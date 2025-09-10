@@ -31,6 +31,9 @@
 - [**14_Coding_Standards.md**](14_Coding_Standards.md) - Стандарты кодирования
 - [**15_Best_Practices.md**](15_Best_Practices.md) - Лучшие практики
 - [**16_Troubleshooting.md**](16_Troubleshooting.md) - Решение проблем
+- [**17_Implementation_Status.md**](17_Implementation_Status.md) - **ТЕКУЩИЙ СТАТУС РЕАЛИЗАЦИИ** ⭐
+- [**18_Key_Features_Overview.md**](18_Key_Features_Overview.md) - **ОБЗОР КЛЮЧЕВЫХ ОСОБЕННОСТЕЙ** ⭐
+- [**19_API_Examples.md**](19_API_Examples.md) - **ПРИМЕРЫ ИСПОЛЬЗОВАНИЯ API** ⭐
 
 ## 🎯 **БЫСТРЫЙ СТАРТ**
 
