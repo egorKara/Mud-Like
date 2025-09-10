@@ -47,7 +47,7 @@ jobs:
         UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
         UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
       with:
-        unity-version: ${{ matrix.unity-version }}
+        unityVersion: ${{ matrix.unity-version }}
         testMode: all
         artifactsPath: artifacts
         githubToken: ${{ secrets.GITHUB_TOKEN }}
@@ -100,7 +100,7 @@ jobs:
         UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
         UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
       with:
-        unity-version: ${{ matrix.unity-version }}
+        unityVersion: ${{ matrix.unity-version }}
         testMode: all
         artifactsPath: artifacts
         githubToken: ${{ secrets.GITHUB_TOKEN }}

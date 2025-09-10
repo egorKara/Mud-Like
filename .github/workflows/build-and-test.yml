@@ -46,10 +46,10 @@ jobs:
         UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
         UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
       with:
-        unity-version: ${{ matrix.unity-version }}
-        target-platform: ${{ matrix.target-platform }}
-        build-name: Mud-Like
-        build-path: build
+        unityVersion: ${{ matrix.unity-version }}
+        targetPlatform: ${{ matrix.target-platform }}
+        buildName: Mud-Like
+        buildPath: build
         
     - name: Upload Build Artifacts
       uses: actions/upload-artifact@v4
