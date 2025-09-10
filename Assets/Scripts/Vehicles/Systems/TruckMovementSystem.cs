@@ -20,7 +20,7 @@ namespace MudLike.Vehicles.Systems
             
             Entities
                 .WithAll<TruckData>()
-                .ForEach((ref LocalTransform transform, ref TruckData truck, in TruckInput input) =>
+                .ForEach((ref LocalTransform transform, ref TruckData truck, in TruckControl input) =>
                 {
                     ProcessTruckMovement(ref transform, ref truck, input, deltaTime);
                 }).Schedule();
@@ -29,7 +29,7 @@ namespace MudLike.Vehicles.Systems
         /// <summary>
         /// Обрабатывает движение конкретного грузовика
         /// </summary>
-        private static void ProcessTruckMovement(ref LocalTransform transform, ref TruckData truck, in TruckInput input, float deltaTime)
+        private static void ProcessTruckMovement(ref LocalTransform transform, ref TruckData truck, in TruckControl input, float deltaTime)
         {
             // Обновляем состояние двигателя
             UpdateEngine(ref truck, input, deltaTime);
@@ -47,7 +47,7 @@ namespace MudLike.Vehicles.Systems
         /// <summary>
         /// Обновляет состояние двигателя
         /// </summary>
-        private static void UpdateEngine(ref TruckData truck, in TruckInput input, float deltaTime)
+        private static void UpdateEngine(ref TruckData truck, in TruckControl input, float deltaTime)
         {
             // Переключение двигателя
             if (input.ToggleEngine)
@@ -72,7 +72,7 @@ namespace MudLike.Vehicles.Systems
         /// <summary>
         /// Обновляет трансмиссию
         /// </summary>
-        private static void UpdateTransmission(ref TruckData truck, in TruckInput input, float deltaTime)
+        private static void UpdateTransmission(ref TruckData truck, in TruckControl input, float deltaTime)
         {
             // Переключение передач
             if (input.ShiftUp && truck.CurrentGear < 6)
@@ -88,7 +88,7 @@ namespace MudLike.Vehicles.Systems
         /// <summary>
         /// Вычисляет целевую частоту вращения двигателя
         /// </summary>
-        private static float CalculateTargetRPM(TruckData truck, in TruckInput input)
+        private static float CalculateTargetRPM(TruckData truck, in TruckControl input)
         {
             if (input.Throttle <= 0f)
             {
@@ -105,7 +105,7 @@ namespace MudLike.Vehicles.Systems
         /// <summary>
         /// Вычисляет силу тяги
         /// </summary>
-        private static float3 CalculateTractionForce(TruckData truck, in TruckInput input)
+        private static float3 CalculateTractionForce(TruckData truck, in TruckControl input)
         {
             if (!truck.EngineRunning || truck.HandbrakeOn)
             {
@@ -130,7 +130,7 @@ namespace MudLike.Vehicles.Systems
         /// <summary>
         /// Вычисляет крутящий момент двигателя
         /// </summary>
-        private static float CalculateEngineTorque(TruckData truck, in TruckInput input)
+        private static float CalculateEngineTorque(TruckData truck, in TruckControl input)
         {
             // Кривая крутящего момента (упрощенная)
             float rpmFactor = truck.EngineRPM / 2000f;

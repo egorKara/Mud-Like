@@ -22,7 +22,7 @@ namespace MudLike.Core.Systems
             // Обрабатываем грузовики с полной физикой
             Entities
                 .WithAll<PlayerTag, TruckData>()
-                .ForEach((ref LocalTransform transform, in TruckInput input) =>
+                .ForEach((ref LocalTransform transform, in TruckControl input) =>
                 {
                     ProcessTruckMovement(ref transform, input, deltaTime);
                 }).Schedule();
@@ -43,7 +43,7 @@ namespace MudLike.Core.Systems
         /// <param name="transform">Трансформация грузовика</param>
         /// <param name="input">Ввод грузовика</param>
         /// <param name="deltaTime">Время с последнего обновления</param>
-        private static void ProcessTruckMovement(ref LocalTransform transform, in TruckInput input, float deltaTime)
+        private static void ProcessTruckMovement(ref LocalTransform transform, in TruckControl input, float deltaTime)
         {
             // Упрощенное движение грузовика (основная логика в TruckMovementSystem)
             float3 movement = CalculateTruckMovement(input);
@@ -75,7 +75,7 @@ namespace MudLike.Core.Systems
         /// </summary>
         /// <param name="input">Ввод грузовика</param>
         /// <returns>Направление движения</returns>
-        private static float3 CalculateTruckMovement(in TruckInput input)
+        private static float3 CalculateTruckMovement(in TruckControl input)
         {
             float3 direction = new float3(0, 0, input.Throttle);
             float speed = input.Throttle * 10f; // Скорость грузовика

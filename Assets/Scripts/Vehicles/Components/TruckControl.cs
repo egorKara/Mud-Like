@@ -4,9 +4,9 @@ using Unity.Mathematics;
 namespace MudLike.Vehicles.Components
 {
     /// <summary>
-    /// Ввод управления грузовиком
+    /// Управление грузовиком
     /// </summary>
-    public struct TruckInput : IComponentData
+    public struct TruckControl : IComponentData
     {
         /// <summary>
         /// Газ (0-1)

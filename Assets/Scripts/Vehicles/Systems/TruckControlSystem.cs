@@ -6,18 +6,18 @@ using MudLike.Vehicles.Components;
 namespace MudLike.Vehicles.Systems
 {
     /// <summary>
-    /// Система обработки ввода для грузовика КРАЗ
+    /// Система управления грузовиком КРАЗ
     /// </summary>
     [UpdateInGroup(typeof(InitializationSystemGroup))]
-    public partial class TruckInputSystem : SystemBase
+    public partial class TruckControlSystem : SystemBase
     {
         /// <summary>
-        /// Обрабатывает ввод для всех грузовиков
+        /// Обрабатывает управление для всех грузовиков
         /// </summary>
         protected override void OnUpdate()
         {
             // Получаем ввод с клавиатуры
-            var input = new TruckInput
+            var input = new TruckControl
             {
                 Throttle = Input.GetAxis("Vertical"), // W/S или стрелки
                 Brake = Input.GetKey(KeyCode.Space) ? 1f : 0f, // Пробел
@@ -34,12 +34,12 @@ namespace MudLike.Vehicles.Systems
             // Нормализуем ввод газа (только положительные значения)
             input.Throttle = math.max(0f, input.Throttle);
             
-            // Обновляем компоненты ввода для всех грузовиков
+            // Обновляем компоненты управления для всех грузовиков
             Entities
                 .WithAll<TruckData>()
-                .ForEach((ref TruckInput truckInput) =>
+                .ForEach((ref TruckControl truckControl) =>
                 {
-                    truckInput = input;
+                    truckControl = input;
                 }).WithoutBurst().Run();
         }
     }
