@@ -97,20 +97,43 @@ namespace MudLike.Core.Systems
                 // Получаем процесс Unity
                 _unityProcess = Process.GetCurrentProcess();
                 
-                // Инициализируем счетчики производительности (Windows)
+                // Инициализируем счетчики производительности (Windows) с улучшенной обработкой ошибок
                 if (Application.platform == RuntimePlatform.WindowsEditor || 
                     Application.platform == RuntimePlatform.WindowsPlayer)
                 {
-                    _cpuCounter = new PerformanceCounter("Process", "% Processor Time", _unityProcess.ProcessName);
-                    _ramCounter = new PerformanceCounter("Process", "Working Set", _unityProcess.ProcessName);
+                    try
+                    {
+                        _cpuCounter = new PerformanceCounter("Process", "% Processor Time", _unityProcess.ProcessName);
+                        _cpuCounter.NextValue(); // Первый вызов для инициализации
+                        
+                        _ramCounter = new PerformanceCounter("Process", "Working Set", _unityProcess.ProcessName);
+                        _ramCounter.NextValue(); // Первый вызов для инициализации
+                        
+                        Debug.Log("[SystemResourceMonitor] PerformanceCounter успешно инициализированы");
+                    }
+                    catch (System.Exception perfEx)
+                    {
+                        Debug.LogWarning($"[SystemResourceMonitor] PerformanceCounter недоступны: {perfEx.Message}");
+                        Debug.LogWarning("[SystemResourceMonitor] Будет использован альтернативный метод мониторинга");
+                        _cpuCounter = null;
+                        _ramCounter = null;
+                    }
+                }
+                else
+                {
+                    Debug.Log("[SystemResourceMonitor] PerformanceCounter не поддерживаются на данной платформе");
                 }
                 
                 // Инициализируем статистику
                 _currentStats = new SystemResourceStats();
+                
+                Debug.Log("[SystemResourceMonitor] Мониторинг ресурсов инициализирован успешно");
             }
             catch (System.Exception e)
             {
-                Debug.LogWarning($"[SystemResourceMonitor] Ошибка инициализации мониторинга: {e.Message}");
+                Debug.LogError($"[SystemResourceMonitor] Критическая ошибка инициализации: {e.Message}");
+                // Устанавливаем безопасные значения по умолчанию
+                _currentStats = new SystemResourceStats();
             }
         }
         
@@ -187,12 +210,24 @@ namespace MudLike.Core.Systems
                     return _cpuCounter.NextValue();
                 }
                 
-                // Альтернативный метод через Process
-                return _unityProcess.TotalProcessorTime.TotalMilliseconds / 
-                       (System.Environment.TickCount - _unityProcess.StartTime.Ticks) * 100f;
+                // Альтернативный метод через Process с защитой от деления на ноль
+                long totalTime = _unityProcess.TotalProcessorTime.TotalMilliseconds;
+                long elapsedTime = System.Environment.TickCount - _unityProcess.StartTime.Ticks;
+                
+                // Защита от деления на ноль и отрицательных значений
+                if (elapsedTime <= 0 || totalTime < 0)
+                {
+                    return 0f;
+                }
+                
+                float cpuUsage = (float)totalTime / elapsedTime * 100f;
+                
+                // Ограничиваем значение разумными пределами
+                return math.clamp(cpuUsage, 0f, 100f);
             }
-            catch
+            catch (System.Exception e)
             {
+                Debug.LogWarning($"[SystemResourceMonitor] Ошибка получения CPU usage: {e.Message}");
                 return 0f;
             }
         }

@@ -232,42 +232,163 @@ namespace MudLike.Core.Systems
             EnableVSync();
         }
         
+        private int _lastAppliedQualityLevel = -1;
+        private float _lastQualityChangeTime;
+        private const float MIN_QUALITY_CHANGE_INTERVAL = 1f; // Минимум 1 секунда между изменениями
+        
         private void SetQualityLevel(int level)
         {
             level = math.clamp(level, 0, 3);
-            QualitySettings.SetQualityLevel(level);
             
-            // Дополнительные настройки для снижения нагрузки
-            switch (level)
+            // Защита от частых изменений качества
+            float currentTime = Time.time;
+            if (level == _lastAppliedQualityLevel || 
+                (currentTime - _lastQualityChangeTime < MIN_QUALITY_CHANGE_INTERVAL))
             {
-                case 0: // Минимальное качество
-                    QualitySettings.pixelLightCount = 1;
-                    QualitySettings.shadowResolution = ShadowResolution.Low;
-                    QualitySettings.shadowDistance = 20f;
-                    QualitySettings.lodBias = 2f;
-                    break;
-                case 1: // Низкое качество
-                    QualitySettings.pixelLightCount = 2;
-                    QualitySettings.shadowResolution = ShadowResolution.Low;
-                    QualitySettings.shadowDistance = 50f;
-                    QualitySettings.lodBias = 1.5f;
-                    break;
+                return; // Пропускаем изменение если оно слишком частое или то же самое
+            }
+            
+            try
+            {
+                QualitySettings.SetQualityLevel(level);
+                _lastAppliedQualityLevel = level;
+                _lastQualityChangeTime = currentTime;
+                
+                // Дополнительные настройки для снижения нагрузки
+                ApplyQualitySettings(level);
+                
+                Debug.Log($"[OverheatProtection] Качество изменено на уровень: {level}");
+            }
+            catch (System.Exception e)
+            {
+                Debug.LogError($"[OverheatProtection] Ошибка изменения качества: {e.Message}");
             }
         }
         
+        private void ApplyQualitySettings(int level)
+        {
+            try
+            {
+                switch (level)
+                {
+                    case 0: // Минимальное качество
+                        QualitySettings.pixelLightCount = 1;
+                        QualitySettings.shadowResolution = ShadowResolution.Low;
+                        QualitySettings.shadowDistance = 20f;
+                        QualitySettings.lodBias = 2f;
+                        QualitySettings.anisotropicFiltering = AnisotropicFiltering.Disable;
+                        QualitySettings.antiAliasing = 0;
+                        break;
+                    case 1: // Низкое качество
+                        QualitySettings.pixelLightCount = 2;
+                        QualitySettings.shadowResolution = ShadowResolution.Low;
+                        QualitySettings.shadowDistance = 50f;
+                        QualitySettings.lodBias = 1.5f;
+                        QualitySettings.anisotropicFiltering = AnisotropicFiltering.Disable;
+                        QualitySettings.antiAliasing = 0;
+                        break;
+                    case 2: // Среднее качество
+                        QualitySettings.pixelLightCount = 4;
+                        QualitySettings.shadowResolution = ShadowResolution.Medium;
+                        QualitySettings.shadowDistance = 100f;
+                        QualitySettings.lodBias = 1f;
+                        QualitySettings.anisotropicFiltering = AnisotropicFiltering.Enable;
+                        QualitySettings.antiAliasing = 2;
+                        break;
+                    case 3: // Высокое качество
+                        QualitySettings.pixelLightCount = 8;
+                        QualitySettings.shadowResolution = ShadowResolution.High;
+                        QualitySettings.shadowDistance = 150f;
+                        QualitySettings.lodBias = 1f;
+                        QualitySettings.anisotropicFiltering = AnisotropicFiltering.Enable;
+                        QualitySettings.antiAliasing = 4;
+                        break;
+                }
+            }
+            catch (System.Exception e)
+            {
+                Debug.LogError($"[OverheatProtection] Ошибка применения настроек качества: {e.Message}");
+            }
+        }
+        
+        private int _lastAppliedFPS = -1;
+        private float _lastFPSChangeTime;
+        private const float MIN_FPS_CHANGE_INTERVAL = 1f; // Минимум 1 секунда между изменениями FPS
+        
         private void SetTargetFPS(int fps)
         {
-            Application.targetFrameRate = fps;
+            // Защита от частых изменений FPS
+            float currentTime = Time.time;
+            if (fps == _lastAppliedFPS || 
+                (currentTime - _lastFPSChangeTime < MIN_FPS_CHANGE_INTERVAL))
+            {
+                return; // Пропускаем изменение если оно слишком частое или то же самое
+            }
+            
+            try
+            {
+                Application.targetFrameRate = fps;
+                _lastAppliedFPS = fps;
+                _lastFPSChangeTime = currentTime;
+                
+                Debug.Log($"[OverheatProtection] FPS установлен: {fps}");
+            }
+            catch (System.Exception e)
+            {
+                Debug.LogError($"[OverheatProtection] Ошибка установки FPS: {e.Message}");
+            }
         }
+        
+        private int _lastAppliedVSync = -1;
+        private float _lastVSyncChangeTime;
+        private const float MIN_VSYNC_CHANGE_INTERVAL = 1f; // Минимум 1 секунда между изменениями VSync
         
         private void EnableVSync()
         {
-            QualitySettings.vSyncCount = 1;
+            // Защита от частых изменений VSync
+            float currentTime = Time.time;
+            if (1 == _lastAppliedVSync || 
+                (currentTime - _lastVSyncChangeTime < MIN_VSYNC_CHANGE_INTERVAL))
+            {
+                return; // Пропускаем изменение если оно слишком частое или то же самое
+            }
+            
+            try
+            {
+                QualitySettings.vSyncCount = 1;
+                _lastAppliedVSync = 1;
+                _lastVSyncChangeTime = currentTime;
+                
+                Debug.Log("[OverheatProtection] VSync включен");
+            }
+            catch (System.Exception e)
+            {
+                Debug.LogError($"[OverheatProtection] Ошибка включения VSync: {e.Message}");
+            }
         }
         
         private void DisableVSync()
         {
-            QualitySettings.vSyncCount = 0;
+            // Защита от частых изменений VSync
+            float currentTime = Time.time;
+            if (0 == _lastAppliedVSync || 
+                (currentTime - _lastVSyncChangeTime < MIN_VSYNC_CHANGE_INTERVAL))
+            {
+                return; // Пропускаем изменение если оно слишком частое или то же самое
+            }
+            
+            try
+            {
+                QualitySettings.vSyncCount = 0;
+                _lastAppliedVSync = 0;
+                _lastVSyncChangeTime = currentTime;
+                
+                Debug.Log("[OverheatProtection] VSync отключен");
+            }
+            catch (System.Exception e)
+            {
+                Debug.LogError($"[OverheatProtection] Ошибка отключения VSync: {e.Message}");
+            }
         }
         
         private void ForceGarbageCollection()

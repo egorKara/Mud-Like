@@ -174,29 +174,52 @@ namespace MudLike.Core.Systems
             }
         }
         
+        private int _lastAppliedQualityLevel = -1;
+        private float _lastQualityChangeTime;
+        private const float MIN_QUALITY_CHANGE_INTERVAL = 2f; // Минимум 2 секунды между изменениями
+        
         private void ApplyQualitySettings()
         {
-            QualitySettings.SetQualityLevel(_currentQualityLevel);
-            
-            // Дополнительные настройки в зависимости от уровня качества
-            switch (_currentQualityLevel)
+            // Защита от частых изменений качества
+            float currentTime = Time.time;
+            if (_currentQualityLevel == _lastAppliedQualityLevel || 
+                (currentTime - _lastQualityChangeTime < MIN_QUALITY_CHANGE_INTERVAL))
             {
-                case 0: // Минимальное качество
-                    ApplyMinimalQuality();
-                    break;
-                case 1: // Низкое качество
-                    ApplyLowQuality();
-                    break;
-                case 2: // Среднее качество
-                    ApplyMediumQuality();
-                    break;
-                case 3: // Высокое качество
-                    ApplyHighQuality();
-                    break;
+                return; // Пропускаем изменение если оно слишком частое или то же самое
             }
             
-            // Устанавливаем соответствующий FPS
-            SetTargetFPSForQuality(_currentQualityLevel);
+            try
+            {
+                QualitySettings.SetQualityLevel(_currentQualityLevel);
+                _lastAppliedQualityLevel = _currentQualityLevel;
+                _lastQualityChangeTime = currentTime;
+                
+                // Дополнительные настройки в зависимости от уровня качества
+                switch (_currentQualityLevel)
+                {
+                    case 0: // Минимальное качество
+                        ApplyMinimalQuality();
+                        break;
+                    case 1: // Низкое качество
+                        ApplyLowQuality();
+                        break;
+                    case 2: // Среднее качество
+                        ApplyMediumQuality();
+                        break;
+                    case 3: // Высокое качество
+                        ApplyHighQuality();
+                        break;
+                }
+                
+                // Устанавливаем соответствующий FPS
+                SetTargetFPSForQuality(_currentQualityLevel);
+                
+                Debug.Log($"[AdaptiveQuality] Качество применено: {_currentQualityLevel}");
+            }
+            catch (System.Exception e)
+            {
+                Debug.LogError($"[AdaptiveQuality] Ошибка применения качества: {e.Message}");
+            }
         }
         
         private void ApplyMinimalQuality()

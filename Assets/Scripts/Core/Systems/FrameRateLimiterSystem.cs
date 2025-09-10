@@ -169,12 +169,30 @@ namespace MudLike.Core.Systems
             }
         }
         
+        private int _lastAppliedFPS = -1;
+        private float _lastFPSChangeTime;
+        private const float MIN_FPS_CHANGE_INTERVAL = 1f; // Минимум 1 секунда между изменениями FPS
+        
         private void ApplyFrameRateLimits()
         {
             if (!_enableFrameRateLimiting) return;
             
-            // Устанавливаем целевой FPS
-            Application.targetFrameRate = _targetFrameRate;
+            // Защита от частых изменений FPS
+            float currentTime = Time.time;
+            if (_targetFrameRate != _lastAppliedFPS || 
+                (currentTime - _lastFPSChangeTime >= MIN_FPS_CHANGE_INTERVAL))
+            {
+                try
+                {
+                    Application.targetFrameRate = _targetFrameRate;
+                    _lastAppliedFPS = _targetFrameRate;
+                    _lastFPSChangeTime = currentTime;
+                }
+                catch (System.Exception e)
+                {
+                    Debug.LogError($"[FrameRate] Ошибка установки FPS: {e.Message}");
+                }
+            }
             
             // Настраиваем VSync
             QualitySettings.vSyncCount = _enableVSync ? 1 : 0;
@@ -229,9 +247,29 @@ namespace MudLike.Core.Systems
         /// </summary>
         public void SetTargetFrameRate(int fps)
         {
-            _targetFrameRate = math.clamp(fps, _minFrameRate, _maxFrameRate);
-            Application.targetFrameRate = _targetFrameRate;
-            Debug.Log($"[FrameRate] Установлен целевой FPS: {_targetFrameRate}");
+            int newFPS = math.clamp(fps, _minFrameRate, _maxFrameRate);
+            
+            // Защита от частых изменений FPS
+            float currentTime = Time.time;
+            if (newFPS == _lastAppliedFPS || 
+                (currentTime - _lastFPSChangeTime < MIN_FPS_CHANGE_INTERVAL))
+            {
+                return; // Пропускаем изменение если оно слишком частое или то же самое
+            }
+            
+            try
+            {
+                _targetFrameRate = newFPS;
+                Application.targetFrameRate = _targetFrameRate;
+                _lastAppliedFPS = _targetFrameRate;
+                _lastFPSChangeTime = currentTime;
+                
+                Debug.Log($"[FrameRate] Установлен целевой FPS: {_targetFrameRate}");
+            }
+            catch (System.Exception e)
+            {
+                Debug.LogError($"[FrameRate] Ошибка установки FPS: {e.Message}");
+            }
         }
         
         /// <summary>
