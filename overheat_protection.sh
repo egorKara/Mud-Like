@@ -31,6 +31,10 @@ CRITICAL_COUNT=0
 EMERGENCY_COUNT=0
 LAST_EMERGENCY_TIME=""
 
+# Защита от частых срабатываний
+LAST_LOAD_REDUCTION_TIME=""
+MIN_LOAD_REDUCTION_INTERVAL=10  # Минимум 10 секунд между срабатываниями
+
 # Флаги состояния
 IS_RUNNING=false
 IS_EMERGENCY_MODE=false
@@ -101,7 +105,7 @@ get_gpu_load() {
     echo "$gpu_load"
 }
 
-# Оценка загрузки GPU на основе процессов
+# Оценка загрузки GPU на основе процессов (исправленная версия)
 estimate_gpu_load_from_processes() {
     local gpu_processes=0
     local total_processes=0
@@ -115,10 +119,23 @@ estimate_gpu_load_from_processes() {
         fi
     done
     
-    # Оцениваем загрузку GPU на основе количества процессов
+    # Исправленная логика: более консервативная оценка
     local estimated_load=0
     if [ "$total_processes" -gt 0 ]; then
-        estimated_load=$((gpu_processes * 100 / total_processes))
+        # Более реалистичная оценка: не более 30% на основе процессов
+        local process_factor=$((gpu_processes * 30 / total_processes))
+        
+        # Дополнительная проверка: если процессов мало, снижаем оценку
+        if [ "$gpu_processes" -lt 3 ]; then
+            process_factor=$((process_factor / 2))
+        fi
+        
+        # Ограничиваем максимальную оценку
+        if [ "$process_factor" -gt 30 ]; then
+            process_factor=30
+        fi
+        
+        estimated_load=$process_factor
     fi
     
     echo "[GPU] Оценочная загрузка: ${estimated_load}% (процессы: ${gpu_processes}/${total_processes})" >&2
@@ -460,19 +477,36 @@ enforce_emergency_limits() {
     sync
 }
 
-# Функция для проверки максимальной нагрузки в основном режиме
+# Функция для проверки максимальной нагрузки в основном режиме (с защитой от частых срабатываний)
 check_maximum_load() {
     local cpu_load=$(get_cpu_load)
     local gpu_load=$(get_gpu_load)
     
     # Проверяем достижение 100% нагрузки
     if [ "$cpu_load" -ge "$MAX_CPU_LOAD_THRESHOLD" ] || [ "$gpu_load" -ge "$MAX_GPU_LOAD_THRESHOLD" ]; then
-        echo -e "${RED}🚨 МАКСИМАЛЬНАЯ НАГРУЗКА ДОСТИГНУТА!${NC}"
-        echo -e "${RED}   CPU: ${cpu_load}% (порог: ${MAX_CPU_LOAD_THRESHOLD}%)${NC}"
-        echo -e "${RED}   GPU: ${gpu_load}% (порог: ${MAX_GPU_LOAD_THRESHOLD}%)${NC}"
+        # Проверяем, прошло ли достаточно времени с последнего срабатывания
+        local current_time=$(date +%s)
+        local last_time=0
         
-        # Применяем меры для снижения нагрузки
-        apply_load_reduction_measures "$cpu_load" "$gpu_load"
+        if [ -n "$LAST_LOAD_REDUCTION_TIME" ]; then
+            last_time=$LAST_LOAD_REDUCTION_TIME
+        fi
+        
+        local time_diff=$((current_time - last_time))
+        
+        if [ "$time_diff" -ge "$MIN_LOAD_REDUCTION_INTERVAL" ]; then
+            echo -e "${RED}🚨 МАКСИМАЛЬНАЯ НАГРУЗКА ДОСТИГНУТА!${NC}"
+            echo -e "${RED}   CPU: ${cpu_load}% (порог: ${MAX_CPU_LOAD_THRESHOLD}%)${NC}"
+            echo -e "${RED}   GPU: ${gpu_load}% (порог: ${MAX_GPU_LOAD_THRESHOLD}%)${NC}"
+            
+            # Применяем меры для снижения нагрузки
+            apply_load_reduction_measures "$cpu_load" "$gpu_load"
+            
+            # Обновляем время последнего срабатывания
+            LAST_LOAD_REDUCTION_TIME=$current_time
+        else
+            echo -e "${YELLOW}⚠️  Нагрузка высокая, но срабатывание заблокировано (прошло ${time_diff}s из ${MIN_LOAD_REDUCTION_INTERVAL}s)${NC}"
+        fi
     else
         echo -e "${GREEN}✅ Нагрузка в пределах нормы - CPU: ${cpu_load}%, GPU: ${gpu_load}%${NC}"
     fi
