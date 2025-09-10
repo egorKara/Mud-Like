@@ -53,7 +53,7 @@ jobs:
         build-method: MudLike.BuildScript.BuildProject
         
     - name: Upload Build Artifacts
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: Build-${{ matrix.target-platform }}
         path: build
@@ -71,7 +71,7 @@ jobs:
         githubToken: ${{ secrets.GITHUB_TOKEN }}
         
     - name: Upload Test Results
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       if: always()
       with:
         name: Test results-${{ matrix.target-platform }}
