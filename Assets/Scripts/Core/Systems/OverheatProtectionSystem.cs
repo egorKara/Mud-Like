@@ -426,41 +426,65 @@ namespace MudLike.Core.Systems
         
         private float GetCPUTemperature()
         {
-            // Попытка получить температуру CPU (работает не на всех системах)
+            // Используем РЕАЛЬНЫЙ датчик температуры
             try
             {
-                if (Application.platform == RuntimePlatform.WindowsEditor || 
-                    Application.platform == RuntimePlatform.WindowsPlayer)
+                float realTemp = RealTemperatureSensor.GetRealCPUTemperature();
+                
+                // Проверяем валидность температуры
+                if (realTemp > 0f && realTemp < 200f)
                 {
-                    return GetWindowsCPUTemperature();
+                    Debug.Log($"[OverheatProtection] Реальная температура CPU: {realTemp:F1}°C");
+                    return realTemp;
                 }
-                else if (Application.platform == RuntimePlatform.LinuxEditor || 
-                         Application.platform == RuntimePlatform.LinuxPlayer)
+                else
                 {
-                    return GetLinuxCPUTemperature();
+                    Debug.LogWarning($"[OverheatProtection] Некорректная температура: {realTemp:F1}°C, используем оценку");
+                    return EstimateTemperatureFromSystemLoad();
                 }
             }
             catch (System.Exception e)
             {
-                Debug.LogWarning($"[OverheatProtection] Не удалось получить температуру CPU: {e.Message}");
+                Debug.LogError($"[OverheatProtection] Критическая ошибка получения температуры: {e.Message}");
+                return EstimateTemperatureFromSystemLoad();
+            }
+        }
+        
+        /// <summary>
+        /// Оценить температуру на основе нагрузки системы
+        /// </summary>
+        private float EstimateTemperatureFromSystemLoad()
+        {
+            try
+            {
+                // Получаем нагрузку CPU через Process
+                using (Process process = Process.GetCurrentProcess())
+                {
+                    long totalTime = process.TotalProcessorTime.TotalMilliseconds;
+                    long elapsedTime = System.Environment.TickCount - process.StartTime.Ticks;
+                    
+                    if (elapsedTime > 0)
+                    {
+                        float cpuLoad = (float)totalTime / elapsedTime * 100f;
+                        cpuLoad = math.clamp(cpuLoad, 0f, 100f);
+                        
+                        // Оцениваем температуру: базовая + влияние нагрузки
+                        float baseTemp = 45f; // Базовая температура
+                        float loadFactor = cpuLoad / 100f;
+                        float estimatedTemp = baseTemp + (loadFactor * 25f); // До +25°C при 100% нагрузке
+                        
+                        Debug.Log($"[OverheatProtection] Оценочная температура: {estimatedTemp:F1}°C (нагрузка CPU: {cpuLoad:F1}%)");
+                        return estimatedTemp;
+                    }
+                }
+            }
+            catch (System.Exception e)
+            {
+                Debug.LogWarning($"[OverheatProtection] Ошибка оценки температуры: {e.Message}");
             }
             
-            // Возвращаем безопасное значение по умолчанию
+            // Безопасное значение по умолчанию
             return 50f;
-        }
-        
-        private float GetWindowsCPUTemperature()
-        {
-            // Упрощенная реализация для Windows
-            // В реальном проекте можно использовать WMI или другие API
-            return 60f; // Заглушка
-        }
-        
-        private float GetLinuxCPUTemperature()
-        {
-            // Упрощенная реализация для Linux
-            // В реальном проекте можно читать /sys/class/thermal/
-            return 55f; // Заглушка
         }
         
         /// <summary>
