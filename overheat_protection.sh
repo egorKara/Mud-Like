@@ -13,6 +13,12 @@ SAFE_TEMP_THRESHOLD=65        # Безопасная температура
 UNITY_EDITOR_CPU_LIMIT=95     # Максимальная нагрузка CPU при работе Unity Editor
 UNITY_EDITOR_GPU_LIMIT=95     # Максимальная нагрузка GPU при работе Unity Editor
 
+# Правила для основного режима работы
+MAX_CPU_LOAD_THRESHOLD=100    # Порог максимальной нагрузки CPU
+MAX_GPU_LOAD_THRESHOLD=100    # Порог максимальной нагрузки GPU
+REDUCE_TO_CPU_LOAD=95         # Снижение CPU нагрузки до этого уровня
+REDUCE_TO_GPU_LOAD=95         # Снижение GPU нагрузки до этого уровня
+
 # Настройки защиты (из OverheatProtectionSystem.cs)
 TEMP_CHECK_INTERVAL=1         # Проверяем каждую секунду
 EMERGENCY_COOLDOWN_TIME=5     # Экстренное охлаждение 5 секунд
@@ -343,6 +349,40 @@ apply_emergency_measures() {
     echo "Экстренные меры применены"
 }
 
+# Меры для снижения нагрузки при достижении 100%
+apply_load_reduction_measures() {
+    local cpu_load="$1"
+    local gpu_load="$2"
+    
+    echo -e "${YELLOW}🔧 СНИЖЕНИЕ НАГРУЗКИ С 100% ДО 95%${NC}"
+    echo -e "${YELLOW}   CPU: ${cpu_load}% → ${REDUCE_TO_CPU_LOAD}%${NC}"
+    echo -e "${YELLOW}   GPU: ${gpu_load}% → ${REDUCE_TO_GPU_LOAD}%${NC}"
+    
+    # Снижение приоритета тяжелых процессов
+    for process in Unity Cursor code firefox chrome; do
+        local pids=$(pgrep "$process" 2>/dev/null)
+        if [ -n "$pids" ]; then
+            for pid in $pids; do
+                if renice +10 "$pid" 2>/dev/null; then
+                    echo "Снижен приоритет процесса $process (PID: $pid) для снижения нагрузки"
+                fi
+            done
+        fi
+    done
+    
+    # Принудительная пауза на 2 секунды для снижения нагрузки
+    echo -e "${YELLOW}⏸️  Принудительная пауза на 2 секунды для снижения нагрузки...${NC}"
+    sleep 2
+    
+    # Очистка кэша для освобождения ресурсов
+    echo 3 > /proc/sys/vm/drop_caches 2>/dev/null || true
+    
+    # Принудительная синхронизация
+    sync
+    
+    echo -e "${GREEN}✅ Нагрузка снижена с 100% до 95%${NC}"
+}
+
 # Экстренные меры для Unity Editor при превышении лимитов
 apply_unity_editor_emergency_measures() {
     local cpu_load="$1"
@@ -420,6 +460,24 @@ enforce_emergency_limits() {
     sync
 }
 
+# Функция для проверки максимальной нагрузки в основном режиме
+check_maximum_load() {
+    local cpu_load=$(get_cpu_load)
+    local gpu_load=$(get_gpu_load)
+    
+    # Проверяем достижение 100% нагрузки
+    if [ "$cpu_load" -ge "$MAX_CPU_LOAD_THRESHOLD" ] || [ "$gpu_load" -ge "$MAX_GPU_LOAD_THRESHOLD" ]; then
+        echo -e "${RED}🚨 МАКСИМАЛЬНАЯ НАГРУЗКА ДОСТИГНУТА!${NC}"
+        echo -e "${RED}   CPU: ${cpu_load}% (порог: ${MAX_CPU_LOAD_THRESHOLD}%)${NC}"
+        echo -e "${RED}   GPU: ${gpu_load}% (порог: ${MAX_GPU_LOAD_THRESHOLD}%)${NC}"
+        
+        # Применяем меры для снижения нагрузки
+        apply_load_reduction_measures "$cpu_load" "$gpu_load"
+    else
+        echo -e "${GREEN}✅ Нагрузка в пределах нормы - CPU: ${cpu_load}%, GPU: ${gpu_load}%${NC}"
+    fi
+}
+
 # Функция для проверки нагрузки при работе Unity Editor
 check_unity_editor_load() {
     local unity_running=$(is_unity_editor_running)
@@ -455,10 +513,13 @@ check_temperature() {
     
     echo -e "${CYAN}🌡️  Температура CPU: ${temp}°C${NC}"
     
-    # Сначала проверяем Unity Editor (приоритет)
+    # 1. Сначала проверяем Unity Editor (высший приоритет)
     check_unity_editor_load
     
-    # Определяем состояние системы (как в OverheatProtectionSystem.cs)
+    # 2. Проверяем максимальную нагрузку в основном режиме
+    check_maximum_load
+    
+    # 3. Определяем состояние системы по температуре (как в OverheatProtectionSystem.cs)
     if [ "$temp" -ge "$CRITICAL_TEMP_THRESHOLD" ]; then
         handle_emergency_temperature "$temp"
     elif [ "$temp" -ge "$WARNING_TEMP_THRESHOLD" ]; then
@@ -556,6 +617,10 @@ show_help() {
     echo "Специальные правила для Unity Editor:"
     echo -e "  ${BLUE}🎮 Unity Editor: CPU ≤ 95%, GPU ≤ 95%${NC}"
     echo -e "  ${RED}🚨 При превышении: принудительная пауза + снижение приоритета${NC}"
+    echo
+    echo "Правила для основного режима работы:"
+    echo -e "  ${YELLOW}⚠️  При 100% CPU/GPU: автоматическое снижение до 95%${NC}"
+    echo -e "  ${YELLOW}🔧 Меры: снижение приоритета + пауза + очистка кэша${NC}"
     echo
     echo "Уровни температуры (из OverheatProtectionSystem.cs):"
     echo -e "  ${YELLOW}⚠️  Предупреждение: 75°C+ - Мягкие меры${NC}"
