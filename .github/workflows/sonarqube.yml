@@ -1,0 +1,89 @@
+name: SonarQube Analysis
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+  schedule:
+    # Запуск анализа SonarQube каждый день в 4:00 UTC
+    - cron: '0 4 * * *'
+
+jobs:
+  sonarqube:
+    runs-on: ubuntu-latest
+    
+    strategy:
+      matrix:
+        unity-version: ['6000.2.2f1']
+        
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+        
+    - name: Cache Unity Library
+      uses: actions/cache@v3
+      with:
+        path: Library
+        key: Library-${{ matrix.unity-version }}-${{ hashFiles('Assets/**', 'Packages/**', 'ProjectSettings/**') }}
+        restore-keys: |
+          Library-${{ matrix.unity-version }}-
+          Library-
+          
+    - name: Setup Unity
+      uses: game-ci/unity-setup@v2
+      with:
+        unity-version: ${{ matrix.unity-version }}
+        unity-modules: linux-il2cpp
+        unity-serial: ${{ secrets.UNITY_SERIAL }}
+        
+    - name: Run Tests with Coverage
+      uses: game-ci/unity-test-runner@v2
+      env:
+        UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+        UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+        UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+      with:
+        unity-version: ${{ matrix.unity-version }}
+        testMode: all
+        artifactsPath: artifacts
+        githubToken: ${{ secrets.GITHUB_TOKEN }}
+        coverageOptions: enableCodeCoverage
+        coverageResultsPath: coverage-results
+        
+    - name: SonarQube Scan
+      uses: SonarSource/sonarqube-scan-action@master
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      with:
+        args: >
+          -Dsonar.projectKey=mud-like
+          -Dsonar.organization=egorkara
+          -Dsonar.host.url=https://sonarcloud.io
+          -Dsonar.cs.opencover.reportsPaths=coverage-results/coverage.xml
+          -Dsonar.qualitygate.wait=true
+          -Dsonar.qualitygate.timeout=300
+          
+    - name: Upload SonarQube Results
+      uses: actions/upload-artifact@v3
+      if: always()
+      with:
+        name: SonarQube results
+        path: |
+          artifacts/
+          coverage-results/
+          
+    - name: Comment SonarQube Results
+      uses: SonarSource/sonarqube-quality-gate-action@master
+      if: always()
+      env:
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      with:
+        scanMetadataReportFile: .scannerwork/report-task.txt
+        githubToken: ${{ secrets.GITHUB_TOKEN }}
+        failAction: false
+        commentMode: create new
+        commentTitle: 'SonarQube Quality Gate'

@@ -1,0 +1,81 @@
+coverage:
+  status:
+    project:
+      default:
+        target: 80%
+        threshold: 5%
+    patch:
+      default:
+        target: 70%
+        threshold: 5%
+
+comment:
+  layout: "header,diff,files,footer"
+  behavior: default
+  require_changes: false
+  require_base: no
+  require_head: yes
+
+github_checks:
+  annotations: true
+
+codecov:
+  require_ci_to_pass: yes
+
+ignore:
+  - "Assets/Scripts/Editor/**"
+  - "Assets/Scripts/Tests/**"
+  - "Assets/Plugins/**"
+  - "Assets/StreamingAssets/**"
+  - "Assets/WebGLTemplates/**"
+  - "Packages/**"
+  - "Library/**"
+  - "Temp/**"
+  - "obj/**"
+  - "bin/**"
+  - "*.meta"
+  - "*.asmdef"
+  - "*.asmref"
+  - "*.csproj"
+  - "*.sln"
+  - "*.userprefs"
+  - "*.pidb"
+  - "*.booproj"
+  - "*.svd"
+  - "*.pdb"
+  - "*.mdb"
+  - "*.opendb"
+  - "*.VC.db"
+  - "*.VC.VC.opendb"
+
+coverage:
+  precision: 2
+  round: down
+  range: "70...100"
+
+  status:
+    project:
+      default:
+        target: 80%
+        threshold: 5%
+        informational: false
+    patch:
+      default:
+        target: 70%
+        threshold: 5%
+        informational: false
+
+parsers:
+  gcov:
+    branch_detection:
+      conditional: yes
+      loop: yes
+      method: no
+      macro: no
+
+fixes:
+  - "Assets/Scripts/Core/::Assets/Scripts/Core/"
+  - "Assets/Scripts/Vehicles/::Assets/Scripts/Vehicles/"
+  - "Assets/Scripts/Terrain/::Assets/Scripts/Terrain/"
+  - "Assets/Scripts/Networking/::Assets/Scripts/Networking/"
+  - "Assets/Scripts/DOTS/::Assets/Scripts/DOTS/"

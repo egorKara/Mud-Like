@@ -32,17 +32,10 @@ jobs:
         languages: ${{ matrix.language }}
         queries: security-and-quality
 
-    - name: Setup Unity
-      uses: game-ci/unity-setup@v2
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
       with:
-        unity-version: 6000.2.2f1
-
-    - name: Build Unity Project
-      uses: game-ci/unity-builder@v3
-      with:
-        targetPlatform: StandaloneLinux64
-        projectPath: .
-        buildMethod: BuildScript.Build
+        dotnet-version: '8.0.x'
 
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v3

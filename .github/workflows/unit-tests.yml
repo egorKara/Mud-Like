@@ -1,0 +1,137 @@
+name: Unit Tests
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+  schedule:
+    # Запуск тестов каждый день в 2:00 UTC
+    - cron: '0 2 * * *'
+
+jobs:
+  unit-tests:
+    runs-on: ubuntu-latest
+    
+    strategy:
+      matrix:
+        unity-version: ['6000.2.2f1']
+        
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+        
+    - name: Cache Unity Library
+      uses: actions/cache@v3
+      with:
+        path: Library
+        key: Library-${{ matrix.unity-version }}-${{ hashFiles('Assets/**', 'Packages/**', 'ProjectSettings/**') }}
+        restore-keys: |
+          Library-${{ matrix.unity-version }}-
+          Library-
+          
+    - name: Cache Unity Packages
+      uses: actions/cache@v3
+      with:
+        path: ~/.local/share/unity3d/cache
+        key: UnityPackages-${{ matrix.unity-version }}
+        restore-keys: |
+          UnityPackages-
+          
+    - name: Setup Unity
+      uses: game-ci/unity-setup@v2
+      with:
+        unity-version: ${{ matrix.unity-version }}
+        unity-modules: linux-il2cpp
+        unity-serial: ${{ secrets.UNITY_SERIAL }}
+        
+    - name: Run Unit Tests
+      uses: game-ci/unity-test-runner@v2
+      env:
+        UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+        UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+        UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+      with:
+        unity-version: ${{ matrix.unity-version }}
+        testMode: all
+        artifactsPath: artifacts
+        githubToken: ${{ secrets.GITHUB_TOKEN }}
+        
+    - name: Upload Test Results
+      uses: actions/upload-artifact@v3
+      if: always()
+      with:
+        name: Test results
+        path: artifacts
+        
+    - name: Comment Test Results
+      uses: game-ci/unity-test-results@v1
+      if: always()
+      with:
+        artifactsPath: artifacts
+        githubToken: ${{ secrets.GITHUB_TOKEN }}
+        checkName: Unit Tests
+        commentMode: create new
+        commentTitle: 'Unit Test Results'
+        
+  code-coverage:
+    runs-on: ubuntu-latest
+    needs: unit-tests
+    
+    strategy:
+      matrix:
+        unity-version: ['6000.2.2f1']
+        
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+        
+    - name: Cache Unity Library
+      uses: actions/cache@v3
+      with:
+        path: Library
+        key: Library-${{ matrix.unity-version }}-${{ hashFiles('Assets/**', 'Packages/**', 'ProjectSettings/**') }}
+        restore-keys: |
+          Library-${{ matrix.unity-version }}-
+          Library-
+          
+    - name: Setup Unity
+      uses: game-ci/unity-setup@v2
+      with:
+        unity-version: ${{ matrix.unity-version }}
+        unity-modules: linux-il2cpp
+        unity-serial: ${{ secrets.UNITY_SERIAL }}
+        
+    - name: Run Code Coverage
+      uses: game-ci/unity-test-runner@v2
+      env:
+        UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+        UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+        UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+      with:
+        unity-version: ${{ matrix.unity-version }}
+        testMode: all
+        artifactsPath: artifacts
+        githubToken: ${{ secrets.GITHUB_TOKEN }}
+        coverageOptions: enableCodeCoverage
+        coverageResultsPath: coverage-results
+        
+    - name: Upload Coverage Results
+      uses: actions/upload-artifact@v3
+      if: always()
+      with:
+        name: Coverage results
+        path: coverage-results
+        
+    - name: Upload Coverage to Codecov
+      uses: codecov/codecov-action@v3
+      if: always()
+      with:
+        file: coverage-results/coverage.xml
+        flags: unittests
+        name: codecov-umbrella
+        fail_ci_if_error: false
