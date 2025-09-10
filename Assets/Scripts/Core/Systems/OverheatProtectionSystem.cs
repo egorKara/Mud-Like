@@ -426,20 +426,20 @@ namespace MudLike.Core.Systems
         
         private float GetCPUTemperature()
         {
-            // Используем РЕАЛЬНЫЙ датчик температуры
+            // Используем существующие утилиты Cursor
             try
             {
-                float realTemp = RealTemperatureSensor.GetRealCPUTemperature();
+                var systemInfo = SystemInfoIntegration.GetSystemInfo();
                 
                 // Проверяем валидность температуры
-                if (realTemp > 0f && realTemp < 200f)
+                if (systemInfo.CPUTemperature > 0f && systemInfo.CPUTemperature < 200f)
                 {
-                    Debug.Log($"[OverheatProtection] Реальная температура CPU: {realTemp:F1}°C");
-                    return realTemp;
+                    Debug.Log($"[OverheatProtection] Температура CPU через системные утилиты: {systemInfo.CPUTemperature:F1}°C");
+                    return systemInfo.CPUTemperature;
                 }
                 else
                 {
-                    Debug.LogWarning($"[OverheatProtection] Некорректная температура: {realTemp:F1}°C, используем оценку");
+                    Debug.LogWarning($"[OverheatProtection] Некорректная температура: {systemInfo.CPUTemperature:F1}°C, используем оценку");
                     return EstimateTemperatureFromSystemLoad();
                 }
             }
