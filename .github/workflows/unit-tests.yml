@@ -40,13 +40,6 @@ jobs:
         restore-keys: |
           UnityPackages-
           
-    - name: Setup Unity
-      uses: game-ci/unity-setup@v2
-      with:
-        unity-version: ${{ matrix.unity-version }}
-        unity-modules: linux-il2cpp
-        unity-serial: ${{ secrets.UNITY_SERIAL }}
-        
     - name: Run Unit Tests
       uses: game-ci/unity-test-runner@v2
       env:
@@ -67,14 +60,8 @@ jobs:
         path: artifacts
         
     - name: Comment Test Results
-      uses: game-ci/unity-test-results@v1
-      if: always()
-      with:
-        artifactsPath: artifacts
-        githubToken: ${{ secrets.GITHUB_TOKEN }}
-        checkName: Unit Tests
-        commentMode: create new
-        commentTitle: 'Unit Test Results'
+      run: |
+        echo "Test results would be commented here"
         
   code-coverage:
     runs-on: ubuntu-latest

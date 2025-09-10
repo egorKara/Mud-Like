@@ -50,7 +50,6 @@ jobs:
         target-platform: ${{ matrix.target-platform }}
         build-name: Mud-Like
         build-path: build
-        build-method: MudLike.BuildScript.BuildProject
         
     - name: Upload Build Artifacts
       uses: actions/upload-artifact@v4
