@@ -83,6 +83,12 @@ namespace MudLike.Vehicles.Systems
             {
                 truck.CurrentGear--;
             }
+            
+            // Обновляем блокировки дифференциалов
+            truck.LockFrontDifferential = input.LockFrontDifferential;
+            truck.LockMiddleDifferential = input.LockMiddleDifferential;
+            truck.LockRearDifferential = input.LockRearDifferential;
+            truck.LockCenterDifferential = input.LockCenterDifferential;
         }
         
         /// <summary>

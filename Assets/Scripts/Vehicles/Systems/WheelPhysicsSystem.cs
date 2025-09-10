@@ -19,18 +19,21 @@ namespace MudLike.Vehicles.Systems
         {
             float deltaTime = SystemAPI.Time.fixedDeltaTime;
             
+            // Получаем данные грузовика для блокировки дифференциалов
+            var truckData = GetComponent<TruckData>(GetSingletonEntity<TruckData>());
+            
             Entities
                 .WithAll<WheelData>()
                 .ForEach((ref WheelData wheel, ref SuspensionData suspension, in LocalTransform transform) =>
                 {
-                    ProcessWheelPhysics(ref wheel, ref suspension, transform, deltaTime);
+                    ProcessWheelPhysics(ref wheel, ref suspension, transform, truckData, deltaTime);
                 }).Schedule();
         }
         
         /// <summary>
         /// Обрабатывает физику конкретного колеса
         /// </summary>
-        private static void ProcessWheelPhysics(ref WheelData wheel, ref SuspensionData suspension, in LocalTransform transform, float deltaTime)
+        private static void ProcessWheelPhysics(ref WheelData wheel, ref SuspensionData suspension, in LocalTransform transform, in TruckData truckData, float deltaTime)
         {
             // Обновляем подвеску
             UpdateSuspension(ref wheel, ref suspension, transform, deltaTime);
@@ -38,8 +41,8 @@ namespace MudLike.Vehicles.Systems
             // Вычисляем сцепление с поверхностью
             CalculateTraction(ref wheel, suspension);
             
-            // Обновляем угловую скорость колеса
-            UpdateWheelRotation(ref wheel, deltaTime);
+            // Обновляем угловую скорость колеса с учетом блокировки дифференциалов
+            UpdateWheelRotation(ref wheel, truckData, deltaTime);
             
             // Вычисляем силу сцепления
             CalculateTractionForce(ref wheel, suspension);
@@ -87,9 +90,9 @@ namespace MudLike.Vehicles.Systems
         }
         
         /// <summary>
-        /// Обновляет вращение колеса
+        /// Обновляет вращение колеса с учетом блокировки дифференциалов
         /// </summary>
-        private static void UpdateWheelRotation(ref WheelData wheel, float deltaTime)
+        private static void UpdateWheelRotation(ref WheelData wheel, in TruckData truckData, float deltaTime)
         {
             // Вычисляем угловую скорость на основе крутящего момента
             float angularAcceleration = wheel.Torque / (wheel.Radius * wheel.Radius * 0.5f);
@@ -102,12 +105,55 @@ namespace MudLike.Vehicles.Systems
                 wheel.AngularVelocity += brakeAcceleration * deltaTime;
             }
             
+            // Применяем блокировку дифференциалов
+            ApplyDifferentialLock(ref wheel, truckData, deltaTime);
+            
             // Сопротивление качению
             wheel.AngularVelocity *= 0.99f;
             
             // Ограничиваем максимальную угловую скорость
             float maxAngularVelocity = 50f; // рад/с
             wheel.AngularVelocity = math.clamp(wheel.AngularVelocity, -maxAngularVelocity, maxAngularVelocity);
+        }
+        
+        /// <summary>
+        /// Применяет блокировку дифференциалов
+        /// </summary>
+        private static void ApplyDifferentialLock(ref WheelData wheel, in TruckData truckData, float deltaTime)
+        {
+            bool isLocked = false;
+            
+            // Определяем, заблокирован ли дифференциал для этого колеса
+            switch (wheel.WheelIndex)
+            {
+                case 0: // Переднее левое
+                case 1: // Переднее правое
+                    isLocked = truckData.LockFrontDifferential;
+                    break;
+                case 2: // Среднее левое
+                case 3: // Среднее правое
+                    isLocked = truckData.LockMiddleDifferential;
+                    break;
+                case 4: // Заднее левое
+                case 5: // Заднее правое
+                    isLocked = truckData.LockRearDifferential;
+                    break;
+            }
+            
+            // Если дифференциал заблокирован, ограничиваем разность скоростей колес
+            if (isLocked)
+            {
+                // Упрощенная реализация блокировки - в реальной игре здесь будет более сложная логика
+                float maxSlipRatio = 0.1f; // Максимальное проскальзывание при блокировке
+                float currentSlipRatio = math.abs(wheel.SlipRatio);
+                
+                if (currentSlipRatio > maxSlipRatio)
+                {
+                    // Корректируем угловую скорость для уменьшения проскальзывания
+                    float correctionFactor = maxSlipRatio / currentSlipRatio;
+                    wheel.AngularVelocity *= correctionFactor;
+                }
+            }
         }
         
         /// <summary>

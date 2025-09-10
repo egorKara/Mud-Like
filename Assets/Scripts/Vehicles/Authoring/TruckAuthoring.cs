@@ -54,7 +54,11 @@ namespace MudLike.Vehicles.Authoring
                     TractionCoefficient = 0.8f,
                     FuelLevel = 1f,
                     EngineRunning = false,
-                    HandbrakeOn = false
+                    HandbrakeOn = false,
+                    LockFrontDifferential = false,
+                    LockMiddleDifferential = false,
+                    LockRearDifferential = false,
+                    LockCenterDifferential = false
                 });
                 
                 AddComponent(entity, new TruckControl
@@ -68,7 +72,10 @@ namespace MudLike.Vehicles.Authoring
                     ToggleEngine = false,
                     Clutch = 0f,
                     FourWheelDrive = false,
-                    LockDifferential = false
+                    LockFrontDifferential = false,
+                    LockMiddleDifferential = false,
+                    LockRearDifferential = false,
+                    LockCenterDifferential = false
                 });
                 
                 AddComponent(entity, new TransmissionData
@@ -128,7 +135,7 @@ namespace MudLike.Vehicles.Authoring
                         SinkDepth = 0f,
                         TractionForce = float3.zero,
                         SlipRatio = 0f,
-                        IsDriven = i >= 2, // Задние и средние колеса ведущие
+                        IsDriven = true, // Все колеса ведущие
                         IsSteerable = i < 2, // Только передние колеса поворотные
                         WheelIndex = i
                     });

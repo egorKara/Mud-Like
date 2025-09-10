@@ -175,7 +175,11 @@ namespace MudLike.Tests.Unit
                 Mass = 8000f,
                 MaxTorque = 1200f,
                 CurrentGear = 1,
-                TractionCoefficient = 0.8f
+                TractionCoefficient = 0.8f,
+                LockFrontDifferential = false,
+                LockMiddleDifferential = false,
+                LockRearDifferential = false,
+                LockCenterDifferential = false
             };
             
             var input = new TruckControl
@@ -190,6 +194,37 @@ namespace MudLike.Tests.Unit
             Assert.Greater(result.z, 0f); // Должна быть сила вперед
             Assert.AreEqual(0f, result.x, 0.001f); // Нет боковой силы
             Assert.AreEqual(0f, result.y, 0.001f); // Нет вертикальной силы
+        }
+        
+        [Test]
+        public void UpdateTransmission_WithDifferentialLocks_UpdatesCorrectly()
+        {
+            // Arrange
+            var truck = new TruckData
+            {
+                CurrentGear = 1,
+                LockFrontDifferential = false,
+                LockMiddleDifferential = false,
+                LockRearDifferential = false,
+                LockCenterDifferential = false
+            };
+            
+            var input = new TruckControl
+            {
+                LockFrontDifferential = true,
+                LockMiddleDifferential = true,
+                LockRearDifferential = false,
+                LockCenterDifferential = true
+            };
+
+            // Act
+            TruckMovementSystem.UpdateTransmission(ref truck, input, 0.1f);
+
+            // Assert
+            Assert.IsTrue(truck.LockFrontDifferential);
+            Assert.IsTrue(truck.LockMiddleDifferential);
+            Assert.IsFalse(truck.LockRearDifferential);
+            Assert.IsTrue(truck.LockCenterDifferential);
         }
     }
 }

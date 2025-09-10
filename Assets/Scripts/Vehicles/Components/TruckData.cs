@@ -72,5 +72,25 @@ namespace MudLike.Vehicles.Components
         /// Состояние ручного тормоза
         /// </summary>
         public bool HandbrakeOn;
+        
+        /// <summary>
+        /// Блокировка переднего дифференциала
+        /// </summary>
+        public bool LockFrontDifferential;
+        
+        /// <summary>
+        /// Блокировка среднего дифференциала
+        /// </summary>
+        public bool LockMiddleDifferential;
+        
+        /// <summary>
+        /// Блокировка заднего дифференциала
+        /// </summary>
+        public bool LockRearDifferential;
+        
+        /// <summary>
+        /// Блокировка межосевого дифференциала
+        /// </summary>
+        public bool LockCenterDifferential;
     }
 }

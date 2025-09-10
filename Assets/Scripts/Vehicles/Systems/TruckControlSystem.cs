@@ -28,7 +28,10 @@ namespace MudLike.Vehicles.Systems
                 ToggleEngine = Input.GetKeyDown(KeyCode.R), // R
                 Clutch = Input.GetKey(KeyCode.LeftControl) ? 1f : 0f, // Левый Ctrl
                 FourWheelDrive = Input.GetKey(KeyCode.F), // F
-                LockDifferential = Input.GetKey(KeyCode.L) // L
+                LockFrontDifferential = Input.GetKey(KeyCode.Alpha1), // 1
+                LockMiddleDifferential = Input.GetKey(KeyCode.Alpha2), // 2
+                LockRearDifferential = Input.GetKey(KeyCode.Alpha3), // 3
+                LockCenterDifferential = Input.GetKey(KeyCode.Alpha4) // 4
             };
             
             // Нормализуем ввод газа (только положительные значения)
