@@ -1,17 +1,19 @@
 #!/bin/bash
 
 # 🚨 АВТОНОМНАЯ СИСТЕМА ЗАЩИТЫ ОТ ПЕРЕГРЕВА НОУТБУКА 🚨
+# Основана на наработках Unity OverheatProtectionSystem и SystemInfoIntegration
 # Работает независимо от Unity и других приложений
-# Использует только системные утилиты Linux
 
-# Настройки температуры
-WARNING_TEMP=70      # Предупреждение
-CRITICAL_TEMP=80     # Критическая температура  
-EMERGENCY_TEMP=90    # Экстренная температура
+# Критические пороги температуры (из OverheatProtectionSystem.cs)
+CRITICAL_TEMP_THRESHOLD=85    # Критическая температура CPU
+WARNING_TEMP_THRESHOLD=75     # Предупреждение о перегреве  
+SAFE_TEMP_THRESHOLD=65        # Безопасная температура
 
-# Настройки мониторинга
-MONITOR_INTERVAL=2   # Интервал мониторинга (секунды)
-EMERGENCY_COOLDOWN=10 # Время охлаждения в экстренном режиме (секунды)
+# Настройки защиты (из OverheatProtectionSystem.cs)
+TEMP_CHECK_INTERVAL=1         # Проверяем каждую секунду
+EMERGENCY_COOLDOWN_TIME=5     # Экстренное охлаждение 5 секунд
+MAX_FPS_EMERGENCY=15          # Максимальный FPS в экстренном режиме
+MAX_FPS_WARNING=30            # Максимальный FPS при предупреждении
 
 # Статистика
 WARNING_COUNT=0
@@ -32,39 +34,48 @@ PURPLE='\033[0;35m'
 CYAN='\033[0;36m'
 NC='\033[0m' # No Color
 
-# Функция для получения температуры CPU
+# Функция для получения температуры CPU (из SystemInfoIntegration.cs)
 get_cpu_temperature() {
     local temp=0
     
-    # Пробуем получить реальную температуру из thermal zones
+    # Пробуем получить реальную температуру из thermal zones (как в SystemInfoIntegration.cs)
     if [ -d "/sys/class/thermal" ]; then
         for thermal_zone in /sys/class/thermal/thermal_zone*; do
             if [ -f "$thermal_zone/temp" ]; then
                 local zone_temp=$(cat "$thermal_zone/temp" 2>/dev/null)
                 if [ -n "$zone_temp" ] && [ "$zone_temp" -gt 0 ] && [ "$zone_temp" -lt 200000 ]; then
                     temp=$((zone_temp / 1000))
+                    echo "[SystemInfo] Найдена температура: ${temp}°C" >&2
                     break
                 fi
             fi
         done
     fi
     
-    # Если реальная температура не найдена, оцениваем по нагрузке
+    # Fallback: оценка на основе нагрузки (как в SystemInfoIntegration.cs)
     if [ "$temp" -eq 0 ]; then
-        local cpu_load=$(get_cpu_load)
-        local base_temp=45
-        local load_factor=$((cpu_load * 25 / 100))
-        temp=$((base_temp + load_factor))
+        temp=$(estimate_temperature_from_load)
     fi
     
     echo "$temp"
 }
 
-# Функция для получения нагрузки CPU
+# Оценить температуру на основе нагрузки (из SystemInfoIntegration.cs)
+estimate_temperature_from_load() {
+    local cpu_load=$(get_cpu_load)
+    local base_temp=45  # Базовая температура
+    local load_factor=$((cpu_load * 25 / 100))
+    local estimated_temp=$((base_temp + load_factor))
+    
+    echo "[SystemInfo] Оценочная температура: ${estimated_temp}°C (нагрузка: ${cpu_load}%)" >&2
+    echo "$estimated_temp"
+}
+
+# Функция для получения нагрузки CPU (из SystemInfoIntegration.cs)
 get_cpu_load() {
     local load=0
     
-    # Пробуем через htop
+    # Используем htop для получения точной нагрузки CPU (как в SystemInfoIntegration.cs)
     if command -v htop >/dev/null 2>&1; then
         local htop_output=$(timeout 3s htop -n 1 -d 1 2>/dev/null | grep -E "Cpu\(s\):|CPU:" | head -1)
         if [ -n "$htop_output" ]; then
@@ -72,8 +83,19 @@ get_cpu_load() {
         fi
     fi
     
-    # Fallback к /proc/loadavg
-    if [ "$load" -eq 0 ] && [ -f "/proc/loadavg" ]; then
+    # Fallback к /proc/loadavg (как в SystemInfoIntegration.cs)
+    if [ "$load" -eq 0 ]; then
+        load=$(get_cpu_load_from_proc)
+    fi
+    
+    echo "$load"
+}
+
+# Получить нагрузку CPU из /proc/loadavg (из SystemInfoIntegration.cs)
+get_cpu_load_from_proc() {
+    local load=0
+    
+    if [ -f "/proc/loadavg" ]; then
         local load_avg=$(cat /proc/loadavg | awk '{print $1}')
         local cpu_cores=$(nproc)
         load=$(echo "$load_avg $cpu_cores" | awk '{printf "%.0f", ($1/$2)*100}')
@@ -226,7 +248,30 @@ apply_emergency_measures() {
     echo "Экстренные меры применены"
 }
 
-# Функция для проверки температуры
+# Дополнительное ограничение нагрузки в экстренном режиме (из OverheatProtectionSystem.cs)
+enforce_emergency_limits() {
+    echo -e "${RED}🔒 Применение экстренных ограничений...${NC}"
+    
+    # Дополнительное снижение приоритета всех процессов
+    for process in Unity Cursor code; do
+        local pids=$(pgrep "$process" 2>/dev/null)
+        if [ -n "$pids" ]; then
+            for pid in $pids; do
+                if renice +19 "$pid" 2>/dev/null; then
+                    echo "Экстренное снижение приоритета для процесса $process (PID: $pid)"
+                fi
+            done
+        fi
+    done
+    
+    # Дополнительная очистка кэша
+    echo 3 > /proc/sys/vm/drop_caches 2>/dev/null || true
+    
+    # Принудительная синхронизация
+    sync
+}
+
+# Функция для проверки температуры (из OverheatProtectionSystem.cs)
 check_temperature() {
     local temp=$(get_cpu_temperature)
     
@@ -237,14 +282,15 @@ check_temperature() {
     
     echo -e "${CYAN}🌡️  Температура CPU: ${temp}°C${NC}"
     
-    if [ "$temp" -ge "$EMERGENCY_TEMP" ]; then
+    # Определяем состояние системы (как в OverheatProtectionSystem.cs)
+    if [ "$temp" -ge "$CRITICAL_TEMP_THRESHOLD" ]; then
         handle_emergency_temperature "$temp"
-    elif [ "$temp" -ge "$CRITICAL_TEMP" ]; then
+    elif [ "$temp" -ge "$WARNING_TEMP_THRESHOLD" ]; then
         handle_critical_temperature "$temp"
-    elif [ "$temp" -ge "$WARNING_TEMP" ]; then
+    elif [ "$temp" -ge "$SAFE_TEMP_THRESHOLD" ]; then
         handle_warning_temperature "$temp"
     else
-        # Температура в норме
+        # Температура в норме (Safe state)
         if [ "$IS_EMERGENCY_MODE" = true ]; then
             echo -e "${GREEN}🌡️  Температура нормализовалась, выход из экстренного режима${NC}"
             IS_EMERGENCY_MODE=false
@@ -252,32 +298,41 @@ check_temperature() {
     fi
 }
 
-# Обработка предупреждающей температуры
+# Обработка предупреждающей температуры (Warning state из OverheatProtectionSystem.cs)
 handle_warning_temperature() {
     local temp="$1"
     WARNING_COUNT=$((WARNING_COUNT + 1))
     
-    show_alert "WARNING" "Температура CPU ${temp}°C (счетчик: $WARNING_COUNT)" "$temp"
+    echo -e "${YELLOW}⚠️  ПРЕДУПРЕЖДЕНИЕ: Температура CPU ${temp}°C (счетчик: $WARNING_COUNT)${NC}"
+    echo -e "${YELLOW}🔧 Применение мягких мер защиты...${NC}"
+    
+    # Мягкие меры (как в OverheatProtectionSystem.cs)
     apply_soft_measures
 }
 
-# Обработка критической температуры
+# Обработка критической температуры (Critical state из OverheatProtectionSystem.cs)
 handle_critical_temperature() {
     local temp="$1"
     CRITICAL_COUNT=$((CRITICAL_COUNT + 1))
     
-    show_alert "CRITICAL" "Температура ${temp}°C (счетчик: $CRITICAL_COUNT)" "$temp"
+    echo -e "${RED}🔥 КРИТИЧЕСКАЯ ТЕМПЕРАТУРА: ${temp}°C (счетчик: $CRITICAL_COUNT)${NC}"
+    echo -e "${RED}🔧 Применение агрессивных мер защиты...${NC}"
+    
+    # Агрессивные меры (как в OverheatProtectionSystem.cs)
     apply_aggressive_measures
 }
 
-# Обработка экстренной температуры
+# Обработка экстренной температуры (Emergency state из OverheatProtectionSystem.cs)
 handle_emergency_temperature() {
     local temp="$1"
     EMERGENCY_COUNT=$((EMERGENCY_COUNT + 1))
     LAST_EMERGENCY_TIME=$(date '+%Y-%m-%d %H:%M:%S')
     IS_EMERGENCY_MODE=true
     
-    show_alert "EMERGENCY" "Температура ${temp}°C (счетчик: $EMERGENCY_COUNT)" "$temp"
+    echo -e "${RED}🚨 ЭКСТРЕННАЯ ТЕМПЕРАТУРА: ${temp}°C (счетчик: $EMERGENCY_COUNT)${NC}"
+    echo -e "${RED}🚨 ПРИМЕНЕНИЕ ЭКСТРЕННЫХ МЕР ЗАЩИТЫ!${NC}"
+    
+    # Экстренные меры (как в OverheatProtectionSystem.cs)
     apply_emergency_measures
 }
 
@@ -317,10 +372,10 @@ show_help() {
     echo "Эта система автоматически мониторит температуру CPU и"
     echo "принимает меры для предотвращения перегрева ноутбука."
     echo
-    echo "Уровни температуры:"
-    echo -e "  ${YELLOW}⚠️  Предупреждение: 70°C+ - Мягкие меры${NC}"
-    echo -e "  ${RED}🔥 Критическая: 80°C+ - Агрессивные меры${NC}"
-    echo -e "  ${RED}🚨 Экстренная: 90°C+ - Экстренные меры${NC}"
+    echo "Уровни температуры (из OverheatProtectionSystem.cs):"
+    echo -e "  ${YELLOW}⚠️  Предупреждение: 75°C+ - Мягкие меры${NC}"
+    echo -e "  ${RED}🔥 Критическая: 85°C+ - Агрессивные меры${NC}"
+    echo -e "  ${RED}🚨 Экстренная: 85°C+ - Экстренные меры${NC}"
     echo
     echo "Меры защиты:"
     echo "  • Снижение приоритета процессов"
@@ -395,15 +450,16 @@ main() {
     echo -e "${GREEN}🚀 Запуск мониторинга температуры...${NC}"
     echo
     
-    # Основной цикл мониторинга
+    # Основной цикл мониторинга (как в OverheatProtectionSystem.cs)
     while [ "$IS_RUNNING" = true ]; do
         check_temperature
         
-        # Если в экстренном режиме, ждем дольше
+        # В экстренном режиме дополнительно ограничиваем нагрузку (как в OverheatProtectionSystem.cs)
         if [ "$IS_EMERGENCY_MODE" = true ]; then
-            sleep "$EMERGENCY_COOLDOWN"
+            enforce_emergency_limits
+            sleep "$EMERGENCY_COOLDOWN_TIME"
         else
-            sleep "$MONITOR_INTERVAL"
+            sleep "$TEMP_CHECK_INTERVAL"
         fi
     done
 }
