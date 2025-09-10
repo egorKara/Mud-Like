@@ -34,33 +34,101 @@ PURPLE='\033[0;35m'
 CYAN='\033[0;36m'
 NC='\033[0m' # No Color
 
-# Функция для получения температуры CPU (из SystemInfoIntegration.cs)
+# Функция для получения температуры CPU (улучшенная версия с параллельными датчиками)
 get_cpu_temperature() {
     local temp=0
     
-    # Пробуем получить реальную температуру из thermal zones (как в SystemInfoIntegration.cs)
+    # Пробуем получить реальную температуру из thermal zones
     if [ -d "/sys/class/thermal" ]; then
         for thermal_zone in /sys/class/thermal/thermal_zone*; do
             if [ -f "$thermal_zone/temp" ]; then
                 local zone_temp=$(cat "$thermal_zone/temp" 2>/dev/null)
                 if [ -n "$zone_temp" ] && [ "$zone_temp" -gt 0 ] && [ "$zone_temp" -lt 200000 ]; then
                     temp=$((zone_temp / 1000))
-                    echo "[SystemInfo] Найдена температура: ${temp}°C" >&2
+                    echo "[SystemInfo] Найдена реальная температура: ${temp}°C" >&2
                     break
                 fi
             fi
         done
     fi
     
-    # Fallback: оценка на основе нагрузки (как в SystemInfoIntegration.cs)
+    # Fallback: улучшенная оценка на основе параллельных датчиков CPU и GPU
     if [ "$temp" -eq 0 ]; then
-        temp=$(estimate_temperature_from_load)
+        temp=$(estimate_temperature_from_parallel_sensors)
     fi
     
     echo "$temp"
 }
 
-# Оценить температуру на основе нагрузки (из SystemInfoIntegration.cs)
+# Функция для получения загрузки GPU
+get_gpu_load() {
+    local gpu_load=0
+    
+    # Пробуем nvidia-smi (если доступен)
+    if command -v nvidia-smi >/dev/null 2>&1; then
+        local nvidia_output=$(timeout 3s nvidia-smi --query-gpu=utilization.gpu --format=csv,noheader,nounits 2>/dev/null)
+        if [ -n "$nvidia_output" ]; then
+            gpu_load=$(echo "$nvidia_output" | head -1 | tr -d ' ')
+            echo "[GPU] nvidia-smi загрузка: ${gpu_load}%" >&2
+        fi
+    fi
+    
+    # Fallback: оценка на основе процессов OpenGL/GPU
+    if [ "$gpu_load" -eq 0 ]; then
+        gpu_load=$(estimate_gpu_load_from_processes)
+    fi
+    
+    echo "$gpu_load"
+}
+
+# Оценка загрузки GPU на основе процессов
+estimate_gpu_load_from_processes() {
+    local gpu_processes=0
+    local total_processes=0
+    
+    # Ищем процессы, которые могут использовать GPU
+    for process in Unity Cursor code firefox chrome; do
+        local count=$(pgrep "$process" 2>/dev/null | wc -l)
+        total_processes=$((total_processes + count))
+        if [ "$count" -gt 0 ]; then
+            gpu_processes=$((gpu_processes + count))
+        fi
+    done
+    
+    # Оцениваем загрузку GPU на основе количества процессов
+    local estimated_load=0
+    if [ "$total_processes" -gt 0 ]; then
+        estimated_load=$((gpu_processes * 100 / total_processes))
+    fi
+    
+    echo "[GPU] Оценочная загрузка: ${estimated_load}% (процессы: ${gpu_processes}/${total_processes})" >&2
+    echo "$estimated_load"
+}
+
+# Улучшенная оценка температуры на основе параллельных датчиков CPU и GPU
+estimate_temperature_from_parallel_sensors() {
+    local cpu_load=$(get_cpu_load)
+    local gpu_load=$(get_gpu_load)
+    local base_temp=45  # Базовая температура
+    
+    # Взвешенная оценка: CPU влияет больше, но GPU тоже учитывается
+    local cpu_factor=$((cpu_load * 30 / 100))  # CPU: 30% влияния
+    local gpu_factor=$((gpu_load * 20 / 100))  # GPU: 20% влияния
+    local combined_load=$((cpu_load + gpu_load))
+    local combined_factor=$((combined_load * 15 / 100))  # Комбинированная нагрузка: 15% влияния
+    
+    local estimated_temp=$((base_temp + cpu_factor + gpu_factor + combined_factor))
+    
+    # Ограничиваем максимальную температуру
+    if [ "$estimated_temp" -gt 95 ]; then
+        estimated_temp=95
+    fi
+    
+    echo "[SystemInfo] Параллельные датчики - CPU: ${cpu_load}%, GPU: ${gpu_load}%, Температура: ${estimated_temp}°C" >&2
+    echo "$estimated_temp"
+}
+
+# Оценить температуру на основе нагрузки (старая версия для совместимости)
 estimate_temperature_from_load() {
     local cpu_load=$(get_cpu_load)
     local base_temp=45  # Базовая температура
@@ -107,16 +175,27 @@ get_cpu_load_from_proc() {
     echo "$load"
 }
 
-# Функция для получения информации о системе
+# Функция для получения информации о системе (улучшенная с GPU)
 get_system_info() {
     local cpu_model="Unknown"
     local cpu_cores=$(nproc)
     local cpu_load=$(get_cpu_load)
+    local gpu_load=$(get_gpu_load)
     local cpu_temp=$(get_cpu_temperature)
     
     # Получаем модель CPU
     if [ -f "/proc/cpuinfo" ]; then
         cpu_model=$(grep "model name" /proc/cpuinfo | head -1 | cut -d: -f2 | sed 's/^[ \t]*//')
+    fi
+    
+    # Получаем информацию о GPU
+    local gpu_info="Unknown"
+    if command -v nvidia-smi >/dev/null 2>&1; then
+        gpu_info=$(timeout 3s nvidia-smi --query-gpu=name --format=csv,noheader 2>/dev/null | head -1)
+    elif [ -f "/proc/driver/nvidia/version" ]; then
+        gpu_info="NVIDIA (драйвер установлен)"
+    else
+        gpu_info="Встроенная/Неизвестная"
     fi
     
     # Получаем информацию о памяти
@@ -142,8 +221,10 @@ get_system_info() {
     
     echo "CPU: $cpu_model"
     echo "Cores: $cpu_cores"
-    echo "Load: ${cpu_load}%"
-    echo "Temperature: ${cpu_temp}°C"
+    echo "CPU Load: ${cpu_load}%"
+    echo "GPU: $gpu_info"
+    echo "GPU Load: ${gpu_load}%"
+    echo "Temperature: ${cpu_temp}°C (параллельные датчики)"
     echo "RAM: ${mem_used}KB / ${mem_total}KB (${mem_usage}%)"
     echo "Uptime: ${uptime_hours}h"
 }
@@ -369,8 +450,13 @@ show_help() {
     echo
     echo -e "${PURPLE}❓ СПРАВКА ПО СИСТЕМЕ ЗАЩИТЫ ОТ ПЕРЕГРЕВА${NC}"
     echo -e "${PURPLE}==========================================${NC}"
-    echo "Эта система автоматически мониторит температуру CPU и"
-    echo "принимает меры для предотвращения перегрева ноутбука."
+    echo "Эта система автоматически мониторит температуру CPU и GPU"
+    echo "и принимает меры для предотвращения перегрева ноутбука."
+    echo
+    echo "Параллельные датчики:"
+    echo "  • CPU загрузка (htop, /proc/loadavg)"
+    echo "  • GPU загрузка (nvidia-smi, процессы)"
+    echo "  • Комбинированная оценка температуры"
     echo
     echo "Уровни температуры (из OverheatProtectionSystem.cs):"
     echo -e "  ${YELLOW}⚠️  Предупреждение: 75°C+ - Мягкие меры${NC}"
@@ -381,6 +467,7 @@ show_help() {
     echo "  • Снижение приоритета процессов"
     echo "  • Очистка системного кэша"
     echo "  • Принудительные паузы в экстренном режиме"
+    echo "  • Мониторинг CPU и GPU нагрузки"
     echo
     echo "Управление:"
     echo "  Ctrl+C - Остановка системы"
@@ -418,10 +505,13 @@ main() {
     echo -e "${GREEN}==================================================${NC}"
     echo
     
-    # Проверяем доступность системных утилит
+    # Проверяем доступность системных утилит (включая GPU)
     echo -e "${BLUE}🔍 Проверка доступности системных утилит...${NC}"
     
     local utilities=""
+    local gpu_utilities=""
+    
+    # CPU и системные утилиты
     [ -f "/usr/bin/htop" ] && utilities="$utilities htop"
     [ -f "/usr/bin/top" ] && utilities="$utilities top"
     [ -f "/proc/cpuinfo" ] && utilities="$utilities /proc/cpuinfo"
@@ -430,10 +520,24 @@ main() {
     [ -f "/proc/uptime" ] && utilities="$utilities /proc/uptime"
     [ -d "/sys/class/thermal" ] && utilities="$utilities /sys/class/thermal"
     
+    # GPU утилиты
+    if command -v nvidia-smi >/dev/null 2>&1; then
+        gpu_utilities="$gpu_utilities nvidia-smi"
+    fi
+    if [ -f "/proc/driver/nvidia/version" ]; then
+        gpu_utilities="$gpu_utilities nvidia-driver"
+    fi
+    
     if [ -n "$utilities" ]; then
         echo -e "${GREEN}✅ Доступные утилиты:$utilities${NC}"
     else
         echo -e "${YELLOW}⚠️  ВНИМАНИЕ: Системные утилиты не найдены! Система может работать некорректно.${NC}"
+    fi
+    
+    if [ -n "$gpu_utilities" ]; then
+        echo -e "${GREEN}✅ GPU утилиты:$gpu_utilities${NC}"
+    else
+        echo -e "${YELLOW}⚠️  GPU утилиты не найдены, будет использоваться оценка на основе процессов${NC}"
     fi
     
     echo
