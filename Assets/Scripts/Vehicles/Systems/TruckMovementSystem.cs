@@ -1,14 +1,19 @@
 using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Transforms;
+using Unity.Burst;
+using Unity.Jobs;
+using Unity.Collections;
 using MudLike.Vehicles.Components;
 
 namespace MudLike.Vehicles.Systems
 {
     /// <summary>
     /// Система движения грузовика КРАЗ
+    /// Оптимизирована с использованием Burst Compiler и Job System
     /// </summary>
     [UpdateInGroup(typeof(FixedStepSimulationSystemGroup))]
+    [BurstCompile]
     public partial class TruckMovementSystem : SystemBase
     {
         /// <summary>
