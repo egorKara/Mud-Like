@@ -34,6 +34,7 @@
 - [**17_Implementation_Status.md**](17_Implementation_Status.md) - **ТЕКУЩИЙ СТАТУС РЕАЛИЗАЦИИ** ⭐
 - [**18_Key_Features_Overview.md**](18_Key_Features_Overview.md) - **ОБЗОР КЛЮЧЕВЫХ ОСОБЕННОСТЕЙ** ⭐
 - [**19_API_Examples.md**](19_API_Examples.md) - **ПРИМЕРЫ ИСПОЛЬЗОВАНИЯ API** ⭐
+- [**20_Overheat_Protection_System.md**](20_Overheat_Protection_System.md) - **🚨 СИСТЕМА ЗАЩИТЫ ОТ ПЕРЕГРЕВА** ⚠️
 
 ## 🎯 **БЫСТРЫЙ СТАРТ**
 
