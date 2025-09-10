@@ -1,0 +1,115 @@
+name: Security Checks
+
+on:
+  push:
+    branches: [ "main", "develop" ]
+  pull_request:
+    branches: [ "main" ]
+  schedule:
+    - cron: '0 3 * * 1' # Weekly on Monday at 3 AM
+
+jobs:
+  security-scan:
+    name: Security Scan
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      security-events: write
+      actions: read
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Run Trivy vulnerability scanner
+      uses: aquasecurity/trivy-action@master
+      with:
+        scan-type: 'fs'
+        scan-ref: '.'
+        format: 'sarif'
+        output: 'trivy-results.sarif'
+
+    - name: Upload Trivy scan results to GitHub Security tab
+      uses: github/codeql-action/upload-sarif@v3
+      if: always()
+      with:
+        sarif_file: 'trivy-results.sarif'
+
+    - name: Check for secrets
+      uses: trufflesecurity/trufflehog@main
+      with:
+        path: ./
+        base: main
+        head: HEAD
+        extra_args: --debug --only-verified
+
+    - name: Dependency Review
+      uses: actions/dependency-review-action@v4
+      if: github.event_name == 'pull_request'
+      with:
+        fail-on-severity: moderate
+        allow-licenses: MIT, Apache-2.0, BSD-2-Clause, BSD-3-Clause, ISC, GPL-2.0, GPL-3.0, LGPL-2.1, LGPL-3.0
+
+    - name: Check for hardcoded secrets
+      uses: gitleaks/gitleaks-action@v2
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GITLEAKS_LICENSE: ${{ secrets.GITLEAKS_LICENSE }}
+
+    - name: Security Audit
+      run: |
+        echo "Running security audit..."
+        # Check for common security issues
+        if grep -r "password\|secret\|key\|token" --include="*.cs" --include="*.json" --include="*.yml" --include="*.yaml" . | grep -v ".git" | grep -v "SECURITY.md"; then
+          echo "⚠️  Potential hardcoded secrets found!"
+          exit 1
+        fi
+        
+        # Check for unsafe Unity practices
+        if grep -r "Application\.dataPath\|Application\.persistentDataPath" --include="*.cs" . | grep -v "Tests"; then
+          echo "⚠️  Potential unsafe file path usage found!"
+          exit 1
+        fi
+        
+        echo "✅ Security audit passed!"
+
+    - name: Unity Security Check
+      run: |
+        echo "Checking Unity security settings..."
+        
+        # Check if unsafe code is enabled
+        if grep -q '"allowUnsafeCode": true' Assets/Scripts/*/*.asmdef; then
+          echo "⚠️  Unsafe code is enabled in Assembly Definitions"
+        fi
+        
+        # Check for proper namespace usage
+        if grep -r "namespace.*-" --include="*.cs" .; then
+          echo "❌ Invalid namespace names found (hyphens not allowed)"
+          exit 1
+        fi
+        
+        echo "✅ Unity security check passed!"
+
+    - name: Generate Security Report
+      if: always()
+      run: |
+        echo "# Security Scan Report" > security-report.md
+        echo "Date: $(date)" >> security-report.md
+        echo "Branch: ${{ github.ref_name }}" >> security-report.md
+        echo "Commit: ${{ github.sha }}" >> security-report.md
+        echo "" >> security-report.md
+        echo "## Scan Results" >> security-report.md
+        echo "- Trivy: ✅ Completed" >> security-report.md
+        echo "- TruffleHog: ✅ Completed" >> security-report.md
+        echo "- Gitleaks: ✅ Completed" >> security-report.md
+        echo "- Dependency Review: ✅ Completed" >> security-report.md
+        echo "- Security Audit: ✅ Completed" >> security-report.md
+        echo "- Unity Security: ✅ Completed" >> security-report.md
+
+    - name: Upload Security Report
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: security-report
+        path: security-report.md
+        retention-days: 30

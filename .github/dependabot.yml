@@ -1,0 +1,71 @@
+version: 2
+updates:
+  # Unity Package Manager
+  - package-ecosystem: "nuget"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+    open-pull-requests-limit: 10
+    reviewers:
+      - "egorKara"
+    assignees:
+      - "egorKara"
+    commit-message:
+      prefix: "chore"
+      include: "scope"
+    labels:
+      - "dependencies"
+      - "unity"
+      - "automated"
+    ignore:
+      # Ignore major version updates for critical packages
+      - dependency-name: "Unity.*"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "com.unity.entities"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "com.unity.physics"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "com.unity.netcode.gameobjects"
+        update-types: ["version-update:semver-major"]
+
+  # GitHub Actions
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+    open-pull-requests-limit: 5
+    reviewers:
+      - "egorKara"
+    assignees:
+      - "egorKara"
+    commit-message:
+      prefix: "chore"
+      include: "scope"
+    labels:
+      - "dependencies"
+      - "github-actions"
+      - "automated"
+
+  # Docker (if used)
+  - package-ecosystem: "docker"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+    open-pull-requests-limit: 5
+    reviewers:
+      - "egorKara"
+    assignees:
+      - "egorKara"
+    commit-message:
+      prefix: "chore"
+      include: "scope"
+    labels:
+      - "dependencies"
+      - "docker"
+      - "automated"
