@@ -15,7 +15,7 @@ jobs:
     
     strategy:
       matrix:
-        unity-version: ['6000.2.2f1']
+        unity-version: ['2022.3.21f1']
         
     steps:
     - name: Checkout repository

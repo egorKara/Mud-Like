@@ -14,7 +14,7 @@ jobs:
     
     strategy:
       matrix:
-        unity-version: ['6000.2.2f1']
+        unity-version: ['2022.3.21f1']
         target-platform: [StandaloneLinux64]
         
     steps:
@@ -125,7 +125,7 @@ jobs:
         echo "### ✅ Build Status" >> $GITHUB_STEP_SUMMARY
         echo "- Build: **SUCCESS**" >> $GITHUB_STEP_SUMMARY
         echo "- Platform: **StandaloneLinux64**" >> $GITHUB_STEP_SUMMARY
-        echo "- Unity Version: **6000.2.2f1**" >> $GITHUB_STEP_SUMMARY
+        echo "- Unity Version: **2022.3.21f1**" >> $GITHUB_STEP_SUMMARY
         echo "" >> $GITHUB_STEP_SUMMARY
         echo "### ✅ Test Status" >> $GITHUB_STEP_SUMMARY
         echo "- Unit Tests: **PASSED**" >> $GITHUB_STEP_SUMMARY
