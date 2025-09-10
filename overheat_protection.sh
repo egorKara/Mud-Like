@@ -9,6 +9,10 @@ CRITICAL_TEMP_THRESHOLD=85    # Критическая температура CP
 WARNING_TEMP_THRESHOLD=75     # Предупреждение о перегреве  
 SAFE_TEMP_THRESHOLD=65        # Безопасная температура
 
+# Специальные правила для Unity Editor
+UNITY_EDITOR_CPU_LIMIT=95     # Максимальная нагрузка CPU при работе Unity Editor
+UNITY_EDITOR_GPU_LIMIT=95     # Максимальная нагрузка GPU при работе Unity Editor
+
 # Настройки защиты (из OverheatProtectionSystem.cs)
 TEMP_CHECK_INTERVAL=1         # Проверяем каждую секунду
 EMERGENCY_COOLDOWN_TIME=5     # Экстренное охлаждение 5 секунд
@@ -58,6 +62,16 @@ get_cpu_temperature() {
     fi
     
     echo "$temp"
+}
+
+# Функция для проверки работы Unity Editor
+is_unity_editor_running() {
+    local unity_processes=$(pgrep -f "Unity.*Editor" 2>/dev/null | wc -l)
+    if [ "$unity_processes" -gt 0 ]; then
+        echo "true"
+    else
+        echo "false"
+    fi
 }
 
 # Функция для получения загрузки GPU
@@ -329,6 +343,60 @@ apply_emergency_measures() {
     echo "Экстренные меры применены"
 }
 
+# Экстренные меры для Unity Editor при превышении лимитов
+apply_unity_editor_emergency_measures() {
+    local cpu_load="$1"
+    local gpu_load="$2"
+    
+    echo -e "${RED}🚨 ЭКСТРЕННЫЕ МЕРЫ ДЛЯ UNITY EDITOR!${NC}"
+    echo -e "${RED}   CPU: ${cpu_load}% > ${UNITY_EDITOR_CPU_LIMIT}%${NC}"
+    echo -e "${RED}   GPU: ${gpu_load}% > ${UNITY_EDITOR_GPU_LIMIT}%${NC}"
+    
+    # Принудительная пауза Unity Editor
+    echo -e "${RED}⏸️  Принудительная пауза Unity Editor на 3 секунды...${NC}"
+    local unity_pids=$(pgrep -f "Unity.*Editor" 2>/dev/null)
+    if [ -n "$unity_pids" ]; then
+        for pid in $unity_pids; do
+            if kill -STOP "$pid" 2>/dev/null; then
+                echo "Unity Editor (PID: $pid) приостановлен"
+            fi
+        done
+        sleep 3
+        for pid in $unity_pids; do
+            if kill -CONT "$pid" 2>/dev/null; then
+                echo "Unity Editor (PID: $pid) возобновлен"
+            fi
+        done
+    fi
+    
+    # Максимальное снижение приоритета Unity Editor
+    for pid in $unity_pids; do
+        if renice +19 "$pid" 2>/dev/null; then
+            echo "Установлен минимальный приоритет для Unity Editor (PID: $pid)"
+        fi
+    done
+    
+    # Дополнительное снижение приоритета других тяжелых процессов
+    for process in Cursor code firefox chrome; do
+        local pids=$(pgrep "$process" 2>/dev/null)
+        if [ -n "$pids" ]; then
+            for pid in $pids; do
+                if renice +15 "$pid" 2>/dev/null; then
+                    echo "Снижен приоритет процесса $process (PID: $pid)"
+                fi
+            done
+        fi
+    done
+    
+    # Принудительная очистка кэша
+    echo 3 > /proc/sys/vm/drop_caches 2>/dev/null || true
+    
+    # Принудительная синхронизация
+    sync
+    
+    echo -e "${GREEN}✅ Экстренные меры для Unity Editor применены${NC}"
+}
+
 # Дополнительное ограничение нагрузки в экстренном режиме (из OverheatProtectionSystem.cs)
 enforce_emergency_limits() {
     echo -e "${RED}🔒 Применение экстренных ограничений...${NC}"
@@ -352,6 +420,30 @@ enforce_emergency_limits() {
     sync
 }
 
+# Функция для проверки нагрузки при работе Unity Editor
+check_unity_editor_load() {
+    local unity_running=$(is_unity_editor_running)
+    
+    if [ "$unity_running" = "true" ]; then
+        local cpu_load=$(get_cpu_load)
+        local gpu_load=$(get_gpu_load)
+        
+        echo -e "${BLUE}🎮 Unity Editor активен - CPU: ${cpu_load}%, GPU: ${gpu_load}%${NC}"
+        
+        # Проверяем превышение лимитов для Unity Editor
+        if [ "$cpu_load" -gt "$UNITY_EDITOR_CPU_LIMIT" ] || [ "$gpu_load" -gt "$UNITY_EDITOR_GPU_LIMIT" ]; then
+            echo -e "${RED}🚨 ПРЕВЫШЕНИЕ ЛИМИТОВ UNITY EDITOR!${NC}"
+            echo -e "${RED}   CPU: ${cpu_load}% (лимит: ${UNITY_EDITOR_CPU_LIMIT}%)${NC}"
+            echo -e "${RED}   GPU: ${gpu_load}% (лимит: ${UNITY_EDITOR_GPU_LIMIT}%)${NC}"
+            
+            # Применяем экстренные меры для Unity Editor
+            apply_unity_editor_emergency_measures "$cpu_load" "$gpu_load"
+        else
+            echo -e "${GREEN}✅ Unity Editor работает в пределах нормы${NC}"
+        fi
+    fi
+}
+
 # Функция для проверки температуры (из OverheatProtectionSystem.cs)
 check_temperature() {
     local temp=$(get_cpu_temperature)
@@ -362,6 +454,9 @@ check_temperature() {
     fi
     
     echo -e "${CYAN}🌡️  Температура CPU: ${temp}°C${NC}"
+    
+    # Сначала проверяем Unity Editor (приоритет)
+    check_unity_editor_load
     
     # Определяем состояние системы (как в OverheatProtectionSystem.cs)
     if [ "$temp" -ge "$CRITICAL_TEMP_THRESHOLD" ]; then
@@ -458,6 +553,10 @@ show_help() {
     echo "  • GPU загрузка (nvidia-smi, процессы)"
     echo "  • Комбинированная оценка температуры"
     echo
+    echo "Специальные правила для Unity Editor:"
+    echo -e "  ${BLUE}🎮 Unity Editor: CPU ≤ 95%, GPU ≤ 95%${NC}"
+    echo -e "  ${RED}🚨 При превышении: принудительная пауза + снижение приоритета${NC}"
+    echo
     echo "Уровни температуры (из OverheatProtectionSystem.cs):"
     echo -e "  ${YELLOW}⚠️  Предупреждение: 75°C+ - Мягкие меры${NC}"
     echo -e "  ${RED}🔥 Критическая: 85°C+ - Агрессивные меры${NC}"
@@ -468,6 +567,7 @@ show_help() {
     echo "  • Очистка системного кэша"
     echo "  • Принудительные паузы в экстренном режиме"
     echo "  • Мониторинг CPU и GPU нагрузки"
+    echo "  • Специальная защита для Unity Editor"
     echo
     echo "Управление:"
     echo "  Ctrl+C - Остановка системы"
