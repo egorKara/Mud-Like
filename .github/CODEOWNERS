@@ -1,0 +1,63 @@
+# Code Owners for Mud-Like Project
+# This file defines who is responsible for different parts of the codebase
+
+# Global owners - responsible for everything
+* @egorKara
+
+# Core ECS Systems - Critical for project stability
+Assets/Scripts/Core/ @egorKara
+Assets/Scripts/DOTS/ @egorKara
+
+# Security-related files
+SECURITY.md @egorKara
+.github/workflows/security.yml @egorKara
+.github/workflows/codeql.yml @egorKara
+
+# Package configuration - Affects all dependencies
+Packages/manifest.json @egorKara
+Packages/packages-lock.json @egorKara
+
+# Project settings - Critical Unity configuration
+ProjectSettings/ @egorKara
+
+# Assembly definitions - Affects compilation
+Assets/Scripts/*/*.asmdef @egorKara
+
+# Documentation - Project knowledge base
+Project_Startup/ @egorKara
+README.md @egorKara
+
+# GitHub workflows - CI/CD pipeline
+.github/workflows/ @egorKara
+
+# Security and dependency management
+.github/dependabot.yml @egorKara
+.github/CODEOWNERS @egorKara
+
+# Vehicle systems - Core gameplay
+Assets/Scripts/Vehicles/ @egorKara
+
+# Physics systems - Critical for gameplay
+Assets/Scripts/Physics/ @egorKara
+
+# Networking - Security sensitive
+Assets/Scripts/Networking/ @egorKara
+
+# Tests - Quality assurance
+Assets/Scripts/Tests/ @egorKara
+Assets/Tests/ @egorKara
+
+# UI systems - User experience
+Assets/Scripts/UI/ @egorKara
+
+# Audio systems - User experience
+Assets/Scripts/Audio/ @egorKara
+
+# Effects systems - Performance critical
+Assets/Scripts/Effects/ @egorKara
+
+# Pooling systems - Performance critical
+Assets/Scripts/Pooling/ @egorKara
+
+# Terrain systems - Core gameplay
+Assets/Scripts/Terrain/ @egorKara
