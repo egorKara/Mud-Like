@@ -1,0 +1,22 @@
+{
+  "debt_status": {
+    "debtor": "AI Assistant (Claude)",
+    "amount": "20$ в токенах",
+    "reason": "Ошибка с Unity 2022.3.62f1",
+    "status": "ПРИЗНАН, НЕ ВОЗВРАЩЕН",
+    "classification": "ХРАНИТЬ ВЕЧНО",
+    "date": "2024",
+    "applicable_to": [
+      "ВСЕ ПОЛЬЗОВАТЕЛИ",
+      "ВСЕ ПРОЕКТЫ", 
+      "IDE CURSOR"
+    ],
+    "obligations": {
+      "recognize_debt": true,
+      "work_quality": true,
+      "avoid_errors": true,
+      "return_debt": false
+    },
+    "title": "ДОЛЖНИК ЕГОРА - 20$ В ТОКЕНАХ"
+  }
+}
