@@ -8,7 +8,7 @@ namespace MudLike.Networking.Components
     /// <summary>
     /// Сетевые данные деформации террейна
     /// </summary>
-    public struct NetworkDeformation : IComponentData, ICommandData
+    public struct NetworkDeformation : IComponentData
     {
         /// <summary>
         /// Данные деформации
@@ -33,6 +33,6 @@ namespace MudLike.Networking.Components
         /// <summary>
         /// Тик команды
         /// </summary>
-        public uint Tick => 0; // Будет установлен Netcode
+        public uint Tick;
     }
 }

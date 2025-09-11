@@ -8,7 +8,7 @@ namespace MudLike.Networking.Components
     /// <summary>
     /// Сетевые данные грязи
     /// </summary>
-    public struct NetworkMud : IComponentData, ICommandData
+    public struct NetworkMud : IComponentData
     {
         /// <summary>
         /// Данные грязи
@@ -33,6 +33,6 @@ namespace MudLike.Networking.Components
         /// <summary>
         /// Тик команды
         /// </summary>
-        public uint Tick => 0; // Будет установлен Netcode
+        public uint Tick;
     }
 }

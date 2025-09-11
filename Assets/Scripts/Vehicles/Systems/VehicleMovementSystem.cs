@@ -18,7 +18,7 @@ namespace MudLike.Vehicles.Systems
         /// </summary>
         protected override void OnUpdate()
         {
-            float deltaTime = SystemAPI.Time.fixedDeltaTime;
+            float deltaTime = Time.fixedDeltaTime;
             
             Entities
                 .WithAll<VehicleTag>()

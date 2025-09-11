@@ -49,7 +49,7 @@ namespace MudLike.Networking.Systems
                         networkPos.Value = transform.Position;
                         networkPos.Rotation = transform.Rotation;
                         networkPos.HasChanged = true;
-                        networkPos.LastUpdateTime = (float)SystemAPI.Time.ElapsedTime;
+                        networkPos.LastUpdateTime = (float)Time.time;
                     }
                 }).Schedule();
         }

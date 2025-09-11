@@ -17,7 +17,7 @@ namespace MudLike.Vehicles.Systems
         
         protected override void OnCreate()
         {
-            _physicsWorld = SystemAPI.GetSingleton<PhysicsWorldSingleton>().PhysicsWorld;
+            _physicsWorld = World.GetExistingSystemManaged<PhysicsWorldSystem>().PhysicsWorld;
         }
         
         /// <summary>
@@ -44,7 +44,7 @@ namespace MudLike.Vehicles.Systems
             float rayDistance = wheel.SuspensionLength + wheel.Radius;
             
             // Выполняем raycast
-            if (PhysicsWorld.CastRay(_physicsWorld, rayStart, rayDirection, rayDistance, out RaycastHit hit))
+            if (_physicsWorld.CastRay(rayStart, rayDirection, rayDistance, out RaycastHit hit))
             {
                 // Обновляем данные колеса
                 wheel.IsGrounded = true;

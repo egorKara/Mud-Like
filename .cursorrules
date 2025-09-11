@@ -9,7 +9,7 @@
 - **SOLID принципы** - следование принципам объектно-ориентированного программирования
 
 ### **Технологический стек**
-- **Unity 6000.2.2f1** - современная версия Unity
+- **Unity 2022.3.62f1** - стабильная LTS версия Unity
 - **DOTS (Data-Oriented Technology Stack)** - Entities, Components, Systems, Jobs
 - **Unity Physics (DOTS)** - для реалистичной физики
 - **Netcode for Entities** - для мультиплеера

@@ -8,7 +8,7 @@ namespace MudLike.Networking.Components
     /// <summary>
     /// Сетевые данные транспортного средства
     /// </summary>
-    public struct NetworkVehicle : IComponentData, ICommandData
+    public struct NetworkVehicle : IComponentData
     {
         /// <summary>
         /// Конфигурация транспорта
@@ -43,6 +43,6 @@ namespace MudLike.Networking.Components
         /// <summary>
         /// Тик команды
         /// </summary>
-        public uint Tick => 0; // Будет установлен Netcode
+        public uint Tick;
     }
 }

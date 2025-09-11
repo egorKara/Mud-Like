@@ -17,7 +17,7 @@ namespace MudLike.Vehicles.Systems
         
         protected override void OnCreate()
         {
-            _physicsWorld = SystemAPI.GetSingleton<PhysicsWorldSingleton>().PhysicsWorld;
+            _physicsWorld = World.GetExistingSystemManaged<PhysicsWorldSystem>().PhysicsWorld;
         }
         
         /// <summary>
@@ -25,7 +25,7 @@ namespace MudLike.Vehicles.Systems
         /// </summary>
         protected override void OnUpdate()
         {
-            float deltaTime = SystemAPI.Time.fixedDeltaTime;
+            float deltaTime = Time.fixedDeltaTime;
             
             Entities
                 .WithAll<WheelData>()
@@ -53,7 +53,7 @@ namespace MudLike.Vehicles.Systems
             float3 rayDirection = -math.up();
             float rayDistance = wheel.SuspensionLength + wheel.Radius;
             
-            if (PhysicsWorld.CastRay(_physicsWorld, rayStart, rayDirection, rayDistance, out RaycastHit hit))
+            if (_physicsWorld.CastRay(rayStart, rayDirection, rayDistance, out RaycastHit hit))
             {
                 wheel.IsGrounded = true;
                 wheel.GroundPoint = hit.Position;

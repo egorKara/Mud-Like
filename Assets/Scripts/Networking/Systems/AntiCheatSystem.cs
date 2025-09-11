@@ -147,7 +147,7 @@ namespace MudLike.Networking.Systems
         {
             // Проверяем, что обновления происходят не слишком часто
             float minUpdateInterval = 0.016f; // 60 FPS
-            float currentTime = (float)SystemAPI.Time.ElapsedTime;
+            float currentTime = Time.time;
             return (currentTime - lastUpdateTime) >= minUpdateInterval;
         }
         

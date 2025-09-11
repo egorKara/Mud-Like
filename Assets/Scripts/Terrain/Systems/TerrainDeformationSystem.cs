@@ -19,7 +19,7 @@ namespace MudLike.Terrain.Systems
         /// </summary>
         protected override void OnUpdate()
         {
-            float deltaTime = SystemAPI.Time.fixedDeltaTime;
+            float deltaTime = Time.fixedDeltaTime;
             
             // Обрабатываем деформации от колес
             ProcessWheelDeformations(deltaTime);

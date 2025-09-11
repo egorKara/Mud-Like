@@ -7,7 +7,7 @@ namespace MudLike.Networking.Components
     /// <summary>
     /// Сетевая позиция сущности
     /// </summary>
-    public struct NetworkPosition : IComponentData, ICommandData
+    public struct NetworkPosition : IComponentData
     {
         /// <summary>
         /// Позиция сущности
@@ -42,6 +42,6 @@ namespace MudLike.Networking.Components
         /// <summary>
         /// Тик команды
         /// </summary>
-        public uint Tick => 0; // Будет установлен Netcode
+        public uint Tick;
     }
 }
