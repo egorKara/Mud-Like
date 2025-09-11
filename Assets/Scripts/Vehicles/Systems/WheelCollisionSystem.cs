@@ -17,7 +17,7 @@ namespace MudLike.Vehicles.Systems
         
         protected override void OnCreate()
         {
-            _physicsWorld = World.GetExistingSystemManaged<PhysicsWorldSystem>().PhysicsWorld;
+            RequireForUpdate<PhysicsWorldSingleton>();
         }
         
         /// <summary>
@@ -25,18 +25,20 @@ namespace MudLike.Vehicles.Systems
         /// </summary>
         protected override void OnUpdate()
         {
+            var physicsWorld = SystemAPI.GetSingleton<PhysicsWorldSingleton>().PhysicsWorld;
+            
             Entities
                 .WithAll<WheelData>()
                 .ForEach((ref WheelData wheel, in LocalTransform wheelTransform) =>
                 {
-                    ProcessWheelCollision(ref wheel, wheelTransform);
+                    ProcessWheelCollision(ref wheel, wheelTransform, physicsWorld);
                 }).Schedule();
         }
         
         /// <summary>
         /// Обрабатывает коллизию конкретного колеса
         /// </summary>
-        private void ProcessWheelCollision(ref WheelData wheel, in LocalTransform wheelTransform)
+        private void ProcessWheelCollision(ref WheelData wheel, in LocalTransform wheelTransform, PhysicsWorld physicsWorld)
         {
             // Вычисляем параметры raycast
             float3 rayStart = wheelTransform.Position;
@@ -44,7 +46,7 @@ namespace MudLike.Vehicles.Systems
             float rayDistance = wheel.SuspensionLength + wheel.Radius;
             
             // Выполняем raycast
-            if (_physicsWorld.CastRay(rayStart, rayDirection, rayDistance, out RaycastHit hit))
+            if (physicsWorld.CastRay(rayStart, rayDirection, rayDistance, out RaycastHit hit))
             {
                 // Обновляем данные колеса
                 wheel.IsGrounded = true;

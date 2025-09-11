@@ -17,7 +17,7 @@ namespace MudLike.Vehicles.Systems
         
         protected override void OnCreate()
         {
-            _physicsWorld = World.GetExistingSystemManaged<PhysicsWorldSystem>().PhysicsWorld;
+            RequireForUpdate<PhysicsWorldSingleton>();
         }
         
         /// <summary>
@@ -26,6 +26,7 @@ namespace MudLike.Vehicles.Systems
         protected override void OnUpdate()
         {
             float deltaTime = Time.fixedDeltaTime;
+            var physicsWorld = SystemAPI.GetSingleton<PhysicsWorldSingleton>().PhysicsWorld;
             
             Entities
                 .WithAll<VehicleTag, PhysicsBody>()
@@ -33,7 +34,7 @@ namespace MudLike.Vehicles.Systems
                          ref PhysicsBody physicsBody, 
                          ref VehiclePhysics vehiclePhysics) =>
                 {
-                    ProcessPhysicsIntegration(ref transform, ref physicsBody, ref vehiclePhysics, deltaTime);
+                    ProcessPhysicsIntegration(ref transform, ref physicsBody, ref vehiclePhysics, deltaTime, physicsWorld);
                 }).Schedule();
         }
         
@@ -41,9 +42,10 @@ namespace MudLike.Vehicles.Systems
         /// Обрабатывает интеграцию физики конкретного транспортного средства
         /// </summary>
         private void ProcessPhysicsIntegration(ref LocalTransform transform, 
-                                             ref PhysicsBody physicsBody, 
-                                             ref VehiclePhysics vehiclePhysics, 
-                                             float deltaTime)
+                                            ref PhysicsBody physicsBody, 
+                                            ref VehiclePhysics vehiclePhysics, 
+                                            float deltaTime,
+                                            PhysicsWorld physicsWorld)
         {
             // Применяем силы к физическому телу
             ApplyForces(ref physicsBody, vehiclePhysics, deltaTime);

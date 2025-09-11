@@ -17,7 +17,8 @@ namespace MudLike.Vehicles.Systems
         
         protected override void OnCreate()
         {
-            _physicsWorld = World.GetExistingSystemManaged<PhysicsWorldSystem>().PhysicsWorld;
+            // Получаем PhysicsWorld через SystemAPI для Unity 2022.3.62f1
+            RequireForUpdate<PhysicsWorldSingleton>();
         }
         
         /// <summary>
@@ -26,6 +27,7 @@ namespace MudLike.Vehicles.Systems
         protected override void OnUpdate()
         {
             float deltaTime = Time.fixedDeltaTime;
+            var physicsWorld = SystemAPI.GetSingleton<PhysicsWorldSingleton>().PhysicsWorld;
             
             Entities
                 .WithAll<WheelData>()
@@ -33,7 +35,7 @@ namespace MudLike.Vehicles.Systems
                          in LocalTransform wheelTransform,
                          in VehiclePhysics vehiclePhysics) =>
                 {
-                    ProcessWheelPhysics(ref wheel, wheelTransform, vehiclePhysics, deltaTime);
+                    ProcessWheelPhysics(ref wheel, wheelTransform, vehiclePhysics, deltaTime, physicsWorld);
                 }).Schedule();
         }
         
@@ -43,7 +45,8 @@ namespace MudLike.Vehicles.Systems
         private void ProcessWheelPhysics(ref WheelData wheel, 
                                        in LocalTransform wheelTransform, 
                                        in VehiclePhysics vehiclePhysics, 
-                                       float deltaTime)
+                                       float deltaTime,
+                                       PhysicsWorld physicsWorld)
         {
             // Вычисляем мировую позицию колеса
             float3 worldPosition = wheelTransform.Position;
@@ -53,7 +56,7 @@ namespace MudLike.Vehicles.Systems
             float3 rayDirection = -math.up();
             float rayDistance = wheel.SuspensionLength + wheel.Radius;
             
-            if (_physicsWorld.CastRay(rayStart, rayDirection, rayDistance, out RaycastHit hit))
+            if (physicsWorld.CastRay(rayStart, rayDirection, rayDistance, out RaycastHit hit))
             {
                 wheel.IsGrounded = true;
                 wheel.GroundPoint = hit.Position;
