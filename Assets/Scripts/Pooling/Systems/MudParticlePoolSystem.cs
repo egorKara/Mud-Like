@@ -1,57 +1,66 @@
 using Unity.Entities;
 using Unity.Mathematics;
+using Unity.Transforms;
 using Unity.Burst;
 using Unity.Collections;
-using Unity.Transforms;
-using Unity.Rendering;
-using MudLike.Core.Components;
+using MudLike.Pooling.Components;
+using MudLike.Effects.Components;
 
 namespace MudLike.Pooling.Systems
 {
     /// <summary>
-    /// Система пулинга объектов для частиц грязи
-    /// Обеспечивает эффективное переиспользование частиц для высокой производительности
+    /// Система пулинга частиц грязи для оптимизации производительности
     /// </summary>
-    [UpdateInGroup(typeof(FixedStepSimulationSystemGroup))]
+    [UpdateInGroup(typeof(SimulationSystemGroup))]
     [BurstCompile]
     public partial class MudParticlePoolSystem : SystemBase
     {
-        private NativeQueue<Entity> _availableParticles;
-        private NativeList<Entity> _activeParticles;
-        private NativeHashMap<Entity, ParticleData> _particleData;
-        private EntityArchetype _particleArchetype;
-        private int _maxParticles = 1000;
-        private int _initialPoolSize = 100;
+        private const int INITIAL_POOL_SIZE = 1000;
+        private const int MAX_POOL_SIZE = 10000;
+        private const float PARTICLE_LIFETIME = 5.0f;
+        private const float PARTICLE_FADE_TIME = 1.0f;
+        private const float PARTICLE_SIZE_MIN = 0.01f;
+        private const float PARTICLE_SIZE_MAX = 0.1f;
+        private const float PARTICLE_VELOCITY_MIN = 1.0f;
+        private const float PARTICLE_VELOCITY_MAX = 10.0f;
+        
+        private EntityQuery _activeParticlesQuery;
+        private EntityQuery _inactiveParticlesQuery;
+        private NativeArray<Entity> _particlePool;
+        private int _poolIndex;
+        private bool _isPoolInitialized;
         
         protected override void OnCreate()
         {
-            _availableParticles = new NativeQueue<Entity>(Allocator.Persistent);
-            _activeParticles = new NativeList<Entity>(_maxParticles, Allocator.Persistent);
-            _particleData = new NativeHashMap<Entity, ParticleData>(_maxParticles, Allocator.Persistent);
+            // Создаем запросы для активных и неактивных частиц
+            _activeParticlesQuery = GetEntityQuery(
+                ComponentType.ReadWrite<MudParticleData>(),
+                ComponentType.ReadWrite<LocalTransform>(),
+                ComponentType.ReadOnly<ActiveParticleTag>()
+            );
             
-            // Создаем архетип частицы
-            _particleArchetype = EntityManager.CreateArchetype(
-                typeof(LocalTransform),
-                typeof(ParticleVelocity),
-                typeof(ParticleLifetime),
-                typeof(ParticleSize),
-                typeof(ParticleColor),
-                typeof(ParticleActive),
-                typeof(MudParticleTag)
+            _inactiveParticlesQuery = GetEntityQuery(
+                ComponentType.ReadWrite<MudParticleData>(),
+                ComponentType.ReadWrite<LocalTransform>(),
+                ComponentType.ReadOnly<InactiveParticleTag>()
             );
             
             // Инициализируем пул частиц
             InitializeParticlePool();
         }
         
-        protected override void OnDestroy()
+        protected override void OnUpdate()
         {
-            if (_availableParticles.IsCreated)
-                _availableParticles.Dispose();
-            if (_activeParticles.IsCreated)
-                _activeParticles.Dispose();
-            if (_particleData.IsCreated)
-                _particleData.Dispose();
+            float deltaTime = SystemAPI.Time.DeltaTime;
+            
+            // Обновляем активные частицы
+            UpdateActiveParticles(deltaTime);
+            
+            // Очищаем неактивные частицы
+            CleanupInactiveParticles();
+            
+            // Управляем пулом
+            ManageParticlePool();
         }
         
         /// <summary>
@@ -59,140 +68,197 @@ namespace MudLike.Pooling.Systems
         /// </summary>
         private void InitializeParticlePool()
         {
-            for (int i = 0; i < _initialPoolSize; i++)
+            if (_isPoolInitialized)
+                return;
+            
+            _particlePool = new NativeArray<Entity>(INITIAL_POOL_SIZE, Allocator.Persistent);
+            _poolIndex = 0;
+            
+            // Создаем неактивные частицы
+            for (int i = 0; i < INITIAL_POOL_SIZE; i++)
             {
-                var particle = EntityManager.CreateEntity(_particleArchetype);
-                SetupInactiveParticle(particle);
-                _availableParticles.Enqueue(particle);
+                var entity = EntityManager.CreateEntity();
+                EntityManager.AddComponentData(entity, new MudParticleData
+                {
+                    Position = float3.zero,
+                    Velocity = float3.zero,
+                    Size = 0.01f,
+                    Lifetime = 0f,
+                    Mass = 0.001f,
+                    Temperature = 20f,
+                    Viscosity = 0.5f,
+                    IsActive = false
+                });
+                EntityManager.AddComponentData(entity, new LocalTransform
+                {
+                    Position = float3.zero,
+                    Rotation = quaternion.identity,
+                    Scale = 1f
+                });
+                EntityManager.AddComponentData(entity, new InactiveParticleTag());
+                
+                _particlePool[i] = entity;
+            }
+            
+            _isPoolInitialized = true;
+        }
+        
+        /// <summary>
+        /// Обновляет активные частицы
+        /// </summary>
+        [BurstCompile]
+        private void UpdateActiveParticles(float deltaTime)
+        {
+            Entities
+                .WithAll<ActiveParticleTag>()
+                .ForEach((ref MudParticleData particle, ref LocalTransform transform) =>
+                {
+                    UpdateParticle(ref particle, ref transform, deltaTime);
+                }).Schedule();
+        }
+        
+        /// <summary>
+        /// Обновляет отдельную частицу
+        /// </summary>
+        [BurstCompile]
+        private static void UpdateParticle(ref MudParticleData particle, ref LocalTransform transform, float deltaTime)
+        {
+            if (!particle.IsActive)
+                return;
+            
+            // Обновляем время жизни
+            particle.Lifetime += deltaTime;
+            
+            // Проверяем, не истекло ли время жизни
+            if (particle.Lifetime >= PARTICLE_LIFETIME)
+            {
+                particle.IsActive = false;
+                return;
+            }
+            
+            // Применяем гравитацию
+            particle.Velocity.y -= 9.81f * deltaTime;
+            
+            // Применяем сопротивление воздуха
+            particle.Velocity *= 0.99f;
+            
+            // Обновляем позицию
+            particle.Position += particle.Velocity * deltaTime;
+            transform.Position = particle.Position;
+            
+            // Обновляем размер на основе времени жизни
+            float lifeRatio = particle.Lifetime / PARTICLE_LIFETIME;
+            float sizeMultiplier = 1f - (lifeRatio * 0.5f); // Уменьшаем размер со временем
+            transform.Scale = particle.Size * sizeMultiplier;
+            
+            // Обновляем вязкость на основе температуры
+            particle.Viscosity = CalculateViscosity(particle.Temperature);
+        }
+        
+        /// <summary>
+        /// Очищает неактивные частицы
+        /// </summary>
+        private void CleanupInactiveParticles()
+        {
+            Entities
+                .WithAll<InactiveParticleTag>()
+                .ForEach((Entity entity, ref MudParticleData particle, ref LocalTransform transform) =>
+                {
+                    // Сбрасываем частицу
+                    particle.Position = float3.zero;
+                    particle.Velocity = float3.zero;
+                    particle.Lifetime = 0f;
+                    particle.IsActive = false;
+                    
+                    transform.Position = float3.zero;
+                    transform.Scale = 0f;
+                }).WithoutBurst().Run();
+        }
+        
+        /// <summary>
+        /// Управляет пулом частиц
+        /// </summary>
+        private void ManageParticlePool()
+        {
+            int activeCount = _activeParticlesQuery.CalculateEntityCount();
+            int inactiveCount = _inactiveParticlesQuery.CalculateEntityCount();
+            
+            // Если неактивных частиц мало, создаем новые
+            if (inactiveCount < 100 && _particlePool.Length < MAX_POOL_SIZE)
+            {
+                ExpandParticlePool();
             }
         }
         
         /// <summary>
-        /// Настраивает неактивную частицу
+        /// Расширяет пул частиц
         /// </summary>
-        private void SetupInactiveParticle(Entity particle)
+        private void ExpandParticlePool()
         {
-            EntityManager.SetComponentData(particle, new LocalTransform
-            {
-                Position = float3.zero,
-                Rotation = quaternion.identity,
-                Scale = 0f
-            });
+            int newSize = math.min(_particlePool.Length * 2, MAX_POOL_SIZE);
+            var newPool = new NativeArray<Entity>(newSize, Allocator.Persistent);
             
-            EntityManager.SetComponentData(particle, new ParticleVelocity
+            // Копируем существующие частицы
+            for (int i = 0; i < _particlePool.Length; i++)
             {
-                Value = float3.zero
-            });
+                newPool[i] = _particlePool[i];
+            }
             
-            EntityManager.SetComponentData(particle, new ParticleLifetime
+            // Создаем новые частицы
+            for (int i = _particlePool.Length; i < newSize; i++)
             {
-                Current = 0f,
-                Max = 1f
-            });
+                var entity = EntityManager.CreateEntity();
+                EntityManager.AddComponentData(entity, new MudParticleData
+                {
+                    Position = float3.zero,
+                    Velocity = float3.zero,
+                    Size = 0.01f,
+                    Lifetime = 0f,
+                    Mass = 0.001f,
+                    Temperature = 20f,
+                    Viscosity = 0.5f,
+                    IsActive = false
+                });
+                EntityManager.AddComponentData(entity, new LocalTransform
+                {
+                    Position = float3.zero,
+                    Rotation = quaternion.identity,
+                    Scale = 1f
+                });
+                EntityManager.AddComponentData(entity, new InactiveParticleTag());
+                
+                newPool[i] = entity;
+            }
             
-            EntityManager.SetComponentData(particle, new ParticleSize
-            {
-                Current = 0f,
-                Max = 1f
-            });
-            
-            EntityManager.SetComponentData(particle, new ParticleColor
-            {
-                Value = new float4(0.4f, 0.2f, 0.1f, 0f) // Коричневый цвет грязи, прозрачный
-            });
-            
-            EntityManager.SetComponentData(particle, new ParticleActive
-            {
-                Value = false
-            });
+            // Освобождаем старый пул
+            _particlePool.Dispose();
+            _particlePool = newPool;
         }
         
         /// <summary>
-        /// Создает частицу грязи в указанной позиции
+        /// Получает частицу из пула
         /// </summary>
-        /// <param name="position">Позиция создания</param>
-        /// <param name="velocity">Начальная скорость</param>
-        /// <param name="size">Размер частицы</param>
-        /// <param name="lifetime">Время жизни</param>
-        /// <returns>Entity созданной частицы</returns>
-        public Entity CreateMudParticle(float3 position, float3 velocity, float size, float lifetime)
+        public Entity GetParticleFromPool()
         {
-            Entity particle;
+            if (!_isPoolInitialized)
+                InitializeParticlePool();
             
-            if (_availableParticles.TryDequeue(out particle))
+            // Ищем неактивную частицу
+            for (int i = 0; i < _particlePool.Length; i++)
             {
-                // Используем частицу из пула
-                ActivateParticle(particle, position, velocity, size, lifetime);
-            }
-            else if (_activeParticles.Length < _maxParticles)
-            {
-                // Создаем новую частицу если пул пуст и не достигнут лимит
-                particle = EntityManager.CreateEntity(_particleArchetype);
-                ActivateParticle(particle, position, velocity, size, lifetime);
-            }
-            else
-            {
-                // Пул полон - переиспользуем самую старую частицу
-                particle = _activeParticles[0];
-                _activeParticles.RemoveAtSwapBack(0);
-                ActivateParticle(particle, position, velocity, size, lifetime);
+                var entity = _particlePool[i];
+                if (EntityManager.HasComponent<InactiveParticleTag>(entity))
+                {
+                    // Активируем частицу
+                    EntityManager.RemoveComponent<InactiveParticleTag>(entity);
+                    EntityManager.AddComponent<ActiveParticleTag>(entity);
+                    
+                    return entity;
+                }
             }
             
-            // Добавляем в активные частицы
-            _activeParticles.Add(particle);
-            
-            // Сохраняем данные частицы
-            var particleData = new ParticleData
-            {
-                Position = position,
-                Velocity = velocity,
-                Size = size,
-                Lifetime = lifetime,
-                CreationTime = SystemAPI.Time.time
-            };
-            _particleData[particle] = particleData;
-            
-            return particle;
-        }
-        
-        /// <summary>
-        /// Активирует частицу с заданными параметрами
-        /// </summary>
-        private void ActivateParticle(Entity particle, float3 position, float3 velocity, float size, float lifetime)
-        {
-            EntityManager.SetComponentData(particle, new LocalTransform
-            {
-                Position = position,
-                Rotation = quaternion.identity,
-                Scale = size
-            });
-            
-            EntityManager.SetComponentData(particle, new ParticleVelocity
-            {
-                Value = velocity
-            });
-            
-            EntityManager.SetComponentData(particle, new ParticleLifetime
-            {
-                Current = lifetime,
-                Max = lifetime
-            });
-            
-            EntityManager.SetComponentData(particle, new ParticleSize
-            {
-                Current = size,
-                Max = size
-            });
-            
-            EntityManager.SetComponentData(particle, new ParticleColor
-            {
-                Value = new float4(0.4f, 0.2f, 0.1f, 1f) // Коричневый цвет грязи, непрозрачный
-            });
-            
-            EntityManager.SetComponentData(particle, new ParticleActive
-            {
-                Value = true
-            });
+            // Если не нашли, создаем новую
+            return CreateNewParticle();
         }
         
         /// <summary>
@@ -200,191 +266,96 @@ namespace MudLike.Pooling.Systems
         /// </summary>
         public void ReturnParticleToPool(Entity particle)
         {
-            if (_particleData.ContainsKey(particle))
-            {
-                // Удаляем из активных частиц
-                for (int i = 0; i < _activeParticles.Length; i++)
-                {
-                    if (_activeParticles[i] == particle)
-                    {
-                        _activeParticles.RemoveAtSwapBack(i);
-                        break;
-                    }
-                }
-                
-                // Удаляем данные частицы
-                _particleData.Remove(particle);
-                
-                // Деактивируем частицу
-                SetupInactiveParticle(particle);
-                
-                // Возвращаем в пул
-                _availableParticles.Enqueue(particle);
-            }
-        }
-        
-        /// <summary>
-        /// Обновляет все активные частицы
-        /// </summary>
-        protected override void OnUpdate()
-        {
-            float deltaTime = SystemAPI.Time.fixedDeltaTime;
+            if (!EntityManager.Exists(particle))
+                return;
             
-            // Обновляем активные частицы
-            for (int i = _activeParticles.Length - 1; i >= 0; i--)
+            // Деактивируем частицу
+            EntityManager.RemoveComponent<ActiveParticleTag>(particle);
+            EntityManager.AddComponent<InactiveParticleTag>(particle);
+            
+            // Сбрасываем данные
+            var particleData = EntityManager.GetComponentData<MudParticleData>(particle);
+            particleData.IsActive = false;
+            particleData.Lifetime = 0f;
+            EntityManager.SetComponentData(particle, particleData);
+        }
+        
+        /// <summary>
+        /// Создает новую частицу
+        /// </summary>
+        private Entity CreateNewParticle()
+        {
+            var entity = EntityManager.CreateEntity();
+            EntityManager.AddComponentData(entity, new MudParticleData
             {
-                Entity particle = _activeParticles[i];
-                
-                if (!_particleData.TryGetValue(particle, out var data))
-                    continue;
-                
-                // Обновляем время жизни
-                data.Lifetime -= deltaTime;
-                
-                if (data.Lifetime <= 0f)
-                {
-                    // Частица умерла - возвращаем в пул
-                    ReturnParticleToPool(particle);
-                    continue;
-                }
-                
-                // Обновляем позицию
-                data.Position += data.Velocity * deltaTime;
-                
-                // Применяем гравитацию
-                data.Velocity.y -= 9.81f * deltaTime;
-                
-                // Обновляем размер (уменьшаем со временем)
-                float sizeMultiplier = data.Lifetime / data.MaxLifetime;
-                data.Size = data.MaxSize * sizeMultiplier;
-                
-                // Обновляем прозрачность
-                float alpha = math.clamp(sizeMultiplier, 0f, 1f);
-                data.Color.w = alpha;
-                
-                // Сохраняем обновленные данные
-                _particleData[particle] = data;
-                
-                // Обновляем компоненты Entity
-                EntityManager.SetComponentData(particle, new LocalTransform
-                {
-                    Position = data.Position,
-                    Rotation = quaternion.identity,
-                    Scale = data.Size
-                });
-                
-                EntityManager.SetComponentData(particle, new ParticleVelocity
-                {
-                    Value = data.Velocity
-                });
-                
-                EntityManager.SetComponentData(particle, new ParticleLifetime
-                {
-                    Current = data.Lifetime,
-                    Max = data.MaxLifetime
-                });
-                
-                EntityManager.SetComponentData(particle, new ParticleSize
-                {
-                    Current = data.Size,
-                    Max = data.MaxSize
-                });
-                
-                EntityManager.SetComponentData(particle, new ParticleColor
-                {
-                    Value = data.Color
-                });
+                Position = float3.zero,
+                Velocity = float3.zero,
+                Size = 0.01f,
+                Lifetime = 0f,
+                Mass = 0.001f,
+                Temperature = 20f,
+                Viscosity = 0.5f,
+                IsActive = false
+            });
+            EntityManager.AddComponentData(entity, new LocalTransform
+            {
+                Position = float3.zero,
+                Rotation = quaternion.identity,
+                Scale = 1f
+            });
+            EntityManager.AddComponentData(entity, new InactiveParticleTag());
+            
+            return entity;
+        }
+        
+        /// <summary>
+        /// Вычисляет вязкость на основе температуры
+        /// </summary>
+        [BurstCompile]
+        private static float CalculateViscosity(float temperature)
+        {
+            // Простая модель вязкости грязи
+            float baseViscosity = 0.5f;
+            float temperatureFactor = 1f - (temperature - 20f) / 100f;
+            return math.clamp(baseViscosity * temperatureFactor, 0.1f, 1f);
+        }
+        
+        /// <summary>
+        /// Создает частицу грязи
+        /// </summary>
+        public Entity CreateMudParticle(float3 position, float3 velocity, float size, float temperature)
+        {
+            var entity = GetParticleFromPool();
+            
+            var particleData = new MudParticleData
+            {
+                Position = position,
+                Velocity = velocity,
+                Size = math.clamp(size, PARTICLE_SIZE_MIN, PARTICLE_SIZE_MAX),
+                Lifetime = 0f,
+                Mass = size * 0.1f,
+                Temperature = temperature,
+                Viscosity = CalculateViscosity(temperature),
+                IsActive = true
+            };
+            
+            EntityManager.SetComponentData(entity, particleData);
+            EntityManager.SetComponentData(entity, new LocalTransform
+            {
+                Position = position,
+                Rotation = quaternion.identity,
+                Scale = size
+            });
+            
+            return entity;
+        }
+        
+        protected override void OnDestroy()
+        {
+            if (_particlePool.IsCreated)
+            {
+                _particlePool.Dispose();
             }
         }
-        
-        /// <summary>
-        /// Получает количество активных частиц
-        /// </summary>
-        public int GetActiveParticleCount()
-        {
-            return _activeParticles.Length;
-        }
-        
-        /// <summary>
-        /// Получает количество доступных частиц в пуле
-        /// </summary>
-        public int GetAvailableParticleCount()
-        {
-            return _availableParticles.Count;
-        }
-        
-        /// <summary>
-        /// Очищает все частицы
-        /// </summary>
-        public void ClearAllParticles()
-        {
-            // Возвращаем все активные частицы в пул
-            for (int i = _activeParticles.Length - 1; i >= 0; i--)
-            {
-                ReturnParticleToPool(_activeParticles[i]);
-            }
-        }
-    }
-    
-    /// <summary>
-    /// Тег частицы грязи
-    /// </summary>
-    public struct MudParticleTag : IComponentData { }
-    
-    /// <summary>
-    /// Скорость частицы
-    /// </summary>
-    public struct ParticleVelocity : IComponentData
-    {
-        public float3 Value;
-    }
-    
-    /// <summary>
-    /// Время жизни частицы
-    /// </summary>
-    public struct ParticleLifetime : IComponentData
-    {
-        public float Current;
-        public float Max;
-    }
-    
-    /// <summary>
-    /// Размер частицы
-    /// </summary>
-    public struct ParticleSize : IComponentData
-    {
-        public float Current;
-        public float Max;
-    }
-    
-    /// <summary>
-    /// Цвет частицы
-    /// </summary>
-    public struct ParticleColor : IComponentData
-    {
-        public float4 Value;
-    }
-    
-    /// <summary>
-    /// Активность частицы
-    /// </summary>
-    public struct ParticleActive : IComponentData
-    {
-        public bool Value;
-    }
-    
-    /// <summary>
-    /// Данные частицы для внутреннего использования
-    /// </summary>
-    public struct ParticleData
-    {
-        public float3 Position;
-        public float3 Velocity;
-        public float Size;
-        public float MaxSize;
-        public float Lifetime;
-        public float MaxLifetime;
-        public float4 Color;
-        public float CreationTime;
     }
 }
