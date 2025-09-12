@@ -12,6 +12,7 @@ namespace MudLike.UI.Systems
     /// Система обновления HUD интерфейса
     /// </summary>
     [UpdateInGroup(typeof(SimulationSystemGroup))]
+    [BurstCompile(CompileSynchronously = true)]
     public partial class UIHUDSystem : SystemBase
     {
         private EntityQuery _hudQuery;

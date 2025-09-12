@@ -11,6 +11,7 @@ namespace MudLike.Vehicles.Systems
     /// Система физики колес транспортного средства
     /// </summary>
     [UpdateInGroup(typeof(FixedStepSimulationSystemGroup))]
+    [BurstCompile(CompileSynchronously = true)]
     public partial class WheelPhysicsSystem : SystemBase
     {
         private PhysicsWorld _physicsWorld;

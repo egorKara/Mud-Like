@@ -10,7 +10,7 @@ namespace MudLike.Vehicles.Systems
     /// Система технического обслуживания транспортного средства
     /// </summary>
     [UpdateInGroup(typeof(FixedStepSimulationSystemGroup))]
-    [BurstCompile]
+    [BurstCompile(CompileSynchronously = true)]
     public partial class VehicleMaintenanceSystem : SystemBase
     {
         protected override void OnUpdate()

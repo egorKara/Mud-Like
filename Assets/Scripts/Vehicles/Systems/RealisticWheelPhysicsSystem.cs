@@ -14,7 +14,7 @@ namespace MudLike.Vehicles.Systems
     /// Реализует подвеску, торможение, рулевое управление и взаимодействие с поверхностью
     /// </summary>
     [UpdateInGroup(typeof(FixedStepSimulationSystemGroup))]
-    [BurstCompile]
+    [BurstCompile(CompileSynchronously = true)]
     public partial class RealisticWheelPhysicsSystem : SystemBase
     {
         protected override void OnUpdate()

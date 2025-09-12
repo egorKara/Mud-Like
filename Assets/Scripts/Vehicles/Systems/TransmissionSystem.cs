@@ -9,6 +9,7 @@ namespace MudLike.Vehicles.Systems
     /// Система трансмиссии транспортного средства
     /// </summary>
     [UpdateInGroup(typeof(FixedStepSimulationSystemGroup))]
+    [BurstCompile(CompileSynchronously = true)]
     public partial class TransmissionSystem : SystemBase
     {
         /// <summary>

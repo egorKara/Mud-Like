@@ -13,7 +13,7 @@ namespace MudLike.Vehicles.Systems
     /// Система износа шин с учетом различных факторов
     /// </summary>
     [UpdateInGroup(typeof(FixedStepSimulationSystemGroup))]
-    [BurstCompile]
+    [BurstCompile(CompileSynchronously = true)]
     public partial class TireWearSystem : SystemBase
     {
         private EntityQuery _tireQuery;

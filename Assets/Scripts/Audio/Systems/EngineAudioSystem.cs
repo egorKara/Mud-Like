@@ -12,7 +12,7 @@ namespace MudLike.Audio.Systems
     /// Система звука двигателя
     /// </summary>
     [UpdateInGroup(typeof(SimulationSystemGroup))]
-    [BurstCompile]
+    [BurstCompile(CompileSynchronously = true)]
     public partial class EngineAudioSystem : SystemBase
     {
         private EntityQuery _engineAudioQuery;

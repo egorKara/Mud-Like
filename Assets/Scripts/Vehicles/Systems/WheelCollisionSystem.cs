@@ -12,6 +12,7 @@ namespace MudLike.Vehicles.Systems
     /// Система коллизий колес с Unity Physics
     /// </summary>
     [UpdateInGroup(typeof(FixedStepSimulationSystemGroup))]
+    [BurstCompile(CompileSynchronously = true)]
     public partial class WheelCollisionSystem : SystemBase
     {
         private PhysicsWorld _physicsWorld;

@@ -12,7 +12,7 @@ namespace MudLike.Effects.Systems
     /// Система обработки частиц грязи
     /// </summary>
     [UpdateInGroup(typeof(SimulationSystemGroup))]
-    [BurstCompile]
+    [BurstCompile(CompileSynchronously = true)]
     public partial class MudParticleSystem : SystemBase
     {
         private EntityQuery _particleQuery;

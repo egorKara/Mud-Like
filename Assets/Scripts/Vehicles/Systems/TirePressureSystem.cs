@@ -12,7 +12,7 @@ namespace MudLike.Vehicles.Systems
     /// Система управления давлением в шинах
     /// </summary>
     [UpdateInGroup(typeof(FixedStepSimulationSystemGroup))]
-    [BurstCompile]
+    [BurstCompile(CompileSynchronously = true)]
     public partial class TirePressureSystem : SystemBase
     {
         private EntityQuery _tireQuery;

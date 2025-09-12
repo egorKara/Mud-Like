@@ -16,7 +16,7 @@ namespace MudLike.Vehicles.Systems
     /// Объединяет физику колес, деформацию террейна и взаимодействие с грязью
     /// </summary>
     [UpdateInGroup(typeof(FixedStepSimulationSystemGroup))]
-    [BurstCompile]
+    [BurstCompile(CompileSynchronously = true)]
     public partial class IntegratedTerrainPhysicsSystem : SystemBase
     {
         private EntityQuery _vehicleQuery;

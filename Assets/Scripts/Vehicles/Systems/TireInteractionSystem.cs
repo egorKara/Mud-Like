@@ -13,7 +13,7 @@ namespace MudLike.Vehicles.Systems
     /// Система взаимодействия шин с поверхностями и погодой
     /// </summary>
     [UpdateInGroup(typeof(FixedStepSimulationSystemGroup))]
-    [BurstCompile]
+    [BurstCompile(CompileSynchronously = true)]
     public partial class TireInteractionSystem : SystemBase
     {
         private EntityQuery _tireQuery;

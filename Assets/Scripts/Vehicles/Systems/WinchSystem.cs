@@ -14,7 +14,7 @@ namespace MudLike.Vehicles.Systems
     /// Система лебедки - ключевая механика игры
     /// </summary>
     [UpdateInGroup(typeof(FixedStepSimulationSystemGroup))]
-    [BurstCompile]
+    [BurstCompile(CompileSynchronously = true)]
     public partial class WinchSystem : SystemBase
     {
         private EntityQuery _winchQuery;

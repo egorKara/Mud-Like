@@ -13,7 +13,7 @@ namespace MudLike.Vehicles.Systems
     /// Система LOD (Level of Detail) для оптимизации рендеринга и физики
     /// </summary>
     [UpdateInGroup(typeof(SimulationSystemGroup))]
-    [BurstCompile]
+    [BurstCompile(CompileSynchronously = true)]
     public partial class LODSystem : SystemBase
     {
         private EntityQuery _lodQuery;

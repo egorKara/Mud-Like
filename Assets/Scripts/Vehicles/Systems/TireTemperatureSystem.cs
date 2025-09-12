@@ -12,7 +12,7 @@ namespace MudLike.Vehicles.Systems
     /// Система управления температурой шин
     /// </summary>
     [UpdateInGroup(typeof(FixedStepSimulationSystemGroup))]
-    [BurstCompile]
+    [BurstCompile(CompileSynchronously = true)]
     public partial class TireTemperatureSystem : SystemBase
     {
         private EntityQuery _tireQuery;

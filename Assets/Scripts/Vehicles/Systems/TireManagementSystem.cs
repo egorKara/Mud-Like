@@ -12,7 +12,7 @@ namespace MudLike.Vehicles.Systems
     /// Система управления шинами - замена, обслуживание, мониторинг
     /// </summary>
     [UpdateInGroup(typeof(SimulationSystemGroup))]
-    [BurstCompile]
+    [BurstCompile(CompileSynchronously = true)]
     public partial class TireManagementSystem : SystemBase
     {
         private EntityQuery _tireQuery;
