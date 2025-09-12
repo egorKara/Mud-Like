@@ -1,58 +1,75 @@
 using Unity.Entities;
-using Unity.Mathematics;
 
 namespace MudLike.Vehicles.Components
 {
     /// <summary>
-    /// Компонент ввода управления транспортом
-    /// Игрок управляет только транспортом, не ходит пешком
+    /// Ввод пользователя для управления транспортным средством
     /// </summary>
     public struct VehicleInput : IComponentData
     {
         /// <summary>
-        /// Ускорение (W/Up)
+        /// Вертикальный ввод (газ/тормоз)
         /// </summary>
-        public bool Accelerate;
+        public float Vertical;
         
         /// <summary>
-        /// Торможение (S/Down)
+        /// Горизонтальный ввод (рулевое управление)
         /// </summary>
-        public bool Brake;
+        public float Horizontal;
         
         /// <summary>
-        /// Ручной тормоз (Space)
+        /// Положение педали газа (0-1)
         /// </summary>
-        public bool Handbrake;
+        public float Throttle;
         
         /// <summary>
-        /// Управление рулем (-1.0 до 1.0, A/D или Left/Right)
+        /// Положение педали тормоза (0-1)
+        /// </summary>
+        public float Brake;
+        
+        /// <summary>
+        /// Угол поворота руля (-1 до 1)
         /// </summary>
         public float Steering;
         
         /// <summary>
-        /// Переключение передач (Shift/Ctrl)
+        /// Ручной тормоз
+        /// </summary>
+        public bool Handbrake;
+        
+        /// <summary>
+        /// Переключение передачи вверх
+        /// </summary>
+        public bool GearUp;
+        
+        /// <summary>
+        /// Переключение передачи вниз
+        /// </summary>
+        public bool GearDown;
+        
+        /// <summary>
+        /// Включение/выключение двигателя
+        /// </summary>
+        public bool EngineToggle;
+        
+        /// <summary>
+        /// Переключение вверх
         /// </summary>
         public bool ShiftUp;
+        
+        /// <summary>
+        /// Переключение вниз
+        /// </summary>
         public bool ShiftDown;
         
         /// <summary>
-        /// Включение/выключение полного привода (F)
+        /// Нейтральная передача
         /// </summary>
-        public bool Toggle4WD;
+        public bool Neutral;
         
         /// <summary>
-        /// Включение/выключение блокировки дифференциала (G)
+        /// Задняя передача
         /// </summary>
-        public bool ToggleDiffLock;
-        
-        /// <summary>
-        /// Использование лебедки (E)
-        /// </summary>
-        public bool UseWinch;
-        
-        /// <summary>
-        /// Переключение камеры (Tab)
-        /// </summary>
-        public bool SwitchCamera;
+        public bool Reverse;
     }
 }

@@ -9,24 +9,14 @@ namespace MudLike.Vehicles.Components
     public struct TransmissionData : IComponentData
     {
         /// <summary>
-        /// Передаточные числа коробки передач
-        /// </summary>
-        public float4 GearRatios;
-        
-        /// <summary>
-        /// Передаточное число главной передачи
-        /// </summary>
-        public float FinalDriveRatio;
-        
-        /// <summary>
-        /// Передаточное число дифференциала
-        /// </summary>
-        public float DifferentialRatio;
-        
-        /// <summary>
         /// Текущая передача
         /// </summary>
         public int CurrentGear;
+        
+        /// <summary>
+        /// Целевая передача
+        /// </summary>
+        public int TargetGear;
         
         /// <summary>
         /// Минимальная передача
@@ -39,19 +29,44 @@ namespace MudLike.Vehicles.Components
         public int MaxGear;
         
         /// <summary>
-        /// Передача заднего хода
-        /// </summary>
-        public int ReverseGear;
-        
-        /// <summary>
         /// Нейтральная передача
         /// </summary>
         public int NeutralGear;
         
         /// <summary>
-        /// Время переключения передачи
+        /// Задняя передача
         /// </summary>
-        public float ShiftTime;
+        public int ReverseGear;
+        
+        /// <summary>
+        /// Передаточные числа (x, y, z, w для 4 передач)
+        /// </summary>
+        public float4 GearRatios;
+        
+        /// <summary>
+        /// Главная передача
+        /// </summary>
+        public float FinalDriveRatio;
+        
+        /// <summary>
+        /// КПД трансмиссии
+        /// </summary>
+        public float Efficiency;
+        
+        /// <summary>
+        /// Выходной крутящий момент
+        /// </summary>
+        public float OutputTorque;
+        
+        /// <summary>
+        /// Выходная мощность
+        /// </summary>
+        public float OutputPower;
+        
+        /// <summary>
+        /// Происходит переключение передачи
+        /// </summary>
+        public bool IsShifting;
         
         /// <summary>
         /// Текущее время переключения
@@ -59,68 +74,18 @@ namespace MudLike.Vehicles.Components
         public float CurrentShiftTime;
         
         /// <summary>
-        /// Переключение передачи в процессе
+        /// Время переключения передачи
         /// </summary>
-        public bool IsShifting;
+        public float ShiftTime;
         
         /// <summary>
-        /// Целевая передача для переключения
-        /// </summary>
-        public int TargetGear;
-        
-        /// <summary>
-        /// Обороты двигателя для переключения вверх
+        /// Обороты для переключения вверх
         /// </summary>
         public float UpshiftRPM;
         
         /// <summary>
-        /// Обороты двигателя для переключения вниз
+        /// Обороты для переключения вниз
         /// </summary>
         public float DownshiftRPM;
-        
-        /// <summary>
-        /// Минимальные обороты двигателя
-        /// </summary>
-        public float MinRPM;
-        
-        /// <summary>
-        /// Максимальные обороты двигателя
-        /// </summary>
-        public float MaxRPM;
-        
-        /// <summary>
-        /// Обороты холостого хода
-        /// </summary>
-        public float IdleRPM;
-        
-        /// <summary>
-        /// Текущие обороты двигателя
-        /// </summary>
-        public float CurrentRPM;
-        
-        /// <summary>
-        /// Целевые обороты двигателя
-        /// </summary>
-        public float TargetRPM;
-        
-        /// <summary>
-        /// Скорость изменения оборотов
-        /// </summary>
-        public float RPMSpeed;
-        
-        /// <summary>
-        /// Крутящий момент на выходе трансмиссии
-        /// </summary>
-        public float OutputTorque;
-        
-        /// <summary>
-        /// Мощность на выходе трансмиссии
-        /// </summary>
-        public float OutputPower;
-        
-        /// <summary>
-        /// Эффективность трансмиссии
-        /// </summary>
-        public float Efficiency;
     }
 }
