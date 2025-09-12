@@ -1,0 +1,309 @@
+using Unity.Entities;
+using Unity.Mathematics;
+using Unity.Transforms;
+using Unity.Burst;
+using Unity.Collections;
+using MudLike.Terrain.Components;
+using MudLike.Vehicles.Components;
+
+namespace MudLike.Terrain.Systems
+{
+    /// <summary>
+    /// MudManager API - центральная система управления грязью и деформацией террейна
+    /// Предоставляет QueryContact(wheelPosition, radius) → sinkDepth, tractionModifier
+    /// </summary>
+    [UpdateInGroup(typeof(FixedStepSimulationSystemGroup))]
+    [BurstCompile]
+    public partial class MudManagerSystem : SystemBase
+    {
+        private TerrainHeightManager _terrainManager;
+        private NativeHashMap<int, MudContactData> _mudContacts;
+        
+        protected override void OnCreate()
+        {
+            _mudContacts = new NativeHashMap<int, MudContactData>(1000, Allocator.Persistent);
+            _terrainManager = SystemAPI.GetSingleton<TerrainHeightManager>();
+        }
+        
+        protected override void OnDestroy()
+        {
+            if (_mudContacts.IsCreated)
+                _mudContacts.Dispose();
+        }
+        
+        /// <summary>
+        /// Основной API метод: QueryContact(wheelPosition, radius) → sinkDepth, tractionModifier
+        /// </summary>
+        /// <param name="wheelPosition">Позиция колеса</param>
+        /// <param name="radius">Радиус колеса</param>
+        /// <param name="wheelForce">Сила, приложенная колесом</param>
+        /// <returns>Данные контакта с грязью</returns>
+        [BurstCompile]
+        public MudContactData QueryContact(float3 wheelPosition, float radius, float wheelForce)
+        {
+            // Получаем данные террейна в позиции колеса
+            var terrainData = GetTerrainDataAtPosition(wheelPosition);
+            
+            // Вычисляем уровень грязи
+            float mudLevel = CalculateMudLevel(wheelPosition, radius, terrainData);
+            
+            // Вычисляем глубину погружения
+            float sinkDepth = CalculateSinkDepth(wheelPosition, radius, wheelForce, mudLevel, terrainData);
+            
+            // Вычисляем модификатор тяги
+            float tractionModifier = CalculateTractionModifier(sinkDepth, mudLevel, terrainData);
+            
+            // Вычисляем сопротивление
+            float drag = CalculateDrag(sinkDepth, mudLevel, terrainData);
+            
+            // Создаем данные контакта
+            var contactData = new MudContactData
+            {
+                Position = wheelPosition,
+                Radius = radius,
+                MudLevel = mudLevel,
+                SinkDepth = sinkDepth,
+                TractionModifier = tractionModifier,
+                Drag = drag,
+                SurfaceType = DetermineSurfaceType(mudLevel, terrainData),
+                IsValid = true,
+                LastUpdateTime = SystemAPI.Time.time
+            };
+            
+            return contactData;
+        }
+        
+        /// <summary>
+        /// Получает данные террейна в указанной позиции
+        /// </summary>
+        [BurstCompile]
+        private TerrainData GetTerrainDataAtPosition(float3 position)
+        {
+            // Получаем чанк террейна
+            int chunkIndex = GetChunkIndex(position);
+            
+            // Получаем высоту в чанке
+            float height = _terrainManager.GetChunkHeight(chunkIndex, position.x, position.z);
+            
+            // Получаем уровень грязи
+            float mudLevel = _terrainManager.GetChunkMudLevel(chunkIndex, position.x, position.z);
+            
+            // Получаем нормаль
+            float3 normal = GetTerrainNormal(chunkIndex, position.x, position.z);
+            
+            return new TerrainData
+            {
+                Height = height,
+                MudLevel = mudLevel,
+                Normal = normal,
+                ChunkIndex = chunkIndex,
+                Position = position
+            };
+        }
+        
+        /// <summary>
+        /// Вычисляет уровень грязи в области
+        /// </summary>
+        [BurstCompile]
+        private float CalculateMudLevel(float3 position, float radius, TerrainData terrainData)
+        {
+            float totalMud = 0f;
+            int sampleCount = 0;
+            
+            // Семплируем грязь в радиусе колеса
+            float sampleStep = radius * 0.5f;
+            for (float x = position.x - radius; x <= position.x + radius; x += sampleStep)
+            {
+                for (float z = position.z - radius; z <= position.z + radius; z += sampleStep)
+                {
+                    float distance = math.distance(new float3(x, 0, z), position);
+                    if (distance <= radius)
+                    {
+                        int chunkIndex = GetChunkIndex(new float3(x, position.y, z));
+                        float mud = _terrainManager.GetChunkMudLevel(chunkIndex, x, z);
+                        
+                        // Взвешиваем по расстоянию от центра
+                        float weight = 1f - (distance / radius);
+                        totalMud += mud * weight;
+                        sampleCount++;
+                    }
+                }
+            }
+            
+            return sampleCount > 0 ? totalMud / sampleCount : terrainData.MudLevel;
+        }
+        
+        /// <summary>
+        /// Вычисляет глубину погружения колеса
+        /// </summary>
+        [BurstCompile]
+        private float CalculateSinkDepth(float3 position, float radius, float wheelForce, float mudLevel, TerrainData terrainData)
+        {
+            // Базовая глубина на основе силы
+            float baseDepth = wheelForce * 0.001f; // Масштабируем силу
+            
+            // Модифицируем глубину на основе уровня грязи
+            float mudFactor = math.lerp(0.1f, 2.0f, mudLevel); // От 10% до 200% глубины
+            
+            // Учитываем твердость поверхности
+            float hardnessFactor = GetSurfaceHardness(terrainData);
+            
+            // Финальная глубина
+            float sinkDepth = baseDepth * mudFactor * (1f - hardnessFactor);
+            
+            // Ограничиваем максимальную глубину
+            sinkDepth = math.min(sinkDepth, radius * 0.8f); // Максимум 80% радиуса
+            
+            return sinkDepth;
+        }
+        
+        /// <summary>
+        /// Вычисляет модификатор тяги
+        /// </summary>
+        [BurstCompile]
+        private float CalculateTractionModifier(float sinkDepth, float mudLevel, TerrainData terrainData)
+        {
+            // Базовая тяга
+            float baseTraction = 1.0f;
+            
+            // Снижаем тягу на основе глубины погружения
+            float sinkPenalty = sinkDepth * 2f; // 2% потери на каждую единицу глубины
+            
+            // Снижаем тягу на основе уровня грязи
+            float mudPenalty = mudLevel * 0.5f; // До 50% потери от грязи
+            
+            // Учитываем тип поверхности
+            float surfaceMultiplier = GetSurfaceTraction(terrainData);
+            
+            // Финальный модификатор
+            float tractionModifier = (baseTraction - sinkPenalty - mudPenalty) * surfaceMultiplier;
+            
+            // Ограничиваем диапазон
+            tractionModifier = math.clamp(tractionModifier, 0.1f, 1.0f);
+            
+            return tractionModifier;
+        }
+        
+        /// <summary>
+        /// Вычисляет сопротивление движению
+        /// </summary>
+        [BurstCompile]
+        private float CalculateDrag(float sinkDepth, float mudLevel, TerrainData terrainData)
+        {
+            // Базовое сопротивление
+            float baseDrag = 0.1f;
+            
+            // Увеличиваем сопротивление на основе глубины
+            float sinkDrag = sinkDepth * 0.5f;
+            
+            // Увеличиваем сопротивление на основе грязи
+            float mudDrag = mudLevel * 0.3f;
+            
+            // Финальное сопротивление
+            float totalDrag = baseDrag + sinkDrag + mudDrag;
+            
+            // Ограничиваем максимальное сопротивление
+            return math.min(totalDrag, 2.0f);
+        }
+        
+        /// <summary>
+        /// Определяет тип поверхности
+        /// </summary>
+        [BurstCompile]
+        private SurfaceType DetermineSurfaceType(float mudLevel, TerrainData terrainData)
+        {
+            if (mudLevel < 0.1f)
+                return SurfaceType.DryGround;
+            else if (mudLevel < 0.3f)
+                return SurfaceType.WetGround;
+            else if (mudLevel < 0.6f)
+                return SurfaceType.Mud;
+            else if (mudLevel < 0.8f)
+                return SurfaceType.DeepMud;
+            else
+                return SurfaceType.Water;
+        }
+        
+        /// <summary>
+        /// Получает твердость поверхности
+        /// </summary>
+        [BurstCompile]
+        private float GetSurfaceHardness(TerrainData terrainData)
+        {
+            // Простая модель твердости на основе типа поверхности
+            switch (DetermineSurfaceType(terrainData.MudLevel, terrainData))
+            {
+                case SurfaceType.Rock: return 0.9f;
+                case SurfaceType.DryGround: return 0.7f;
+                case SurfaceType.WetGround: return 0.5f;
+                case SurfaceType.Mud: return 0.2f;
+                case SurfaceType.DeepMud: return 0.1f;
+                case SurfaceType.Water: return 0.0f;
+                default: return 0.5f;
+            }
+        }
+        
+        /// <summary>
+        /// Получает коэффициент тяги поверхности
+        /// </summary>
+        [BurstCompile]
+        private float GetSurfaceTraction(TerrainData terrainData)
+        {
+            // Простая модель тяги на основе типа поверхности
+            switch (DetermineSurfaceType(terrainData.MudLevel, terrainData))
+            {
+                case SurfaceType.Rock: return 1.0f;
+                case SurfaceType.DryGround: return 0.9f;
+                case SurfaceType.WetGround: return 0.7f;
+                case SurfaceType.Mud: return 0.5f;
+                case SurfaceType.DeepMud: return 0.3f;
+                case SurfaceType.Water: return 0.1f;
+                default: return 0.7f;
+            }
+        }
+        
+        /// <summary>
+        /// Получает индекс чанка для позиции
+        /// </summary>
+        [BurstCompile]
+        private int GetChunkIndex(float3 position)
+        {
+            var terrainConfig = SystemAPI.GetSingleton<TerrainData>();
+            int chunkX = (int)(position.x / terrainConfig.ChunkSize);
+            int chunkZ = (int)(position.z / terrainConfig.ChunkSize);
+            return chunkX * terrainConfig.ChunkCountZ + chunkZ;
+        }
+        
+        /// <summary>
+        /// Получает нормаль террейна
+        /// </summary>
+        [BurstCompile]
+        private float3 GetTerrainNormal(int chunkIndex, float x, float z)
+        {
+            // В реальной реализации здесь должен быть доступ к нормалям террейна
+            // Пока возвращаем стандартную нормаль
+            return new float3(0, 1, 0);
+        }
+        
+        protected override void OnUpdate()
+        {
+            // Система работает по требованию через API методы
+        }
+    }
+    
+    /// <summary>
+    /// Данные контакта с грязью
+    /// </summary>
+    public struct MudContactData
+    {
+        public float3 Position;
+        public float Radius;
+        public float MudLevel;
+        public float SinkDepth;
+        public float TractionModifier;
+        public float Drag;
+        public SurfaceType SurfaceType;
+        public bool IsValid;
+        public float LastUpdateTime;
+    }
+}

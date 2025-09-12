@@ -32,7 +32,7 @@ chmod +x UnityHub.AppImage
 ```
 
 ### **2. Установка Unity Editor**
-- **Версия:** Unity 6000.2.2f1
+- **Версия:** Unity 6000.0.57f1
 - **Модули:** Windows Build Support, Linux Build Support
 - **Дополнительно:** Visual Studio Code Support
 
@@ -48,7 +48,7 @@ chmod +x UnityHub.AppImage
 # Создать новый 3D проект
 # Название: Mud-Like
 # Шаблон: 3D (URP)
-# Версия: 6000.2.2f1
+# Версия: 6000.0.57f1
 ```
 
 ### **2. Настройка Package Manager**
@@ -331,7 +331,7 @@ jobs:
       - name: Setup Unity
         uses: game-ci/unity-setup@v2
         with:
-          unity-version: 6000.2.2f1
+          unity-version: 6000.0.57f1
       - name: Run Tests
         uses: game-ci/unity-test-runner@v2
         with:
@@ -354,7 +354,7 @@ chmod +x UnityHub.AppImage
 ## ✅ **ПРОВЕРКА НАСТРОЙКИ**
 
 ### **1. Проверка Unity**
-- [ ] Unity 6000.2.2f1 установлен
+- [ ] Unity 6000.0.57f1 установлен
 - [ ] Все пакеты DOTS установлены
 - [ ] Проект создан и открывается
 - [ ] Нет ошибок в Console
