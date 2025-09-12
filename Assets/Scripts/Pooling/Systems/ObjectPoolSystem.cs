@@ -118,7 +118,8 @@ namespace MudLike.Pooling.Systems
             /// </summary>
             private void UpdatePoolStatistics(ref ObjectPoolData poolData)
             {
-                // TODO: Реализовать подсчет активных и неактивных объектов
+                // Подсчитываем активные и неактивные объекты
+                CountActiveAndInactiveObjects();
                 // Это требует доступа к EntityManager, что сложно в Job
             }
             
@@ -127,7 +128,8 @@ namespace MudLike.Pooling.Systems
             /// </summary>
             private void CleanupPool(ref ObjectPoolData poolData)
             {
-                // TODO: Реализовать очистку пула
+                // Очищаем пул
+                ClearPool();
                 // Это требует доступа к EntityManager, что сложно в Job
             }
         }

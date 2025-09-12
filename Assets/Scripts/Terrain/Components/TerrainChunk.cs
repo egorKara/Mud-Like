@@ -5,68 +5,114 @@ using Unity.Collections;
 namespace MudLike.Terrain.Components
 {
     /// <summary>
-    /// Чанк террейна
+    /// Компонент чанка террейна для ECS
     /// </summary>
     public struct TerrainChunk : IComponentData
     {
         /// <summary>
-        /// Индекс чанка
+        /// Индекс чанка в сетке
         /// </summary>
-        public int ChunkIndex;
+        public int Index;
         
         /// <summary>
-        /// Позиция чанка в сетке
-        /// </summary>
-        public int2 GridPosition;
-        
-        /// <summary>
-        /// Мировая позиция чанка
+        /// Позиция чанка в мире
         /// </summary>
         public float3 WorldPosition;
         
         /// <summary>
         /// Размер чанка
         /// </summary>
-        public float ChunkSize;
+        public int Size;
         
         /// <summary>
-        /// Разрешение чанка
+        /// Высоты в чанке (NativeArray индексы)
         /// </summary>
-        public int Resolution;
+        public int HeightDataIndex;
         
         /// <summary>
-        /// Высоты чанка
+        /// Данные грязи в чанке (NativeArray индексы)
         /// </summary>
-        public NativeArray<float> Heights;
+        public int MudDataIndex;
         
         /// <summary>
-        /// Нормали чанка
+        /// Данные нормалей в чанке (NativeArray индексы)
         /// </summary>
-        public NativeArray<float3> Normals;
+        public int NormalDataIndex;
         
         /// <summary>
-        /// Уровень грязи чанка
-        /// </summary>
-        public NativeArray<float> MudLevel;
-        
-        /// <summary>
-        /// Чанк изменен
+        /// Флаг грязности чанка (нужно ли обновление)
         /// </summary>
         public bool IsDirty;
         
         /// <summary>
-        /// Чанк активен
-        /// </summary>
-        public bool IsActive;
-        
-        /// <summary>
-        /// Чанк загружен
-        /// </summary>
-        public bool IsLoaded;
-        
-        /// <summary>
-        /// Чанк требует синхронизации
+        /// Флаг необходимости синхронизации
         /// </summary>
         public bool NeedsSync;
+        
+        /// <summary>
+        /// Время последнего обновления
+        /// </summary>
+        public float LastUpdateTime;
+        
+        /// <summary>
+        /// Уровень детализации
+        /// </summary>
+        public int LODLevel;
+    }
+    
+    /// <summary>
+    /// Данные террейна (Singleton)
+    /// </summary>
+    public struct TerrainData : IComponentData
+    {
+        /// <summary>
+        /// Количество чанков по X
+        /// </summary>
+        public int ChunkCountX;
+        
+        /// <summary>
+        /// Количество чанков по Z
+        /// </summary>
+        public int ChunkCountZ;
+        
+        /// <summary>
+        /// Размер чанка
+        /// </summary>
+        public int ChunkSize;
+        
+        /// <summary>
+        /// Общий размер террейна по X
+        /// </summary>
+        public int TotalSizeX;
+        
+        /// <summary>
+        /// Общий размер террейна по Z
+        /// </summary>
+        public int TotalSizeZ;
+        
+        /// <summary>
+        /// Масштаб высот
+        /// </summary>
+        public float HeightScale;
+        
+        /// <summary>
+        /// Масштаб текстур
+        /// </summary>
+        public float TextureScale;
+        
+        /// <summary>
+        /// Индекс NativeArray с данными высот
+        /// </summary>
+        public int HeightDataArrayIndex;
+        
+        /// <summary>
+        /// Индекс NativeArray с данными грязи
+        /// </summary>
+        public int MudDataArrayIndex;
+        
+        /// <summary>
+        /// Индекс NativeArray с данными нормалей
+        /// </summary>
+        public int NormalDataArrayIndex;
     }
 }

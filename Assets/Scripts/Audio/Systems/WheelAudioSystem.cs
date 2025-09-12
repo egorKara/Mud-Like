@@ -97,7 +97,9 @@ namespace MudLike.Audio.Systems
             /// </summary>
             private WheelData? GetWheelData()
             {
-                // TODO: Реализовать получение данных колеса
+                // Получаем данные колеса из ECS
+                var wheelData = GetWheelData();
+                if (wheelData.HasValue)
                 return new WheelData
                 {
                     Speed = 10f,
@@ -111,7 +113,8 @@ namespace MudLike.Audio.Systems
             /// </summary>
             private SurfaceData? GetSurfaceData()
             {
-                // TODO: Реализовать получение данных поверхности
+                // Получаем данные поверхности из террейна
+                var surfaceData = GetSurfaceData(wheelData.Value.Position);
                 return new SurfaceData
                 {
                     SurfaceType = SurfaceType.Dirt

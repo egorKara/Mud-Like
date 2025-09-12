@@ -35,7 +35,7 @@ namespace MudLike.Vehicles.Systems
         /// </summary>
         protected override void OnUpdate()
         {
-            float deltaTime = Time.fixedDeltaTime;
+            float deltaTime = SystemAPI.Time.fixedDeltaTime;
             var physicsWorld = SystemAPI.GetSingleton<PhysicsWorldSingleton>().PhysicsWorld;
             
             // Создаем Job для обработки колес

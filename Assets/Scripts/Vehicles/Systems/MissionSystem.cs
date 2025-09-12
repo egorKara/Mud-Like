@@ -138,19 +138,67 @@ namespace MudLike.Vehicles.Systems
             /// <summary>
             /// Обновляет прогресс миссии
             /// </summary>
+            [BurstCompile]
             private void UpdateProgress(ref MissionData missionData)
             {
-                // TODO: Реализовать обновление прогресса на основе целей
-                // Например, проверка расстояния до цели, выполнение задач
+                // Проверяем каждую цель миссии
+                for (int i = 0; i < missionData.Objectives.Length; i++)
+                {
+                    var objective = missionData.Objectives[i];
+                    
+                    if (!objective.IsCompleted)
+                    {
+                        // Проверяем выполнение цели на основе типа
+                        switch (objective.Type)
+                        {
+                            case ObjectiveType.ReachLocation:
+                                UpdateLocationObjective(ref objective, missionData.PlayerPosition);
+                                break;
+                            case ObjectiveType.CollectItems:
+                                UpdateCollectObjective(ref objective, missionData.CollectedItems);
+                                break;
+                            case ObjectiveType.DeliverCargo:
+                                UpdateDeliveryObjective(ref objective, missionData.DeliveredCargo);
+                                break;
+                        }
+                        
+                        missionData.Objectives[i] = objective;
+                    }
+                }
+                
+                // Пересчитываем общий прогресс
+                missionData.Progress = CalculateMissionProgress(missionData.Objectives);
             }
             
             /// <summary>
             /// Проверяет выполнение миссии
             /// </summary>
+            [BurstCompile]
             private void CheckMissionCompletion(ref MissionData missionData)
             {
-                // TODO: Реализовать проверку выполнения миссии
-                // Например, все цели выполнены, достигнута конечная точка
+                // Проверяем, все ли цели выполнены
+                bool allObjectivesCompleted = true;
+                for (int i = 0; i < missionData.Objectives.Length; i++)
+                {
+                    if (!missionData.Objectives[i].IsCompleted)
+                    {
+                        allObjectivesCompleted = false;
+                        break;
+                    }
+                }
+                
+                // Проверяем дополнительные условия миссии
+                bool additionalConditionsMet = CheckAdditionalConditions(missionData);
+                
+                // Миссия завершена, если все цели выполнены и дополнительные условия соблюдены
+                if (allObjectivesCompleted && additionalConditionsMet && !missionData.IsCompleted)
+                {
+                    missionData.IsCompleted = true;
+                    missionData.CompletionTime = SystemAPI.Time.time;
+                    
+                    // Выдаем награду за выполнение миссии
+                    AwardMissionCompletion(missionData);
+                }
             }
         }
         
@@ -186,7 +234,8 @@ namespace MudLike.Vehicles.Systems
             /// </summary>
             private void CheckObjectiveCompletion(ref MissionObjectiveData objectiveData)
             {
-                // TODO: Реализовать проверку выполнения цели
+                // Проверяем выполнение цели
+                CheckObjectiveCompletion(ref objective, missionData);
                 // Например, проверка расстояния до цели, количества собранных предметов
             }
         }
@@ -212,7 +261,8 @@ namespace MudLike.Vehicles.Systems
             {
                 if (rewardData.IsRewarded) return;
                 
-                // TODO: Реализовать выдачу награды
+                // Выдаем награду за выполнение цели
+                AwardObjectiveCompletion(ref objective, missionData);
                 // Например, добавление денег, опыта, предметов
                 
                 rewardData.NeedsUpdate = true;

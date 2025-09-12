@@ -491,3 +491,4 @@ namespace MudLike.Core.Systems
 **Дата создания**: $(date)
 **Версия**: 1.0
 **Статус**: Готов к использованию
+**Unity Version**: 6000.0.57f1

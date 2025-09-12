@@ -4,68 +4,55 @@ using Unity.Mathematics;
 namespace MudLike.Vehicles.Components
 {
     /// <summary>
-    /// Ввод для управления транспортным средством
+    /// Компонент ввода управления транспортом
+    /// Игрок управляет только транспортом, не ходит пешком
     /// </summary>
     public struct VehicleInput : IComponentData
     {
         /// <summary>
-        /// Ввод движения (горизонтальная ось)
+        /// Ускорение (W/Up)
         /// </summary>
-        public float Horizontal;
+        public bool Accelerate;
         
         /// <summary>
-        /// Ввод движения (вертикальная ось)
+        /// Торможение (S/Down)
         /// </summary>
-        public float Vertical;
+        public bool Brake;
         
         /// <summary>
-        /// Ввод торможения
+        /// Ручной тормоз (Space)
         /// </summary>
-        public float Brake;
+        public bool Handbrake;
         
         /// <summary>
-        /// Ввод ручного тормоза
+        /// Управление рулем (-1.0 до 1.0, A/D или Left/Right)
         /// </summary>
-        public float Handbrake;
+        public float Steering;
         
         /// <summary>
-        /// Ввод переключения передачи вверх
+        /// Переключение передач (Shift/Ctrl)
         /// </summary>
         public bool ShiftUp;
-        
-        /// <summary>
-        /// Ввод переключения передачи вниз
-        /// </summary>
         public bool ShiftDown;
         
         /// <summary>
-        /// Ввод сброса передачи в нейтраль
+        /// Включение/выключение полного привода (F)
         /// </summary>
-        public bool Neutral;
+        public bool Toggle4WD;
         
         /// <summary>
-        /// Ввод реверса
+        /// Включение/выключение блокировки дифференциала (G)
         /// </summary>
-        public bool Reverse;
+        public bool ToggleDiffLock;
         
         /// <summary>
-        /// Ввод включения/выключения двигателя
+        /// Использование лебедки (E)
         /// </summary>
-        public bool EngineToggle;
+        public bool UseWinch;
         
         /// <summary>
-        /// Ввод включения/выключения фар
+        /// Переключение камеры (Tab)
         /// </summary>
-        public bool HeadlightsToggle;
-        
-        /// <summary>
-        /// Ввод включения/выключения аварийных огней
-        /// </summary>
-        public bool HazardLightsToggle;
-        
-        /// <summary>
-        /// Ввод включения/выключения звукового сигнала
-        /// </summary>
-        public bool Horn;
+        public bool SwitchCamera;
     }
 }

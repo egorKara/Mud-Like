@@ -3,6 +3,7 @@ using Unity.Mathematics;
 using Unity.Transforms;
 using Unity.Physics;
 using Unity.Collections;
+using Unity.Burst;
 using MudLike.Vehicles.Components;
 
 namespace MudLike.Vehicles.Systems
@@ -25,7 +26,7 @@ namespace MudLike.Vehicles.Systems
         /// </summary>
         protected override void OnUpdate()
         {
-            float deltaTime = Time.fixedDeltaTime;
+            float deltaTime = SystemAPI.Time.fixedDeltaTime;
             var physicsWorld = SystemAPI.GetSingleton<PhysicsWorldSingleton>().PhysicsWorld;
             
             Entities

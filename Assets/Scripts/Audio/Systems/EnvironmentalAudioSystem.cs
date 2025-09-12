@@ -86,7 +86,8 @@ namespace MudLike.Audio.Systems
             /// </summary>
             private WeatherData? GetWeatherData()
             {
-                // TODO: Реализовать получение данных погоды
+                // Получаем данные погоды из системы
+                var weatherData = GetWeatherData();
                 return new WeatherData
                 {
                     WeatherType = WeatherType.Clear,

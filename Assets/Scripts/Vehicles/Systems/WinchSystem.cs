@@ -45,7 +45,7 @@ namespace MudLike.Vehicles.Systems
         
         protected override void OnUpdate()
         {
-            float deltaTime = Time.fixedDeltaTime;
+            float deltaTime = SystemAPI.Time.fixedDeltaTime;
             var physicsWorld = SystemAPI.GetSingleton<PhysicsWorldSingleton>().PhysicsWorld;
             
             var winchJob = new WinchJob
@@ -210,18 +210,40 @@ namespace MudLike.Vehicles.Systems
             /// <summary>
             /// Проверяет, что подключение все еще активно
             /// </summary>
+            [BurstCompile]
             private bool IsConnectionValid(WinchData winchData)
             {
-                // TODO: Реализовать проверку подключения
+                // Проверяем, что лебедка подключена
+                if (!winchData.IsConnected)
+                    return false;
+                
+                // Проверяем, что подключенный объект все еще существует
+                if (winchData.ConnectedEntityId == Entity.Null)
+                    return false;
+                
+                // Проверяем максимальную дистанцию подключения
+                float currentDistance = math.distance(winchData.ConnectionPoint, winchData.AttachmentPoint);
+                if (currentDistance > winchData.MaxConnectionDistance)
+                    return false;
+                
                 return true;
             }
             
             /// <summary>
             /// Получает позицию подключения
             /// </summary>
+            [BurstCompile]
             private float3 GetConnectionPosition(WinchData winchData)
             {
-                // TODO: Реализовать получение позиции подключения
+                // Если подключен объект, получаем его позицию
+                if (winchData.IsConnected && winchData.ConnectedEntityId != Entity.Null)
+                {
+                    // В реальной реализации здесь должен быть доступ к Transform подключенного объекта
+                    // Для ECS это может быть через EntityManager или SystemAPI
+                    return winchData.ConnectedObjectPosition;
+                }
+                
+                // Иначе возвращаем точку подключения лебедки
                 return winchData.ConnectionPoint;
             }
             
@@ -242,26 +264,52 @@ namespace MudLike.Vehicles.Systems
             /// <summary>
             /// Получает подключенный объект
             /// </summary>
+            [BurstCompile]
             private Entity GetConnectedObject(WinchData winchData)
             {
-                // TODO: Реализовать получение подключенного объекта
+                // Возвращаем ID подключенной сущности
+                if (winchData.IsConnected)
+                    return winchData.ConnectedEntityId;
+                
                 return Entity.Null;
             }
             
             /// <summary>
             /// Применяет силу к объекту
             /// </summary>
+            [BurstCompile]
             private void ApplyForceToObject(Entity entity, float3 force)
             {
-                // TODO: Реализовать применение силы к объекту
+                // Применяем силу к физическому телу объекта
+                if (EntityManager.HasComponent<PhysicsVelocity>(entity))
+                {
+                    var velocity = EntityManager.GetComponentData<PhysicsVelocity>(entity);
+                    velocity.Linear += force * SystemAPI.Time.fixedDeltaTime;
+                    EntityManager.SetComponentData(entity, velocity);
+                }
+                
+                // Если объект имеет компонент VehiclePhysics, применяем к нему
+                if (EntityManager.HasComponent<VehiclePhysics>(entity))
+                {
+                    var vehiclePhysics = EntityManager.GetComponentData<VehiclePhysics>(entity);
+                    vehiclePhysics.Velocity += force * SystemAPI.Time.fixedDeltaTime;
+                    EntityManager.SetComponentData(entity, vehiclePhysics);
+                }
             }
             
             /// <summary>
             /// Применяет силу к транспорту
             /// </summary>
-            private void ApplyForceToVehicle(LocalTransform transform, float3 force)
+            [BurstCompile]
+            private void ApplyForceToVehicle(ref LocalTransform transform, float3 force)
             {
-                // TODO: Реализовать применение силы к транспорту
+                // Применяем силу к трансформации транспорта
+                // Сила влияет на позицию транспорта
+                float deltaTime = SystemAPI.Time.fixedDeltaTime;
+                transform.Position += force * deltaTime * deltaTime * 0.5f;
+                
+                // Дополнительно можем применить к VehiclePhysics если есть
+                // Это будет сделано в основной системе движения транспорта
             }
             
             /// <summary>

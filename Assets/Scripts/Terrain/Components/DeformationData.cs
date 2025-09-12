@@ -9,7 +9,7 @@ namespace MudLike.Terrain.Components
     public struct DeformationData : IComponentData
     {
         /// <summary>
-        /// Позиция деформации
+        /// Позиция деформации в мире
         /// </summary>
         public float3 Position;
         
@@ -34,44 +34,131 @@ namespace MudLike.Terrain.Components
         public DeformationType Type;
         
         /// <summary>
-        /// Время деформации
+        /// Время создания деформации
         /// </summary>
         public float Time;
         
         /// <summary>
-        /// Деформация активна
+        /// Активна ли деформация
         /// </summary>
         public bool IsActive;
         
         /// <summary>
-        /// Деформация применена
+        /// Применена ли деформация
         /// </summary>
         public bool IsApplied;
+        
+        /// <summary>
+        /// ID источника деформации
+        /// </summary>
+        public int SourceId;
     }
     
     /// <summary>
-    /// Тип деформации
+    /// Тип деформации террейна
     /// </summary>
-    public enum DeformationType
+    public enum DeformationType : byte
     {
         /// <summary>
-        /// Вдавливание (от колес)
+        /// Вдавление (от колес)
         /// </summary>
         Indentation,
         
         /// <summary>
-        /// Выдавливание (от взрывов)
+        /// Поднятие (от взрыва)
         /// </summary>
-        Explosion,
+        Elevation,
         
         /// <summary>
-        /// Сглаживание
+        /// Сглаживание (от времени)
         /// </summary>
         Smoothing,
         
         /// <summary>
-        /// Восстановление
+        /// Эрозия (от воды)
         /// </summary>
-        Restoration
+        Erosion
+    }
+    
+    /// <summary>
+    /// Данные грязи в точке террейна
+    /// </summary>
+    public struct MudData : IComponentData
+    {
+        /// <summary>
+        /// Позиция грязи
+        /// </summary>
+        public float3 Position;
+        
+        /// <summary>
+        /// Уровень грязи (0-1)
+        /// </summary>
+        public float MudLevel;
+        
+        /// <summary>
+        /// Вязкость грязи
+        /// </summary>
+        public float Viscosity;
+        
+        /// <summary>
+        /// Сопротивление движению
+        /// </summary>
+        public float TractionModifier;
+        
+        /// <summary>
+        /// Глубина погружения
+        /// </summary>
+        public float SinkDepth;
+        
+        /// <summary>
+        /// Тип поверхности
+        /// </summary>
+        public SurfaceType SurfaceType;
+        
+        /// <summary>
+        /// Время последнего обновления
+        /// </summary>
+        public float LastUpdateTime;
+    }
+    
+    /// <summary>
+    /// Тип поверхности
+    /// </summary>
+    public enum SurfaceType : byte
+    {
+        /// <summary>
+        /// Сухая земля
+        /// </summary>
+        DryGround,
+        
+        /// <summary>
+        /// Влажная земля
+        /// </summary>
+        WetGround,
+        
+        /// <summary>
+        /// Грязь
+        /// </summary>
+        Mud,
+        
+        /// <summary>
+        /// Глубокая грязь
+        /// </summary>
+        DeepMud,
+        
+        /// <summary>
+        /// Вода
+        /// </summary>
+        Water,
+        
+        /// <summary>
+        /// Камень
+        /// </summary>
+        Rock,
+        
+        /// <summary>
+        /// Песок
+        /// </summary>
+        Sand
     }
 }

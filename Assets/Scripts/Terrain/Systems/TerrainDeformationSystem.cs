@@ -12,6 +12,7 @@ namespace MudLike.Terrain.Systems
     /// Система деформации террейна
     /// </summary>
     [UpdateInGroup(typeof(FixedStepSimulationSystemGroup))]
+    [BurstCompile]
     public partial class TerrainDeformationSystem : SystemBase
     {
         /// <summary>
@@ -19,7 +20,7 @@ namespace MudLike.Terrain.Systems
         /// </summary>
         protected override void OnUpdate()
         {
-            float deltaTime = Time.fixedDeltaTime;
+            float deltaTime = SystemAPI.Time.fixedDeltaTime;
             
             // Обрабатываем деформации от колес
             ProcessWheelDeformations(deltaTime);
@@ -111,6 +112,7 @@ namespace MudLike.Terrain.Systems
         /// <summary>
         /// Применяет деформацию к террейну
         /// </summary>
+        [BurstCompile]
         private void ApplyDeformation(in DeformationData deformation)
         {
             // Находим затронутые чанки
@@ -170,26 +172,91 @@ namespace MudLike.Terrain.Systems
         /// <summary>
         /// Применяет деформацию к чанку
         /// </summary>
+        [BurstCompile]
         private void ApplyDeformationToChunk(int chunkIndex, in DeformationData deformation)
         {
-            // Здесь должна быть логика применения деформации к конкретному чанку
-            // Это включает в себя:
-            // 1. Вычисление индексов высот в чанке
-            // 2. Применение деформации к высотам
-            // 3. Обновление нормалей
-            // 4. Обновление уровня грязи
+            // Получаем данные террейна
+            var terrainData = GetSingleton<TerrainData>();
+            
+            // Вычисляем размеры чанка
+            int chunkSize = terrainData.ChunkSize;
+            int chunkX = chunkIndex / terrainData.ChunkCountZ;
+            int chunkZ = chunkIndex % terrainData.ChunkCountZ;
+            
+            // Вычисляем границы деформации в локальных координатах чанка
+            float3 chunkWorldPos = new float3(chunkX * chunkSize, 0, chunkZ * chunkSize);
+            float3 localDeformationPos = deformation.Position - chunkWorldPos;
+            
+            // Применяем деформацию к высотам в чанке
+            for (int x = 0; x < chunkSize; x++)
+            {
+                for (int z = 0; z < chunkSize; z++)
+                {
+                    float3 localPos = new float3(x, 0, z);
+                    float distance = math.distance(localPos.xz, localDeformationPos.xz);
+                    
+                    // Вычисляем влияние деформации
+                    if (distance <= deformation.Radius)
+                    {
+                        float influence = 1f - (distance / deformation.Radius);
+                        float heightDeformation = deformation.Depth * influence * influence;
+                        
+                        // Применяем деформацию к высоте
+                        ApplyHeightDeformation(chunkIndex, x, z, heightDeformation);
+                        
+                        // Обновляем уровень грязи
+                        UpdateMudLevel(chunkIndex, x, z, deformation.Force * influence);
+                    }
+                }
+            }
         }
         
         /// <summary>
         /// Обновляет высоты чанка
         /// </summary>
+        [BurstCompile]
         private void UpdateChunkHeights(ref TerrainChunk chunk)
         {
-            // Здесь должна быть логика обновления высот чанка
-            // Это включает в себя:
-            // 1. Пересчет высот
-            // 2. Обновление нормалей
-            // 3. Синхронизация с Unity Terrain
+            // Пересчитываем нормали для плавности
+            RecalculateNormals(ref chunk);
+            
+            // Обновляем физические коллайдеры
+            UpdatePhysicsColliders(chunk);
+            
+            // Синхронизируем с Unity Terrain
+            SyncWithUnityTerrain(chunk);
+        }
+        
+        /// <summary>
+        /// Применяет деформацию к высоте в конкретной точке
+        /// </summary>
+        [BurstCompile]
+        private void ApplyHeightDeformation(int chunkIndex, int x, int z, float deformation)
+        {
+            // Получаем текущую высоту
+            float currentHeight = GetChunkHeight(chunkIndex, x, z);
+            
+            // Применяем деформацию
+            float newHeight = currentHeight - deformation;
+            
+            // Ограничиваем минимальную высоту
+            newHeight = math.max(newHeight, 0f);
+            
+            // Сохраняем новую высоту
+            SetChunkHeight(chunkIndex, x, z, newHeight);
+        }
+        
+        /// <summary>
+        /// Обновляет уровень грязи в точке
+        /// </summary>
+        [BurstCompile]
+        private void UpdateMudLevel(int chunkIndex, int x, int z, float force)
+        {
+            float currentMud = GetChunkMudLevel(chunkIndex, x, z);
+            float mudIncrease = force * 0.001f; // Масштабируем силу
+            float newMud = math.min(currentMud + mudIncrease, 1f);
+            
+            SetChunkMudLevel(chunkIndex, x, z, newMud);
         }
     }
 }

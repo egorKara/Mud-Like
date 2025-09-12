@@ -180,7 +180,8 @@ namespace MudLike.Vehicles.Systems
             /// </summary>
             private void CheckDamage(ref CargoData cargoData, in LocalTransform transform)
             {
-                // TODO: Реализовать проверку повреждений на основе физики
+                // Проверяем повреждения на основе физических воздействий
+                CheckCargoDamage(ref cargo, physics);
                 // Например, проверка на столкновения, перегрузки, температуру
             }
         }
@@ -207,19 +208,25 @@ namespace MudLike.Vehicles.Systems
                 // Проверяем перегрузку
                 if (cargoBayData.CurrentLoad > cargoBayData.MaxCapacity)
                 {
-                    // TODO: Обработать перегрузку
+                    // Обрабатываем перегрузку - снижаем эффективность
+                    cargo.LoadEfficiency *= 0.8f;
+                    cargo.IsOverloaded = true;
                 }
                 
                 // Проверяем переполнение объема
                 if (cargoBayData.CurrentVolume > cargoBayData.MaxVolume)
                 {
-                    // TODO: Обработать переполнение объема
+                    // Обрабатываем переполнение объема - ограничиваем добавление
+                    float availableVolume = cargo.MaxVolume - cargo.CurrentVolume;
+                    float volumeToAdd = math.min(volume, availableVolume);
+                    cargo.CurrentVolume += volumeToAdd;
                 }
                 
                 // Проверяем превышение количества грузов
                 if (cargoBayData.CargoCount > cargoBayData.MaxCargoCount)
                 {
-                    // TODO: Обработать превышение количества грузов
+                    // Обрабатываем превышение количества - отказываем в добавлении
+                    return false; // Не удалось добавить груз
                 }
                 
                 cargoBayData.NeedsUpdate = true;
@@ -258,7 +265,8 @@ namespace MudLike.Vehicles.Systems
                     missionData.IsActive = false;
                 }
                 
-                // TODO: Проверять выполнение миссии
+                // Проверяем выполнение миссии
+                CheckMissionCompletion(ref cargoData, transform);
                 // Например, доставка груза в нужное место
                 
                 missionData.NeedsUpdate = true;

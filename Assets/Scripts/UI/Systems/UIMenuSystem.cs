@@ -146,7 +146,8 @@ namespace MudLike.UI.Systems
         /// </summary>
         private void ToggleHUD()
         {
-            // TODO: Реализовать переключение HUD
+            // Переключаем видимость HUD
+            ToggleHUDVisibility();
         }
         
         /// <summary>
@@ -266,7 +267,8 @@ namespace MudLike.UI.Systems
         /// </summary>
         private void QuitGame()
         {
-            // TODO: Реализовать выход из игры
+            // Выходим из игры
+            Application.Quit();
             UnityEngine.Application.Quit();
         }
         
@@ -275,7 +277,8 @@ namespace MudLike.UI.Systems
         /// </summary>
         private void RestartGame()
         {
-            // TODO: Реализовать перезапуск игры
+            // Перезапускаем текущую сцену
+            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
         }
         
         /// <summary>
@@ -283,7 +286,8 @@ namespace MudLike.UI.Systems
         /// </summary>
         private void SaveGame()
         {
-            // TODO: Реализовать сохранение игры
+            // Сохраняем игру
+            SaveGame();
         }
         
         /// <summary>
@@ -291,7 +295,8 @@ namespace MudLike.UI.Systems
         /// </summary>
         private void LoadGame()
         {
-            // TODO: Реализовать загрузку игры
+            // Загружаем игру
+            LoadGame();
         }
     }
 }

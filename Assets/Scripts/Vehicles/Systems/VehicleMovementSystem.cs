@@ -2,6 +2,7 @@ using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Transforms;
 using Unity.Physics;
+using Unity.Burst;
 using MudLike.Vehicles.Components;
 using MudLike.Core.Components;
 
@@ -11,6 +12,7 @@ namespace MudLike.Vehicles.Systems
     /// Система движения транспортного средства
     /// </summary>
     [UpdateInGroup(typeof(FixedStepSimulationSystemGroup))]
+    [BurstCompile]
     public partial class VehicleMovementSystem : SystemBase
     {
         /// <summary>
@@ -18,7 +20,7 @@ namespace MudLike.Vehicles.Systems
         /// </summary>
         protected override void OnUpdate()
         {
-            float deltaTime = Time.fixedDeltaTime;
+            float deltaTime = SystemAPI.Time.fixedDeltaTime;
             
             Entities
                 .WithAll<VehicleTag>()
@@ -34,6 +36,7 @@ namespace MudLike.Vehicles.Systems
         /// <summary>
         /// Обрабатывает движение конкретного транспортного средства
         /// </summary>
+        [BurstCompile]
         private static void ProcessVehicleMovement(ref LocalTransform transform, 
                                                  ref VehiclePhysics physics, 
                                                  in VehicleConfig config, 

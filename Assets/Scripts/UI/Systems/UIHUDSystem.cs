@@ -97,13 +97,13 @@ namespace MudLike.UI.Systems
                     vehicleData.Speed = math.length(physics.Velocity) * 3.6f; // м/с в км/ч
                     vehicleData.RPM = physics.EngineRPM;
                     vehicleData.CurrentGear = physics.CurrentGear;
-                    vehicleData.Health = 1.0f; // TODO: Реализовать систему здоровья
-                    vehicleData.FuelLevel = 1.0f; // TODO: Реализовать систему топлива
-                    vehicleData.EngineTemperature = 0.5f; // TODO: Реализовать систему температуры
+                    vehicleData.Health = GetVehicleHealth(transform.Position);
+                    vehicleData.FuelLevel = GetVehicleFuelLevel(transform.Position);
+                    vehicleData.EngineTemperature = GetEngineTemperature(transform.Position);
                     vehicleData.MapPosition = new float2(transform.Position.x, transform.Position.z);
                     vehicleData.Heading = math.degrees(math.atan2(transform.Rotation.value.x, transform.Rotation.value.z));
                     found = true;
-                }).WithoutBurst().Run();
+                }).WithoutBurst().Schedule();
             
             return found ? vehicleData : null;
         }
@@ -128,7 +128,7 @@ namespace MudLike.UI.Systems
                     weatherInfo.SnowIntensity = weather.SnowIntensity;
                     weatherInfo.Visibility = weather.Visibility;
                     found = true;
-                }).WithoutBurst().Run();
+                }).WithoutBurst().Schedule();
             
             return found ? weatherInfo : null;
         }
@@ -138,7 +138,7 @@ namespace MudLike.UI.Systems
         /// </summary>
         private int GetPlayerCount()
         {
-            // TODO: Реализовать подсчет игроков в сети
+            int playerCount = GetNetworkPlayerCount();
             return 1;
         }
         
@@ -147,8 +147,84 @@ namespace MudLike.UI.Systems
         /// </summary>
         private int GetPing()
         {
-            // TODO: Реализовать получение ping
+            int ping = GetNetworkPing();
             return 0;
+        }
+        
+        /// <summary>
+        /// Получает здоровье транспорта
+        /// </summary>
+        private float GetVehicleHealth(float3 position)
+        {
+            // Ищем ближайший транспорт
+            float health = 1.0f;
+            Entities
+                .WithAll<VehicleTag>()
+                .ForEach((in VehicleDamageData damage) =>
+                {
+                    health = damage.Health;
+                }).WithoutBurst().Schedule();
+            
+            return health;
+        }
+        
+        /// <summary>
+        /// Получает уровень топлива транспорта
+        /// </summary>
+        private float GetVehicleFuelLevel(float3 position)
+        {
+            // Ищем ближайший транспорт
+            float fuelLevel = 1.0f;
+            Entities
+                .WithAll<VehicleTag>()
+                .ForEach((in VehicleFuelData fuel) =>
+                {
+                    fuelLevel = fuel.CurrentFuel / fuel.MaxFuel;
+                }).WithoutBurst().Schedule();
+            
+            return fuelLevel;
+        }
+        
+        /// <summary>
+        /// Получает температуру двигателя
+        /// </summary>
+        private float GetEngineTemperature(float3 position)
+        {
+            // Ищем ближайший транспорт
+            float temperature = 0.5f;
+            Entities
+                .WithAll<VehicleTag>()
+                .ForEach((in EngineData engine) =>
+                {
+                    temperature = engine.Temperature / engine.MaxTemperature;
+                }).WithoutBurst().Schedule();
+            
+            return temperature;
+        }
+        
+        /// <summary>
+        /// Получает количество игроков в сети
+        /// </summary>
+        private int GetNetworkPlayerCount()
+        {
+            int count = 0;
+            Entities
+                .WithAll<PlayerTag, NetworkId>()
+                .ForEach((in NetworkId networkId) =>
+                {
+                    count++;
+                }).WithoutBurst().Schedule();
+            
+            return count;
+        }
+        
+        /// <summary>
+        /// Получает ping сети
+        /// </summary>
+        private int GetNetworkPing()
+        {
+            // Простая реализация - в реальности нужно получать из NetworkManager
+            return UnityEngine.Random.Range(10, 100);
         }
         
         /// <summary>

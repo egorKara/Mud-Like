@@ -1,5 +1,4 @@
 using Unity.Entities;
-using Unity.NetCode;
 
 namespace MudLike.Networking.Components
 {
@@ -9,35 +8,27 @@ namespace MudLike.Networking.Components
     public struct NetworkId : IComponentData
     {
         /// <summary>
-        /// Уникальный идентификатор
+        /// Уникальный идентификатор в сети
         /// </summary>
         public int Value;
         
         /// <summary>
-        /// Тип сущности
+        /// Время последнего обновления
         /// </summary>
-        public NetworkEntityType EntityType;
+        public float LastUpdateTime;
         
         /// <summary>
-        /// Владелец сущности
+        /// Создает новый сетевой ID
         /// </summary>
-        public int OwnerId;
-        
-        /// <summary>
-        /// Сущность синхронизируется
-        /// </summary>
-        public bool IsSynced;
-    }
-    
-    /// <summary>
-    /// Тип сетевой сущности
-    /// </summary>
-    public enum NetworkEntityType
-    {
-        Player,
-        Vehicle,
-        Terrain,
-        Deformation,
-        Mud
+        /// <param name="id">Значение идентификатора</param>
+        /// <returns>Новый NetworkId</returns>
+        public static NetworkId Create(int id)
+        {
+            return new NetworkId
+            {
+                Value = id,
+                LastUpdateTime = 0f
+            };
+        }
     }
 }

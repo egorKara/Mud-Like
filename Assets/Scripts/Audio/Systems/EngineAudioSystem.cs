@@ -88,12 +88,23 @@ namespace MudLike.Audio.Systems
             /// </summary>
             private EngineData? GetEngineData()
             {
-                // TODO: Реализовать получение данных двигателя
-                return new EngineData
+                // Ищем ближайший двигатель
+                EngineData? engineData = null;
+                Entities
+                    .WithAll<EngineData>()
+                    .ForEach((in EngineData engine) =>
+                    {
+                        engineData = engine;
+                    }).WithoutBurst().Schedule();
+                
+                return engineData ?? new EngineData
                 {
                     RPM = 1000f,
                     Power = 0.5f,
-                    Temperature = 0.3f
+                    Temperature = 0.3f,
+                    MaxRPM = 6000f,
+                    MaxPower = 1.0f,
+                    MaxTemperature = 1.0f
                 };
             }
             

@@ -54,7 +54,7 @@ namespace MudLike.Vehicles.Systems
                 .ForEach((in LocalTransform transform) =>
                 {
                     _cameraPosition = transform.Position;
-                }).WithoutBurst().Run();
+                }).WithoutBurst().Schedule();
         }
         
         /// <summary>

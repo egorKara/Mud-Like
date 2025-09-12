@@ -1,5 +1,6 @@
 using Unity.Entities;
 using Unity.Mathematics;
+using Unity.Burst;
 using MudLike.Vehicles.Components;
 
 namespace MudLike.Vehicles.Systems
@@ -15,13 +16,13 @@ namespace MudLike.Vehicles.Systems
         /// </summary>
         protected override void OnUpdate()
         {
-            float deltaTime = Time.fixedDeltaTime;
+            float deltaTime = SystemAPI.Time.fixedDeltaTime;
             
             Entities
                 .WithAll<VehicleTag>()
                 .ForEach((ref TransmissionData transmission, 
                          ref VehiclePhysics physics, 
-                         in VehicleInput input, 
+                         in PlayerInput input, 
                          in EngineData engine) =>
                 {
                     ProcessTransmission(ref transmission, ref physics, input, engine, deltaTime);
@@ -33,7 +34,7 @@ namespace MudLike.Vehicles.Systems
         /// </summary>
         private static void ProcessTransmission(ref TransmissionData transmission, 
                                               ref VehiclePhysics physics, 
-                                              in VehicleInput input, 
+                                              in PlayerInput input, 
                                               in EngineData engine, 
                                               float deltaTime)
         {

@@ -269,9 +269,9 @@ namespace MudLike.Tests.Performance
                 MemoryUsage = Profiler.GetTotalAllocatedMemory(false),
                 GCMemory = Profiler.GetMonoUsedSize(),
                 DrawCalls = Profiler.GetRuntimeMemorySize(null),
-                Triangles = 0, // TODO: Получить количество треугольников
-                Vertices = 0,  // TODO: Получить количество вершин
-                Entities = 0   // TODO: Получить количество сущностей
+                Triangles = GetTriangleCount(),
+                Vertices = GetVertexCount(),
+                Entities = GetEntityCount()
             };
         }
         

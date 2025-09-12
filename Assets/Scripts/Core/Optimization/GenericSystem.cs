@@ -94,9 +94,15 @@ namespace MudLike.Core.Optimization
         {
             return new BurstGenericJob<T>
             {
-                ProcessFunction = ProcessComponentBurst
+                ProcessFunction = GetProcessFunctionPointer()
             };
         }
+        
+        /// <summary>
+        /// Получает FunctionPointer для обработки компонентов
+        /// Переопределяется в наследниках для предоставления конкретной реализации
+        /// </summary>
+        protected abstract Unity.Burst.FunctionPointer<ProcessComponentDelegate<T>> GetProcessFunctionPointer();
         
         /// <summary>
         /// Burst-оптимизированная обработка компонента
@@ -192,19 +198,62 @@ namespace MudLike.Core.Optimization
     }
     
     /// <summary>
+    /// Пример конкретной реализации BurstGenericSystem
+    /// Показывает, как правильно использовать FunctionPointer
+    /// </summary>
+    /// <typeparam name="T">Тип компонента</typeparam>
+    public abstract partial class ExampleBurstSystem<T> : BurstGenericSystem<T> where T : unmanaged, IComponentData
+    {
+        /// <summary>
+        /// Статический метод для Burst-оптимизированной обработки
+        /// </summary>
+        [BurstCompile]
+        public static void StaticProcessComponent(ref T component)
+        {
+            // Конкретная логика обработки компонента
+            // Этот метод может быть скомпилирован в Burst
+        }
+        
+        /// <summary>
+        /// Получает FunctionPointer для статического метода
+        /// </summary>
+        protected override Unity.Burst.FunctionPointer<ProcessComponentDelegate<T>> GetProcessFunctionPointer()
+        {
+            return BurstCompiler.CompileFunctionPointer<ProcessComponentDelegate<T>>(StaticProcessComponent);
+        }
+        
+        /// <summary>
+        /// Burst-оптимизированная обработка компонента
+        /// </summary>
+        [BurstCompile]
+        protected override void ProcessComponentBurst(ref T component)
+        {
+            StaticProcessComponent(ref component);
+        }
+    }
+    
+    /// <summary>
     /// Burst-оптимизированный job для универсальных систем
     /// </summary>
     /// <typeparam name="T">Тип компонента</typeparam>
     [BurstCompile]
     public partial struct BurstGenericJob<T> : IJobEntity where T : unmanaged, IComponentData
     {
-        public System.FuncRef<T, void> ProcessFunction;
+        // Используем FunctionPointer для обработки компонента
+        public Unity.Burst.FunctionPointer<ProcessComponentDelegate<T>> ProcessFunction;
         
         public void Execute(ref T component)
         {
-            ProcessFunction(ref component);
+            ProcessFunction.Invoke(ref component);
         }
     }
+    
+    /// <summary>
+    /// Делегат для обработки компонентов в Burst-оптимизированных системах
+    /// </summary>
+    /// <typeparam name="T">Тип компонента</typeparam>
+    /// <param name="component">Компонент для обработки</param>
+    public delegate void ProcessComponentDelegate<T>(ref T component) where T : unmanaged, IComponentData;
     
     /// <summary>
     /// SIMD-оптимизированный job для универсальных систем
@@ -213,11 +262,11 @@ namespace MudLike.Core.Optimization
     [BurstCompile]
     public partial struct SIMDGenericJob<T> : IJobEntity where T : unmanaged, IComponentData
     {
-        public System.FuncRef<T, void> ProcessFunction;
+        public Unity.Burst.FunctionPointer<ProcessComponentDelegate<T>> ProcessFunction;
         
         public void Execute(ref T component)
         {
-            ProcessFunction(ref component);
+            ProcessFunction.Invoke(ref component);
         }
     }
     
@@ -229,7 +278,7 @@ namespace MudLike.Core.Optimization
     public partial struct ChunkGenericJob<T> : IJobChunk where T : unmanaged, IComponentData
     {
         public ComponentTypeHandle<T> ComponentType;
-        public System.FuncRef<T, void> ProcessFunction;
+        public Unity.Burst.FunctionPointer<ProcessComponentDelegate<T>> ProcessFunction;
         
         public void Execute(in ArchetypeChunk chunk, int unfilteredChunkIndex, 
                            bool useEnabledMask, in v128 chunkEnabledMask)
@@ -238,7 +287,7 @@ namespace MudLike.Core.Optimization
             
             for (int i = 0; i < chunk.Count; i++)
             {
-                ProcessFunction(ref components[i]);
+                ProcessFunction.Invoke(ref components[i]);
             }
         }
     }

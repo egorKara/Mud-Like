@@ -413,7 +413,7 @@ jobs:
       - name: Setup Unity
         uses: game-ci/unity-setup@v2
         with:
-          unity-version: 6000.2.2f1
+          unity-version: 6000.0.57f1
       - name: Run Tests
         uses: game-ci/unity-test-runner@v2
         with:
