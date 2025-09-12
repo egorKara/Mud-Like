@@ -4,22 +4,22 @@ using Unity.Mathematics;
 namespace MudLike.Vehicles.Components
 {
     /// <summary>
-    /// Расширенные данные физики колеса для взаимодействия с грязью
+    /// Расширенные физические данные колеса
     /// </summary>
     public struct WheelPhysicsData : IComponentData
     {
         /// <summary>
-        /// Скорость проскальзывания (0-1)
+        /// Коэффициент проскальзывания
         /// </summary>
         public float SlipRatio;
         
         /// <summary>
-        /// Угол проскальзывания (радианы)
+        /// Угол проскальзывания
         /// </summary>
         public float SlipAngle;
         
         /// <summary>
-        /// Коэффициент сцепления с текущей поверхностью
+        /// Сцепление с поверхностью
         /// </summary>
         public float SurfaceTraction;
         
@@ -29,37 +29,37 @@ namespace MudLike.Vehicles.Components
         public float SinkDepth;
         
         /// <summary>
-        /// Сила сопротивления качению
+        /// Сопротивление качению
         /// </summary>
         public float RollingResistance;
         
         /// <summary>
-        /// Сила сопротивления вязкости
+        /// Вязкое сопротивление
         /// </summary>
         public float ViscousResistance;
         
         /// <summary>
-        /// Сила выталкивания (Архимед)
+        /// Сила плавучести
         /// </summary>
         public float BuoyancyForce;
         
         /// <summary>
-        /// Момент сопротивления повороту
+        /// Сопротивление повороту
         /// </summary>
         public float SteeringResistance;
         
         /// <summary>
-        /// Температура колеса (влияет на сцепление)
+        /// Температура колеса
         /// </summary>
         public float WheelTemperature;
         
         /// <summary>
-        /// Износ протектора (0-1)
+        /// Износ протектора
         /// </summary>
         public float TreadWear;
         
         /// <summary>
-        /// Давление в шине (кПа)
+        /// Давление в шине
         /// </summary>
         public float TirePressure;
         
@@ -74,17 +74,17 @@ namespace MudLike.Vehicles.Components
         public float MinTirePressure;
         
         /// <summary>
-        /// Скорость нагрева колеса
+        /// Скорость нагрева
         /// </summary>
         public float HeatingRate;
         
         /// <summary>
-        /// Скорость охлаждения колеса
+        /// Скорость охлаждения
         /// </summary>
         public float CoolingRate;
         
         /// <summary>
-        /// Время в контакте с текущей поверхностью
+        /// Время контакта с поверхностью
         /// </summary>
         public float ContactTime;
         
@@ -94,17 +94,17 @@ namespace MudLike.Vehicles.Components
         public int LastSurfaceType;
         
         /// <summary>
-        /// Количество частиц грязи на колесе
+        /// Количество частиц грязи
         /// </summary>
         public int MudParticleCount;
         
         /// <summary>
-        /// Масса грязи на колесе (кг)
+        /// Масса грязи на колесе
         /// </summary>
         public float MudMass;
         
         /// <summary>
-        /// Скорость очистки от грязи
+        /// Скорость очистки
         /// </summary>
         public float CleaningRate;
         
@@ -124,12 +124,12 @@ namespace MudLike.Vehicles.Components
         public float CurrentTractionForce;
         
         /// <summary>
-        /// Сила бокового сцепления
+        /// Боковая сила сцепления
         /// </summary>
         public float LateralTractionForce;
         
         /// <summary>
-        /// Сила продольного сцепления
+        /// Продольная сила сцепления
         /// </summary>
         public float LongitudinalTractionForce;
         
@@ -149,7 +149,7 @@ namespace MudLike.Vehicles.Components
         public float3 SlipDirection;
         
         /// <summary>
-        /// Энергия проскальзывания (для нагрева)
+        /// Энергия проскальзывания
         /// </summary>
         public float SlipEnergy;
         
@@ -159,7 +159,7 @@ namespace MudLike.Vehicles.Components
         public float LastUpdateTime;
         
         /// <summary>
-        /// Требует ли обновления
+        /// Требует обновления
         /// </summary>
         public bool NeedsUpdate;
     }

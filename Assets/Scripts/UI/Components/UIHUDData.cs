@@ -1,5 +1,6 @@
 using Unity.Entities;
 using Unity.Mathematics;
+using MudLike.Weather.Components;
 
 namespace MudLike.UI.Components
 {
@@ -9,12 +10,12 @@ namespace MudLike.UI.Components
     public struct UIHUDData : IComponentData
     {
         /// <summary>
-        /// Скорость транспорта (км/ч)
+        /// Скорость транспорта
         /// </summary>
         public float Speed;
         
         /// <summary>
-        /// Обороты двигателя (RPM)
+        /// Обороты двигателя
         /// </summary>
         public float RPM;
         
@@ -24,17 +25,17 @@ namespace MudLike.UI.Components
         public int CurrentGear;
         
         /// <summary>
-        /// Здоровье транспорта (0-1)
+        /// Здоровье транспорта
         /// </summary>
         public float Health;
         
         /// <summary>
-        /// Уровень топлива (0-1)
+        /// Уровень топлива
         /// </summary>
         public float FuelLevel;
         
         /// <summary>
-        /// Температура двигателя (0-1)
+        /// Температура двигателя
         /// </summary>
         public float EngineTemperature;
         
@@ -44,37 +45,12 @@ namespace MudLike.UI.Components
         public WeatherInfo WeatherInfo;
         
         /// <summary>
-        /// Позиция на карте
-        /// </summary>
-        public float2 MapPosition;
-        
-        /// <summary>
-        /// Направление движения
-        /// </summary>
-        public float Heading;
-        
-        /// <summary>
-        /// Время игры
-        /// </summary>
-        public float GameTime;
-        
-        /// <summary>
-        /// Количество игроков в сети
-        /// </summary>
-        public int PlayerCount;
-        
-        /// <summary>
-        /// Ping в сети (мс)
-        /// </summary>
-        public int Ping;
-        
-        /// <summary>
         /// HUD активен
         /// </summary>
         public bool IsActive;
         
         /// <summary>
-        /// HUD требует обновления
+        /// Требует обновления
         /// </summary>
         public bool NeedsUpdate;
     }
@@ -90,50 +66,13 @@ namespace MudLike.UI.Components
         public WeatherType Type;
         
         /// <summary>
-        /// Температура (°C)
+        /// Температура
         /// </summary>
         public float Temperature;
         
         /// <summary>
-        /// Влажность (0-1)
+        /// Влажность
         /// </summary>
         public float Humidity;
-        
-        /// <summary>
-        /// Скорость ветра (м/с)
-        /// </summary>
-        public float WindSpeed;
-        
-        /// <summary>
-        /// Интенсивность дождя (0-1)
-        /// </summary>
-        public float RainIntensity;
-        
-        /// <summary>
-        /// Интенсивность снега (0-1)
-        /// </summary>
-        public float SnowIntensity;
-        
-        /// <summary>
-        /// Видимость (0-1)
-        /// </summary>
-        public float Visibility;
-    }
-    
-    /// <summary>
-    /// Тип погоды
-    /// </summary>
-    public enum WeatherType
-    {
-        Clear,      // Ясно
-        Cloudy,     // Облачно
-        Rainy,      // Дождь
-        Snowy,      // Снег
-        Foggy,      // Туман
-        Stormy,     // Буря
-        Windy,      // Ветрено
-        Hot,        // Жарко
-        Cold,       // Холодно
-        Icy         // Лед
     }
 }

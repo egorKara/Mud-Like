@@ -1,18 +1,18 @@
 using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Transforms;
+using Unity.Burst;
 using MudLike.UI.Components;
 using MudLike.Vehicles.Components;
 using MudLike.Weather.Components;
-using MudLike.Core.Components;
 
 namespace MudLike.UI.Systems
 {
     /// <summary>
-    /// Система обновления HUD интерфейса
+    /// Система HUD интерфейса
     /// </summary>
     [UpdateInGroup(typeof(SimulationSystemGroup))]
-    [BurstCompile(CompileSynchronously = true)]
+    [BurstCompile]
     public partial class UIHUDSystem : SystemBase
     {
         private EntityQuery _hudQuery;
@@ -27,8 +27,8 @@ namespace MudLike.UI.Systems
             
             _vehicleQuery = GetEntityQuery(
                 ComponentType.ReadOnly<VehiclePhysics>(),
-                ComponentType.ReadOnly<VehicleConfig>(),
-                ComponentType.ReadOnly<LocalTransform>()
+                ComponentType.ReadOnly<EngineData>(),
+                ComponentType.ReadOnly<TransmissionData>()
             );
             
             _weatherQuery = GetEntityQuery(
@@ -38,210 +38,61 @@ namespace MudLike.UI.Systems
         
         protected override void OnUpdate()
         {
-            // Обновляем HUD данные
-            UpdateHUDData();
+            float deltaTime = SystemAPI.Time.DeltaTime;
+            
+            // Обновляем HUD
+            UpdateHUD(deltaTime);
         }
         
-        /// <summary>
-        /// Обновляет данные HUD
-        /// </summary>
-        private void UpdateHUDData()
+        private void UpdateHUD(float deltaTime)
         {
+            // Получаем данные о погоде
+            var weatherData = GetWeatherData();
+            
+            // Обновляем HUD для каждого игрока
             Entities
                 .WithAll<UIHUDData>()
-                .ForEach((ref UIHUDData hudData) =>
+                .ForEach((ref UIHUDData hud) =>
                 {
-                    // Получаем данные транспорта
-                    var vehicleData = GetVehicleData();
-                    if (vehicleData.HasValue)
-                    {
-                        hudData.Speed = vehicleData.Value.Speed;
-                        hudData.RPM = vehicleData.Value.RPM;
-                        hudData.CurrentGear = vehicleData.Value.CurrentGear;
-                        hudData.Health = vehicleData.Value.Health;
-                        hudData.FuelLevel = vehicleData.Value.FuelLevel;
-                        hudData.EngineTemperature = vehicleData.Value.EngineTemperature;
-                        hudData.MapPosition = vehicleData.Value.MapPosition;
-                        hudData.Heading = vehicleData.Value.Heading;
-                    }
-                    
-                    // Получаем данные погоды
-                    var weatherData = GetWeatherData();
-                    if (weatherData.HasValue)
-                    {
-                        hudData.WeatherInfo = weatherData.Value;
-                    }
-                    
-                    // Обновляем время игры
-                    hudData.GameTime += SystemAPI.Time.DeltaTime;
-                    
-                    // Обновляем сетевую информацию
-                    hudData.PlayerCount = GetPlayerCount();
-                    hudData.Ping = GetPing();
-                    
-                    hudData.NeedsUpdate = true;
+                    UpdateHUDData(ref hud, weatherData, deltaTime);
                 }).Schedule();
         }
         
-        /// <summary>
-        /// Получает данные транспорта
-        /// </summary>
-        private VehicleHUDData? GetVehicleData()
+        private WeatherInfo GetWeatherData()
         {
-            var vehicleData = new VehicleHUDData();
-            bool found = false;
+            var weatherEntities = _weatherQuery.ToEntityArray(Unity.Collections.Allocator.Temp);
             
-            Entities
-                .WithAll<VehiclePhysics, VehicleConfig, LocalTransform>()
-                .ForEach((in VehiclePhysics physics, in VehicleConfig config, in LocalTransform transform) =>
+            if (weatherEntities.Length > 0)
+            {
+                var weather = EntityManager.GetComponentData<WeatherData>(weatherEntities[0]);
+                weatherEntities.Dispose();
+                
+                return new WeatherInfo
                 {
-                    vehicleData.Speed = math.length(physics.Velocity) * 3.6f; // м/с в км/ч
-                    vehicleData.RPM = physics.EngineRPM;
-                    vehicleData.CurrentGear = physics.CurrentGear;
-                    vehicleData.Health = GetVehicleHealth(transform.Position);
-                    vehicleData.FuelLevel = GetVehicleFuelLevel(transform.Position);
-                    vehicleData.EngineTemperature = GetEngineTemperature(transform.Position);
-                    vehicleData.MapPosition = new float2(transform.Position.x, transform.Position.z);
-                    vehicleData.Heading = math.degrees(math.atan2(transform.Rotation.value.x, transform.Rotation.value.z));
-                    found = true;
-                }).Schedule();
+                    Type = weather.Type,
+                    Temperature = weather.Temperature,
+                    Humidity = weather.Humidity
+                };
+            }
             
-            return found ? vehicleData : null;
-        }
-        
-        /// <summary>
-        /// Получает данные погоды
-        /// </summary>
-        private WeatherInfo? GetWeatherData()
-        {
-            var weatherInfo = new WeatherInfo();
-            bool found = false;
+            weatherEntities.Dispose();
             
-            Entities
-                .WithAll<WeatherData>()
-                .ForEach((in WeatherData weather) =>
-                {
-                    weatherInfo.Type = (WeatherType)weather.Type;
-                    weatherInfo.Temperature = weather.Temperature;
-                    weatherInfo.Humidity = weather.Humidity;
-                    weatherInfo.WindSpeed = weather.WindSpeed;
-                    weatherInfo.RainIntensity = weather.RainIntensity;
-                    weatherInfo.SnowIntensity = weather.SnowIntensity;
-                    weatherInfo.Visibility = weather.Visibility;
-                    found = true;
-                }).Schedule();
+            return new WeatherInfo
+            {
+                Type = WeatherType.Clear,
+                Temperature = 20f,
+                Humidity = 0.5f
+            };
+        }
+        
+        private void UpdateHUDData(ref UIHUDData hud, WeatherInfo weatherInfo, float deltaTime)
+        {
+            // Обновляем информацию о погоде
+            hud.WeatherInfo = weatherInfo;
             
-            return found ? weatherInfo : null;
-        }
-        
-        /// <summary>
-        /// Получает количество игроков
-        /// </summary>
-        private int GetPlayerCount()
-        {
-            int playerCount = GetNetworkPlayerCount();
-            return 1;
-        }
-        
-        /// <summary>
-        /// Получает ping
-        /// </summary>
-        private int GetPing()
-        {
-            int ping = GetNetworkPing();
-            return 0;
-        }
-        
-        /// <summary>
-        /// Получает здоровье транспорта
-        /// </summary>
-        private float GetVehicleHealth(float3 position)
-        {
-            // Ищем ближайший транспорт
-            float health = 1.0f;
-            Entities
-                .WithAll<VehicleTag>()
-                .ForEach((in VehicleDamageData damage) =>
-                {
-                    health = damage.Health;
-                }).Schedule();
-            
-            return health;
-        }
-        
-        /// <summary>
-        /// Получает уровень топлива транспорта
-        /// </summary>
-        private float GetVehicleFuelLevel(float3 position)
-        {
-            // Ищем ближайший транспорт
-            float fuelLevel = 1.0f;
-            Entities
-                .WithAll<VehicleTag>()
-                .ForEach((in VehicleFuelData fuel) =>
-                {
-                    fuelLevel = fuel.CurrentFuel / fuel.MaxFuel;
-                }).Schedule();
-            
-            return fuelLevel;
-        }
-        
-        /// <summary>
-        /// Получает температуру двигателя
-        /// </summary>
-        private float GetEngineTemperature(float3 position)
-        {
-            // Ищем ближайший транспорт
-            float temperature = 0.5f;
-            Entities
-                .WithAll<VehicleTag>()
-                .ForEach((in EngineData engine) =>
-                {
-                    temperature = engine.Temperature / engine.MaxTemperature;
-                }).Schedule();
-            
-            return temperature;
-        }
-        
-        /// <summary>
-        /// Получает количество игроков в сети
-        /// </summary>
-        private int GetNetworkPlayerCount()
-        {
-            int count = 0;
-            Entities
-                .WithAll<PlayerTag, NetworkId>()
-                .ForEach((in NetworkId networkId) =>
-                {
-                    count++;
-                }).Schedule();
-            
-            return count;
-        }
-        
-        /// <summary>
-        /// Получает ping сети
-        /// </summary>
-        private int GetNetworkPing()
-        {
-            // Получаем ping из NetworkManager если доступен
-            var networkManager = SystemAPI.GetSingleton<NetworkManagerData>();
-            return networkManager.Ping;
-        }
-        
-        /// <summary>
-        /// Данные транспорта для HUD
-        /// </summary>
-        private struct VehicleHUDData
-        {
-            public float Speed;
-            public float RPM;
-            public int CurrentGear;
-            public float Health;
-            public float FuelLevel;
-            public float EngineTemperature;
-            public float2 MapPosition;
-            public float Heading;
+            // Обновляем статус HUD
+            hud.IsActive = true;
+            hud.NeedsUpdate = false;
         }
     }
 }

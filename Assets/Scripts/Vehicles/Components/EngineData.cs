@@ -9,29 +9,9 @@ namespace MudLike.Vehicles.Components
     public struct EngineData : IComponentData
     {
         /// <summary>
-        /// Максимальная мощность двигателя
+        /// Текущие обороты двигателя
         /// </summary>
-        public float MaxPower;
-        
-        /// <summary>
-        /// Максимальный крутящий момент двигателя
-        /// </summary>
-        public float MaxTorque;
-        
-        /// <summary>
-        /// Обороты максимальной мощности
-        /// </summary>
-        public float PowerRPM;
-        
-        /// <summary>
-        /// Обороты максимального крутящего момента
-        /// </summary>
-        public float TorqueRPM;
-        
-        /// <summary>
-        /// Минимальные обороты двигателя
-        /// </summary>
-        public float MinRPM;
+        public float CurrentRPM;
         
         /// <summary>
         /// Максимальные обороты двигателя
@@ -44,12 +24,42 @@ namespace MudLike.Vehicles.Components
         public float IdleRPM;
         
         /// <summary>
-        /// Текущие обороты двигателя
+        /// Минимальные обороты двигателя
         /// </summary>
-        public float CurrentRPM;
+        public float MinRPM;
         
         /// <summary>
-        /// Целевые обороты двигателя
+        /// Крутящий момент двигателя
+        /// </summary>
+        public float Torque;
+        
+        /// <summary>
+        /// Мощность двигателя
+        /// </summary>
+        public float Power;
+        
+        /// <summary>
+        /// Максимальный крутящий момент
+        /// </summary>
+        public float MaxTorque;
+        
+        /// <summary>
+        /// Максимальная мощность
+        /// </summary>
+        public float MaxPower;
+        
+        /// <summary>
+        /// Положение дроссельной заслонки
+        /// </summary>
+        public float ThrottlePosition;
+        
+        /// <summary>
+        /// Положение педали газа
+        /// </summary>
+        public float GasPedal;
+        
+        /// <summary>
+        /// Целевые обороты
         /// </summary>
         public float TargetRPM;
         
@@ -59,27 +69,37 @@ namespace MudLike.Vehicles.Components
         public float RPMSpeed;
         
         /// <summary>
-        /// Текущая мощность двигателя
+        /// Текущая мощность
         /// </summary>
         public float CurrentPower;
         
         /// <summary>
-        /// Текущий крутящий момент двигателя
+        /// Текущий крутящий момент
         /// </summary>
         public float CurrentTorque;
         
         /// <summary>
-        /// Положение дроссельной заслонки (0-1)
+        /// Уровень топлива (0-1)
         /// </summary>
-        public float ThrottlePosition;
+        public float FuelLevel;
         
         /// <summary>
-        /// Положение педали газа (0-1)
+        /// Расход топлива
         /// </summary>
-        public float GasPedal;
+        public float FuelConsumption;
         
         /// <summary>
-        /// Двигатель включен
+        /// Температура двигателя
+        /// </summary>
+        public float Temperature;
+        
+        /// <summary>
+        /// Максимальная температура
+        /// </summary>
+        public float MaxTemperature;
+        
+        /// <summary>
+        /// Двигатель работает
         /// </summary>
         public bool IsRunning;
         
@@ -99,53 +119,18 @@ namespace MudLike.Vehicles.Components
         public float RunningTime;
         
         /// <summary>
-        /// Время с последнего запуска
+        /// Время с момента запуска
         /// </summary>
         public float TimeSinceStart;
         
         /// <summary>
-        /// Температура двигателя
+        /// Кривая мощности (x: RPM, y: Power)
         /// </summary>
-        public float Temperature;
+        public float2 PowerCurve;
         
         /// <summary>
-        /// Максимальная температура двигателя
+        /// Кривая крутящего момента (x: RPM, y: Torque)
         /// </summary>
-        public float MaxTemperature;
-        
-        /// <summary>
-        /// Уровень масла
-        /// </summary>
-        public float OilLevel;
-        
-        /// <summary>
-        /// Уровень топлива
-        /// </summary>
-        public float FuelLevel;
-        
-        /// <summary>
-        /// Максимальный уровень топлива
-        /// </summary>
-        public float MaxFuelLevel;
-        
-        /// <summary>
-        /// Расход топлива
-        /// </summary>
-        public float FuelConsumption;
-        
-        /// <summary>
-        /// Эффективность двигателя
-        /// </summary>
-        public float Efficiency;
-        
-        /// <summary>
-        /// Кривая мощности двигателя
-        /// </summary>
-        public float4 PowerCurve;
-        
-        /// <summary>
-        /// Кривая крутящего момента двигателя
-        /// </summary>
-        public float4 TorqueCurve;
+        public float2 TorqueCurve;
     }
 }

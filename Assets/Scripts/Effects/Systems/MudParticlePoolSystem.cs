@@ -140,7 +140,7 @@ namespace MudLike.Pooling.Systems
             
             // Обновляем размер на основе времени жизни
             float lifeRatio = particle.Lifetime / PARTICLE_LIFETIME;
-            float sizeMultiplier = 1f - (lifeRatio * 0.5f); // Уменьшаем размер со временем
+            float sizeMultiplier = 1f - (lifeRatio * 0.5f);
             transform.Scale = particle.Size * sizeMultiplier;
         }
         

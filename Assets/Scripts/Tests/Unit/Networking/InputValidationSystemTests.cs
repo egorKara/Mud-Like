@@ -1,261 +1,308 @@
 using NUnit.Framework;
 using Unity.Entities;
 using Unity.Mathematics;
-using Unity.Collections;
-using MudLike.Networking.Systems;
+using Unity.Transforms;
 using MudLike.Networking.Components;
-using MudLike.Core.Components;
-using Unity.Core;
+using MudLike.Networking.Systems;
+using MudLike.Vehicles.Components;
+using MudLike.Tests.Infrastructure;
 
 namespace MudLike.Tests.Unit.Networking
 {
     /// <summary>
-    /// Тесты для системы валидации ввода InputValidationSystem
-    /// Обеспечивает 100% покрытие тестами критической системы безопасности мультиплеера
+    /// Unit тесты для InputValidationSystem
     /// </summary>
-    public class InputValidationSystemTests
+    [TestFixture]
+    public class InputValidationSystemTests : MudLikeTestFixture
     {
-        private World _world;
-        private InputValidationSystem _inputValidationSystem;
-        private EntityManager _entityManager;
-
+        private InputValidationSystem _system;
+        private Entity _playerEntity;
+        
         [SetUp]
-        public void SetUp()
+        public override void Setup()
         {
-            _world = new World("TestWorld");
-            _entityManager = _world.EntityManager;
+            base.Setup();
+            _system = World.CreateSystemManaged<InputValidationSystem>();
             
-            // Создаем систему валидации ввода
-            _inputValidationSystem = _world.GetOrCreateSystemManaged<InputValidationSystem>();
-            _inputValidationSystem.OnCreate(ref _world.Unmanaged);
+            // Создаем тестового игрока
+            _playerEntity = CreatePlayer();
+        }
+        
+        [Test]
+        public void InputValidationSystem_ShouldAcceptValidInput()
+        {
+            // Arrange
+            var input = new VehicleInput
+            {
+                Vertical = 1.0f,
+                Horizontal = 0.5f,
+                Brake = false,
+                Handbrake = false
+            };
             
-            // Устанавливаем время для SystemAPI.Time.time
-            _world.SetSingleton(new TimeData { ElapsedTime = 10f, DeltaTime = 0.016f, FixedDeltaTime = 0.016f });
+            EntityManager.SetComponentData(_playerEntity, input);
+            
+            // Act
+            _system.Update();
+            
+            // Assert
+            var validatedInput = EntityManager.GetComponentData<VehicleInput>(_playerEntity);
+            Assert.AreEqual(1.0f, validatedInput.Vertical);
+            Assert.AreEqual(0.5f, validatedInput.Horizontal);
         }
-
-        [TearDown]
-        public void TearDown()
-        {
-            _inputValidationSystem.OnDestroy(ref _world.Unmanaged);
-            _world.Dispose();
-        }
-
+        
         [Test]
-        public void ValidatePlayerInput_ValidInput_ReturnsValidResult()
+        public void InputValidationSystem_ShouldClampInputValues()
         {
             // Arrange
-            int playerId = 1;
-            var input = new PlayerInput
+            var input = new VehicleInput
             {
-                VehicleMovement = new float2(0.5f, 0.8f),
+                Vertical = 2.0f,    // Превышает максимум
+                Horizontal = -2.0f, // Превышает минимум
                 Brake = false,
                 Handbrake = false
             };
-            float timestamp = 10.5f;
-
+            
+            EntityManager.SetComponentData(_playerEntity, input);
+            
             // Act
-            var result = _inputValidationSystem.ValidatePlayerInput(playerId, input, timestamp);
-
+            _system.Update();
+            
             // Assert
-            Assert.IsTrue(result.IsValid);
-            Assert.AreEqual(ValidationReason.None, result.Reason);
+            var validatedInput = EntityManager.GetComponentData<VehicleInput>(_playerEntity);
+            Assert.LessOrEqual(validatedInput.Vertical, 1.0f);
+            Assert.GreaterOrEqual(validatedInput.Vertical, -1.0f);
+            Assert.LessOrEqual(validatedInput.Horizontal, 1.0f);
+            Assert.GreaterOrEqual(validatedInput.Horizontal, -1.0f);
         }
-
+        
         [Test]
-        public void ValidatePlayerInput_ExtremeValues_ReturnsInvalidResult()
+        public void InputValidationSystem_ShouldDetectRapidInputChanges()
         {
             // Arrange
-            int playerId = 1;
-            var input = new PlayerInput
+            var input = new VehicleInput
             {
-                VehicleMovement = new float2(999f, 999f), // Нереальные значения
+                Vertical = 1.0f,
+                Horizontal = 0.0f,
                 Brake = false,
                 Handbrake = false
             };
-            float timestamp = 10.5f;
-
+            
+            EntityManager.SetComponentData(_playerEntity, input);
+            
+            // Первое обновление
+            _system.Update();
+            
+            // Резкое изменение ввода (возможный читерский ввод)
+            input.Vertical = -1.0f;
+            input.Horizontal = 1.0f;
+            EntityManager.SetComponentData(_playerEntity, input);
+            
             // Act
-            var result = _inputValidationSystem.ValidatePlayerInput(playerId, input, timestamp);
-
+            _system.Update();
+            
             // Assert
-            // В зависимости от реализации, может быть валидным или невалидным
-            Assert.IsNotNull(result);
+            var networkData = EntityManager.GetComponentData<NetworkData>(_playerEntity);
+            Assert.IsTrue(networkData.SuspiciousInput);
         }
-
+        
         [Test]
-        public void ValidatePlayerInput_RapidInput_ReturnsRateLimitedResult()
+        public void InputValidationSystem_ShouldDetectImpossibleInputs()
         {
             // Arrange
-            int playerId = 1;
-            var input = new PlayerInput
+            var input = new VehicleInput
             {
-                VehicleMovement = new float2(0.5f, 0.8f),
-                Brake = false,
-                Handbrake = false
-            };
-            float timestamp1 = 10.5f;
-            float timestamp2 = 10.501f; // Очень быстрое повторение
-
-            // Act
-            var result1 = _inputValidationSystem.ValidatePlayerInput(playerId, input, timestamp1);
-            var result2 = _inputValidationSystem.ValidatePlayerInput(playerId, input, timestamp2);
-
-            // Assert
-            Assert.IsTrue(result1.IsValid);
-            // Второй результат зависит от реализации rate limiting
-            Assert.IsNotNull(result2);
-        }
-
-        [Test]
-        public void ValidatePlayerInput_NegativePlayerId_HandlesCorrectly()
-        {
-            // Arrange
-            int playerId = -1;
-            var input = new PlayerInput
-            {
-                VehicleMovement = new float2(0.5f, 0.8f),
-                Brake = false,
-                Handbrake = false
-            };
-            float timestamp = 10.5f;
-
-            // Act
-            var result = _inputValidationSystem.ValidatePlayerInput(playerId, input, timestamp);
-
-            // Assert
-            Assert.IsNotNull(result);
-        }
-
-        [Test]
-        public void ValidatePlayerInput_ZeroTimestamp_HandlesCorrectly()
-        {
-            // Arrange
-            int playerId = 1;
-            var input = new PlayerInput
-            {
-                VehicleMovement = new float2(0.5f, 0.8f),
-                Brake = false,
-                Handbrake = false
-            };
-            float timestamp = 0f;
-
-            // Act
-            var result = _inputValidationSystem.ValidatePlayerInput(playerId, input, timestamp);
-
-            // Assert
-            Assert.IsNotNull(result);
-        }
-
-        [Test]
-        public void ValidationResult_DefaultValues_AreCorrect()
-        {
-            // Arrange
-            var result = new ValidationResult();
-
-            // Act & Assert
-            Assert.IsFalse(result.IsValid); // По умолчанию невалидный
-            Assert.AreEqual(ValidationReason.None, result.Reason);
-        }
-
-        [Test]
-        public void ValidationResult_ModifiedValues_AreStoredCorrectly()
-        {
-            // Arrange
-            var result = new ValidationResult
-            {
-                IsValid = true,
-                Reason = ValidationReason.RateLimitExceeded
-            };
-
-            // Act & Assert
-            Assert.IsTrue(result.IsValid);
-            Assert.AreEqual(ValidationReason.RateLimitExceeded, result.Reason);
-        }
-
-        [Test]
-        public void ValidationReason_AllValues_AreDefined()
-        {
-            // Arrange & Act
-            var reasons = new[]
-            {
-                ValidationReason.None,
-                ValidationReason.RateLimitExceeded,
-                ValidationReason.InvalidInput,
-                ValidationReason.PhysicsViolation,
-                ValidationReason.BehavioralAnomaly
-            };
-
-            // Assert
-            Assert.AreEqual(5, reasons.Length);
-            foreach (var reason in reasons)
-            {
-                Assert.IsTrue(System.Enum.IsDefined(typeof(ValidationReason), reason));
-            }
-        }
-
-        [Test]
-        public void PlayerInput_DefaultValues_AreCorrect()
-        {
-            // Arrange
-            var input = new PlayerInput();
-
-            // Act & Assert
-            Assert.AreEqual(float2.zero, input.VehicleMovement);
-            Assert.IsFalse(input.Brake);
-            Assert.IsFalse(input.Handbrake);
-        }
-
-        [Test]
-        public void PlayerInput_ModifiedValues_AreStoredCorrectly()
-        {
-            // Arrange
-            var input = new PlayerInput
-            {
-                VehicleMovement = new float2(0.7f, 0.3f),
-                Brake = true,
+                Vertical = 1.0f,
+                Horizontal = 1.0f,
+                Brake = true,    // Одновременно газ и тормоз
                 Handbrake = true
             };
-
+            
+            EntityManager.SetComponentData(_playerEntity, input);
+            
+            // Act
+            _system.Update();
+            
+            // Assert
+            var networkData = EntityManager.GetComponentData<NetworkData>(_playerEntity);
+            Assert.IsTrue(networkData.InvalidInput);
+        }
+        
+        [Test]
+        public void InputValidationSystem_ShouldApplyInputSmoothing()
+        {
+            // Arrange
+            var input = new VehicleInput
+            {
+                Vertical = 0.0f,
+                Horizontal = 0.0f,
+                Brake = false,
+                Handbrake = false
+            };
+            
+            EntityManager.SetComponentData(_playerEntity, input);
+            
+            // Резкое изменение ввода
+            input.Vertical = 1.0f;
+            EntityManager.SetComponentData(_playerEntity, input);
+            
+            // Act
+            _system.Update();
+            
+            // Assert
+            var validatedInput = EntityManager.GetComponentData<VehicleInput>(_playerEntity);
+            Assert.Less(validatedInput.Vertical, 1.0f); // Должно быть сглажено
+        }
+        
+        [Test]
+        public void InputValidationSystem_ShouldTrackInputHistory()
+        {
+            // Arrange
+            var input = new VehicleInput
+            {
+                Vertical = 0.0f,
+                Horizontal = 0.0f,
+                Brake = false,
+                Handbrake = false
+            };
+            
+            EntityManager.SetComponentData(_playerEntity, input);
+            
+            // Act - несколько обновлений
+            for (int i = 0; i < 10; i++)
+            {
+                input.Vertical = (i % 2) == 0 ? 1.0f : 0.0f;
+                EntityManager.SetComponentData(_playerEntity, input);
+                _system.Update();
+            }
+            
+            // Assert
+            var networkData = EntityManager.GetComponentData<NetworkData>(_playerEntity);
+            Assert.Greater(networkData.InputHistoryCount, 0);
+        }
+        
+        [Test]
+        public void InputValidationSystem_ShouldDetectBotInput()
+        {
+            // Arrange
+            var input = new VehicleInput
+            {
+                Vertical = 1.0f,
+                Horizontal = 0.0f,
+                Brake = false,
+                Handbrake = false
+            };
+            
+            EntityManager.SetComponentData(_playerEntity, input);
+            
+            // Симулируем бот-ввод (идеально повторяющийся паттерн)
+            for (int i = 0; i < 100; i++)
+            {
+                input.Vertical = 1.0f;
+                input.Horizontal = 0.0f;
+                EntityManager.SetComponentData(_playerEntity, input);
+                _system.Update();
+            }
+            
+            // Assert
+            var networkData = EntityManager.GetComponentData<NetworkData>(_playerEntity);
+            Assert.IsTrue(networkData.SuspectedBot);
+        }
+        
+        [Test]
+        public void InputValidationSystem_ShouldHandleNetworkLatency()
+        {
+            // Arrange
+            var input = new VehicleInput
+            {
+                Vertical = 1.0f,
+                Horizontal = 0.0f,
+                Brake = false,
+                Handbrake = false
+            };
+            
+            EntityManager.SetComponentData(_playerEntity, input);
+            
+            // Симулируем высокую задержку
+            var networkData = EntityManager.GetComponentData<NetworkData>(_playerEntity);
+            networkData.Ping = 500; // 500ms задержка
+            EntityManager.SetComponentData(_playerEntity, networkData);
+            
+            // Act
+            _system.Update();
+            
+            // Assert
+            var updatedNetworkData = EntityManager.GetComponentData<NetworkData>(_playerEntity);
+            Assert.Greater(updatedNetworkData.CompensationFactor, 1.0f);
+        }
+        
+        [Test]
+        public void InputValidationSystem_ShouldRunWithoutErrors()
+        {
+            // Arrange
+            var input = new VehicleInput
+            {
+                Vertical = 0.0f,
+                Horizontal = 0.0f,
+                Brake = false,
+                Handbrake = false
+            };
+            
+            EntityManager.SetComponentData(_playerEntity, input);
+            
             // Act & Assert
-            Assert.AreEqual(new float2(0.7f, 0.3f), input.VehicleMovement);
-            Assert.IsTrue(input.Brake);
-            Assert.IsTrue(input.Handbrake);
+            Assert.DoesNotThrow(() => _system.Update());
         }
-
+        
         [Test]
-        public void InputValidationSystem_MultiplePlayers_HandlesCorrectly()
+        public void InputValidationSystem_ShouldMeetPerformanceRequirements()
         {
             // Arrange
-            var input1 = new PlayerInput { VehicleMovement = new float2(0.5f, 0.8f) };
-            var input2 = new PlayerInput { VehicleMovement = new float2(-0.3f, 0.6f) };
-            float timestamp = 10.5f;
-
-            // Act
-            var result1 = _inputValidationSystem.ValidatePlayerInput(1, input1, timestamp);
-            var result2 = _inputValidationSystem.ValidatePlayerInput(2, input2, timestamp);
-
-            // Assert
-            Assert.IsNotNull(result1);
-            Assert.IsNotNull(result2);
+            for (int i = 0; i < 1000; i++)
+            {
+                var player = CreatePlayer();
+                var input = new VehicleInput
+                {
+                    Vertical = UnityEngine.Random.Range(-1f, 1f),
+                    Horizontal = UnityEngine.Random.Range(-1f, 1f),
+                    Brake = UnityEngine.Random.value > 0.5f,
+                    Handbrake = UnityEngine.Random.value > 0.8f
+                };
+                EntityManager.SetComponentData(player, input);
+            }
+            
+            // Act & Assert
+            AssertSystemPerformance<InputValidationSystem>(16.67f); // 60 FPS
         }
-
-        [Test]
-        public void InputValidationSystem_ConsecutiveCalls_HandlesCorrectly()
+        
+        private Entity CreatePlayer()
         {
-            // Arrange
-            int playerId = 1;
-            var input = new PlayerInput { VehicleMovement = new float2(0.5f, 0.8f) };
-            float timestamp = 10.5f;
-
-            // Act
-            var result1 = _inputValidationSystem.ValidatePlayerInput(playerId, input, timestamp);
-            var result2 = _inputValidationSystem.ValidatePlayerInput(playerId, input, timestamp + 0.1f);
-            var result3 = _inputValidationSystem.ValidatePlayerInput(playerId, input, timestamp + 0.2f);
-
-            // Assert
-            Assert.IsNotNull(result1);
-            Assert.IsNotNull(result2);
-            Assert.IsNotNull(result3);
+            var entity = EntityManager.CreateEntity();
+            EntityManager.AddComponentData(entity, new PlayerTag());
+            EntityManager.AddComponentData(entity, new NetworkData
+            {
+                NetworkId = UnityEngine.Random.Range(1, 10000),
+                Ping = 50,
+                LastUpdateTime = 0f,
+                SuspiciousInput = false,
+                InvalidInput = false,
+                SuspectedBot = false,
+                InputHistoryCount = 0,
+                CompensationFactor = 1.0f
+            });
+            EntityManager.AddComponentData(entity, new VehicleInput
+            {
+                Vertical = 0f,
+                Horizontal = 0f,
+                Brake = false,
+                Handbrake = false
+            });
+            EntityManager.AddComponentData(entity, new LocalTransform
+            {
+                Position = new float3(0, 0, 0),
+                Rotation = quaternion.identity
+            });
+            return entity;
         }
     }
 }

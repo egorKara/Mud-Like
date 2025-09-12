@@ -4,29 +4,29 @@ using Unity.Mathematics;
 namespace MudLike.Terrain.Components
 {
     /// <summary>
-    /// Данные террейна
+    /// Данные чанка террейна
     /// </summary>
-    public struct TerrainData : IComponentData
+    public struct TerrainChunkData : IComponentData
     {
         /// <summary>
-        /// Ширина террейна
+        /// Координата чанка
         /// </summary>
-        public int Width;
+        public int2 ChunkCoordinate;
         
         /// <summary>
-        /// Высота террейна
+        /// Размер чанка
         /// </summary>
-        public int Height;
+        public int Size;
         
         /// <summary>
-        /// Разрешение террейна
+        /// Разрешение чанка
         /// </summary>
         public float Resolution;
         
         /// <summary>
-        /// Максимальная глубина деформации
+        /// Чанк загружен
         /// </summary>
-        public float MaxDeformationDepth;
+        public bool IsLoaded;
         
         /// <summary>
         /// Требует обновления
@@ -34,8 +34,8 @@ namespace MudLike.Terrain.Components
         public bool NeedsUpdate;
         
         /// <summary>
-        /// Коллайдер требует обновления
+        /// Время последнего обновления
         /// </summary>
-        public bool ColliderNeedsUpdate;
+        public float LastUpdateTime;
     }
 }

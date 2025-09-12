@@ -19,19 +19,9 @@ namespace MudLike.Effects.Components
         public float3 Velocity;
         
         /// <summary>
-        /// Ускорение частицы
-        /// </summary>
-        public float3 Acceleration;
-        
-        /// <summary>
         /// Размер частицы
         /// </summary>
         public float Size;
-        
-        /// <summary>
-        /// Масса частицы
-        /// </summary>
-        public float Mass;
         
         /// <summary>
         /// Время жизни частицы
@@ -39,44 +29,9 @@ namespace MudLike.Effects.Components
         public float Lifetime;
         
         /// <summary>
-        /// Максимальное время жизни
+        /// Масса частицы
         /// </summary>
-        public float MaxLifetime;
-        
-        /// <summary>
-        /// Прозрачность частицы
-        /// </summary>
-        public float Alpha;
-        
-        /// <summary>
-        /// Цвет частицы
-        /// </summary>
-        public float4 Color;
-        
-        /// <summary>
-        /// Тип частицы
-        /// </summary>
-        public ParticleType Type;
-        
-        /// <summary>
-        /// Активна ли частица
-        /// </summary>
-        public bool IsActive;
-        
-        /// <summary>
-        /// Прилипла ли к поверхности
-        /// </summary>
-        public bool IsStuck;
-        
-        /// <summary>
-        /// Скорость высыхания
-        /// </summary>
-        public float DryingRate;
-        
-        /// <summary>
-        /// Влажность частицы
-        /// </summary>
-        public float Moisture;
+        public float Mass;
         
         /// <summary>
         /// Температура частицы
@@ -89,63 +44,8 @@ namespace MudLike.Effects.Components
         public float Viscosity;
         
         /// <summary>
-        /// Плотность частицы
+        /// Частица активна
         /// </summary>
-        public float Density;
-        
-        /// <summary>
-        /// Коэффициент трения
-        /// </summary>
-        public float Friction;
-        
-        /// <summary>
-        /// Эластичность частицы
-        /// </summary>
-        public float Elasticity;
-        
-        /// <summary>
-        /// Скорость вращения
-        /// </summary>
-        public float3 AngularVelocity;
-        
-        /// <summary>
-        /// Угол поворота
-        /// </summary>
-        public quaternion Rotation;
-        
-        /// <summary>
-        /// Масштаб частицы
-        /// </summary>
-        public float3 Scale;
-        
-        /// <summary>
-        /// Сила притяжения к земле
-        /// </summary>
-        public float Gravity;
-        
-        /// <summary>
-        /// Сопротивление воздуха
-        /// </summary>
-        public float AirResistance;
-        
-        /// <summary>
-        /// Время последнего обновления
-        /// </summary>
-        public float LastUpdateTime;
-    }
-    
-    /// <summary>
-    /// Типы частиц
-    /// </summary>
-    public enum ParticleType
-    {
-        Mud,        // Грязь
-        Water,      // Вода
-        Sand,       // Песок
-        Grass,      // Трава
-        Stone,      // Камень
-        Dust,       // Пыль
-        Smoke,      // Дым
-        Spark       // Искры
+        public bool IsActive;
     }
 }
