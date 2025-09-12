@@ -65,7 +65,7 @@ namespace MudLike.Vehicles.Systems
             var lodJob = new LODJob
             {
                 CameraPosition = _cameraPosition,
-                DeltaTime = Time.deltaTime
+                DeltaTime = SystemAPI.Time.DeltaTime
             };
             
             Dependency = lodJob.ScheduleParallel(_lodQuery, Dependency);
@@ -130,11 +130,11 @@ namespace MudLike.Vehicles.Systems
                                   int newLOD)
             {
                 // Проверяем, можно ли переключить LOD
-                if (Time.time - lodData.LastLODSwitchTime < lodData.LODSwitchSpeed)
+                if (SystemAPI.Time.ElapsedTime - lodData.LastLODSwitchTime < lodData.LODSwitchSpeed)
                     return;
                 
                 lodData.CurrentLOD = newLOD;
-                lodData.LastLODSwitchTime = Time.time;
+                lodData.LastLODSwitchTime = (float)SystemAPI.Time.ElapsedTime;
                 
                 // Обновляем данные рендеринга
                 UpdateRenderData(ref renderData, newLOD);

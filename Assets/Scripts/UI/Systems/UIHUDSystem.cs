@@ -72,7 +72,7 @@ namespace MudLike.UI.Systems
                     }
                     
                     // Обновляем время игры
-                    hudData.GameTime += Time.deltaTime;
+                    hudData.GameTime += SystemAPI.Time.DeltaTime;
                     
                     // Обновляем сетевую информацию
                     hudData.PlayerCount = GetPlayerCount();
@@ -103,7 +103,7 @@ namespace MudLike.UI.Systems
                     vehicleData.MapPosition = new float2(transform.Position.x, transform.Position.z);
                     vehicleData.Heading = math.degrees(math.atan2(transform.Rotation.value.x, transform.Rotation.value.z));
                     found = true;
-                }).WithoutBurst().Schedule();
+                }).Schedule();
             
             return found ? vehicleData : null;
         }
@@ -128,7 +128,7 @@ namespace MudLike.UI.Systems
                     weatherInfo.SnowIntensity = weather.SnowIntensity;
                     weatherInfo.Visibility = weather.Visibility;
                     found = true;
-                }).WithoutBurst().Schedule();
+                }).Schedule();
             
             return found ? weatherInfo : null;
         }
@@ -163,7 +163,7 @@ namespace MudLike.UI.Systems
                 .ForEach((in VehicleDamageData damage) =>
                 {
                     health = damage.Health;
-                }).WithoutBurst().Schedule();
+                }).Schedule();
             
             return health;
         }
@@ -180,7 +180,7 @@ namespace MudLike.UI.Systems
                 .ForEach((in VehicleFuelData fuel) =>
                 {
                     fuelLevel = fuel.CurrentFuel / fuel.MaxFuel;
-                }).WithoutBurst().Schedule();
+                }).Schedule();
             
             return fuelLevel;
         }
@@ -197,7 +197,7 @@ namespace MudLike.UI.Systems
                 .ForEach((in EngineData engine) =>
                 {
                     temperature = engine.Temperature / engine.MaxTemperature;
-                }).WithoutBurst().Schedule();
+                }).Schedule();
             
             return temperature;
         }
@@ -213,7 +213,7 @@ namespace MudLike.UI.Systems
                 .ForEach((in NetworkId networkId) =>
                 {
                     count++;
-                }).WithoutBurst().Schedule();
+                }).Schedule();
             
             return count;
         }
@@ -223,8 +223,9 @@ namespace MudLike.UI.Systems
         /// </summary>
         private int GetNetworkPing()
         {
-            // Простая реализация - в реальности нужно получать из NetworkManager
-            return UnityEngine.Random.Range(10, 100);
+            // Получаем ping из NetworkManager если доступен
+            var networkManager = SystemAPI.GetSingleton<NetworkManagerData>();
+            return networkManager.Ping;
         }
         
         /// <summary>
