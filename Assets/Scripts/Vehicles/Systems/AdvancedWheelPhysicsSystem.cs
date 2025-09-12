@@ -127,7 +127,7 @@ namespace MudLike.Vehicles.Systems
                     ResetWheelPhysics(ref wheelPhysics);
                 }
                 
-                wheelPhysics.LastUpdateTime = Time.time;
+                wheelPhysics.LastUpdateTime = (float)SystemAPI.Time.ElapsedTime;
             }
             
             /// <summary>
@@ -137,7 +137,7 @@ namespace MudLike.Vehicles.Systems
             {
                 // В реальной реализации здесь будет определение по материалам
                 // Пока что используем случайный тип для демонстрации
-                return (SurfaceType)((int)(Time.time * 0.1f) % 11);
+                return (SurfaceType)((int)(SystemAPI.Time.ElapsedTime * 0.1f) % 11);
             }
             
             /// <summary>
@@ -157,7 +157,7 @@ namespace MudLike.Vehicles.Systems
                 // Вычисляем угол проскальзывания
                 float3 velocityDirection = math.normalize(vehiclePhysics.Velocity);
                 float3 wheelDirection = math.forward(wheelTransform.Rotation);
-                wheelPhysics.SlipAngle = math.acos(math.dot(velocityDirection, wheelDirection));
+                wheelPhysics.SlipAngle = math.acos(math.clamp(math.dot(velocityDirection, wheelDirection), -1f, 1f));
                 
                 // Обновляем сцепление с поверхностью
                 wheelPhysics.SurfaceTraction = CalculateSurfaceTraction(surface, wheelPhysics, wheel);

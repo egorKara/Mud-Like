@@ -5,14 +5,14 @@ using Unity.Collections;
 namespace MudLike.Terrain.Components
 {
     /// <summary>
-    /// Компонент чанка террейна для ECS
+    /// Компонент чанка террейна для эффективного управления деформацией
     /// </summary>
     public struct TerrainChunk : IComponentData
     {
         /// <summary>
-        /// Индекс чанка в сетке
+        /// Индекс чанка в сетке террейна
         /// </summary>
-        public int Index;
+        public int ChunkIndex;
         
         /// <summary>
         /// Позиция чанка в мире
@@ -22,32 +22,42 @@ namespace MudLike.Terrain.Components
         /// <summary>
         /// Размер чанка
         /// </summary>
-        public int Size;
+        public float ChunkSize;
         
         /// <summary>
-        /// Высоты в чанке (NativeArray индексы)
+        /// Разрешение чанка (количество точек на сторону)
         /// </summary>
-        public int HeightDataIndex;
+        public int Resolution;
         
         /// <summary>
-        /// Данные грязи в чанке (NativeArray индексы)
+        /// Данные высот чанка
         /// </summary>
-        public int MudDataIndex;
+        public NativeArray<float> HeightData;
         
         /// <summary>
-        /// Данные нормалей в чанке (NativeArray индексы)
+        /// Данные грязи чанка
         /// </summary>
-        public int NormalDataIndex;
+        public NativeArray<float> MudData;
         
         /// <summary>
-        /// Флаг грязности чанка (нужно ли обновление)
+        /// Данные нормалей чанка
         /// </summary>
-        public bool IsDirty;
+        public NativeArray<float3> NormalData;
         
         /// <summary>
-        /// Флаг необходимости синхронизации
+        /// Данные типов поверхностей чанка
         /// </summary>
-        public bool NeedsSync;
+        public NativeArray<SurfaceType> SurfaceData;
+        
+        /// <summary>
+        /// Требует ли обновления коллайдер
+        /// </summary>
+        public bool NeedsColliderUpdate;
+        
+        /// <summary>
+        /// Требует ли обновления меш
+        /// </summary>
+        public bool NeedsMeshUpdate;
         
         /// <summary>
         /// Время последнего обновления
@@ -55,64 +65,181 @@ namespace MudLike.Terrain.Components
         public float LastUpdateTime;
         
         /// <summary>
-        /// Уровень детализации
+        /// Количество деформаций в чанке
         /// </summary>
-        public int LODLevel;
+        public int DeformationCount;
+        
+        /// <summary>
+        /// Максимальная деформация в чанке
+        /// </summary>
+        public float MaxDeformation;
+        
+        /// <summary>
+        /// Активен ли чанк (загружен)
+        /// </summary>
+        public bool IsActive;
+        
+        /// <summary>
+        /// Приоритет загрузки чанка
+        /// </summary>
+        public int LoadPriority;
+        
+        /// <summary>
+        /// Расстояние до ближайшего игрока
+        /// </summary>
+        public float DistanceToPlayer;
+        
+        /// <summary>
+        /// Требует ли обновления
+        /// </summary>
+        public bool NeedsUpdate;
+        
+        /// <summary>
+        /// Конструктор с значениями по умолчанию
+        /// </summary>
+        public static TerrainChunk Default => new TerrainChunk
+        {
+            ChunkIndex = -1,
+            WorldPosition = new float3(0f, 0f, 0f),
+            ChunkSize = 16f,
+            Resolution = 64,
+            NeedsColliderUpdate = false,
+            NeedsMeshUpdate = false,
+            LastUpdateTime = 0f,
+            DeformationCount = 0,
+            MaxDeformation = 0f,
+            IsActive = false,
+            LoadPriority = 0,
+            DistanceToPlayer = float.MaxValue,
+            NeedsUpdate = false
+        };
+        
+        /// <summary>
+        /// Получает индекс в массиве данных по координатам
+        /// </summary>
+        public int GetDataIndex(int x, int z)
+        {
+            return z * Resolution + x;
+        }
+        
+        /// <summary>
+        /// Получает координаты из индекса массива
+        /// </summary>
+        public (int x, int z) GetCoordinates(int index)
+        {
+            int x = index % Resolution;
+            int z = index / Resolution;
+            return (x, z);
+        }
+        
+        /// <summary>
+        /// Проверяет, находится ли точка в пределах чанка
+        /// </summary>
+        public bool ContainsPoint(float3 worldPosition)
+        {
+            float3 localPos = worldPosition - WorldPosition;
+            return localPos.x >= 0f && localPos.x <= ChunkSize &&
+                   localPos.z >= 0f && localPos.z <= ChunkSize;
+        }
+        
+        /// <summary>
+        /// Получает локальные координаты точки в чанке
+        /// </summary>
+        public (float x, float z) GetLocalCoordinates(float3 worldPosition)
+        {
+            float3 localPos = worldPosition - WorldPosition;
+            return (localPos.x, localPos.z);
+        }
+        
+        /// <summary>
+        /// Получает индексы данных для точки
+        /// </summary>
+        public (int x, int z) GetDataCoordinates(float3 worldPosition)
+        {
+            var (localX, localZ) = GetLocalCoordinates(worldPosition);
+            int x = (int)(localX / ChunkSize * Resolution);
+            int z = (int)(localZ / ChunkSize * Resolution);
+            
+            // Ограничиваем индексы
+            x = math.clamp(x, 0, Resolution - 1);
+            z = math.clamp(z, 0, Resolution - 1);
+            
+            return (x, z);
+        }
+        
+        /// <summary>
+        /// Вычисляет приоритет обновления чанка
+        /// </summary>
+        public float GetUpdatePriority()
+        {
+            float distanceFactor = math.max(0f, 1f - (DistanceToPlayer / 100f));
+            float deformationFactor = math.min(MaxDeformation / 1f, 1f);
+            float timeFactor = math.max(0f, 1f - (SystemAPI.Time.ElapsedTime - LastUpdateTime) / 10f);
+            
+            return (distanceFactor + deformationFactor + timeFactor) / 3f;
+        }
+        
+        /// <summary>
+        /// Проверяет, нуждается ли чанк в обновлении
+        /// </summary>
+        public bool NeedsUpdate()
+        {
+            return NeedsColliderUpdate || NeedsMeshUpdate || 
+                   (MaxDeformation > 0.1f && (SystemAPI.Time.ElapsedTime - LastUpdateTime) > 1f);
+        }
     }
     
     /// <summary>
-    /// Данные террейна (Singleton)
+    /// Тег для активных чанков террейна
     /// </summary>
-    public struct TerrainData : IComponentData
+    public struct ActiveTerrainChunk : IComponentData
     {
         /// <summary>
-        /// Количество чанков по X
+        /// Время активации чанка
         /// </summary>
-        public int ChunkCountX;
+        public float ActivationTime;
         
         /// <summary>
-        /// Количество чанков по Z
+        /// Количество активных объектов в чанке
         /// </summary>
-        public int ChunkCountZ;
+        public int ActiveObjectCount;
         
         /// <summary>
-        /// Размер чанка
+        /// Приоритет рендеринга чанка
         /// </summary>
-        public int ChunkSize;
+        public int RenderPriority;
+    }
+    
+    /// <summary>
+    /// Тег для чанков террейна, требующих обновления
+    /// </summary>
+    public struct TerrainChunkNeedsUpdate : IComponentData
+    {
+        /// <summary>
+        /// Тип требуемого обновления
+        /// </summary>
+        public UpdateType UpdateType;
         
         /// <summary>
-        /// Общий размер террейна по X
+        /// Приоритет обновления
         /// </summary>
-        public int TotalSizeX;
+        public int Priority;
         
         /// <summary>
-        /// Общий размер террейна по Z
+        /// Время постановки в очередь на обновление
         /// </summary>
-        public int TotalSizeZ;
-        
-        /// <summary>
-        /// Масштаб высот
-        /// </summary>
-        public float HeightScale;
-        
-        /// <summary>
-        /// Масштаб текстур
-        /// </summary>
-        public float TextureScale;
-        
-        /// <summary>
-        /// Индекс NativeArray с данными высот
-        /// </summary>
-        public int HeightDataArrayIndex;
-        
-        /// <summary>
-        /// Индекс NativeArray с данными грязи
-        /// </summary>
-        public int MudDataArrayIndex;
-        
-        /// <summary>
-        /// Индекс NativeArray с данными нормалей
-        /// </summary>
-        public int NormalDataArrayIndex;
+        public float QueueTime;
+    }
+    
+    /// <summary>
+    /// Типы обновления чанка террейна
+    /// </summary>
+    public enum UpdateType
+    {
+        None = 0,
+        Height = 1,
+        Mesh = 2,
+        Collider = 3,
+        All = 4
     }
 }

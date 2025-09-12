@@ -75,7 +75,14 @@ namespace MudLike.Vehicles.Components
         public float LODLevel;            // Уровень детализации (0-1)
         public float UpdateFrequency;     // Частота обновления (Гц)
         
-        // Конструктор с значениями по умолчанию
+        // Параметры взаимодействия с террейном
+        public float EffectiveTraction;   // Эффективное сцепление (0-1)
+        public float RollingResistance;   // Сопротивление качению
+        public float MudDrag;             // Сопротивление грязи
+        public float BaseMaxSpeed;        // Базовая максимальная скорость
+        public float BaseAcceleration;    // Базовое ускорение
+        
+        // Конструктор со значениями по умолчанию
         public static VehiclePhysics Default => new VehiclePhysics
         {
             Mass = 1500f,                    // 1.5 тонны
@@ -106,7 +113,12 @@ namespace MudLike.Vehicles.Components
             IsOptimized = false,             // Не оптимизирован
             LODLevel = 1f,                   // Максимальная детализация
             UpdateFrequency = 60f,           // 60 Гц
-            LastUpdateTime = 0f              // Начальное время
+            LastUpdateTime = 0f,             // Начальное время
+            EffectiveTraction = 1f,          // Базовое сцепление
+            RollingResistance = 0.02f,       // Базовое сопротивление качению
+            MudDrag = 0f,                    // Без сопротивления грязи
+            BaseMaxSpeed = 50f,              // Базовая максимальная скорость
+            BaseAcceleration = 8f            // Базовое ускорение
         };
         
         /// <summary>
