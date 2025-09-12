@@ -13,60 +13,48 @@
 
 ## 🏗️ **АРХИТЕКТУРНЫЕ ПРИНЦИПЫ**
 
-### **1. SOLID принципы**
+### **1. Data-Oriented Design принципы**
 ```csharp
-// Single Responsibility Principle
-public class PlayerMovementSystem : SystemBase
+// Компоненты - только данные
+public struct Position : IComponentData
 {
-    // Только отвечает за движение игрока
+    public float3 Value;
+}
+
+public struct Velocity : IComponentData
+{
+    public float3 Value;
+}
+
+// Системы - только логика
+public class MovementSystem : SystemBase
+{
     protected override void OnUpdate()
     {
-        // Логика движения
+        // Обрабатывает данные компонентов
+        Entities.ForEach((ref Position pos, in Velocity vel) =>
+        {
+            pos.Value += vel.Value * Time.fixedDeltaTime;
+        }).Schedule();
     }
 }
 
-// Open/Closed Principle
-public abstract class BaseVehicle
+// Разделение данных и логики
+public struct VehicleConfig : IComponentData
 {
-    public abstract void Move(float3 direction);
+    public float MaxSpeed;
+    public float Acceleration;
 }
 
-public class Car : BaseVehicle
+// Системы работают с данными, а не с объектами
+public class VehicleSystem : SystemBase
 {
-    public override void Move(float3 direction)
+    protected override void OnUpdate()
     {
-        // Реализация движения машины
-    }
-}
-
-// Liskov Substitution Principle
-public interface IVehicleController
-{
-    void Move(float3 direction);
-    void Brake();
-}
-
-// Interface Segregation Principle
-public interface IMovable
-{
-    void Move(float3 direction);
-}
-
-public interface IBrakable
-{
-    void Brake();
-}
-
-// Dependency Inversion Principle
-public class VehicleController
-{
-    private readonly IMovable _movable;
-    private readonly IBrakable _brakable;
-    
-    public VehicleController(IMovable movable, IBrakable brakable)
-    {
-        _movable = movable;
-        _brakable = brakable;
+        Entities.ForEach((ref Position pos, in VehicleConfig config) =>
+        {
+            // Логика обработки данных
+        }).Schedule();
     }
 }
 ```

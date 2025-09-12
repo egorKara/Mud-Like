@@ -1,0 +1,27 @@
+{
+    "name": "MudLike.UI",
+    "rootNamespace": "MudLike.UI",
+    "references": [
+        "Unity.Entities",
+        "Unity.Collections",
+        "Unity.Jobs",
+        "Unity.Burst",
+        "Unity.Mathematics",
+        "Unity.Transforms",
+        "Unity.UI",
+        "Unity.UIBuilder",
+        "MudLike.Core",
+        "MudLike.Vehicles",
+        "MudLike.Terrain",
+        "MudLike.Weather"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": true,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
