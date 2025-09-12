@@ -1,0 +1,52 @@
+title = "Mud-Like Security Configuration"
+version = "8.16.4"
+
+[[rules]]
+description = "Unity API Keys"
+regex = '''(?i)(unity|unity3d).{0,20}['\"][0-9a-zA-Z]{32,45}['\"]'''
+tags = ["key", "unity"]
+
+[[rules]]
+description = "Generic API Key"
+regex = '''(?i)(api_key|apikey|access_key).{0,20}['\"][0-9a-zA-Z]{16,45}['\"]'''
+tags = ["key", "api"]
+
+[[rules]]
+description = "Secret Key"
+regex = '''(?i)(secret).{0,20}['\"][0-9a-zA-Z]{16,45}['\"]'''
+tags = ["key", "secret"]
+
+[[rules]]
+description = "Password"
+regex = '''(?i)(password|passwd|pwd).{0,20}['\"][0-9a-zA-Z@#$%^&+=]{8,}['\"]'''
+tags = ["key", "password"]
+
+[[rules]]
+description = "Token"
+regex = '''(?i)(token).{0,20}['\"][0-9a-zA-Z]{16,}['\"]'''
+tags = ["key", "token"]
+
+[[rules]]
+description = "Private Key"
+regex = '''-----BEGIN[ A-Z]*PRIVATE KEY-----'''
+tags = ["key", "private"]
+
+[[rules]]
+description = "AWS Access Key"
+regex = '''AKIA[0-9A-Z]{16}'''
+tags = ["key", "aws"]
+
+[[rules]]
+description = "GitHub Token"
+regex = '''gh[ps]_[A-Za-z0-9_]{36}'''
+tags = ["key", "github"]
+
+[[rules]]
+description = "Slack Token"
+regex = '''xox[baprs]-[0-9a-zA-Z-]{10,48}'''
+tags = ["key", "slack"]
+
+[[rules]]
+description = "Discord Token"
+regex = '''[MN][A-Za-z\d]{23}\.[\w-]{6}\.[\w-]{27}'''
+tags = ["key", "discord"]

@@ -55,6 +55,9 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         GITLEAKS_LICENSE: ${{ secrets.GITLEAKS_LICENSE }}
+      with:
+        repo-path: ${{ github.workspace }}
+        config-path: .gitleaks.toml
 
     - name: Security Audit
       run: |

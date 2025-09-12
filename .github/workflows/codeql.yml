@@ -33,12 +33,12 @@ jobs:
         queries: security-and-quality
 
     - name: Setup Unity
-      uses: game-ci/unity-setup@v2
+      uses: game-ci/unity-setup@v2.1.0
       with:
-        unity-version: 6000.2.2f1
+        unity-version: 6000.0.57f1
 
     - name: Build Unity Project
-      uses: game-ci/unity-builder@v3
+      uses: game-ci/unity-builder@v3.1.0
       with:
         targetPlatform: StandaloneLinux64
         projectPath: .
