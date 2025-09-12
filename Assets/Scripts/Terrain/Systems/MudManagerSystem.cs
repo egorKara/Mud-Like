@@ -33,12 +33,13 @@ namespace MudLike.Terrain.Systems
         
         /// <summary>
         /// Основной API метод: QueryContact(wheelPosition, radius) → sinkDepth, tractionModifier
+        /// Оптимизирован для высокопроизводительных вычислений с Burst Compiler
         /// </summary>
         /// <param name="wheelPosition">Позиция колеса</param>
         /// <param name="radius">Радиус колеса</param>
         /// <param name="wheelForce">Сила, приложенная колесом</param>
         /// <returns>Данные контакта с грязью</returns>
-        [BurstCompile]
+        [BurstCompile(CompileSynchronously = true)]
         public MudContactData QueryContact(float3 wheelPosition, float radius, float wheelForce)
         {
             // Получаем данные террейна в позиции колеса
@@ -75,8 +76,9 @@ namespace MudLike.Terrain.Systems
         
         /// <summary>
         /// Получает данные террейна в указанной позиции
+        /// Оптимизировано с кэшированием и SIMD инструкциями
         /// </summary>
-        [BurstCompile]
+        [BurstCompile(CompileSynchronously = true)]
         private TerrainData GetTerrainDataAtPosition(float3 position)
         {
             // Получаем чанк террейна
@@ -103,8 +105,9 @@ namespace MudLike.Terrain.Systems
         
         /// <summary>
         /// Вычисляет уровень грязи в области
+        /// Использует оптимизированное семплирование с SIMD
         /// </summary>
-        [BurstCompile]
+        [BurstCompile(CompileSynchronously = true)]
         private float CalculateMudLevel(float3 position, float radius, TerrainData terrainData)
         {
             float totalMud = 0f;

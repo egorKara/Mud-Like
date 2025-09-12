@@ -12,7 +12,7 @@ namespace MudLike.Vehicles.Systems
     /// Система движения транспортного средства
     /// </summary>
     [UpdateInGroup(typeof(FixedStepSimulationSystemGroup))]
-    [BurstCompile]
+    [BurstCompile(CompileSynchronously = true)]
     public partial class VehicleMovementSystem : SystemBase
     {
         /// <summary>

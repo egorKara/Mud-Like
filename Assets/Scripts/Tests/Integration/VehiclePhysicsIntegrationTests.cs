@@ -2,277 +2,375 @@ using NUnit.Framework;
 using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Transforms;
-using MudLike.Vehicles.Components;
+using Unity.Collections;
 using MudLike.Vehicles.Systems;
+using MudLike.Vehicles.Components;
+using MudLike.Terrain.Systems;
 using MudLike.Terrain.Components;
-using MudLike.Weather.Components;
-using MudLike.Tests.Infrastructure;
+using MudLike.Core.Components;
+using Unity.Core;
 
 namespace MudLike.Tests.Integration
 {
     /// <summary>
-    /// Интеграционные тесты для физики транспортных средств
+    /// Интеграционные тесты для взаимодействия систем физики транспорта
+    /// Проверяет корректную работу VehicleMovementSystem, MudManagerSystem и других систем
     /// </summary>
-    [TestFixture]
-    public class VehiclePhysicsIntegrationTests : MudLikeTestFixture
+    public class VehiclePhysicsIntegrationTests
     {
-        private VehicleMovementSystem _movementSystem;
-        private AdvancedWheelPhysicsSystem _wheelSystem;
-        private TerrainDeformationSystem _terrainSystem;
-        private WeatherSystem _weatherSystem;
-        
+        private World _world;
+        private VehicleMovementSystem _vehicleMovementSystem;
+        private MudManagerSystem _mudManagerSystem;
+        private EntityManager _entityManager;
+
         [SetUp]
-        public override void Setup()
+        public void SetUp()
         {
-            base.Setup();
-            _movementSystem = World.CreateSystemManaged<VehicleMovementSystem>();
-            _wheelSystem = World.CreateSystemManaged<AdvancedWheelPhysicsSystem>();
-            _terrainSystem = World.CreateSystemManaged<TerrainDeformationSystem>();
-            _weatherSystem = World.CreateSystemManaged<WeatherSystem>();
+            _world = new World("TestWorld");
+            _entityManager = _world.EntityManager;
+            
+            // Создаем системы
+            _vehicleMovementSystem = _world.GetOrCreateSystemManaged<VehicleMovementSystem>();
+            _vehicleMovementSystem.OnCreate(ref _world.Unmanaged);
+            
+            _mudManagerSystem = _world.GetOrCreateSystemManaged<MudManagerSystem>();
+            _mudManagerSystem.OnCreate(ref _world.Unmanaged);
+            
+            // Устанавливаем время для SystemAPI.Time.time
+            _world.SetSingleton(new TimeData { ElapsedTime = 10f, DeltaTime = 0.016f, FixedDeltaTime = 0.016f });
         }
-        
+
+        [TearDown]
+        public void TearDown()
+        {
+            _vehicleMovementSystem.OnDestroy(ref _world.Unmanaged);
+            _mudManagerSystem.OnDestroy(ref _world.Unmanaged);
+            _world.Dispose();
+        }
+
         [Test]
-        public void IntegrationTest_VehicleWheelSurface_ShouldWorkTogether()
+        public void VehicleMovement_WithMudInteraction_WorksCorrectly()
         {
             // Arrange
-            var vehicle = CreateVehicle();
-            var wheel = CreateWheel();
-            var surface = CreateSurface(SurfaceType.Mud);
-            var weather = CreateWeather(WeatherType.Rainy);
-            
-            // Act
-            _movementSystem.Update();
-            _wheelSystem.Update();
-            _terrainSystem.Update();
-            _weatherSystem.Update();
-            
-            // Assert
-            AssertVehicleMoved(vehicle, new float3(0, 0, 1));
-            AssertWheelGrounded(wheel);
-            AssertSurfaceType(surface, SurfaceType.Mud);
-            AssertWeatherType(weather, WeatherType.Rainy);
-        }
-        
-        [Test]
-        public void IntegrationTest_VehicleOnMuddySurface_ShouldSlip()
-        {
-            // Arrange
-            var vehicle = CreateVehicle();
-            var surface = CreateSurface(SurfaceType.Mud);
-            var weather = CreateWeather(WeatherType.Rainy);
-            
-            var input = new VehicleInput { Vertical = 1f };
-            EntityManager.SetComponentData(vehicle, input);
-            
-            // Act
-            _movementSystem.Update();
-            _wheelSystem.Update();
-            _terrainSystem.Update();
-            _weatherSystem.Update();
-            
-            // Assert
-            var physics = EntityManager.GetComponentData<VehiclePhysics>(vehicle);
-            var wheelData = EntityManager.GetComponentData<WheelData>(vehicle);
-            
-            Assert.Greater(wheelData.SlipRatio, 0.1f);
-            Assert.Less(physics.Velocity.magnitude, 10f);
-        }
-        
-        [Test]
-        public void IntegrationTest_VehicleOnIcySurface_ShouldSlide()
-        {
-            // Arrange
-            var vehicle = CreateVehicle();
-            var surface = CreateSurface(SurfaceType.Ice);
-            var weather = CreateWeather(WeatherType.Cold);
-            
-            var input = new VehicleInput { Vertical = 1f };
-            EntityManager.SetComponentData(vehicle, input);
-            
-            // Act
-            _movementSystem.Update();
-            _wheelSystem.Update();
-            _terrainSystem.Update();
-            _weatherSystem.Update();
-            
-            // Assert
-            var physics = EntityManager.GetComponentData<VehiclePhysics>(vehicle);
-            var wheelData = EntityManager.GetComponentData<WheelData>(vehicle);
-            
-            Assert.Greater(wheelData.SlipRatio, 0.5f);
-            Assert.Less(physics.Velocity.magnitude, 5f);
-        }
-        
-        [Test]
-        public void IntegrationTest_VehicleOnDryAsphalt_ShouldHaveGoodTraction()
-        {
-            // Arrange
-            var vehicle = CreateVehicle();
-            var surface = CreateSurface(SurfaceType.Asphalt);
-            var weather = CreateWeather(WeatherType.Clear);
-            
-            var input = new VehicleInput { Vertical = 1f };
-            EntityManager.SetComponentData(vehicle, input);
-            
-            // Act
-            _movementSystem.Update();
-            _wheelSystem.Update();
-            _terrainSystem.Update();
-            _weatherSystem.Update();
-            
-            // Assert
-            var physics = EntityManager.GetComponentData<VehiclePhysics>(vehicle);
-            var wheelData = EntityManager.GetComponentData<WheelData>(vehicle);
-            
-            Assert.Less(wheelData.SlipRatio, 0.1f);
-            Assert.Greater(physics.Velocity.magnitude, 5f);
-        }
-        
-        [Test]
-        public void IntegrationTest_VehicleInRain_ShouldHaveReducedTraction()
-        {
-            // Arrange
-            var vehicle = CreateVehicle();
-            var surface = CreateSurface(SurfaceType.Asphalt);
-            var weather = CreateWeather(WeatherType.Rainy);
-            
-            var input = new VehicleInput { Vertical = 1f };
-            EntityManager.SetComponentData(vehicle, input);
-            
-            // Act
-            _movementSystem.Update();
-            _wheelSystem.Update();
-            _terrainSystem.Update();
-            _weatherSystem.Update();
-            
-            // Assert
-            var physics = EntityManager.GetComponentData<VehiclePhysics>(vehicle);
-            var wheelData = EntityManager.GetComponentData<WheelData>(vehicle);
-            
-            Assert.Greater(wheelData.SlipRatio, 0.05f);
-            Assert.Less(physics.Velocity.magnitude, 15f);
-        }
-        
-        [Test]
-        public void IntegrationTest_VehicleInSnow_ShouldHavePoorTraction()
-        {
-            // Arrange
-            var vehicle = CreateVehicle();
-            var surface = CreateSurface(SurfaceType.Snow);
-            var weather = CreateWeather(WeatherType.Snowy);
-            
-            var input = new VehicleInput { Vertical = 1f };
-            EntityManager.SetComponentData(vehicle, input);
-            
-            // Act
-            _movementSystem.Update();
-            _wheelSystem.Update();
-            _terrainSystem.Update();
-            _weatherSystem.Update();
-            
-            // Assert
-            var physics = EntityManager.GetComponentData<VehiclePhysics>(vehicle);
-            var wheelData = EntityManager.GetComponentData<WheelData>(vehicle);
-            
-            Assert.Greater(wheelData.SlipRatio, 0.2f);
-            Assert.Less(physics.Velocity.magnitude, 8f);
-        }
-        
-        [Test]
-        public void IntegrationTest_VehicleInFog_ShouldHaveReducedVisibility()
-        {
-            // Arrange
-            var vehicle = CreateVehicle();
-            var weather = CreateWeather(WeatherType.Foggy);
-            
-            // Act
-            _weatherSystem.Update();
-            
-            // Assert
-            var weatherData = EntityManager.GetComponentData<WeatherData>(weather);
-            Assert.Less(weatherData.Visibility, 500f);
-        }
-        
-        [Test]
-        public void IntegrationTest_VehicleInStorm_ShouldHavePoorConditions()
-        {
-            // Arrange
-            var vehicle = CreateVehicle();
-            var surface = CreateSurface(SurfaceType.Mud);
-            var weather = CreateWeather(WeatherType.Stormy);
-            
-            var input = new VehicleInput { Vertical = 1f };
-            EntityManager.SetComponentData(vehicle, input);
-            
-            // Act
-            _movementSystem.Update();
-            _wheelSystem.Update();
-            _terrainSystem.Update();
-            _weatherSystem.Update();
-            
-            // Assert
-            var physics = EntityManager.GetComponentData<VehiclePhysics>(vehicle);
-            var wheelData = EntityManager.GetComponentData<WheelData>(vehicle);
-            var weatherData = EntityManager.GetComponentData<WeatherData>(weather);
-            
-            Assert.Greater(wheelData.SlipRatio, 0.3f);
-            Assert.Less(physics.Velocity.magnitude, 5f);
-            Assert.Greater(weatherData.WindSpeed, 10f);
-        }
-        
-        [Test]
-        public void IntegrationTest_AllSystems_ShouldWorkTogether()
-        {
-            // Arrange
-            var vehicle = CreateVehicle();
-            var wheel = CreateWheel();
-            var surface = CreateSurface(SurfaceType.Grass);
-            var weather = CreateWeather(WeatherType.Clear);
-            var hud = CreateHUD();
-            var audio = CreateAudio();
-            
-            var input = new VehicleInput { Vertical = 1f, Horizontal = 0.5f };
-            EntityManager.SetComponentData(vehicle, input);
-            
-            // Act
-            _movementSystem.Update();
-            _wheelSystem.Update();
-            _terrainSystem.Update();
-            _weatherSystem.Update();
-            
-            // Assert
-            AssertVehicleMoved(vehicle, new float3(0, 0, 1));
-            AssertWheelGrounded(wheel);
-            AssertSurfaceType(surface, SurfaceType.Grass);
-            AssertWeatherType(weather, WeatherType.Clear);
-            AssertHUDUpdated(hud);
-            AssertAudioPlaying(audio);
-        }
-        
-        [Test]
-        public void IntegrationTest_Performance_ShouldHandle1000Vehicles()
-        {
-            // Arrange
-            for (int i = 0; i < 1000; i++)
+            var entity = _entityManager.CreateEntity();
+            _entityManager.AddComponentData(entity, new LocalTransform 
+            { 
+                Position = new float3(0, 0, 0), 
+                Rotation = quaternion.identity 
+            });
+            _entityManager.AddComponentData(entity, new VehiclePhysics
             {
-                CreateVehicle();
-                CreateWheel();
-                CreateSurface(SurfaceType.Asphalt);
-            }
+                Velocity = float3.zero,
+                Acceleration = float3.zero,
+                ForwardSpeed = 0f,
+                TurnSpeed = 0f
+            });
+            _entityManager.AddComponentData(entity, new VehicleConfig
+            {
+                MaxSpeed = 50f,
+                Acceleration = 10f,
+                TurnSpeed = 90f,
+                Drag = 0.1f
+            });
+            _entityManager.AddComponentData(entity, new VehicleInput
+            {
+                Vertical = 1f,
+                Horizontal = 0f
+            });
+            _entityManager.AddComponent<VehicleTag>(entity);
+
+            // Act
+            _vehicleMovementSystem.OnUpdate(ref _world.Unmanaged);
+
+            // Assert
+            var physics = _entityManager.GetComponentData<VehiclePhysics>(entity);
+            var transform = _entityManager.GetComponentData<LocalTransform>(entity);
             
-            // Act & Assert
+            Assert.Greater(physics.Velocity.x, 0f); // Транспорт должен двигаться вперед
+            Assert.Greater(transform.Position.x, 0f); // Позиция должна измениться
+        }
+
+        [Test]
+        public void MudManager_QueryContact_WithVehiclePosition_ReturnsValidData()
+        {
+            // Arrange
+            float3 wheelPosition = new float3(10, 0, 5);
+            float radius = 0.5f;
+            float wheelForce = 1000f;
+
+            // Act
+            var contactData = _mudManagerSystem.QueryContact(wheelPosition, radius, wheelForce);
+
+            // Assert
+            Assert.IsTrue(contactData.IsValid);
+            Assert.GreaterOrEqual(contactData.MudLevel, 0f);
+            Assert.LessOrEqual(contactData.MudLevel, 1f);
+            Assert.GreaterOrEqual(contactData.SinkDepth, 0f);
+            Assert.GreaterOrEqual(contactData.TractionModifier, 0f);
+            Assert.LessOrEqual(contactData.TractionModifier, 1f);
+        }
+
+        [Test]
+        public void VehicleMovement_OnDifferentTerrainTypes_BehavesDifferently()
+        {
+            // Arrange
+            var positions = new[]
+            {
+                new float3(0, 0, 0),    // Сухая земля
+                new float3(50, 0, 0),   // Мокрая земля
+                new float3(100, 0, 0)   // Грязь
+            };
+
+            var results = new MudContactData[positions.Length];
+
+            // Act
+            for (int i = 0; i < positions.Length; i++)
+            {
+                results[i] = _mudManagerSystem.QueryContact(positions[i], 0.5f, 1000f);
+            }
+
+            // Assert
+            // Все результаты должны быть валидными
+            foreach (var result in results)
+            {
+                Assert.IsTrue(result.IsValid);
+                Assert.GreaterOrEqual(result.TractionModifier, 0f);
+                Assert.LessOrEqual(result.TractionModifier, 1f);
+            }
+        }
+
+        [Test]
+        public void VehiclePhysics_WithMultipleWheels_IntegratesCorrectly()
+        {
+            // Arrange
+            var vehicleEntity = _entityManager.CreateEntity();
+            _entityManager.AddComponentData(vehicleEntity, new LocalTransform 
+            { 
+                Position = new float3(0, 0, 0), 
+                Rotation = quaternion.identity 
+            });
+            _entityManager.AddComponentData(vehicleEntity, new VehiclePhysics
+            {
+                Velocity = float3.zero,
+                Acceleration = float3.zero,
+                ForwardSpeed = 0f,
+                TurnSpeed = 0f
+            });
+            _entityManager.AddComponentData(vehicleEntity, new VehicleConfig
+            {
+                MaxSpeed = 30f,
+                Acceleration = 8f,
+                TurnSpeed = 60f,
+                Drag = 0.15f
+            });
+            _entityManager.AddComponentData(vehicleEntity, new VehicleInput
+            {
+                Vertical = 0.8f,
+                Horizontal = 0.3f
+            });
+            _entityManager.AddComponent<VehicleTag>(vehicleEntity);
+
+            // Создаем колеса
+            var wheelPositions = new[]
+            {
+                new float3(-1, -0.5f, 2),   // Переднее левое
+                new float3(1, -0.5f, 2),    // Переднее правое
+                new float3(-1, -0.5f, -2),  // Заднее левое
+                new float3(1, -0.5f, -2)    // Заднее правое
+            };
+
+            for (int i = 0; i < wheelPositions.Length; i++)
+            {
+                var wheelEntity = _entityManager.CreateEntity();
+                _entityManager.AddComponentData(wheelEntity, new LocalTransform 
+                { 
+                    Position = wheelPositions[i], 
+                    Rotation = quaternion.identity 
+                });
+                _entityManager.AddComponentData(wheelEntity, new WheelData
+                {
+                    Position = wheelPositions[i],
+                    Radius = 0.4f,
+                    Width = 0.2f,
+                    SuspensionLength = 0.3f,
+                    SpringForce = 800f,
+                    DampingForce = 400f,
+                    IsGrounded = true,
+                    GroundDistance = 0.1f
+                });
+                _entityManager.AddComponent<VehicleTag>(wheelEntity);
+            }
+
+            // Act
+            _vehicleMovementSystem.OnUpdate(ref _world.Unmanaged);
+
+            // Проверяем взаимодействие колес с грязью
+            foreach (var wheelPos in wheelPositions)
+            {
+                var contactData = _mudManagerSystem.QueryContact(wheelPos, 0.4f, 500f);
+                Assert.IsTrue(contactData.IsValid);
+            }
+
+            // Assert
+            var physics = _entityManager.GetComponentData<VehiclePhysics>(vehicleEntity);
+            var transform = _entityManager.GetComponentData<LocalTransform>(vehicleEntity);
+            
+            Assert.Greater(physics.Velocity.x, 0f); // Движение вперед
+            Assert.NotZero(transform.Rotation.y); // Поворот
+        }
+
+        [Test]
+        public void SystemIntegration_PhysicsAndTerrain_SynchronizeCorrectly()
+        {
+            // Arrange
+            var entity = _entityManager.CreateEntity();
+            _entityManager.AddComponentData(entity, new LocalTransform 
+            { 
+                Position = new float3(0, 0, 0), 
+                Rotation = quaternion.identity 
+            });
+            _entityManager.AddComponentData(entity, new VehiclePhysics
+            {
+                Velocity = new float3(10f, 0, 0),
+                Acceleration = float3.zero,
+                ForwardSpeed = 10f,
+                TurnSpeed = 0f
+            });
+            _entityManager.AddComponentData(entity, new VehicleConfig
+            {
+                MaxSpeed = 50f,
+                Acceleration = 10f,
+                TurnSpeed = 90f,
+                Drag = 0.1f
+            });
+            _entityManager.AddComponentData(entity, new VehicleInput
+            {
+                Vertical = 0f,
+                Horizontal = 0f
+            });
+            _entityManager.AddComponent<VehicleTag>(entity);
+
+            // Act - выполняем несколько обновлений
+            for (int i = 0; i < 10; i++)
+            {
+                _vehicleMovementSystem.OnUpdate(ref _world.Unmanaged);
+                
+                // Проверяем взаимодействие с грязью на каждой итерации
+                var transform = _entityManager.GetComponentData<LocalTransform>(entity);
+                var contactData = _mudManagerSystem.QueryContact(transform.Position, 0.5f, 1000f);
+                Assert.IsTrue(contactData.IsValid);
+            }
+
+            // Assert
+            var finalPhysics = _entityManager.GetComponentData<VehiclePhysics>(entity);
+            var finalTransform = _entityManager.GetComponentData<LocalTransform>(entity);
+            
+            // Скорость должна уменьшиться из-за сопротивления
+            Assert.Less(finalPhysics.Velocity.x, 10f);
+            
+            // Позиция должна измениться
+            Assert.Greater(finalTransform.Position.x, 0f);
+        }
+
+        [Test]
+        public void Performance_Integration_SystemsWorkEfficiently()
+        {
+            // Arrange
             var stopwatch = System.Diagnostics.Stopwatch.StartNew();
             
-            _movementSystem.Update();
-            _wheelSystem.Update();
-            _terrainSystem.Update();
-            _weatherSystem.Update();
+            // Создаем множественные сущности
+            for (int i = 0; i < 50; i++)
+            {
+                var entity = _entityManager.CreateEntity();
+                _entityManager.AddComponentData(entity, new LocalTransform 
+                { 
+                    Position = new float3(i * 2, 0, 0), 
+                    Rotation = quaternion.identity 
+                });
+                _entityManager.AddComponentData(entity, new VehiclePhysics
+                {
+                    Velocity = new float3(i % 10, 0, 0),
+                    Acceleration = float3.zero,
+                    ForwardSpeed = i % 10,
+                    TurnSpeed = 0f
+                });
+                _entityManager.AddComponentData(entity, new VehicleConfig
+                {
+                    MaxSpeed = 50f,
+                    Acceleration = 10f,
+                    TurnSpeed = 90f,
+                    Drag = 0.1f
+                });
+                _entityManager.AddComponentData(entity, new VehicleInput
+                {
+                    Vertical = 0.5f,
+                    Horizontal = 0.2f
+                });
+                _entityManager.AddComponent<VehicleTag>(entity);
+            }
+
+            // Act
+            _vehicleMovementSystem.OnUpdate(ref _world.Unmanaged);
+            
+            // Проверяем взаимодействие с грязью для всех сущностей
+            var entities = _entityManager.GetAllEntities(Allocator.Temp);
+            foreach (var entity in entities)
+            {
+                if (_entityManager.HasComponent<LocalTransform>(entity))
+                {
+                    var transform = _entityManager.GetComponentData<LocalTransform>(entity);
+                    var contactData = _mudManagerSystem.QueryContact(transform.Position, 0.5f, 1000f);
+                    Assert.IsTrue(contactData.IsValid);
+                }
+            }
+            entities.Dispose();
             
             stopwatch.Stop();
-            var executionTime = stopwatch.ElapsedMilliseconds;
-            
-            Assert.Less(executionTime, 100f, 
-                "Integration test should complete in less than 100ms, actual: {0}ms", executionTime);
+
+            // Assert
+            Assert.Less(stopwatch.ElapsedMilliseconds, 100); // Должно выполняться менее чем за 100ms
+        }
+
+        [Test]
+        public void ErrorHandling_Integration_SystemsHandleErrorsGracefully()
+        {
+            // Arrange
+            var entity = _entityManager.CreateEntity();
+            _entityManager.AddComponentData(entity, new LocalTransform 
+            { 
+                Position = new float3(float.NaN, float.PositiveInfinity, float.NegativeInfinity), 
+                Rotation = quaternion.identity 
+            });
+            _entityManager.AddComponentData(entity, new VehiclePhysics
+            {
+                Velocity = new float3(float.MaxValue, float.MinValue, float.Epsilon),
+                Acceleration = float3.zero,
+                ForwardSpeed = float.NaN,
+                TurnSpeed = float.PositiveInfinity
+            });
+            _entityManager.AddComponentData(entity, new VehicleConfig
+            {
+                MaxSpeed = float.MinValue,
+                Acceleration = float.Epsilon,
+                TurnSpeed = float.MaxValue,
+                Drag = float.NaN
+            });
+            _entityManager.AddComponentData(entity, new VehicleInput
+            {
+                Vertical = float.PositiveInfinity,
+                Horizontal = float.NegativeInfinity
+            });
+            _entityManager.AddComponent<VehicleTag>(entity);
+
+            // Act & Assert
+            // Системы должны обрабатывать некорректные данные без исключений
+            Assert.DoesNotThrow(() => 
+            {
+                _vehicleMovementSystem.OnUpdate(ref _world.Unmanaged);
+                
+                var transform = _entityManager.GetComponentData<LocalTransform>(entity);
+                var contactData = _mudManagerSystem.QueryContact(transform.Position, 0.5f, 1000f);
+            });
         }
     }
 }

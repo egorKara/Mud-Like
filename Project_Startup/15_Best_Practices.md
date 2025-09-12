@@ -519,7 +519,7 @@ public class VehicleConfig : ScriptableObject
 
 ### **3. Quality Gates**
 - **Все тесты** должны проходить
-- **Code Coverage** >80%
+- **Code Coverage** 100%
 - **Performance** в пределах нормы
 - **Нет критических** ошибок
 

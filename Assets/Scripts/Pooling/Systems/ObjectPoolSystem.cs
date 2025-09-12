@@ -12,7 +12,7 @@ namespace MudLike.Pooling.Systems
     /// Система пула объектов для оптимизации памяти
     /// </summary>
     [UpdateInGroup(typeof(SimulationSystemGroup))]
-    [BurstCompile]
+    [BurstCompile(CompileSynchronously = true)]
     public partial class ObjectPoolSystem : SystemBase
     {
         private EntityQuery _poolQuery;

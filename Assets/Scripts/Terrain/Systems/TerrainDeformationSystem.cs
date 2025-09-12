@@ -12,7 +12,7 @@ namespace MudLike.Terrain.Systems
     /// Система деформации террейна
     /// </summary>
     [UpdateInGroup(typeof(FixedStepSimulationSystemGroup))]
-    [BurstCompile]
+    [BurstCompile(CompileSynchronously = true)]
     public partial class TerrainDeformationSystem : SystemBase
     {
         /// <summary>

@@ -11,7 +11,7 @@ namespace MudLike.Core.Systems
     /// Игрок управляет только транспортом, не ходит пешком
     /// </summary>
     [UpdateInGroup(typeof(FixedStepSimulationSystemGroup))]
-    [BurstCompile]
+    [BurstCompile(CompileSynchronously = true)]
     public partial class VehicleControlSystem : SystemBase
     {
         /// <summary>

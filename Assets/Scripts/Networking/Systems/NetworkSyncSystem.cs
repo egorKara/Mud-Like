@@ -11,6 +11,7 @@ namespace MudLike.Networking.Systems
     /// Система синхронизации сетевых данных
     /// </summary>
     [UpdateInGroup(typeof(NetCodeClientAndServerSystemGroup))]
+    [BurstCompile(CompileSynchronously = true)]
     public partial class NetworkSyncSystem : SystemBase
     {
         /// <summary>

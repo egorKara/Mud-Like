@@ -14,7 +14,7 @@ namespace MudLike.Core.Performance
     /// Использует Burst Compiler и Job System для максимальной производительности
     /// </summary>
     [UpdateInGroup(typeof(FixedStepSimulationSystemGroup))]
-    [BurstCompile]
+    [BurstCompile(CompileSynchronously = true)]
     public partial class OptimizedJobSystem : SystemBase
     {
         private EntityQuery _vehicleQuery;
@@ -147,7 +147,7 @@ namespace MudLike.Core.Performance
     /// Оптимизированная система для обработки деформации террейна
     /// </summary>
     [UpdateInGroup(typeof(FixedStepSimulationSystemGroup))]
-    [BurstCompile]
+    [BurstCompile(CompileSynchronously = true)]
     public partial class OptimizedTerrainSystem : SystemBase
     {
         private EntityQuery _deformationQuery;

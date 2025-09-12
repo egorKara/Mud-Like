@@ -394,7 +394,7 @@ public struct OptimizedJob : IJobParallelFor
 ### **2. Тестирование**
 - [ ] Unit тесты написаны
 - [ ] Integration тесты написаны
-- [ ] Code Coverage >80%
+- [ ] Code Coverage 100%
 - [ ] Все тесты проходят
 
 ### **3. Производительность**
