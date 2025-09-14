@@ -1,0 +1,26 @@
+{
+    "name": "MudLike.DOTS",
+    "rootNamespace": "MudLike.DOTS",
+    "references": [
+        "Unity.Entities",
+        "Unity.Collections",
+        "Unity.Jobs",
+        "Unity.Burst",
+        "Unity.Mathematics",
+        "Unity.Physics",
+        "Unity.Rendering.Hybrid",
+        "MudLike.Core",
+        "MudLike.Vehicles",
+        "MudLike.Terrain",
+        "MudLike.Networking"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": true,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

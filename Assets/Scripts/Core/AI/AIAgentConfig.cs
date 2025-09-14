@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using Unity.Entities;
 using UnityEngine;
+using MudLike.Core.Constants;
 
 namespace MudLike.Core.AI
 {
@@ -59,7 +60,7 @@ namespace MudLike.Core.AI
         
         [Tooltip("Интервал проверок (в минутах)")]
         [Range(5, 1440)]
-        public int CheckIntervalMinutes = 60;
+        public int CheckIntervalMinutes = SystemConstants.DEFAULT_AI_UPDATE_INTERVAL * 600; // 60 минут
         
         [Header("🎯 Task Priorities")]
         [Tooltip("Приоритет задач детерминизма")]
@@ -96,7 +97,7 @@ namespace MudLike.Core.AI
         
         [Tooltip("Таймаут выполнения задач (в секундах)")]
         [Range(10, 300)]
-        public int TaskTimeoutSeconds = 60;
+        public int TaskTimeoutSeconds = SystemConstants.DEFAULT_TEST_TIMEOUT; // 5 секунд
         
         [Tooltip("Уровень логирования")]
         public LogLevel LogLevel = LogLevel.Info;
