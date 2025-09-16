@@ -1,3 +1,5 @@
+using Unity.Entities;
+using UnityEngine.InputSystem;
 # 📹 VehicleCameraSystem - Система камеры для транспорта
 
 ## 📋 **ОБЗОР СИСТЕМЫ**

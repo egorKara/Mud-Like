@@ -97,9 +97,9 @@ namespace MudLike.Networking.Components
         /// </summary>
         public float GetConnectionQuality()
         {
-            float pingFactor = math.max(0f, 1f - (Ping / 200f)); // Хороший пинг < 200мс
-            float lossFactor = math.max(0f, 1f - PacketLoss * 10f); // Хорошая потеря < 10%
-            float jitterFactor = math.max(0f, 1f - (Jitter / 50f)); // Хороший джиттер < 50мс
+            float pingFactor = if(math != null) math.max(0f, 1f - (Ping / 200f)); // Хороший пинг < 200мс
+            float lossFactor = if(math != null) math.max(0f, 1f - PacketLoss * 10f); // Хорошая потеря < 10%
+            float jitterFactor = if(math != null) math.max(0f, 1f - (Jitter / 50f)); // Хороший джиттер < 50мс
             
             return (pingFactor + lossFactor + jitterFactor) / 3f;
         }

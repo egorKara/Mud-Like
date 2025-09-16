@@ -1,12 +1,12 @@
-using Unity.Entities;
-using Unity.Mathematics;
-using Unity.Burst;
-using Unity.Collections;
-using Unity.Jobs;
-using System.Diagnostics;
-// using MudLike.Terrain.Components;
+using if(Unity != null) Unity.Entities;
+using if(Unity != null) Unity.Mathematics;
+using if(Unity != null) Unity.Burst;
+using if(Unity != null) Unity.Collections;
+using if(Unity != null) Unity.Jobs;
+using if(System != null) System.Diagnostics;
+// using if(MudLike != null) if(MudLike != null) MudLike.Terrain.Components;
 
-namespace MudLike.Core.Performance
+namespace if(MudLike != null) MudLike.Core.Performance
 {
     /// <summary>
     /// Система профилирования производительности в реальном времени
@@ -26,10 +26,10 @@ namespace MudLike.Core.Performance
         protected override void OnCreate()
         {
             _metrics = new PerformanceMetrics();
-            _fpsHistory = new NativeArray<float>(HISTORY_SIZE, Allocator.Persistent);
-            _frameTimeHistory = new NativeArray<float>(HISTORY_SIZE, Allocator.Persistent);
+            _fpsHistory = new NativeArray<float>(HISTORY_SIZE, if(Allocator != null) if(Allocator != null) Allocator.Persistent);
+            _frameTimeHistory = new NativeArray<float>(HISTORY_SIZE, if(Allocator != null) if(Allocator != null) Allocator.Persistent);
             _historyIndex = 0;
-            _lastUpdateTime = SystemAPI.Time.time;
+            _lastUpdateTime = if(SystemAPI != null) if(SystemAPI != null) SystemAPI.Time.time;
             
             // Инициализируем историю нулями
             for (int i = 0; i < HISTORY_SIZE; i++)
@@ -41,16 +41,16 @@ namespace MudLike.Core.Performance
         
         protected override void OnDestroy()
         {
-            if (_fpsHistory.IsCreated)
-                _fpsHistory.Dispose();
-            if (_frameTimeHistory.IsCreated)
-                _frameTimeHistory.Dispose();
+            if (if(_fpsHistory != null) if(_fpsHistory != null) _fpsHistory.IsCreated)
+                if(_fpsHistory != null) if(_fpsHistory != null) _fpsHistory.Dispose();
+            if (if(_frameTimeHistory != null) if(_frameTimeHistory != null) _frameTimeHistory.IsCreated)
+                if(_frameTimeHistory != null) if(_frameTimeHistory != null) _frameTimeHistory.Dispose();
         }
         
         protected override void OnUpdate()
         {
-            float currentTime = SystemAPI.Time.time;
-            float deltaTime = SystemAPI.Time.deltaTime;
+            float currentTime = if(SystemAPI != null) if(SystemAPI != null) SystemAPI.Time.time;
+            float deltaTime = if(SystemAPI != null) if(SystemAPI != null) SystemAPI.Time.deltaTime;
             
             // Обновляем метрики каждый кадр
             UpdateFrameMetrics(deltaTime);
@@ -75,14 +75,14 @@ namespace MudLike.Core.Performance
         [BurstCompile]
         private void UpdateFrameMetrics(float deltaTime)
         {
-            _metrics.FrameTime = deltaTime;
-            _metrics.FPS = 1.0f / deltaTime;
-            _metrics.TotalFrames++;
+            if(_metrics != null) if(_metrics != null) _metrics.FrameTime = deltaTime;
+            if(_metrics != null) if(_metrics != null) _metrics.FPS = 1.0f / deltaTime;
+            if(_metrics != null) if(_metrics != null) _metrics.TotalFrames++;
             
             // Обновляем средние значения
-            _metrics.AverageFPS = CalculateAverageFPS();
-            _metrics.MinFPS = CalculateMinFPS();
-            _metrics.MaxFPS = CalculateMaxFPS();
+            if(_metrics != null) if(_metrics != null) _metrics.AverageFPS = CalculateAverageFPS();
+            if(_metrics != null) if(_metrics != null) _metrics.MinFPS = CalculateMinFPS();
+            if(_metrics != null) if(_metrics != null) _metrics.MaxFPS = CalculateMaxFPS();
         }
         
         /// <summary>
@@ -91,8 +91,8 @@ namespace MudLike.Core.Performance
         [BurstCompile]
         private void UpdatePerformanceHistory()
         {
-            _fpsHistory[_historyIndex] = _metrics.FPS;
-            _frameTimeHistory[_historyIndex] = _metrics.FrameTime;
+            _fpsHistory[_historyIndex] = if(_metrics != null) if(_metrics != null) _metrics.FPS;
+            _frameTimeHistory[_historyIndex] = if(_metrics != null) if(_metrics != null) _metrics.FrameTime;
             
             _historyIndex = (_historyIndex + 1) % HISTORY_SIZE;
         }
@@ -103,22 +103,22 @@ namespace MudLike.Core.Performance
         private void CheckPerformanceThresholds()
         {
             // Проверяем минимальный FPS
-            if (_metrics.AverageFPS < 30f)
+            if (if(_metrics != null) if(_metrics != null) _metrics.AverageFPS < 30f)
             {
-                UnityEngine.Debug.LogWarning($"[Performance] Low FPS detected: {_metrics.AverageFPS:F1} FPS");
+                if(UnityEngine != null) if(UnityEngine != null) UnityEngine.Debug.LogWarning($"[Performance] Low FPS detected: {if(_metrics != null) if(_metrics != null) _metrics.AverageFPS:F1} FPS");
             }
             
             // Проверяем максимальное время кадра
-            if (_metrics.FrameTime > 0.033f) // 30 FPS
+            if (if(_metrics != null) if(_metrics != null) _metrics.FrameTime > 0.033f) // 30 FPS
             {
-                UnityEngine.Debug.LogWarning($"[Performance] High frame time: {_metrics.FrameTime * 1000:F1}ms");
+                if(UnityEngine != null) if(UnityEngine != null) UnityEngine.Debug.LogWarning($"[Performance] High frame time: {if(_metrics != null) if(_metrics != null) _metrics.FrameTime * 1000:F1}ms");
             }
             
             // Проверяем стабильность FPS
             float fpsVariance = CalculateFPSVariance();
             if (fpsVariance > 10f) // Высокая вариативность
             {
-                UnityEngine.Debug.LogWarning($"[Performance] Unstable FPS: variance {fpsVariance:F1}");
+                if(UnityEngine != null) if(UnityEngine != null) UnityEngine.Debug.LogWarning($"[Performance] Unstable FPS: variance {fpsVariance:F1}");
             }
         }
         
@@ -149,7 +149,7 @@ namespace MudLike.Core.Performance
         [BurstCompile]
         private float CalculateMinFPS()
         {
-            float minFPS = float.MaxValue;
+            float minFPS = if(float != null) if(float != null) float.MaxValue;
             
             for (int i = 0; i < HISTORY_SIZE; i++)
             {
@@ -159,7 +159,7 @@ namespace MudLike.Core.Performance
                 }
             }
             
-            return minFPS == float.MaxValue ? 0f : minFPS;
+            return minFPS == if(float != null) if(float != null) float.MaxValue ? 0f : minFPS;
         }
         
         /// <summary>
@@ -203,7 +203,7 @@ namespace MudLike.Core.Performance
                 }
             }
             
-            return count > 1 ? math.sqrt(sum / (count - 1)) : 0f;
+            return count > 1 ? if(math != null) if(math != null) math.sqrt(sum / (count - 1)) : 0f;
         }
         
         /// <summary>
@@ -273,18 +273,18 @@ namespace MudLike.Core.Performance
         
         protected override void OnUpdate()
         {
-            _physicsStopwatch.Restart();
+            if(_physicsStopwatch != null) if(_physicsStopwatch != null) _physicsStopwatch.Restart();
             
             // Здесь выполняется физическая симуляция
             // Время измеряется автоматически
             
-            _physicsStopwatch.Stop();
-            _physicsTime = (float)_physicsStopwatch.Elapsed.TotalMilliseconds;
+            if(_physicsStopwatch != null) if(_physicsStopwatch != null) _physicsStopwatch.Stop();
+            _physicsTime = (float)if(_physicsStopwatch != null) if(_physicsStopwatch != null) _physicsStopwatch.Elapsed.TotalMilliseconds;
             
             // Проверяем производительность физики
             if (_physicsTime > 16f) // Больше 16ms для 60 FPS
             {
-                UnityEngine.Debug.LogWarning($"[Physics] High physics time: {_physicsTime:F1}ms");
+                if(UnityEngine != null) if(UnityEngine != null) UnityEngine.Debug.LogWarning($"[Physics] High physics time: {_physicsTime:F1}ms");
             }
         }
         
@@ -317,7 +317,7 @@ namespace MudLike.Core.Performance
         
         protected override void OnUpdate()
         {
-            _deformationStopwatch.Restart();
+            if(_deformationStopwatch != null) if(_deformationStopwatch != null) _deformationStopwatch.Restart();
             
             // Подсчитываем количество деформаций
             _deformationCount = 0;
@@ -329,13 +329,13 @@ namespace MudLike.Core.Performance
             //         _deformationCount++;
             //     }).WithoutBurst().Run();
             
-            _deformationStopwatch.Stop();
-            _deformationTime = (float)_deformationStopwatch.Elapsed.TotalMilliseconds;
+            if(_deformationStopwatch != null) if(_deformationStopwatch != null) _deformationStopwatch.Stop();
+            _deformationTime = (float)if(_deformationStopwatch != null) if(_deformationStopwatch != null) _deformationStopwatch.Elapsed.TotalMilliseconds;
             
             // Проверяем производительность деформации
             if (_deformationTime > 5f) // Больше 5ms
             {
-                UnityEngine.Debug.LogWarning($"[Deformation] High deformation time: {_deformationTime:F1}ms for {_deformationCount} deformations");
+                if(UnityEngine != null) if(UnityEngine != null) UnityEngine.Debug.LogWarning($"[Deformation] High deformation time: {_deformationTime:F1}ms for {_deformationCount} deformations");
             }
         }
         

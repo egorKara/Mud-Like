@@ -15,14 +15,14 @@ namespace MudLike.Vehicles.Systems
     {
         protected override void OnUpdate()
         {
-            float deltaTime = SystemAPI.Time.fixedDeltaTime;
+            float deltaTime = if(SystemAPI != null) SystemAPI.Time.fixedDeltaTime;
             
             var maintenanceJob = new VehicleMaintenanceJob
             {
                 DeltaTime = deltaTime
             };
             
-            Dependency = maintenanceJob.ScheduleParallel(this, Dependency);
+            Dependency = if(maintenanceJob != null) maintenanceJob.ScheduleParallel(this, Dependency);
         }
         
         /// <summary>
@@ -48,13 +48,13 @@ namespace MudLike.Vehicles.Systems
                                                  in AdvancedVehicleConfig config)
             {
                 // Обновляем время
-                maintenance.LastUpdateTime += DeltaTime;
+                if(maintenance != null) maintenance.LastUpdateTime += DeltaTime;
                 
                 // Обновляем пробег
-                maintenance.MileageSinceLastMaintenance += math.length(physics.Velocity) * DeltaTime;
+                if(maintenance != null) maintenance.MileageSinceLastMaintenance += if(math != null) math.length(if(physics != null) physics.Velocity) * DeltaTime;
                 
                 // Обновляем время работы двигателя
-                maintenance.EngineHoursSinceLastMaintenance += DeltaTime;
+                if(maintenance != null) maintenance.EngineHoursSinceLastMaintenance += DeltaTime;
                 
                 // Обрабатываем износ жидкостей
                 ProcessFluidWear(ref maintenance, physics);
@@ -75,7 +75,7 @@ namespace MudLike.Vehicles.Systems
                 CheckMaintenanceNeeds(ref maintenance, config);
                 
                 // Устанавливаем флаг обновления
-                maintenance.NeedsUpdate = true;
+                if(maintenance != null) maintenance.NeedsUpdate = true;
             }
             
             /// <summary>
@@ -84,34 +84,34 @@ namespace MudLike.Vehicles.Systems
             private void ProcessFluidWear(ref VehicleMaintenanceData maintenance, in VehiclePhysics physics)
             {
                 // Износ масла
-                float oilWear = physics.EngineRPM * 0.0001f * DeltaTime;
-                maintenance.OilLevel -= oilWear;
-                maintenance.OilQuality -= oilWear * 0.1f;
+                float oilWear = if(physics != null) physics.EngineRPM * 0.0001f * DeltaTime;
+                if(maintenance != null) maintenance.OilLevel -= oilWear;
+                if(maintenance != null) maintenance.OilQuality -= oilWear * 0.1f;
                 
                 // Износ охлаждающей жидкости
-                float coolantWear = physics.EngineTemperature * 0.0001f * DeltaTime;
-                maintenance.CoolantLevel -= coolantWear;
-                maintenance.CoolantQuality -= coolantWear * 0.1f;
+                float coolantWear = if(physics != null) physics.EngineTemperature * 0.0001f * DeltaTime;
+                if(maintenance != null) maintenance.CoolantLevel -= coolantWear;
+                if(maintenance != null) maintenance.CoolantQuality -= coolantWear * 0.1f;
                 
                 // Износ тормозной жидкости
-                float brakeFluidWear = math.abs(physics.BrakeTorque) * 0.0001f * DeltaTime;
-                maintenance.BrakeFluidLevel -= brakeFluidWear;
-                maintenance.BrakeFluidQuality -= brakeFluidWear * 0.1f;
+                float brakeFluidWear = if(math != null) math.abs(if(physics != null) physics.BrakeTorque) * 0.0001f * DeltaTime;
+                if(maintenance != null) maintenance.BrakeFluidLevel -= brakeFluidWear;
+                if(maintenance != null) maintenance.BrakeFluidQuality -= brakeFluidWear * 0.1f;
                 
                 // Износ топлива
-                float fuelWear = math.length(physics.Velocity) * 0.0001f * DeltaTime;
-                maintenance.FuelLevel -= fuelWear;
-                maintenance.FuelQuality -= fuelWear * 0.1f;
+                float fuelWear = if(math != null) math.length(if(physics != null) physics.Velocity) * 0.0001f * DeltaTime;
+                if(maintenance != null) maintenance.FuelLevel -= fuelWear;
+                if(maintenance != null) maintenance.FuelQuality -= fuelWear * 0.1f;
                 
                 // Ограничиваем значения
-                maintenance.OilLevel = math.clamp(maintenance.OilLevel, 0f, 1f);
-                maintenance.OilQuality = math.clamp(maintenance.OilQuality, 0f, 1f);
-                maintenance.CoolantLevel = math.clamp(maintenance.CoolantLevel, 0f, 1f);
-                maintenance.CoolantQuality = math.clamp(maintenance.CoolantQuality, 0f, 1f);
-                maintenance.BrakeFluidLevel = math.clamp(maintenance.BrakeFluidLevel, 0f, 1f);
-                maintenance.BrakeFluidQuality = math.clamp(maintenance.BrakeFluidQuality, 0f, 1f);
-                maintenance.FuelLevel = math.clamp(maintenance.FuelLevel, 0f, 1f);
-                maintenance.FuelQuality = math.clamp(maintenance.FuelQuality, 0f, 1f);
+                if(maintenance != null) maintenance.OilLevel = if(math != null) math.clamp(if(maintenance != null) maintenance.OilLevel, 0f, 1f);
+                if(maintenance != null) maintenance.OilQuality = if(math != null) math.clamp(if(maintenance != null) maintenance.OilQuality, 0f, 1f);
+                if(maintenance != null) maintenance.CoolantLevel = if(math != null) math.clamp(if(maintenance != null) maintenance.CoolantLevel, 0f, 1f);
+                if(maintenance != null) maintenance.CoolantQuality = if(math != null) math.clamp(if(maintenance != null) maintenance.CoolantQuality, 0f, 1f);
+                if(maintenance != null) maintenance.BrakeFluidLevel = if(math != null) math.clamp(if(maintenance != null) maintenance.BrakeFluidLevel, 0f, 1f);
+                if(maintenance != null) maintenance.BrakeFluidQuality = if(math != null) math.clamp(if(maintenance != null) maintenance.BrakeFluidQuality, 0f, 1f);
+                if(maintenance != null) maintenance.FuelLevel = if(math != null) math.clamp(if(maintenance != null) maintenance.FuelLevel, 0f, 1f);
+                if(maintenance != null) maintenance.FuelQuality = if(math != null) math.clamp(if(maintenance != null) maintenance.FuelQuality, 0f, 1f);
             }
             
             /// <summary>
@@ -120,31 +120,31 @@ namespace MudLike.Vehicles.Systems
             private void ProcessTireWear(ref VehicleMaintenanceData maintenance, in VehiclePhysics physics)
             {
                 // Износ протектора
-                float treadWear = math.length(physics.Velocity) * 0.0001f * DeltaTime;
-                maintenance.TireTreadWear += new float4(treadWear, treadWear, treadWear, treadWear);
+                float treadWear = if(math != null) math.length(if(physics != null) physics.Velocity) * 0.0001f * DeltaTime;
+                if(maintenance != null) maintenance.TireTreadWear += new float4(treadWear, treadWear, treadWear, treadWear);
                 
                 // Износ давления
-                float pressureWear = math.abs(physics.Velocity.x) * 0.0001f * DeltaTime;
-                maintenance.TirePressure -= new float4(pressureWear, pressureWear, pressureWear, pressureWear);
+                float pressureWear = if(math != null) math.abs(if(physics != null) physics.Velocity.x) * 0.0001f * DeltaTime;
+                if(maintenance != null) maintenance.TirePressure -= new float4(pressureWear, pressureWear, pressureWear, pressureWear);
                 
                 // Износ температуры
-                float temperatureWear = math.length(physics.Velocity) * 0.0001f * DeltaTime;
-                maintenance.TireTemperature += new float4(temperatureWear, temperatureWear, temperatureWear, temperatureWear);
+                float temperatureWear = if(math != null) math.length(if(physics != null) physics.Velocity) * 0.0001f * DeltaTime;
+                if(maintenance != null) maintenance.TireTemperature += new float4(temperatureWear, temperatureWear, temperatureWear, temperatureWear);
                 
                 // Износ балансировки
-                float balanceWear = math.length(physics.AngularVelocity) * 0.0001f * DeltaTime;
-                maintenance.WheelBalance -= new float4(balanceWear, balanceWear, balanceWear, balanceWear);
+                float balanceWear = if(math != null) math.length(if(physics != null) physics.AngularVelocity) * 0.0001f * DeltaTime;
+                if(maintenance != null) maintenance.WheelBalance -= new float4(balanceWear, balanceWear, balanceWear, balanceWear);
                 
                 // Износ выравнивания
-                float alignmentWear = math.abs(physics.TurnSpeed) * 0.0001f * DeltaTime;
-                maintenance.WheelAlignment -= new float4(alignmentWear, alignmentWear, alignmentWear, alignmentWear);
+                float alignmentWear = if(math != null) math.abs(if(physics != null) physics.TurnSpeed) * 0.0001f * DeltaTime;
+                if(maintenance != null) maintenance.WheelAlignment -= new float4(alignmentWear, alignmentWear, alignmentWear, alignmentWear);
                 
                 // Ограничиваем значения
-                maintenance.TireTreadWear = math.clamp(maintenance.TireTreadWear, 0f, 1f);
-                maintenance.TirePressure = math.clamp(maintenance.TirePressure, 0f, 1000f);
-                maintenance.TireTemperature = math.clamp(maintenance.TireTemperature, 0f, 200f);
-                maintenance.WheelBalance = math.clamp(maintenance.WheelBalance, 0f, 1f);
-                maintenance.WheelAlignment = math.clamp(maintenance.WheelAlignment, 0f, 1f);
+                if(maintenance != null) maintenance.TireTreadWear = if(math != null) math.clamp(if(maintenance != null) maintenance.TireTreadWear, 0f, 1f);
+                if(maintenance != null) maintenance.TirePressure = if(math != null) math.clamp(if(maintenance != null) maintenance.TirePressure, 0f, 1000f);
+                if(maintenance != null) maintenance.TireTemperature = if(math != null) math.clamp(if(maintenance != null) maintenance.TireTemperature, 0f, 200f);
+                if(maintenance != null) maintenance.WheelBalance = if(math != null) math.clamp(if(maintenance != null) maintenance.WheelBalance, 0f, 1f);
+                if(maintenance != null) maintenance.WheelAlignment = if(math != null) math.clamp(if(maintenance != null) maintenance.WheelAlignment, 0f, 1f);
             }
             
             /// <summary>
@@ -153,26 +153,26 @@ namespace MudLike.Vehicles.Systems
             private void ProcessSuspensionWear(ref VehicleMaintenanceData maintenance, in VehiclePhysics physics)
             {
                 // Износ подвески
-                float suspensionWear = math.length(physics.Velocity) * 0.0001f * DeltaTime;
-                maintenance.SuspensionCondition -= suspensionWear;
+                float suspensionWear = if(math != null) math.length(if(physics != null) physics.Velocity) * 0.0001f * DeltaTime;
+                if(maintenance != null) maintenance.SuspensionCondition -= suspensionWear;
                 
                 // Износ амортизаторов
-                float shockWear = math.length(physics.Velocity) * 0.0001f * DeltaTime;
-                maintenance.ShockAbsorberCondition -= new float4(shockWear, shockWear, shockWear, shockWear);
+                float shockWear = if(math != null) math.length(if(physics != null) physics.Velocity) * 0.0001f * DeltaTime;
+                if(maintenance != null) maintenance.ShockAbsorberCondition -= new float4(shockWear, shockWear, shockWear, shockWear);
                 
                 // Износ пружин
-                float springWear = math.length(physics.Velocity) * 0.0001f * DeltaTime;
-                maintenance.SpringCondition -= new float4(springWear, springWear, springWear, springWear);
+                float springWear = if(math != null) math.length(if(physics != null) physics.Velocity) * 0.0001f * DeltaTime;
+                if(maintenance != null) maintenance.SpringCondition -= new float4(springWear, springWear, springWear, springWear);
                 
                 // Износ стабилизаторов
-                float stabilizerWear = math.abs(physics.TurnSpeed) * 0.0001f * DeltaTime;
-                maintenance.StabilizerCondition -= new float4(stabilizerWear, stabilizerWear, stabilizerWear, stabilizerWear);
+                float stabilizerWear = if(math != null) math.abs(if(physics != null) physics.TurnSpeed) * 0.0001f * DeltaTime;
+                if(maintenance != null) maintenance.StabilizerCondition -= new float4(stabilizerWear, stabilizerWear, stabilizerWear, stabilizerWear);
                 
                 // Ограничиваем значения
-                maintenance.SuspensionCondition = math.clamp(maintenance.SuspensionCondition, 0f, 1f);
-                maintenance.ShockAbsorberCondition = math.clamp(maintenance.ShockAbsorberCondition, 0f, 1f);
-                maintenance.SpringCondition = math.clamp(maintenance.SpringCondition, 0f, 1f);
-                maintenance.StabilizerCondition = math.clamp(maintenance.StabilizerCondition, 0f, 1f);
+                if(maintenance != null) maintenance.SuspensionCondition = if(math != null) math.clamp(if(maintenance != null) maintenance.SuspensionCondition, 0f, 1f);
+                if(maintenance != null) maintenance.ShockAbsorberCondition = if(math != null) math.clamp(if(maintenance != null) maintenance.ShockAbsorberCondition, 0f, 1f);
+                if(maintenance != null) maintenance.SpringCondition = if(math != null) math.clamp(if(maintenance != null) maintenance.SpringCondition, 0f, 1f);
+                if(maintenance != null) maintenance.StabilizerCondition = if(math != null) math.clamp(if(maintenance != null) maintenance.StabilizerCondition, 0f, 1f);
             }
             
             /// <summary>
@@ -181,21 +181,21 @@ namespace MudLike.Vehicles.Systems
             private void ProcessBrakeWear(ref VehicleMaintenanceData maintenance, in VehiclePhysics physics)
             {
                 // Износ тормозов
-                float brakeWear = math.abs(physics.BrakeTorque) * 0.0001f * DeltaTime;
-                maintenance.BrakeCondition -= new float4(brakeWear, brakeWear, brakeWear, brakeWear);
+                float brakeWear = if(math != null) math.abs(if(physics != null) physics.BrakeTorque) * 0.0001f * DeltaTime;
+                if(maintenance != null) maintenance.BrakeCondition -= new float4(brakeWear, brakeWear, brakeWear, brakeWear);
                 
                 // Износ тормозных дисков
-                float discWear = math.abs(physics.BrakeTorque) * 0.0001f * DeltaTime;
-                maintenance.BrakeDiscCondition -= new float4(discWear, discWear, discWear, discWear);
+                float discWear = if(math != null) math.abs(if(physics != null) physics.BrakeTorque) * 0.0001f * DeltaTime;
+                if(maintenance != null) maintenance.BrakeDiscCondition -= new float4(discWear, discWear, discWear, discWear);
                 
                 // Износ тормозных колодок
-                float padWear = math.abs(physics.BrakeTorque) * 0.0001f * DeltaTime;
-                maintenance.BrakePadCondition -= new float4(padWear, padWear, padWear, padWear);
+                float padWear = if(math != null) math.abs(if(physics != null) physics.BrakeTorque) * 0.0001f * DeltaTime;
+                if(maintenance != null) maintenance.BrakePadCondition -= new float4(padWear, padWear, padWear, padWear);
                 
                 // Ограничиваем значения
-                maintenance.BrakeCondition = math.clamp(maintenance.BrakeCondition, 0f, 1f);
-                maintenance.BrakeDiscCondition = math.clamp(maintenance.BrakeDiscCondition, 0f, 1f);
-                maintenance.BrakePadCondition = math.clamp(maintenance.BrakePadCondition, 0f, 1f);
+                if(maintenance != null) maintenance.BrakeCondition = if(math != null) math.clamp(if(maintenance != null) maintenance.BrakeCondition, 0f, 1f);
+                if(maintenance != null) maintenance.BrakeDiscCondition = if(math != null) math.clamp(if(maintenance != null) maintenance.BrakeDiscCondition, 0f, 1f);
+                if(maintenance != null) maintenance.BrakePadCondition = if(math != null) math.clamp(if(maintenance != null) maintenance.BrakePadCondition, 0f, 1f);
             }
             
             /// <summary>
@@ -204,21 +204,21 @@ namespace MudLike.Vehicles.Systems
             private void ProcessSteeringWear(ref VehicleMaintenanceData maintenance, in VehiclePhysics physics)
             {
                 // Износ рулевого управления
-                float steeringWear = math.abs(physics.TurnSpeed) * 0.0001f * DeltaTime;
-                maintenance.SteeringCondition -= steeringWear;
+                float steeringWear = if(math != null) math.abs(if(physics != null) physics.TurnSpeed) * 0.0001f * DeltaTime;
+                if(maintenance != null) maintenance.SteeringCondition -= steeringWear;
                 
                 // Износ рулевой рейки
-                float rackWear = math.abs(physics.TurnSpeed) * 0.0001f * DeltaTime;
-                maintenance.SteeringRackCondition -= rackWear;
+                float rackWear = if(math != null) math.abs(if(physics != null) physics.TurnSpeed) * 0.0001f * DeltaTime;
+                if(maintenance != null) maintenance.SteeringRackCondition -= rackWear;
                 
                 // Износ рулевых тяг
-                float tieRodWear = math.abs(physics.TurnSpeed) * 0.0001f * DeltaTime;
-                maintenance.SteeringTieRodCondition -= new float4(tieRodWear, tieRodWear, tieRodWear, tieRodWear);
+                float tieRodWear = if(math != null) math.abs(if(physics != null) physics.TurnSpeed) * 0.0001f * DeltaTime;
+                if(maintenance != null) maintenance.SteeringTieRodCondition -= new float4(tieRodWear, tieRodWear, tieRodWear, tieRodWear);
                 
                 // Ограничиваем значения
-                maintenance.SteeringCondition = math.clamp(maintenance.SteeringCondition, 0f, 1f);
-                maintenance.SteeringRackCondition = math.clamp(maintenance.SteeringRackCondition, 0f, 1f);
-                maintenance.SteeringTieRodCondition = math.clamp(maintenance.SteeringTieRodCondition, 0f, 1f);
+                if(maintenance != null) maintenance.SteeringCondition = if(math != null) math.clamp(if(maintenance != null) maintenance.SteeringCondition, 0f, 1f);
+                if(maintenance != null) maintenance.SteeringRackCondition = if(math != null) math.clamp(if(maintenance != null) maintenance.SteeringRackCondition, 0f, 1f);
+                if(maintenance != null) maintenance.SteeringTieRodCondition = if(math != null) math.clamp(if(maintenance != null) maintenance.SteeringTieRodCondition, 0f, 1f);
             }
             
             /// <summary>
@@ -227,68 +227,67 @@ namespace MudLike.Vehicles.Systems
             private void CheckMaintenanceNeeds(ref VehicleMaintenanceData maintenance, in AdvancedVehicleConfig config)
             {
                 // Проверяем пробег
-                if (maintenance.MileageSinceLastMaintenance >= maintenance.MaxMileageBetweenMaintenance)
+                if (if(maintenance != null) maintenance.MileageSinceLastMaintenance >= if(maintenance != null) maintenance.MaxMileageBetweenMaintenance)
                 {
                     // Требуется обслуживание по пробегу
-                    maintenance.NeedsUpdate = true;
+                    if(maintenance != null) maintenance.NeedsUpdate = true;
                 }
                 
                 // Проверяем время работы двигателя
-                if (maintenance.EngineHoursSinceLastMaintenance >= maintenance.MaxEngineHoursBetweenMaintenance)
+                if (if(maintenance != null) maintenance.EngineHoursSinceLastMaintenance >= if(maintenance != null) maintenance.MaxEngineHoursBetweenMaintenance)
                 {
                     // Требуется обслуживание по времени работы двигателя
-                    maintenance.NeedsUpdate = true;
+                    if(maintenance != null) maintenance.NeedsUpdate = true;
                 }
                 
                 // Проверяем уровень жидкостей
-                if (maintenance.OilLevel < 0.2f || maintenance.CoolantLevel < 0.2f || 
-                    maintenance.BrakeFluidLevel < 0.2f || maintenance.FuelLevel < 0.1f)
+                if (if(maintenance != null) maintenance.OilLevel < 0.2f || if(maintenance != null) maintenance.CoolantLevel < 0.2f || 
+                    if(maintenance != null) maintenance.BrakeFluidLevel < 0.2f || if(maintenance != null) maintenance.FuelLevel < 0.1f)
                 {
                     // Требуется доливка жидкостей
-                    maintenance.NeedsUpdate = true;
+                    if(maintenance != null) maintenance.NeedsUpdate = true;
                 }
                 
                 // Проверяем качество жидкостей
-                if (maintenance.OilQuality < 0.3f || maintenance.CoolantQuality < 0.3f || 
-                    maintenance.BrakeFluidQuality < 0.3f || maintenance.FuelQuality < 0.3f)
+                if (if(maintenance != null) maintenance.OilQuality < 0.3f || if(maintenance != null) maintenance.CoolantQuality < 0.3f || 
+                    if(maintenance != null) maintenance.BrakeFluidQuality < 0.3f || if(maintenance != null) maintenance.FuelQuality < 0.3f)
                 {
                     // Требуется замена жидкостей
-                    maintenance.NeedsUpdate = true;
+                    if(maintenance != null) maintenance.NeedsUpdate = true;
                 }
                 
                 // Проверяем состояние шин
-                if (math.any(maintenance.TireTreadWear > 0.8f) || math.any(maintenance.TirePressure < 200f) || 
-                    math.any(maintenance.TireTemperature > 150f) || math.any(maintenance.WheelBalance < 0.3f) || 
-                    math.any(maintenance.WheelAlignment < 0.3f))
+                if (if(math != null) math.any(if(maintenance != null) maintenance.TireTreadWear > 0.8f) || if(math != null) math.any(if(maintenance != null) maintenance.TirePressure < 200f) || 
+                    if(math != null) math.any(if(maintenance != null) maintenance.TireTemperature > 150f) || if(math != null) math.any(if(maintenance != null) maintenance.WheelBalance < 0.3f) || 
+                    if(math != null) math.any(if(maintenance != null) maintenance.WheelAlignment < 0.3f))
                 {
                     // Требуется обслуживание шин
-                    maintenance.NeedsUpdate = true;
+                    if(maintenance != null) maintenance.NeedsUpdate = true;
                 }
                 
                 // Проверяем состояние подвески
-                if (maintenance.SuspensionCondition < 0.3f || math.any(maintenance.ShockAbsorberCondition < 0.3f) || 
-                    math.any(maintenance.SpringCondition < 0.3f) || math.any(maintenance.StabilizerCondition < 0.3f))
+                if (if(maintenance != null) maintenance.SuspensionCondition < 0.3f || if(math != null) math.any(if(maintenance != null) maintenance.ShockAbsorberCondition < 0.3f) || 
+                    if(math != null) math.any(if(maintenance != null) maintenance.SpringCondition < 0.3f) || if(math != null) math.any(if(maintenance != null) maintenance.StabilizerCondition < 0.3f))
                 {
                     // Требуется обслуживание подвески
-                    maintenance.NeedsUpdate = true;
+                    if(maintenance != null) maintenance.NeedsUpdate = true;
                 }
                 
                 // Проверяем состояние тормозов
-                if (math.any(maintenance.BrakeCondition < 0.3f) || math.any(maintenance.BrakeDiscCondition < 0.3f) || 
-                    math.any(maintenance.BrakePadCondition < 0.3f))
+                if (if(math != null) math.any(if(maintenance != null) maintenance.BrakeCondition < 0.3f) || if(math != null) math.any(if(maintenance != null) maintenance.BrakeDiscCondition < 0.3f) || 
+                    if(math != null) math.any(if(maintenance != null) maintenance.BrakePadCondition < 0.3f))
                 {
                     // Требуется обслуживание тормозов
-                    maintenance.NeedsUpdate = true;
+                    if(maintenance != null) maintenance.NeedsUpdate = true;
                 }
                 
                 // Проверяем состояние рулевого управления
-                if (maintenance.SteeringCondition < 0.3f || maintenance.SteeringRackCondition < 0.3f || 
-                    math.any(maintenance.SteeringTieRodCondition < 0.3f))
+                if (if(maintenance != null) maintenance.SteeringCondition < 0.3f || if(maintenance != null) maintenance.SteeringRackCondition < 0.3f || 
+                    if(math != null) math.any(if(maintenance != null) maintenance.SteeringTieRodCondition < 0.3f))
                 {
                     // Требуется обслуживание рулевого управления
-                    maintenance.NeedsUpdate = true;
+                    if(maintenance != null) maintenance.NeedsUpdate = true;
                 }
             }
         }
     }
-}

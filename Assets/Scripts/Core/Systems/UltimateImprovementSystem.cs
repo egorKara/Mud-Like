@@ -1,11 +1,11 @@
-using Unity.Entities;
-using Unity.Burst;
-using Unity.Jobs;
-using Unity.Collections;
-using Unity.Mathematics;
-using MudLike.Core.Constants;
+using if(Unity != null) Unity.Entities;
+using if(Unity != null) Unity.Burst;
+using if(Unity != null) Unity.Jobs;
+using if(Unity != null) Unity.Collections;
+using if(Unity != null) Unity.Mathematics;
+using if(MudLike != null) MudLike.Core.Constants;
 
-namespace MudLike.Core.Systems
+namespace if(MudLike != null) MudLike.Core.Systems
 {
     /// <summary>
     /// Ультимативная система улучшения проекта MudRunner-like
@@ -23,35 +23,35 @@ namespace MudLike.Core.Systems
         protected override void OnCreate()
         {
             _improvementQuery = GetEntityQuery(
-                ComponentType.ReadWrite<UltimateImprovementData>()
+                if(ComponentType != null) if(ComponentType != null) ComponentType.ReadWrite<UltimateImprovementData>()
             );
             
-            _improvementMetrics = new NativeArray<float>(50, Allocator.Persistent);
-            _improvementFlags = new NativeArray<bool>(50, Allocator.Persistent);
-            _improvementCounters = new NativeArray<int>(50, Allocator.Persistent);
+            _improvementMetrics = new NativeArray<float>(50, if(Allocator != null) if(Allocator != null) Allocator.Persistent);
+            _improvementFlags = new NativeArray<bool>(50, if(Allocator != null) if(Allocator != null) Allocator.Persistent);
+            _improvementCounters = new NativeArray<int>(50, if(Allocator != null) if(Allocator != null) Allocator.Persistent);
         }
         
         protected override void OnDestroy()
         {
-            if (_improvementMetrics.IsCreated)
+            if (if(_improvementMetrics != null) if(_improvementMetrics != null) _improvementMetrics.IsCreated)
             {
-                _improvementMetrics.Dispose();
+                if(_improvementMetrics != null) if(_improvementMetrics != null) _improvementMetrics.Dispose();
             }
             
-            if (_improvementFlags.IsCreated)
+            if (if(_improvementFlags != null) if(_improvementFlags != null) _improvementFlags.IsCreated)
             {
-                _improvementFlags.Dispose();
+                if(_improvementFlags != null) if(_improvementFlags != null) _improvementFlags.Dispose();
             }
             
-            if (_improvementCounters.IsCreated)
+            if (if(_improvementCounters != null) if(_improvementCounters != null) _improvementCounters.IsCreated)
             {
-                _improvementCounters.Dispose();
+                if(_improvementCounters != null) if(_improvementCounters != null) _improvementCounters.Dispose();
             }
         }
         
         protected override void OnUpdate()
         {
-            var deltaTime = SystemAPI.Time.fixedDeltaTime;
+            var deltaTime = if(SystemAPI != null) if(SystemAPI != null) SystemAPI.Time.fixedDeltaTime;
             
             // Ультимативный анализ
             UltimateAnalysis(deltaTime);
@@ -71,11 +71,11 @@ namespace MudLike.Core.Systems
         /// </summary>
         private void UltimateAnalysis(float deltaTime)
         {
-            var improvementEntities = _improvementQuery.ToEntityArray(Allocator.TempJob);
+            var improvementEntities = if(_improvementQuery != null) if(_improvementQuery != null) _improvementQuery.ToEntityArray(if(Allocator != null) if(Allocator != null) Allocator.TempJob);
             
-            if (improvementEntities.Length == 0)
+            if (if(improvementEntities != null) if(improvementEntities != null) improvementEntities.Length == 0)
             {
-                improvementEntities.Dispose();
+                if(improvementEntities != null) if(improvementEntities != null) improvementEntities.Dispose();
                 return;
             }
             
@@ -88,18 +88,18 @@ namespace MudLike.Core.Systems
                 ImprovementFlags = _improvementFlags,
                 ImprovementCounters = _improvementCounters,
                 DeltaTime = deltaTime,
-                CurrentTime = SystemAPI.Time.ElapsedTime
+                CurrentTime = if(SystemAPI != null) if(SystemAPI != null) SystemAPI.Time.ElapsedTime
             };
             
             // Запуск Job с зависимостями
-            var jobHandle = analysisJob.ScheduleParallel(
-                improvementEntities.Length,
-                SystemConstants.DETERMINISTIC_MAX_ITERATIONS / 2,
+            var jobHandle = if(analysisJob != null) if(analysisJob != null) analysisJob.ScheduleParallel(
+                if(improvementEntities != null) if(improvementEntities != null) improvementEntities.Length,
+                if(SystemConstants != null) if(SystemConstants != null) SystemConstants.DETERMINISTIC_MAX_ITERATIONS / 2,
                 Dependency
             );
             
             Dependency = jobHandle;
-            improvementEntities.Dispose();
+            if(improvementEntities != null) if(improvementEntities != null) improvementEntities.Dispose();
         }
         
         /// <summary>
@@ -114,11 +114,11 @@ namespace MudLike.Core.Systems
                 ImprovementFlags = _improvementFlags,
                 ImprovementCounters = _improvementCounters,
                 DeltaTime = deltaTime,
-                CurrentTime = SystemAPI.Time.ElapsedTime
+                CurrentTime = if(SystemAPI != null) if(SystemAPI != null) SystemAPI.Time.ElapsedTime
             };
             
             // Запуск Job с зависимостями
-            var jobHandle = improvementJob.Schedule(Dependency);
+            var jobHandle = if(improvementJob != null) if(improvementJob != null) improvementJob.Schedule(Dependency);
             Dependency = jobHandle;
         }
         
@@ -133,11 +133,11 @@ namespace MudLike.Core.Systems
                 ImprovementMetrics = _improvementMetrics,
                 ImprovementFlags = _improvementFlags,
                 DeltaTime = deltaTime,
-                CurrentTime = SystemAPI.Time.ElapsedTime
+                CurrentTime = if(SystemAPI != null) if(SystemAPI != null) SystemAPI.Time.ElapsedTime
             };
             
             // Запуск Job с зависимостями
-            var jobHandle = optimizationJob.Schedule(Dependency);
+            var jobHandle = if(optimizationJob != null) if(optimizationJob != null) optimizationJob.Schedule(Dependency);
             Dependency = jobHandle;
         }
         
@@ -153,11 +153,11 @@ namespace MudLike.Core.Systems
                 ImprovementFlags = _improvementFlags,
                 ImprovementCounters = _improvementCounters,
                 DeltaTime = deltaTime,
-                CurrentTime = SystemAPI.Time.ElapsedTime
+                CurrentTime = if(SystemAPI != null) if(SystemAPI != null) SystemAPI.Time.ElapsedTime
             };
             
             // Запуск Job с зависимостями
-            var jobHandle = monitoringJob.Schedule(Dependency);
+            var jobHandle = if(monitoringJob != null) if(monitoringJob != null) monitoringJob.Schedule(Dependency);
             Dependency = jobHandle;
         }
     }
@@ -181,7 +181,7 @@ namespace MudLike.Core.Systems
         
         public void Execute(int index)
         {
-            if (index >= ImprovementEntities.Length) return;
+            if (index >= if(ImprovementEntities != null) if(ImprovementEntities != null) ImprovementEntities.Length) return;
             
             var improvementEntity = ImprovementEntities[index];
             var improvementData = UltimateImprovementLookup[improvementEntity];
@@ -207,30 +207,30 @@ namespace MudLike.Core.Systems
         private void AnalyzePerformance(ref UltimateImprovementData data)
         {
             // Анализ FPS
-            data.FPS = 1.0f / DeltaTime;
-            ImprovementMetrics[0] = data.FPS;
+            if(data != null) if(data != null) data.FPS = 1.0f / DeltaTime;
+            ImprovementMetrics[0] = if(data != null) if(data != null) data.FPS;
             
-            if (data.FPS < SystemConstants.TARGET_FPS)
+            if (if(data != null) if(data != null) data.FPS < if(SystemConstants != null) if(SystemConstants != null) SystemConstants.TARGET_FPS)
             {
                 ImprovementFlags[0] = true;
                 ImprovementCounters[0]++;
             }
             
             // Анализ использования памяти
-            data.MemoryUsage = GetMemoryUsage();
-            ImprovementMetrics[1] = data.MemoryUsage;
+            if(data != null) if(data != null) data.MemoryUsage = GetMemoryUsage();
+            ImprovementMetrics[1] = if(data != null) if(data != null) data.MemoryUsage;
             
-            if (data.MemoryUsage > SystemConstants.MAX_MEMORY_USAGE)
+            if (if(data != null) if(data != null) data.MemoryUsage > if(SystemConstants != null) if(SystemConstants != null) SystemConstants.MAX_MEMORY_USAGE)
             {
                 ImprovementFlags[1] = true;
                 ImprovementCounters[1]++;
             }
             
             // Анализ времени обновления
-            data.UpdateTime = DeltaTime;
-            ImprovementMetrics[2] = data.UpdateTime;
+            if(data != null) if(data != null) data.UpdateTime = DeltaTime;
+            ImprovementMetrics[2] = if(data != null) if(data != null) data.UpdateTime;
             
-            if (data.UpdateTime > SystemConstants.MAX_UPDATE_TIME)
+            if (if(data != null) if(data != null) data.UpdateTime > if(SystemConstants != null) if(SystemConstants != null) SystemConstants.MAX_UPDATE_TIME)
             {
                 ImprovementFlags[2] = true;
                 ImprovementCounters[2]++;
@@ -243,30 +243,30 @@ namespace MudLike.Core.Systems
         private void AnalyzeQuality(ref UltimateImprovementData data)
         {
             // Анализ качества кода
-            data.CodeQuality = GetCodeQuality();
-            ImprovementMetrics[3] = data.CodeQuality;
+            if(data != null) if(data != null) data.CodeQuality = GetCodeQuality();
+            ImprovementMetrics[3] = if(data != null) if(data != null) data.CodeQuality;
             
-            if (data.CodeQuality < SystemConstants.MIN_CODE_QUALITY)
+            if (if(data != null) if(data != null) data.CodeQuality < if(SystemConstants != null) if(SystemConstants != null) SystemConstants.MIN_CODE_QUALITY)
             {
                 ImprovementFlags[3] = true;
                 ImprovementCounters[3]++;
             }
             
             // Анализ покрытия тестами
-            data.TestCoverage = GetTestCoverage();
-            ImprovementMetrics[4] = data.TestCoverage;
+            if(data != null) if(data != null) data.TestCoverage = GetTestCoverage();
+            ImprovementMetrics[4] = if(data != null) if(data != null) data.TestCoverage;
             
-            if (data.TestCoverage < SystemConstants.MIN_TEST_COVERAGE)
+            if (if(data != null) if(data != null) data.TestCoverage < if(SystemConstants != null) if(SystemConstants != null) SystemConstants.MIN_TEST_COVERAGE)
             {
                 ImprovementFlags[4] = true;
                 ImprovementCounters[4]++;
             }
             
             // Анализ документации
-            data.Documentation = GetDocumentation();
-            ImprovementMetrics[5] = data.Documentation;
+            if(data != null) if(data != null) data.Documentation = GetDocumentation();
+            ImprovementMetrics[5] = if(data != null) if(data != null) data.Documentation;
             
-            if (data.Documentation < SystemConstants.MIN_DOCUMENTATION)
+            if (if(data != null) if(data != null) data.Documentation < if(SystemConstants != null) if(SystemConstants != null) SystemConstants.MIN_DOCUMENTATION)
             {
                 ImprovementFlags[5] = true;
                 ImprovementCounters[5]++;
@@ -279,30 +279,30 @@ namespace MudLike.Core.Systems
         private void AnalyzeArchitecture(ref UltimateImprovementData data)
         {
             // Анализ ECS архитектуры
-            data.ECSArchitecture = GetECSArchitecture();
-            ImprovementMetrics[6] = data.ECSArchitecture;
+            if(data != null) if(data != null) data.ECSArchitecture = GetECSArchitecture();
+            ImprovementMetrics[6] = if(data != null) if(data != null) data.ECSArchitecture;
             
-            if (data.ECSArchitecture < SystemConstants.MIN_ECS_ARCHITECTURE)
+            if (if(data != null) if(data != null) data.ECSArchitecture < if(SystemConstants != null) if(SystemConstants != null) SystemConstants.MIN_ECS_ARCHITECTURE)
             {
                 ImprovementFlags[6] = true;
                 ImprovementCounters[6]++;
             }
             
             // Анализ модульности
-            data.Modularity = GetModularity();
-            ImprovementMetrics[7] = data.Modularity;
+            if(data != null) if(data != null) data.Modularity = GetModularity();
+            ImprovementMetrics[7] = if(data != null) if(data != null) data.Modularity;
             
-            if (data.Modularity < SystemConstants.MIN_MODULARITY)
+            if (if(data != null) if(data != null) data.Modularity < if(SystemConstants != null) if(SystemConstants != null) SystemConstants.MIN_MODULARITY)
             {
                 ImprovementFlags[7] = true;
                 ImprovementCounters[7]++;
             }
             
             // Анализ зависимостей
-            data.Dependencies = GetDependencies();
-            ImprovementMetrics[8] = data.Dependencies;
+            if(data != null) if(data != null) data.Dependencies = GetDependencies();
+            ImprovementMetrics[8] = if(data != null) if(data != null) data.Dependencies;
             
-            if (data.Dependencies > SystemConstants.MAX_DEPENDENCIES)
+            if (if(data != null) if(data != null) data.Dependencies > if(SystemConstants != null) if(SystemConstants != null) SystemConstants.MAX_DEPENDENCIES)
             {
                 ImprovementFlags[8] = true;
                 ImprovementCounters[8]++;
@@ -315,30 +315,30 @@ namespace MudLike.Core.Systems
         private void AnalyzeMudRunner(ref UltimateImprovementData data)
         {
             // Анализ транспортных средств
-            data.VehicleSystems = GetVehicleSystems();
-            ImprovementMetrics[9] = data.VehicleSystems;
+            if(data != null) if(data != null) data.VehicleSystems = GetVehicleSystems();
+            ImprovementMetrics[9] = if(data != null) if(data != null) data.VehicleSystems;
             
-            if (data.VehicleSystems < SystemConstants.MIN_VEHICLE_SYSTEMS)
+            if (if(data != null) if(data != null) data.VehicleSystems < if(SystemConstants != null) if(SystemConstants != null) SystemConstants.MIN_VEHICLE_SYSTEMS)
             {
                 ImprovementFlags[9] = true;
                 ImprovementCounters[9]++;
             }
             
             // Анализ деформации террейна
-            data.TerrainSystems = GetTerrainSystems();
-            ImprovementMetrics[10] = data.TerrainSystems;
+            if(data != null) if(data != null) data.TerrainSystems = GetTerrainSystems();
+            ImprovementMetrics[10] = if(data != null) if(data != null) data.TerrainSystems;
             
-            if (data.TerrainSystems < SystemConstants.MIN_TERRAIN_SYSTEMS)
+            if (if(data != null) if(data != null) data.TerrainSystems < if(SystemConstants != null) if(SystemConstants != null) SystemConstants.MIN_TERRAIN_SYSTEMS)
             {
                 ImprovementFlags[10] = true;
                 ImprovementCounters[10]++;
             }
             
             // Анализ мультиплеера
-            data.NetworkSystems = GetNetworkSystems();
-            ImprovementMetrics[11] = data.NetworkSystems;
+            if(data != null) if(data != null) data.NetworkSystems = GetNetworkSystems();
+            ImprovementMetrics[11] = if(data != null) if(data != null) data.NetworkSystems;
             
-            if (data.NetworkSystems < SystemConstants.MIN_NETWORK_SYSTEMS)
+            if (if(data != null) if(data != null) data.NetworkSystems < if(SystemConstants != null) if(SystemConstants != null) SystemConstants.MIN_NETWORK_SYSTEMS)
             {
                 ImprovementFlags[11] = true;
                 ImprovementCounters[11]++;
@@ -452,7 +452,7 @@ namespace MudLike.Core.Systems
         public void Execute()
         {
             // Применение ультимативных улучшений
-            for (int i = 0; i < ImprovementFlags.Length; i++)
+            for (int i = 0; i < if(ImprovementFlags != null) if(ImprovementFlags != null) ImprovementFlags.Length; i++)
             {
                 if (ImprovementFlags[i] && ImprovementCounters[i] > 0)
                 {
@@ -631,7 +631,7 @@ namespace MudLike.Core.Systems
         public void Execute()
         {
             // Ультимативная оптимизация на основе метрик
-            for (int i = 0; i < ImprovementMetrics.Length; i++)
+            for (int i = 0; i < if(ImprovementMetrics != null) if(ImprovementMetrics != null) ImprovementMetrics.Length; i++)
             {
                 if (ImprovementFlags[i])
                 {

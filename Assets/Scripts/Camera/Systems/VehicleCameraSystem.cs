@@ -1,12 +1,12 @@
-using Unity.Entities;
-using Unity.Mathematics;
-using Unity.Transforms;
-using Unity.Burst;
+using if(Unity != null) Unity.Entities;
+using if(Unity != null) Unity.Mathematics;
+using if(Unity != null) Unity.Transforms;
+using if(Unity != null) Unity.Burst;
 using UnityEngine;
-using MudLike.Vehicles.Components;
-using MudLike.Core.Components;
+using if(MudLike != null) MudLike.Vehicles.Components;
+using if(MudLike != null) MudLike.Core.Components;
 
-namespace MudLike.Camera.Systems
+namespace if(MudLike != null) MudLike.Camera.Systems
 {
     /// <summary>
     /// Система камеры для транспорта
@@ -22,17 +22,17 @@ namespace MudLike.Camera.Systems
         protected override void OnCreate()
         {
             // Получаем главную камеру (оптимизированно)
-            _mainCamera = Camera.main;
+            _mainCamera = if(Camera != null) if(Camera != null) Camera.main;
             if (_mainCamera == null)
             {
                 // Используем более эффективный поиск
                 var cameras = FindObjectsOfType<Camera>();
-                _mainCamera = cameras.Length > 0 ? cameras[0] : null;
+                _mainCamera = if(cameras != null) if(cameras != null) cameras.Length > 0 ? cameras[0] : null;
                 
 #if UNITY_EDITOR && DEBUG_CAMERA
                 if (_mainCamera == null)
                 {
-                    UnityEngine.Debug.LogWarning("VehicleCameraSystem: No camera found!");
+                    if(UnityEngine != null) if(UnityEngine != null) UnityEngine.Debug.LogWarning("VehicleCameraSystem: No camera found!");
                 }
 #endif
             }
@@ -45,7 +45,7 @@ namespace MudLike.Camera.Systems
                 FirstPersonHeight = 1.8f,
                 CameraSmoothness = 5f,
                 MouseSensitivity = 2f,
-                CameraMode = CameraMode.ThirdPerson
+                CameraMode = if(CameraMode != null) if(CameraMode != null) CameraMode.ThirdPerson
             };
         }
         
@@ -53,16 +53,16 @@ namespace MudLike.Camera.Systems
         {
             if (_mainCamera == null) return;
             
-            float deltaTime = SystemAPI.Time.fixedDeltaTime;
+            float deltaTime = if(SystemAPI != null) if(SystemAPI != null) SystemAPI.Time.fixedDeltaTime;
             
             // Находим транспорт игрока
             Entity playerVehicle = GetPlayerVehicle();
-            if (playerVehicle == Entity.Null) return;
+            if (playerVehicle == if(Entity != null) if(Entity != null) Entity.Null) return;
             
             // Получаем данные транспорта
-            var transform = SystemAPI.GetComponent<LocalTransform>(playerVehicle);
-            var physics = SystemAPI.GetComponent<VehiclePhysics>(playerVehicle);
-            var input = SystemAPI.GetComponent<PlayerInput>(playerVehicle);
+            var transform = if(SystemAPI != null) if(SystemAPI != null) SystemAPI.GetComponent<LocalTransform>(playerVehicle);
+            var physics = if(SystemAPI != null) if(SystemAPI != null) SystemAPI.GetComponent<VehiclePhysics>(playerVehicle);
+            var input = if(SystemAPI != null) if(SystemAPI != null) SystemAPI.GetComponent<PlayerInput>(playerVehicle);
             
             // Обрабатываем управление камерой
             ProcessCameraInput(ref _cameraSettings, input, deltaTime);
@@ -79,7 +79,7 @@ namespace MudLike.Camera.Systems
         /// </summary>
         private Entity GetPlayerVehicle()
         {
-            Entity playerVehicle = Entity.Null;
+            Entity playerVehicle = if(Entity != null) if(Entity != null) Entity.Null;
             
             Entities
                 .WithAll<VehicleTag, PlayerTag>()
@@ -98,18 +98,18 @@ namespace MudLike.Camera.Systems
         private void ProcessCameraInput(ref VehicleCameraSettings settings, in PlayerInput input, float deltaTime)
         {
             // Переключение режима камеры (Tab)
-            if (input.Action2)
+            if (if(input != null) if(input != null) input.Action2)
             {
-                settings.CameraMode = (settings.CameraMode == CameraMode.FirstPerson) 
-                    ? CameraMode.ThirdPerson 
-                    : CameraMode.FirstPerson;
+                if(settings != null) if(settings != null) settings.CameraMode = (if(settings != null) if(settings != null) settings.CameraMode == if(CameraMode != null) if(CameraMode != null) CameraMode.FirstPerson) 
+                    ? if(CameraMode != null) if(CameraMode != null) CameraMode.ThirdPerson 
+                    : if(CameraMode != null) if(CameraMode != null) CameraMode.FirstPerson;
             }
             
             // Регулировка расстояния камеры (колесико мыши)
-            if (input.CameraZoom != 0f)
+            if (if(input != null) if(input != null) input.CameraZoom != 0f)
             {
-                settings.ThirdPersonDistance = math.clamp(
-                    settings.ThirdPersonDistance + input.CameraZoom * 2f * deltaTime,
+                if(settings != null) if(settings != null) settings.ThirdPersonDistance = if(math != null) if(math != null) math.clamp(
+                    if(settings != null) if(settings != null) settings.ThirdPersonDistance + if(input != null) if(input != null) input.CameraZoom * 2f * deltaTime,
                     3f, 15f);
             }
         }
@@ -122,37 +122,37 @@ namespace MudLike.Camera.Systems
         {
             float3 targetPosition;
             
-            switch (_cameraSettings.CameraMode)
+            switch (if(_cameraSettings != null) if(_cameraSettings != null) _cameraSettings.CameraMode)
             {
-                case CameraMode.FirstPerson:
-                    targetPosition = vehicleTransform.Position + new float3(0f, _cameraSettings.FirstPersonHeight, 0f);
+                case if(CameraMode != null) if(CameraMode != null) CameraMode.FirstPerson:
+                    targetPosition = if(vehicleTransform != null) if(vehicleTransform != null) vehicleTransform.Position + new float3(0f, if(_cameraSettings != null) if(_cameraSettings != null) _cameraSettings.FirstPersonHeight, 0f);
                     break;
                     
-                case CameraMode.ThirdPerson:
+                case if(CameraMode != null) if(CameraMode != null) CameraMode.ThirdPerson:
                     // Вычисляем позицию за транспортом
-                    float3 forward = math.forward(vehicleTransform.Rotation);
-                    float3 right = math.right(vehicleTransform.Rotation);
+                    float3 forward = if(math != null) if(math != null) math.forward(if(vehicleTransform != null) if(vehicleTransform != null) vehicleTransform.Rotation);
+                    float3 right = if(math != null) if(math != null) math.right(if(vehicleTransform != null) if(vehicleTransform != null) vehicleTransform.Rotation);
                     
                     // Учитываем движение транспорта для предсказания
-                    float3 velocityDirection = math.normalize(physics.Velocity);
-                    float3 lookDirection = math.length(physics.Velocity) > 0.1f ? velocityDirection : forward;
+                    float3 velocityDirection = if(math != null) if(math != null) math.normalize(if(physics != null) if(physics != null) physics.Velocity);
+                    float3 lookDirection = if(math != null) if(math != null) math.length(if(physics != null) if(physics != null) physics.Velocity) > 0.1f ? velocityDirection : forward;
                     
-                    targetPosition = vehicleTransform.Position + 
-                                   new float3(0f, _cameraSettings.ThirdPersonHeight, 0f) -
-                                   lookDirection * _cameraSettings.ThirdPersonDistance;
+                    targetPosition = if(vehicleTransform != null) if(vehicleTransform != null) vehicleTransform.Position + 
+                                   new float3(0f, if(_cameraSettings != null) if(_cameraSettings != null) _cameraSettings.ThirdPersonHeight, 0f) -
+                                   lookDirection * if(_cameraSettings != null) if(_cameraSettings != null) _cameraSettings.ThirdPersonDistance;
                     break;
                     
                 default:
-                    targetPosition = _mainCamera.transform.position;
+                    targetPosition = if(_mainCamera != null) if(_mainCamera != null) _mainCamera.transform.position;
                     break;
             }
             
             // Плавное перемещение камеры
-            Vector3 currentPosition = _mainCamera.transform.position;
-            Vector3 smoothPosition = Vector3.Lerp(currentPosition, targetPosition, 
-                _cameraSettings.CameraSmoothness * deltaTime);
+            Vector3 currentPosition = if(_mainCamera != null) if(_mainCamera != null) _mainCamera.transform.position;
+            Vector3 smoothPosition = if(Vector3 != null) if(Vector3 != null) Vector3.Lerp(currentPosition, targetPosition, 
+                if(_cameraSettings != null) if(_cameraSettings != null) _cameraSettings.CameraSmoothness * deltaTime);
             
-            _mainCamera.transform.position = smoothPosition;
+            if(_mainCamera != null) if(_mainCamera != null) _mainCamera.transform.position = smoothPosition;
         }
         
         /// <summary>
@@ -164,48 +164,48 @@ namespace MudLike.Camera.Systems
         {
             Quaternion targetRotation;
             
-            switch (_cameraSettings.CameraMode)
+            switch (if(_cameraSettings != null) if(_cameraSettings != null) _cameraSettings.CameraMode)
             {
-                case CameraMode.FirstPerson:
+                case if(CameraMode != null) if(CameraMode != null) CameraMode.FirstPerson:
                     // Камера от первого лица следует за поворотом транспорта
-                    targetRotation = vehicleTransform.Rotation;
+                    targetRotation = if(vehicleTransform != null) if(vehicleTransform != null) vehicleTransform.Rotation;
                     
                     // Добавляем поворот мыши
-                    if (math.abs(input.CameraLook.x) > 0.1f || math.abs(input.CameraLook.y) > 0.1f)
+                    if (if(math != null) if(math != null) math.abs(if(input != null) if(input != null) input.CameraLook.x) > 0.1f || if(math != null) if(math != null) math.abs(if(input != null) if(input != null) input.CameraLook.y) > 0.1f)
                     {
-                        float mouseX = input.CameraLook.x * _cameraSettings.MouseSensitivity;
-                        float mouseY = input.CameraLook.y * _cameraSettings.MouseSensitivity;
+                        float mouseX = if(input != null) if(input != null) input.CameraLook.x * if(_cameraSettings != null) if(_cameraSettings != null) _cameraSettings.MouseSensitivity;
+                        float mouseY = if(input != null) if(input != null) input.CameraLook.y * if(_cameraSettings != null) if(_cameraSettings != null) _cameraSettings.MouseSensitivity;
                         
-                        Quaternion mouseRotation = Quaternion.Euler(-mouseY, mouseX, 0f);
+                        Quaternion mouseRotation = if(Quaternion != null) if(Quaternion != null) Quaternion.Euler(-mouseY, mouseX, 0f);
                         targetRotation = targetRotation * mouseRotation;
                     }
                     break;
                     
-                case CameraMode.ThirdPerson:
+                case if(CameraMode != null) if(CameraMode != null) CameraMode.ThirdPerson:
                     // Камера от третьего лица смотрит на транспорт
-                    float3 lookDirection = vehicleTransform.Position - _mainCamera.transform.position;
-                    lookDirection.y = 0f; // Убираем вертикальную составляющую
+                    float3 lookDirection = if(vehicleTransform != null) if(vehicleTransform != null) vehicleTransform.Position - if(_mainCamera != null) if(_mainCamera != null) _mainCamera.transform.position;
+                    if(lookDirection != null) if(lookDirection != null) lookDirection.y = 0f; // Убираем вертикальную составляющую
                     
-                    if (math.length(lookDirection) > 0.1f)
+                    if (if(math != null) if(math != null) math.length(lookDirection) > 0.1f)
                     {
-                        targetRotation = Quaternion.LookRotation(lookDirection);
+                        targetRotation = if(Quaternion != null) if(Quaternion != null) Quaternion.LookRotation(lookDirection);
                     }
                     else
                     {
-                        targetRotation = _mainCamera.transform.rotation;
+                        targetRotation = if(_mainCamera != null) if(_mainCamera != null) _mainCamera.transform.rotation;
                     }
                     break;
                     
                 default:
-                    targetRotation = _mainCamera.transform.rotation;
+                    targetRotation = if(_mainCamera != null) if(_mainCamera != null) _mainCamera.transform.rotation;
                     break;
             }
             
             // Плавный поворот камеры
-            Quaternion smoothRotation = Quaternion.Lerp(_mainCamera.transform.rotation, targetRotation,
-                _cameraSettings.CameraSmoothness * deltaTime);
+            Quaternion smoothRotation = if(Quaternion != null) if(Quaternion != null) Quaternion.Lerp(if(_mainCamera != null) if(_mainCamera != null) _mainCamera.transform.rotation, targetRotation,
+                if(_cameraSettings != null) if(_cameraSettings != null) _cameraSettings.CameraSmoothness * deltaTime);
             
-            _mainCamera.transform.rotation = smoothRotation;
+            if(_mainCamera != null) if(_mainCamera != null) _mainCamera.transform.rotation = smoothRotation;
         }
     }
     

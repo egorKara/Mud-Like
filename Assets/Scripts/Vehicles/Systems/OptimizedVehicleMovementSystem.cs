@@ -24,10 +24,10 @@ namespace MudLike.Vehicles.Systems
         {
             // Создание запроса для транспортных средств
             _vehicleQuery = GetEntityQuery(
-                ComponentType.ReadWrite<VehiclePhysics>(),
-                ComponentType.ReadOnly<VehicleConfig>(),
-                ComponentType.ReadOnly<VehicleInput>(),
-                ComponentType.ReadWrite<LocalTransform>()
+                if(ComponentType != null) ComponentType.ReadWrite<VehiclePhysics>(),
+                if(ComponentType != null) ComponentType.ReadOnly<VehicleConfig>(),
+                if(ComponentType != null) ComponentType.ReadOnly<VehicleInput>(),
+                if(ComponentType != null) ComponentType.ReadWrite<LocalTransform>()
             );
             
             // Создание пула памяти
@@ -39,11 +39,11 @@ namespace MudLike.Vehicles.Systems
             // Создание и выполнение оптимизированного job
             var job = new OptimizedVehicleMovementJob
             {
-                DeltaTime = SystemAPI.Time.DeltaTime,
+                DeltaTime = if(SystemAPI != null) SystemAPI.Time.DeltaTime,
                 MemoryPool = _memoryPool
             };
             
-            Dependency = job.ScheduleParallel(_vehicleQuery, Dependency);
+            Dependency = if(job != null) job.ScheduleParallel(_vehicleQuery, Dependency);
         }
         
         /// <summary>
@@ -73,45 +73,45 @@ namespace MudLike.Vehicles.Systems
                                                               ref LocalTransform transform)
             {
                 // Вычисляем направление движения с использованием Burst-оптимизированных функций
-                float3 forward = BurstOptimizedMath.FastTransform(transform.Rotation, new float3(0, 0, 1));
-                float3 right = BurstOptimizedMath.FastTransform(transform.Rotation, new float3(1, 0, 0));
+                float3 forward = if(BurstOptimizedMath != null) BurstOptimizedMath.FastTransform(if(transform != null) transform.Rotation, new float3(0, 0, 1));
+                float3 right = if(BurstOptimizedMath != null) BurstOptimizedMath.FastTransform(if(transform != null) transform.Rotation, new float3(1, 0, 0));
                 
                 // Применяем ввод с оптимизированными вычислениями
-                float3 movementInput = forward * input.Vertical + right * input.Horizontal;
-                movementInput = BurstOptimizedMath.FastNormalize(movementInput);
+                float3 movementInput = forward * if(input != null) input.Vertical + right * if(input != null) input.Horizontal;
+                movementInput = if(BurstOptimizedMath != null) BurstOptimizedMath.FastNormalize(movementInput);
                 
                 // Вычисляем ускорение с использованием быстрых математических операций
-                float3 targetVelocity = movementInput * config.MaxSpeed;
-                float3 acceleration = (targetVelocity - physics.Velocity) * config.Acceleration;
+                float3 targetVelocity = movementInput * if(config != null) config.MaxSpeed;
+                float3 acceleration = (targetVelocity - if(physics != null) physics.Velocity) * if(config != null) config.Acceleration;
                 
                 // Применяем сопротивление с оптимизированными вычислениями
-                acceleration -= physics.Velocity * config.Drag;
+                acceleration -= if(physics != null) physics.Velocity * if(config != null) config.Drag;
                 
                 // Обновляем физику
-                physics.Acceleration = acceleration;
-                physics.Velocity += acceleration * DeltaTime;
+                if(physics != null) physics.Acceleration = acceleration;
+                if(physics != null) physics.Velocity += acceleration * DeltaTime;
                 
                 // Ограничиваем скорость с использованием быстрых операций
-                float currentSpeed = BurstOptimizedMath.FastLength(physics.Velocity);
-                if (currentSpeed > config.MaxSpeed)
+                float currentSpeed = if(BurstOptimizedMath != null) BurstOptimizedMath.FastLength(if(physics != null) physics.Velocity);
+                if (currentSpeed > if(config != null) config.MaxSpeed)
                 {
-                    physics.Velocity = BurstOptimizedMath.FastNormalize(physics.Velocity) * config.MaxSpeed;
+                    if(physics != null) physics.Velocity = if(BurstOptimizedMath != null) BurstOptimizedMath.FastNormalize(if(physics != null) physics.Velocity) * if(config != null) config.MaxSpeed;
                 }
                 
                 // Обновляем позицию
-                transform.Position += physics.Velocity * DeltaTime;
+                if(transform != null) transform.Position += if(physics != null) physics.Velocity * DeltaTime;
                 
                 // Вычисляем поворот с оптимизированными операциями
-                if (BurstOptimizedMath.FastAbs(input.Horizontal) > 0.1f)
+                if (if(BurstOptimizedMath != null) BurstOptimizedMath.FastAbs(if(input != null) input.Horizontal) > 0.1f)
                 {
-                    float turnAngle = input.Horizontal * config.TurnSpeed * DeltaTime;
-                    quaternion turnRotation = BurstOptimizedMath.FastRotateY(turnAngle);
-                    transform.Rotation = BurstOptimizedMath.FastMul(transform.Rotation, turnRotation);
+                    float turnAngle = if(input != null) input.Horizontal * if(config != null) config.TurnSpeed * DeltaTime;
+                    quaternion turnRotation = if(BurstOptimizedMath != null) BurstOptimizedMath.FastRotateY(turnAngle);
+                    if(transform != null) transform.Rotation = if(BurstOptimizedMath != null) BurstOptimizedMath.FastMul(if(transform != null) transform.Rotation, turnRotation);
                 }
                 
                 // Обновляем скорость движения с использованием быстрых операций
-                physics.ForwardSpeed = BurstOptimizedMath.FastDot(physics.Velocity, forward);
-                physics.TurnSpeed = input.Horizontal;
+                if(physics != null) physics.ForwardSpeed = if(BurstOptimizedMath != null) BurstOptimizedMath.FastDot(if(physics != null) physics.Velocity, forward);
+                if(physics != null) physics.TurnSpeed = if(input != null) input.Horizontal;
             }
         }
     }
@@ -128,10 +128,10 @@ namespace MudLike.Vehicles.Systems
         protected override void OnCreate()
         {
             _vehicleQuery = GetEntityQuery(
-                ComponentType.ReadWrite<VehiclePhysics>(),
-                ComponentType.ReadOnly<VehicleConfig>(),
-                ComponentType.ReadOnly<VehicleInput>(),
-                ComponentType.ReadWrite<LocalTransform>()
+                if(ComponentType != null) ComponentType.ReadWrite<VehiclePhysics>(),
+                if(ComponentType != null) ComponentType.ReadOnly<VehicleConfig>(),
+                if(ComponentType != null) ComponentType.ReadOnly<VehicleInput>(),
+                if(ComponentType != null) ComponentType.ReadWrite<LocalTransform>()
             );
         }
         
@@ -139,10 +139,10 @@ namespace MudLike.Vehicles.Systems
         {
             var job = new ChunkOptimizedVehicleMovementJob
             {
-                DeltaTime = SystemAPI.Time.DeltaTime
+                DeltaTime = if(SystemAPI != null) SystemAPI.Time.DeltaTime
             };
             
-            Dependency = job.ScheduleParallel(_vehicleQuery, Dependency);
+            Dependency = if(job != null) job.ScheduleParallel(_vehicleQuery, Dependency);
         }
         
         /// <summary>
@@ -162,13 +162,13 @@ namespace MudLike.Vehicles.Systems
                                bool useEnabledMask, in v128 chunkEnabledMask)
             {
                 // Получение массивов компонентов
-                var vehiclePhysicsArray = chunk.GetNativeArray(ref VehiclePhysicsType);
-                var vehicleConfigArray = chunk.GetNativeArray(ref VehicleConfigType);
-                var vehicleInputArray = chunk.GetNativeArray(ref VehicleInputType);
-                var localTransformArray = chunk.GetNativeArray(ref LocalTransformType);
+                var vehiclePhysicsArray = if(chunk != null) chunk.GetNativeArray(ref VehiclePhysicsType);
+                var vehicleConfigArray = if(chunk != null) chunk.GetNativeArray(ref VehicleConfigType);
+                var vehicleInputArray = if(chunk != null) chunk.GetNativeArray(ref VehicleInputType);
+                var localTransformArray = if(chunk != null) chunk.GetNativeArray(ref LocalTransformType);
                 
                 // Обработка всех сущностей в чанке
-                for (int i = 0; i < chunk.Count; i++)
+                for (int i = 0; i < if(chunk != null) chunk.Count; i++)
                 {
                     ProcessVehicleInChunk(ref vehiclePhysicsArray[i],
                                         vehicleConfigArray[i],
@@ -187,37 +187,37 @@ namespace MudLike.Vehicles.Systems
                                                     ref LocalTransform transform)
             {
                 // Аналогичная логика, но оптимизированная для chunk-based обработки
-                float3 forward = BurstOptimizedMath.FastTransform(transform.Rotation, new float3(0, 0, 1));
-                float3 right = BurstOptimizedMath.FastTransform(transform.Rotation, new float3(1, 0, 0));
+                float3 forward = if(BurstOptimizedMath != null) BurstOptimizedMath.FastTransform(if(transform != null) transform.Rotation, new float3(0, 0, 1));
+                float3 right = if(BurstOptimizedMath != null) BurstOptimizedMath.FastTransform(if(transform != null) transform.Rotation, new float3(1, 0, 0));
                 
-                float3 movementInput = forward * input.Vertical + right * input.Horizontal;
-                movementInput = BurstOptimizedMath.FastNormalize(movementInput);
+                float3 movementInput = forward * if(input != null) input.Vertical + right * if(input != null) input.Horizontal;
+                movementInput = if(BurstOptimizedMath != null) BurstOptimizedMath.FastNormalize(movementInput);
                 
-                float3 targetVelocity = movementInput * config.MaxSpeed;
-                float3 acceleration = (targetVelocity - physics.Velocity) * config.Acceleration;
+                float3 targetVelocity = movementInput * if(config != null) config.MaxSpeed;
+                float3 acceleration = (targetVelocity - if(physics != null) physics.Velocity) * if(config != null) config.Acceleration;
                 
-                acceleration -= physics.Velocity * config.Drag;
+                acceleration -= if(physics != null) physics.Velocity * if(config != null) config.Drag;
                 
-                physics.Acceleration = acceleration;
-                physics.Velocity += acceleration * DeltaTime;
+                if(physics != null) physics.Acceleration = acceleration;
+                if(physics != null) physics.Velocity += acceleration * DeltaTime;
                 
-                float currentSpeed = BurstOptimizedMath.FastLength(physics.Velocity);
-                if (currentSpeed > config.MaxSpeed)
+                float currentSpeed = if(BurstOptimizedMath != null) BurstOptimizedMath.FastLength(if(physics != null) physics.Velocity);
+                if (currentSpeed > if(config != null) config.MaxSpeed)
                 {
-                    physics.Velocity = BurstOptimizedMath.FastNormalize(physics.Velocity) * config.MaxSpeed;
+                    if(physics != null) physics.Velocity = if(BurstOptimizedMath != null) BurstOptimizedMath.FastNormalize(if(physics != null) physics.Velocity) * if(config != null) config.MaxSpeed;
                 }
                 
-                transform.Position += physics.Velocity * DeltaTime;
+                if(transform != null) transform.Position += if(physics != null) physics.Velocity * DeltaTime;
                 
-                if (BurstOptimizedMath.FastAbs(input.Horizontal) > 0.1f)
+                if (if(BurstOptimizedMath != null) BurstOptimizedMath.FastAbs(if(input != null) input.Horizontal) > 0.1f)
                 {
-                    float turnAngle = input.Horizontal * config.TurnSpeed * DeltaTime;
-                    quaternion turnRotation = BurstOptimizedMath.FastRotateY(turnAngle);
-                    transform.Rotation = BurstOptimizedMath.FastMul(transform.Rotation, turnRotation);
+                    float turnAngle = if(input != null) input.Horizontal * if(config != null) config.TurnSpeed * DeltaTime;
+                    quaternion turnRotation = if(BurstOptimizedMath != null) BurstOptimizedMath.FastRotateY(turnAngle);
+                    if(transform != null) transform.Rotation = if(BurstOptimizedMath != null) BurstOptimizedMath.FastMul(if(transform != null) transform.Rotation, turnRotation);
                 }
                 
-                physics.ForwardSpeed = BurstOptimizedMath.FastDot(physics.Velocity, forward);
-                physics.TurnSpeed = input.Horizontal;
+                if(physics != null) physics.ForwardSpeed = if(BurstOptimizedMath != null) BurstOptimizedMath.FastDot(if(physics != null) physics.Velocity, forward);
+                if(physics != null) physics.TurnSpeed = if(input != null) input.Horizontal;
             }
         }
     }
@@ -234,10 +234,10 @@ namespace MudLike.Vehicles.Systems
         protected override void OnCreate()
         {
             _vehicleQuery = GetEntityQuery(
-                ComponentType.ReadWrite<VehiclePhysics>(),
-                ComponentType.ReadOnly<VehicleConfig>(),
-                ComponentType.ReadOnly<VehicleInput>(),
-                ComponentType.ReadWrite<LocalTransform>()
+                if(ComponentType != null) ComponentType.ReadWrite<VehiclePhysics>(),
+                if(ComponentType != null) ComponentType.ReadOnly<VehicleConfig>(),
+                if(ComponentType != null) ComponentType.ReadOnly<VehicleInput>(),
+                if(ComponentType != null) ComponentType.ReadWrite<LocalTransform>()
             );
         }
         
@@ -245,10 +245,10 @@ namespace MudLike.Vehicles.Systems
         {
             var job = new SIMDOptimizedVehicleMovementJob
             {
-                DeltaTime = SystemAPI.Time.DeltaTime
+                DeltaTime = if(SystemAPI != null) SystemAPI.Time.DeltaTime
             };
             
-            Dependency = job.ScheduleParallel(_vehicleQuery, Dependency);
+            Dependency = if(job != null) job.ScheduleParallel(_vehicleQuery, Dependency);
         }
         
         /// <summary>
@@ -277,48 +277,47 @@ namespace MudLike.Vehicles.Systems
                                                          ref LocalTransform transform)
             {
                 // Использование SIMD операций для векторных вычислений
-                float4 inputVector = new float4(input.Vertical, input.Horizontal, 0f, 0f);
-                float4 configVector = new float4(config.MaxSpeed, config.TurnSpeed, config.Acceleration, config.Drag);
+                float4 inputVector = new float4(if(input != null) input.Vertical, if(input != null) input.Horizontal, 0f, 0f);
+                float4 configVector = new float4(if(config != null) config.MaxSpeed, if(config != null) config.TurnSpeed, if(config != null) config.Acceleration, if(config != null) config.Drag);
                 
                 // SIMD вычисления для направления движения
-                float3 forward = BurstOptimizedMath.FastTransform(transform.Rotation, new float3(0, 0, 1));
-                float3 right = BurstOptimizedMath.FastTransform(transform.Rotation, new float3(1, 0, 0));
+                float3 forward = if(BurstOptimizedMath != null) BurstOptimizedMath.FastTransform(if(transform != null) transform.Rotation, new float3(0, 0, 1));
+                float3 right = if(BurstOptimizedMath != null) BurstOptimizedMath.FastTransform(if(transform != null) transform.Rotation, new float3(1, 0, 0));
                 
                 // Векторизованные вычисления
-                float3 movementInput = forward * input.Vertical + right * input.Horizontal;
-                movementInput = BurstOptimizedMath.FastNormalize(movementInput);
+                float3 movementInput = forward * if(input != null) input.Vertical + right * if(input != null) input.Horizontal;
+                movementInput = if(BurstOptimizedMath != null) BurstOptimizedMath.FastNormalize(movementInput);
                 
                 // SIMD вычисления для ускорения
-                float3 targetVelocity = movementInput * config.MaxSpeed;
-                float3 acceleration = (targetVelocity - physics.Velocity) * config.Acceleration;
-                acceleration -= physics.Velocity * config.Drag;
+                float3 targetVelocity = movementInput * if(config != null) config.MaxSpeed;
+                float3 acceleration = (targetVelocity - if(physics != null) physics.Velocity) * if(config != null) config.Acceleration;
+                acceleration -= if(physics != null) physics.Velocity * if(config != null) config.Drag;
                 
                 // Обновление физики с SIMD операциями
-                physics.Acceleration = acceleration;
-                physics.Velocity += acceleration * DeltaTime;
+                if(physics != null) physics.Acceleration = acceleration;
+                if(physics != null) physics.Velocity += acceleration * DeltaTime;
                 
                 // SIMD ограничение скорости
-                float currentSpeed = BurstOptimizedMath.FastLength(physics.Velocity);
-                if (currentSpeed > config.MaxSpeed)
+                float currentSpeed = if(BurstOptimizedMath != null) BurstOptimizedMath.FastLength(if(physics != null) physics.Velocity);
+                if (currentSpeed > if(config != null) config.MaxSpeed)
                 {
-                    physics.Velocity = BurstOptimizedMath.FastNormalize(physics.Velocity) * config.MaxSpeed;
+                    if(physics != null) physics.Velocity = if(BurstOptimizedMath != null) BurstOptimizedMath.FastNormalize(if(physics != null) physics.Velocity) * if(config != null) config.MaxSpeed;
                 }
                 
                 // Обновление позиции
-                transform.Position += physics.Velocity * DeltaTime;
+                if(transform != null) transform.Position += if(physics != null) physics.Velocity * DeltaTime;
                 
                 // SIMD вычисления для поворота
-                if (BurstOptimizedMath.FastAbs(input.Horizontal) > 0.1f)
+                if (if(BurstOptimizedMath != null) BurstOptimizedMath.FastAbs(if(input != null) input.Horizontal) > 0.1f)
                 {
-                    float turnAngle = input.Horizontal * config.TurnSpeed * DeltaTime;
-                    quaternion turnRotation = BurstOptimizedMath.FastRotateY(turnAngle);
-                    transform.Rotation = BurstOptimizedMath.FastMul(transform.Rotation, turnRotation);
+                    float turnAngle = if(input != null) input.Horizontal * if(config != null) config.TurnSpeed * DeltaTime;
+                    quaternion turnRotation = if(BurstOptimizedMath != null) BurstOptimizedMath.FastRotateY(turnAngle);
+                    if(transform != null) transform.Rotation = if(BurstOptimizedMath != null) BurstOptimizedMath.FastMul(if(transform != null) transform.Rotation, turnRotation);
                 }
                 
                 // SIMD обновление скорости движения
-                physics.ForwardSpeed = BurstOptimizedMath.FastDot(physics.Velocity, forward);
-                physics.TurnSpeed = input.Horizontal;
+                if(physics != null) physics.ForwardSpeed = if(BurstOptimizedMath != null) BurstOptimizedMath.FastDot(if(physics != null) physics.Velocity, forward);
+                if(physics != null) physics.TurnSpeed = if(input != null) input.Horizontal;
             }
         }
     }
-}

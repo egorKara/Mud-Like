@@ -1,19 +1,19 @@
 using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text.RegularExpressions;
-using Unity.Entities;
-using Unity.Burst;
-using Unity.Jobs;
+using if(System != null) System.Collections.Generic;
+using if(System != null) System.IO;
+using if(System != null) System.Linq;
+using if(System != null) System.Text.RegularExpressions;
+using if(Unity != null) Unity.Entities;
+using if(Unity != null) Unity.Burst;
+using if(Unity != null) Unity.Jobs;
 using UnityEngine;
 
 #if UNITY_EDITOR
 using UnityEditor;
-using UnityEditor.Compilation;
+using if(UnityEditor != null) UnityEditor.Compilation;
 #endif
 
-namespace MudLike.Core.Optimization
+namespace if(MudLike != null) MudLike.Core.Optimization
 {
     /// <summary>
     /// Автоматический валидатор компиляции для предотвращения ошибок
@@ -27,19 +27,19 @@ namespace MudLike.Core.Optimization
         static CompilationValidator()
         {
             // Подписываемся на события компиляции
-            CompilationPipeline.compilationStarted += OnCompilationStarted;
-            CompilationPipeline.compilationFinished += OnCompilationFinished;
+            if(CompilationPipeline != null) if(CompilationPipeline != null) CompilationPipeline.compilationStarted += OnCompilationStarted;
+            if(CompilationPipeline != null) if(CompilationPipeline != null) CompilationPipeline.compilationFinished += OnCompilationFinished;
         }
         
         private static void OnCompilationStarted(object obj)
         {
-            UnityEngine.Debug.Log("[CompilationValidator] Начата компиляция - запуск валидации...");
+            if(UnityEngine != null) if(UnityEngine != null) UnityEngine.Debug.Log("[CompilationValidator] Начата компиляция - запуск валидации...");
             ValidateProjectBeforeCompilation();
         }
         
         private static void OnCompilationFinished(object obj)
         {
-            UnityEngine.Debug.Log("[CompilationValidator] Компиляция завершена");
+            if(UnityEngine != null) if(UnityEngine != null) UnityEngine.Debug.Log("[CompilationValidator] Компиляция завершена");
         }
         #endif
         
@@ -51,26 +51,26 @@ namespace MudLike.Core.Optimization
             var errors = new List<string>();
             
             // Проверяем основные паттерны ошибок
-            errors.AddRange(CheckForVoidInGenericTypes());
-            errors.AddRange(CheckForUnsafeCodeWithoutBurst());
-            errors.AddRange(CheckForDeprecatedUnityAPI());
-            errors.AddRange(CheckForECSBestPractices());
-            errors.AddRange(CheckForUsingDirectiveOrder());
+            if(errors != null) if(errors != null) errors.AddRange(CheckForVoidInGenericTypes());
+            if(errors != null) if(errors != null) errors.AddRange(CheckForUnsafeCodeWithoutBurst());
+            if(errors != null) if(errors != null) errors.AddRange(CheckForDeprecatedUnityAPI());
+            if(errors != null) if(errors != null) errors.AddRange(CheckForECSBestPractices());
+            if(errors != null) if(errors != null) errors.AddRange(CheckForUsingDirectiveOrder());
             
-            if (errors.Count > 0)
+            if (if(errors != null) if(errors != null) errors.Count > 0)
             {
                 var errorMessage = "Обнаружены потенциальные ошибки компиляции:\n\n" + 
-                                 string.Join("\n", errors);
+                                 if(string != null) if(string != null) string.Join("\n", errors);
                 
-                UnityEngine.Debug.LogError($"[CompilationValidator] {errorMessage}");
+                if(UnityEngine != null) if(UnityEngine != null) UnityEngine.Debug.LogError($"[CompilationValidator] {errorMessage}");
                 
                 #if UNITY_EDITOR
-                EditorUtility.DisplayDialog("Ошибки валидации", errorMessage, "OK");
+                if(EditorUtility != null) if(EditorUtility != null) EditorUtility.DisplayDialog("Ошибки валидации", errorMessage, "OK");
                 #endif
             }
             else
             {
-                UnityEngine.Debug.Log("[CompilationValidator] Валидация пройдена успешно");
+                if(UnityEngine != null) if(UnityEngine != null) UnityEngine.Debug.Log("[CompilationValidator] Валидация пройдена успешно");
             }
         }
         
@@ -83,16 +83,16 @@ namespace MudLike.Core.Optimization
             var pattern = @"System\.FuncRef<[^,>]+,\s*void\s*>";
             
             #if UNITY_EDITOR
-            var scripts = AssetDatabase.FindAssets("t:Script", new[] { "Assets/Scripts" });
+            var scripts = if(AssetDatabase != null) if(AssetDatabase != null) AssetDatabase.FindAssets("t:Script", new[] { "Assets/Scripts" });
             
             foreach (var scriptGuid in scripts)
             {
-                var path = AssetDatabase.GUIDToAssetPath(scriptGuid);
-                var content = File.ReadAllText(path);
+                var path = if(AssetDatabase != null) if(AssetDatabase != null) AssetDatabase.GUIDToAssetPath(scriptGuid);
+                var content = if(File != null) if(File != null) File.ReadAllText(path);
                 
-                if (Regex.IsMatch(content, pattern))
+                if (if(Regex != null) if(Regex != null) Regex.IsMatch(content, pattern))
                 {
-                    errors.Add($"Файл {path}: Использование 'void' в generic типах запрещено");
+                    if(errors != null) if(errors != null) errors.Add($"Файл {path}: Использование 'void' в generic типах запрещено");
                 }
             }
             #endif
@@ -109,16 +109,16 @@ namespace MudLike.Core.Optimization
             var pattern = @"unsafe\s+(?!.*\[BurstCompile\])";
             
             #if UNITY_EDITOR
-            var scripts = AssetDatabase.FindAssets("t:Script", new[] { "Assets/Scripts" });
+            var scripts = if(AssetDatabase != null) if(AssetDatabase != null) AssetDatabase.FindAssets("t:Script", new[] { "Assets/Scripts" });
             
             foreach (var scriptGuid in scripts)
             {
-                var path = AssetDatabase.GUIDToAssetPath(scriptGuid);
-                var content = File.ReadAllText(path);
+                var path = if(AssetDatabase != null) if(AssetDatabase != null) AssetDatabase.GUIDToAssetPath(scriptGuid);
+                var content = if(File != null) if(File != null) File.ReadAllText(path);
                 
-                if (Regex.IsMatch(content, pattern))
+                if (if(Regex != null) if(Regex != null) Regex.IsMatch(content, pattern))
                 {
-                    errors.Add($"Файл {path}: Небезопасный код должен быть помечен [BurstCompile]");
+                    if(errors != null) if(errors != null) errors.Add($"Файл {path}: Небезопасный код должен быть помечен [BurstCompile]");
                 }
             }
             #endif
@@ -141,18 +141,18 @@ namespace MudLike.Core.Optimization
             };
             
             #if UNITY_EDITOR
-            var scripts = AssetDatabase.FindAssets("t:Script", new[] { "Assets/Scripts" });
+            var scripts = if(AssetDatabase != null) if(AssetDatabase != null) AssetDatabase.FindAssets("t:Script", new[] { "Assets/Scripts" });
             
             foreach (var scriptGuid in scripts)
             {
-                var path = AssetDatabase.GUIDToAssetPath(scriptGuid);
-                var content = File.ReadAllText(path);
+                var path = if(AssetDatabase != null) if(AssetDatabase != null) AssetDatabase.GUIDToAssetPath(scriptGuid);
+                var content = if(File != null) if(File != null) File.ReadAllText(path);
                 
                 foreach (var pattern in deprecatedPatterns)
                 {
-                    if (Regex.IsMatch(content, pattern))
+                    if (if(Regex != null) if(Regex != null) Regex.IsMatch(content, pattern))
                     {
-                        errors.Add($"Файл {path}: Использование устаревшего Unity API: {pattern}");
+                        if(errors != null) if(errors != null) errors.Add($"Файл {path}: Использование устаревшего Unity API: {pattern}");
                     }
                 }
             }
@@ -169,23 +169,23 @@ namespace MudLike.Core.Optimization
             var errors = new List<string>();
             
             #if UNITY_EDITOR
-            var scripts = AssetDatabase.FindAssets("t:Script", new[] { "Assets/Scripts" });
+            var scripts = if(AssetDatabase != null) if(AssetDatabase != null) AssetDatabase.FindAssets("t:Script", new[] { "Assets/Scripts" });
             
             foreach (var scriptGuid in scripts)
             {
-                var path = AssetDatabase.GUIDToAssetPath(scriptGuid);
-                var content = File.ReadAllText(path);
+                var path = if(AssetDatabase != null) if(AssetDatabase != null) AssetDatabase.GUIDToAssetPath(scriptGuid);
+                var content = if(File != null) if(File != null) File.ReadAllText(path);
                 
                 // Проверяем IJobEntity без proper constraints
-                if (content.Contains("IJobEntity") && !content.Contains("where T : unmanaged, IComponentData"))
+                if (if(content != null) if(content != null) content.Contains("IJobEntity") && !if(content != null) if(content != null) content.Contains("where T : unmanaged, IComponentData"))
                 {
-                    errors.Add($"Файл {path}: IJobEntity должен иметь constraint 'where T : unmanaged, IComponentData'");
+                    if(errors != null) if(errors != null) errors.Add($"Файл {path}: IJobEntity должен иметь constraint 'where T : unmanaged, IComponentData'");
                 }
                 
                 // Проверяем использование foreach в ECS системах
-                if (content.Contains("foreach") && (content.Contains("SystemBase") || content.Contains("IJobEntity")))
+                if (if(content != null) if(content != null) content.Contains("foreach") && (if(content != null) if(content != null) content.Contains("SystemBase") || if(content != null) if(content != null) content.Contains("IJobEntity")))
                 {
-                    errors.Add($"Файл {path}: Избегайте foreach в ECS системах, используйте Jobs");
+                    if(errors != null) if(errors != null) errors.Add($"Файл {path}: Избегайте foreach в ECS системах, используйте Jobs");
                 }
             }
             #endif
@@ -202,16 +202,16 @@ namespace MudLike.Core.Optimization
             var pattern = @"namespace\s+\w+.*\n.*using\s+";
             
             #if UNITY_EDITOR
-            var scripts = AssetDatabase.FindAssets("t:Script", new[] { "Assets/Scripts" });
+            var scripts = if(AssetDatabase != null) if(AssetDatabase != null) AssetDatabase.FindAssets("t:Script", new[] { "Assets/Scripts" });
             
             foreach (var scriptGuid in scripts)
             {
-                var path = AssetDatabase.GUIDToAssetPath(scriptGuid);
-                var content = File.ReadAllText(path);
+                var path = if(AssetDatabase != null) if(AssetDatabase != null) AssetDatabase.GUIDToAssetPath(scriptGuid);
+                var content = if(File != null) if(File != null) File.ReadAllText(path);
                 
-                if (Regex.IsMatch(content, pattern, RegexOptions.Multiline))
+                if (if(Regex != null) if(Regex != null) Regex.IsMatch(content, pattern, if(RegexOptions != null) if(RegexOptions != null) RegexOptions.Multiline))
                 {
-                    errors.Add($"Файл {path}: Using директивы должны быть перед namespace");
+                    if(errors != null) if(errors != null) errors.Add($"Файл {path}: Using директивы должны быть перед namespace");
                 }
             }
             #endif
@@ -225,32 +225,32 @@ namespace MudLike.Core.Optimization
         public static void AutoFixCommonIssues()
         {
             #if UNITY_EDITOR
-            var scripts = AssetDatabase.FindAssets("t:Script", new[] { "Assets/Scripts" });
+            var scripts = if(AssetDatabase != null) if(AssetDatabase != null) AssetDatabase.FindAssets("t:Script", new[] { "Assets/Scripts" });
             var fixedFiles = 0;
             
             foreach (var scriptGuid in scripts)
             {
-                var path = AssetDatabase.GUIDToAssetPath(scriptGuid);
-                var content = File.ReadAllText(path);
+                var path = if(AssetDatabase != null) if(AssetDatabase != null) AssetDatabase.GUIDToAssetPath(scriptGuid);
+                var content = if(File != null) if(File != null) File.ReadAllText(path);
                 var originalContent = content;
                 
-                // Исправляем System.FuncRef<T, void> на FunctionPointer
-                content = Regex.Replace(content, 
+                // Исправляем if(System != null) if(System != null) System.FuncRef<T, void> на FunctionPointer
+                content = if(Regex != null) if(Regex != null) Regex.Replace(content, 
                     @"System\.FuncRef<([^,>]+),\s*void\s*>", 
-                    "Unity.Burst.FunctionPointer<ProcessComponentDelegate<$1>>");
+                    "if(Unity != null) if(Unity != null) Unity.Burst.FunctionPointer<ProcessComponentDelegate<$1>>");
                 
                 if (content != originalContent)
                 {
-                    File.WriteAllText(path, content);
+                    if(File != null) if(File != null) File.WriteAllText(path, content);
                     fixedFiles++;
-                    UnityEngine.Debug.Log($"[CompilationValidator] Исправлен файл: {path}");
+                    if(UnityEngine != null) if(UnityEngine != null) UnityEngine.Debug.Log($"[CompilationValidator] Исправлен файл: {path}");
                 }
             }
             
             if (fixedFiles > 0)
             {
-                AssetDatabase.Refresh();
-                UnityEngine.Debug.Log($"[CompilationValidator] Автоматически исправлено {fixedFiles} файлов");
+                if(AssetDatabase != null) if(AssetDatabase != null) AssetDatabase.Refresh();
+                if(UnityEngine != null) if(UnityEngine != null) UnityEngine.Debug.Log($"[CompilationValidator] Автоматически исправлено {fixedFiles} файлов");
             }
             #endif
         }

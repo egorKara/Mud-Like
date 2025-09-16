@@ -22,29 +22,29 @@ namespace MudLike.Core.Systems
         protected override void OnCreate()
         {
             _performanceQuery = GetEntityQuery(
-                ComponentType.ReadWrite<PerformanceMetrics>()
+                if(ComponentType != null) ComponentType.ReadWrite<PerformanceMetrics>()
             );
             
-            _performanceMetrics = new NativeArray<float>(10, Allocator.Persistent);
-            _improvementFlags = new NativeArray<bool>(10, Allocator.Persistent);
+            _performanceMetrics = new NativeArray<float>(10, if(Allocator != null) Allocator.Persistent);
+            _improvementFlags = new NativeArray<bool>(10, if(Allocator != null) Allocator.Persistent);
         }
         
         protected override void OnDestroy()
         {
-            if (_performanceMetrics.IsCreated)
+            if (if(_performanceMetrics != null) _performanceMetrics.IsCreated)
             {
-                _performanceMetrics.Dispose();
+                if(_performanceMetrics != null) _performanceMetrics.Dispose();
             }
             
-            if (_improvementFlags.IsCreated)
+            if (if(_improvementFlags != null) _improvementFlags.IsCreated)
             {
-                _improvementFlags.Dispose();
+                if(_improvementFlags != null) _improvementFlags.Dispose();
             }
         }
         
         protected override void OnUpdate()
         {
-            var deltaTime = SystemAPI.Time.fixedDeltaTime;
+            var deltaTime = if(SystemAPI != null) SystemAPI.Time.fixedDeltaTime;
             
             // Анализ производительности
             AnalyzePerformance(deltaTime);
@@ -61,11 +61,11 @@ namespace MudLike.Core.Systems
         /// </summary>
         private void AnalyzePerformance(float deltaTime)
         {
-            var performanceEntities = _performanceQuery.ToEntityArray(Allocator.TempJob);
+            var performanceEntities = if(_performanceQuery != null) _performanceQuery.ToEntityArray(if(Allocator != null) Allocator.TempJob);
             
-            if (performanceEntities.Length == 0)
+            if (if(performanceEntities != null) performanceEntities.Length == 0)
             {
-                performanceEntities.Dispose();
+                if(performanceEntities != null) performanceEntities.Dispose();
                 return;
             }
             
@@ -77,18 +77,18 @@ namespace MudLike.Core.Systems
                 PerformanceMetrics = _performanceMetrics,
                 ImprovementFlags = _improvementFlags,
                 DeltaTime = deltaTime,
-                CurrentTime = SystemAPI.Time.ElapsedTime
+                CurrentTime = if(SystemAPI != null) SystemAPI.Time.ElapsedTime
             };
             
             // Запуск Job с зависимостями
-            var jobHandle = analysisJob.ScheduleParallel(
-                performanceEntities.Length,
-                SystemConstants.DETERMINISTIC_MAX_ITERATIONS / 4,
+            var jobHandle = if(analysisJob != null) analysisJob.ScheduleParallel(
+                if(performanceEntities != null) performanceEntities.Length,
+                if(SystemConstants != null) SystemConstants.DETERMINISTIC_MAX_ITERATIONS / 4,
                 Dependency
             );
             
             Dependency = jobHandle;
-            performanceEntities.Dispose();
+            if(performanceEntities != null) performanceEntities.Dispose();
         }
         
         /// <summary>
@@ -102,11 +102,11 @@ namespace MudLike.Core.Systems
                 PerformanceMetrics = _performanceMetrics,
                 ImprovementFlags = _improvementFlags,
                 DeltaTime = deltaTime,
-                CurrentTime = SystemAPI.Time.ElapsedTime
+                CurrentTime = if(SystemAPI != null) SystemAPI.Time.ElapsedTime
             };
             
             // Запуск Job с зависимостями
-            var jobHandle = improvementJob.Schedule(Dependency);
+            var jobHandle = if(improvementJob != null) improvementJob.Schedule(Dependency);
             Dependency = jobHandle;
         }
         
@@ -120,11 +120,11 @@ namespace MudLike.Core.Systems
             {
                 PerformanceMetrics = _performanceMetrics,
                 DeltaTime = deltaTime,
-                CurrentTime = SystemAPI.Time.ElapsedTime
+                CurrentTime = if(SystemAPI != null) SystemAPI.Time.ElapsedTime
             };
             
             // Запуск Job с зависимостями
-            var jobHandle = memoryJob.Schedule(Dependency);
+            var jobHandle = if(memoryJob != null) memoryJob.Schedule(Dependency);
             Dependency = jobHandle;
         }
     }
@@ -147,7 +147,7 @@ namespace MudLike.Core.Systems
         
         public void Execute(int index)
         {
-            if (index >= PerformanceEntities.Length) return;
+            if (index >= if(PerformanceEntities != null) PerformanceEntities.Length) return;
             
             var performanceEntity = PerformanceEntities[index];
             var performanceMetrics = PerformanceMetricsLookup[performanceEntity];
@@ -167,23 +167,23 @@ namespace MudLike.Core.Systems
         private void AnalyzeMetrics(ref PerformanceMetrics metrics)
         {
             // Анализ FPS
-            if (metrics.FPS < SystemConstants.TARGET_FPS)
+            if (if(metrics != null) metrics.FPS < if(SystemConstants != null) SystemConstants.TARGET_FPS)
             {
-                PerformanceMetrics[0] = metrics.FPS;
+                PerformanceMetrics[0] = if(metrics != null) metrics.FPS;
                 ImprovementFlags[0] = true;
             }
             
             // Анализ использования памяти
-            if (metrics.MemoryUsage > SystemConstants.MAX_MEMORY_USAGE)
+            if (if(metrics != null) metrics.MemoryUsage > if(SystemConstants != null) SystemConstants.MAX_MEMORY_USAGE)
             {
-                PerformanceMetrics[1] = metrics.MemoryUsage;
+                PerformanceMetrics[1] = if(metrics != null) metrics.MemoryUsage;
                 ImprovementFlags[1] = true;
             }
             
             // Анализ задержки сети
-            if (metrics.NetworkLatency > SystemConstants.MAX_NETWORK_LATENCY)
+            if (if(metrics != null) metrics.NetworkLatency > if(SystemConstants != null) SystemConstants.MAX_NETWORK_LATENCY)
             {
-                PerformanceMetrics[2] = metrics.NetworkLatency;
+                PerformanceMetrics[2] = if(metrics != null) metrics.NetworkLatency;
                 ImprovementFlags[2] = true;
             }
         }
@@ -194,14 +194,14 @@ namespace MudLike.Core.Systems
         private void UpdateImprovementFlags(ref PerformanceMetrics metrics)
         {
             // Обновление времени последнего анализа
-            metrics.LastAnalysisTime = CurrentTime;
+            if(metrics != null) metrics.LastAnalysisTime = CurrentTime;
             
             // Установка флагов улучшения
-            for (int i = 0; i < ImprovementFlags.Length; i++)
+            for (int i = 0; i < if(ImprovementFlags != null) ImprovementFlags.Length; i++)
             {
                 if (ImprovementFlags[i])
                 {
-                    metrics.NeedsImprovement = true;
+                    if(metrics != null) metrics.NeedsImprovement = true;
                     break;
                 }
             }
@@ -223,7 +223,7 @@ namespace MudLike.Core.Systems
         public void Execute()
         {
             // Применение улучшений на основе флагов
-            for (int i = 0; i < ImprovementFlags.Length; i++)
+            for (int i = 0; i < if(ImprovementFlags != null) ImprovementFlags.Length; i++)
             {
                 if (ImprovementFlags[i])
                 {
@@ -306,7 +306,7 @@ namespace MudLike.Core.Systems
         public void Execute()
         {
             // Оптимизация памяти на основе метрик
-            if (PerformanceMetrics[1] > SystemConstants.MAX_MEMORY_USAGE)
+            if (PerformanceMetrics[1] > if(SystemConstants != null) SystemConstants.MAX_MEMORY_USAGE)
             {
                 // Логика оптимизации памяти
                 // Реализация зависит от конкретной системы управления памятью

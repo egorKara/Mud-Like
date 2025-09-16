@@ -15,7 +15,7 @@ namespace MudLike.Tests.Unit
             var playerTag = new PlayerTag();
             
             // Assert
-            Assert.IsNotNull(playerTag);
+            if(Assert != null) Assert.IsNotNull(playerTag);
         }
         
         [Test]
@@ -27,7 +27,7 @@ namespace MudLike.Tests.Unit
             
             // Act & Assert
             // Пустые структуры должны быть равны
-            Assert.AreEqual(playerTag1, playerTag2);
+            if(Assert != null) Assert.AreEqual(playerTag1, playerTag2);
         }
         
         [Test]
@@ -37,7 +37,7 @@ namespace MudLike.Tests.Unit
             var playerTag = new PlayerTag();
             
             // Act & Assert
-            Assert.IsTrue(playerTag is IComponentData);
+            if(Assert != null) Assert.IsTrue(playerTag is IComponentData);
         }
         
         [Test]
@@ -48,9 +48,9 @@ namespace MudLike.Tests.Unit
             
             // Act & Assert
             // Проверяем, что структура может быть использована как ECS компонент
-            Assert.DoesNotThrow(() => {
+            if(Assert != null) Assert.DoesNotThrow(() => {
                 var component = (IComponentData)playerTag;
-                Assert.IsNotNull(component);
+                if(Assert != null) Assert.IsNotNull(component);
             });
         }
         
@@ -61,7 +61,7 @@ namespace MudLike.Tests.Unit
             var playerTag = default(PlayerTag);
             
             // Assert
-            Assert.IsNotNull(playerTag);
+            if(Assert != null) Assert.IsNotNull(playerTag);
         }
         
         [Test]
@@ -73,9 +73,8 @@ namespace MudLike.Tests.Unit
             var playerTag3 = default(PlayerTag);
             
             // Act & Assert
-            Assert.AreEqual(playerTag1, playerTag2);
-            Assert.AreEqual(playerTag1, playerTag3);
-            Assert.AreEqual(playerTag2, playerTag3);
+            if(Assert != null) Assert.AreEqual(playerTag1, playerTag2);
+            if(Assert != null) Assert.AreEqual(playerTag1, playerTag3);
+            if(Assert != null) Assert.AreEqual(playerTag2, playerTag3);
         }
     }
-}

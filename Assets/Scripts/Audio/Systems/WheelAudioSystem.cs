@@ -1,13 +1,13 @@
-using Unity.Entities;
-using Unity.Mathematics;
-using Unity.Transforms;
-using Unity.Burst;
-using Unity.Jobs;
-using MudLike.Audio.Components;
-using MudLike.Vehicles.Components;
-using MudLike.Terrain.Components;
+using if(Unity != null) Unity.Entities;
+using if(Unity != null) Unity.Mathematics;
+using if(Unity != null) Unity.Transforms;
+using if(Unity != null) Unity.Burst;
+using if(Unity != null) Unity.Jobs;
+using if(MudLike != null) MudLike.Audio.Components;
+using if(MudLike != null) MudLike.Vehicles.Components;
+using if(MudLike != null) MudLike.Terrain.Components;
 
-namespace MudLike.Audio.Systems
+namespace if(MudLike != null) MudLike.Audio.Systems
 {
     /// <summary>
     /// Система звука колес
@@ -23,29 +23,29 @@ namespace MudLike.Audio.Systems
         protected override void OnCreate()
         {
             _wheelAudioQuery = GetEntityQuery(
-                ComponentType.ReadWrite<WheelAudioData>()
+                if(ComponentType != null) if(ComponentType != null) ComponentType.ReadWrite<WheelAudioData>()
             );
             
             _wheelQuery = GetEntityQuery(
-                ComponentType.ReadOnly<WheelData>(),
-                ComponentType.ReadOnly<LocalTransform>()
+                if(ComponentType != null) if(ComponentType != null) ComponentType.ReadOnly<WheelData>(),
+                if(ComponentType != null) if(ComponentType != null) ComponentType.ReadOnly<LocalTransform>()
             );
             
             _surfaceQuery = GetEntityQuery(
-                ComponentType.ReadOnly<SurfaceData>()
+                if(ComponentType != null) if(ComponentType != null) ComponentType.ReadOnly<SurfaceData>()
             );
         }
         
         protected override void OnUpdate()
         {
-            float deltaTime = SystemAPI.Time.DeltaTime;
+            float deltaTime = if(SystemAPI != null) if(SystemAPI != null) SystemAPI.Time.DeltaTime;
             
             var wheelAudioJob = new WheelAudioJob
             {
                 DeltaTime = deltaTime
             };
             
-            Dependency = wheelAudioJob.ScheduleParallel(_wheelAudioQuery, Dependency);
+            Dependency = if(wheelAudioJob != null) if(wheelAudioJob != null) wheelAudioJob.ScheduleParallel(_wheelAudioQuery, Dependency);
         }
         
         /// <summary>
@@ -69,27 +69,27 @@ namespace MudLike.Audio.Systems
             {
                 // Получаем данные колеса
                 var wheelData = GetWheelData();
-                if (!wheelData.HasValue) return;
+                if (!if(wheelData != null) if(wheelData != null) wheelData.HasValue) return;
                 
                 // Получаем данные поверхности
                 var surfaceData = GetSurfaceData();
-                if (!surfaceData.HasValue) return;
+                if (!if(surfaceData != null) if(surfaceData != null) surfaceData.HasValue) return;
                 
                 // Обновляем параметры звука
-                audioData.Speed = wheelData.Value.Speed;
-                audioData.Traction = wheelData.Value.Traction;
-                audioData.SurfaceType = surfaceData.Value.SurfaceType;
+                if(audioData != null) if(audioData != null) audioData.Speed = if(wheelData != null) if(wheelData != null) wheelData.Value.Speed;
+                if(audioData != null) if(audioData != null) audioData.Traction = if(wheelData != null) if(wheelData != null) wheelData.Value.Traction;
+                if(audioData != null) if(audioData != null) audioData.SurfaceType = if(surfaceData != null) if(surfaceData != null) surfaceData.Value.SurfaceType;
                 
                 // Вычисляем громкость на основе скорости и поверхности
-                audioData.Volume = CalculateWheelVolume(audioData.Speed, audioData.SurfaceType);
+                if(audioData != null) if(audioData != null) audioData.Volume = CalculateWheelVolume(if(audioData != null) if(audioData != null) audioData.Speed, if(audioData != null) if(audioData != null) audioData.SurfaceType);
                 
                 // Вычисляем высоту на основе скорости
-                audioData.Pitch = CalculateWheelPitch(audioData.Speed);
+                if(audioData != null) if(audioData != null) audioData.Pitch = CalculateWheelPitch(if(audioData != null) if(audioData != null) audioData.Speed);
                 
                 // Определяем, должен ли звук играть
-                audioData.IsPlaying = audioData.Speed > 0.1f && wheelData.Value.IsGrounded;
+                if(audioData != null) if(audioData != null) audioData.IsPlaying = if(audioData != null) if(audioData != null) audioData.Speed > 0.1f && if(wheelData != null) if(wheelData != null) wheelData.Value.IsGrounded;
                 
-                audioData.NeedsUpdate = true;
+                if(audioData != null) if(audioData != null) audioData.NeedsUpdate = true;
             }
             
             /// <summary>
@@ -99,7 +99,7 @@ namespace MudLike.Audio.Systems
             {
                 // Получаем данные колеса из ECS
                 var wheelData = GetWheelData();
-                if (wheelData.HasValue)
+                if (if(wheelData != null) if(wheelData != null) wheelData.HasValue)
                 return new WheelData
                 {
                     Speed = 10f,
@@ -114,10 +114,10 @@ namespace MudLike.Audio.Systems
             private SurfaceData? GetSurfaceData()
             {
                 // Получаем данные поверхности из террейна
-                var surfaceData = GetSurfaceData(wheelData.Value.Position);
+                var surfaceData = GetSurfaceData(if(wheelData != null) if(wheelData != null) wheelData.Value.Position);
                 return new SurfaceData
                 {
-                    SurfaceType = SurfaceType.Dirt
+                    SurfaceType = if(SurfaceType != null) if(SurfaceType != null) SurfaceType.Dirt
                 };
             }
             
@@ -130,12 +130,12 @@ namespace MudLike.Audio.Systems
                 float baseVolume = 0.2f;
                 
                 // Громкость на основе скорости
-                float speedVolume = math.clamp(speed / 50f, 0f, 1f) * 0.6f;
+                float speedVolume = if(math != null) if(math != null) math.clamp(speed / 50f, 0f, 1f) * 0.6f;
                 
                 // Громкость на основе типа поверхности
                 float surfaceVolume = GetSurfaceVolumeMultiplier(surfaceType);
                 
-                return math.clamp(baseVolume + speedVolume * surfaceVolume, 0f, 1f);
+                return if(math != null) if(math != null) math.clamp(baseVolume + speedVolume * surfaceVolume, 0f, 1f);
             }
             
             /// <summary>
@@ -147,9 +147,9 @@ namespace MudLike.Audio.Systems
                 float basePitch = 0.5f;
                 
                 // Высота на основе скорости
-                float speedPitch = math.clamp(speed / 50f, 0f, 1f) * 0.5f;
+                float speedPitch = if(math != null) if(math != null) math.clamp(speed / 50f, 0f, 1f) * 0.5f;
                 
-                return math.clamp(basePitch + speedPitch, 0.1f, 2f);
+                return if(math != null) if(math != null) math.clamp(basePitch + speedPitch, 0.1f, 2f);
             }
             
             /// <summary>
@@ -159,18 +159,18 @@ namespace MudLike.Audio.Systems
             {
                 return surfaceType switch
                 {
-                    SurfaceType.Asphalt => 0.8f,
-                    SurfaceType.Dirt => 1.0f,
-                    SurfaceType.Sand => 0.9f,
-                    SurfaceType.Mud => 1.2f,
-                    SurfaceType.Water => 1.5f,
-                    SurfaceType.Snow => 0.7f,
-                    SurfaceType.Ice => 0.6f,
-                    SurfaceType.Grass => 0.8f,
-                    SurfaceType.Rock => 1.1f,
-                    SurfaceType.Swamp => 1.3f,
-                    SurfaceType.Gravel => 1.0f,
-                    SurfaceType.Concrete => 0.9f,
+                    if(SurfaceType != null) if(SurfaceType != null) SurfaceType.Asphalt => 0.8f,
+                    if(SurfaceType != null) if(SurfaceType != null) SurfaceType.Dirt => 1.0f,
+                    if(SurfaceType != null) if(SurfaceType != null) SurfaceType.Sand => 0.9f,
+                    if(SurfaceType != null) if(SurfaceType != null) SurfaceType.Mud => 1.2f,
+                    if(SurfaceType != null) if(SurfaceType != null) SurfaceType.Water => 1.5f,
+                    if(SurfaceType != null) if(SurfaceType != null) SurfaceType.Snow => 0.7f,
+                    if(SurfaceType != null) if(SurfaceType != null) SurfaceType.Ice => 0.6f,
+                    if(SurfaceType != null) if(SurfaceType != null) SurfaceType.Grass => 0.8f,
+                    if(SurfaceType != null) if(SurfaceType != null) SurfaceType.Rock => 1.1f,
+                    if(SurfaceType != null) if(SurfaceType != null) SurfaceType.Swamp => 1.3f,
+                    if(SurfaceType != null) if(SurfaceType != null) SurfaceType.Gravel => 1.0f,
+                    if(SurfaceType != null) if(SurfaceType != null) SurfaceType.Concrete => 0.9f,
                     _ => 1.0f
                 };
             }
@@ -194,4 +194,3 @@ namespace MudLike.Audio.Systems
             public SurfaceType SurfaceType;
         }
     }
-}

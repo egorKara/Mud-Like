@@ -20,21 +20,21 @@ namespace MudLike.Vehicles.Systems
         protected override void OnCreate()
         {
             _tireQuery = GetEntityQuery(
-                ComponentType.ReadWrite<TireData>(),
-                ComponentType.ReadOnly<WheelData>()
+                if(ComponentType != null) ComponentType.ReadWrite<TireData>(),
+                if(ComponentType != null) ComponentType.ReadOnly<WheelData>()
             );
         }
         
         protected override void OnUpdate()
         {
-            float deltaTime = SystemAPI.Time.DeltaTime;
+            float deltaTime = if(SystemAPI != null) SystemAPI.Time.DeltaTime;
             
             var tireManagementJob = new TireManagementJob
             {
                 DeltaTime = deltaTime
             };
             
-            Dependency = tireManagementJob.ScheduleParallel(_tireQuery, Dependency);
+            Dependency = if(tireManagementJob != null) tireManagementJob.ScheduleParallel(_tireQuery, Dependency);
         }
         
         /// <summary>
@@ -74,41 +74,41 @@ namespace MudLike.Vehicles.Systems
             private void CheckTireCondition(ref TireData tire)
             {
                 // Проверяем критическое состояние
-                if (tire.TreadWear >= 1f)
+                if (if(tire != null) tire.TreadWear >= 1f)
                 {
-                    tire.Condition = TireCondition.Worn;
+                    if(tire != null) tire.Condition = if(TireCondition != null) TireCondition.Worn;
                 }
-                else if (tire.Age >= tire.MaxAge)
+                else if (if(tire != null) tire.Age >= if(tire != null) tire.MaxAge)
                 {
-                    tire.Condition = TireCondition.Worn;
+                    if(tire != null) tire.Condition = if(TireCondition != null) TireCondition.Worn;
                 }
-                else if (tire.Mileage >= tire.MaxMileage)
+                else if (if(tire != null) tire.Mileage >= if(tire != null) tire.MaxMileage)
                 {
-                    tire.Condition = TireCondition.Worn;
+                    if(tire != null) tire.Condition = if(TireCondition != null) TireCondition.Worn;
                 }
-                else if (tire.CurrentPressure <= tire.MinPressure * 0.8f)
+                else if (if(tire != null) tire.CurrentPressure <= if(tire != null) tire.MinPressure * 0.8f)
                 {
-                    tire.Condition = TireCondition.Damaged;
+                    if(tire != null) tire.Condition = if(TireCondition != null) TireCondition.Damaged;
                 }
-                else if (tire.Temperature >= tire.MaxTemperature * 0.9f)
+                else if (if(tire != null) tire.Temperature >= if(tire != null) tire.MaxTemperature * 0.9f)
                 {
-                    tire.Condition = TireCondition.Damaged;
+                    if(tire != null) tire.Condition = if(TireCondition != null) TireCondition.Damaged;
                 }
-                else if (tire.TreadWear >= 0.8f)
+                else if (if(tire != null) tire.TreadWear >= 0.8f)
                 {
-                    tire.Condition = TireCondition.Poor;
+                    if(tire != null) tire.Condition = if(TireCondition != null) TireCondition.Poor;
                 }
-                else if (tire.TreadWear >= 0.5f)
+                else if (if(tire != null) tire.TreadWear >= 0.5f)
                 {
-                    tire.Condition = TireCondition.Fair;
+                    if(tire != null) tire.Condition = if(TireCondition != null) TireCondition.Fair;
                 }
-                else if (tire.TreadWear >= 0.2f)
+                else if (if(tire != null) tire.TreadWear >= 0.2f)
                 {
-                    tire.Condition = TireCondition.Good;
+                    if(tire != null) tire.Condition = if(TireCondition != null) TireCondition.Good;
                 }
                 else
                 {
-                    tire.Condition = TireCondition.New;
+                    if(tire != null) tire.Condition = if(TireCondition != null) TireCondition.New;
                 }
             }
             
@@ -118,23 +118,23 @@ namespace MudLike.Vehicles.Systems
             private void UpdateMaintenanceRecommendations(ref TireData tire)
             {
                 // Рекомендации по давлению
-                if (tire.CurrentPressure < tire.RecommendedPressure * 0.9f)
+                if (if(tire != null) tire.CurrentPressure < if(tire != null) tire.RecommendedPressure * 0.9f)
                 {
                     // Нужно подкачать шину
                 }
-                else if (tire.CurrentPressure > tire.RecommendedPressure * 1.1f)
+                else if (if(tire != null) tire.CurrentPressure > if(tire != null) tire.RecommendedPressure * 1.1f)
                 {
                     // Нужно спустить шину
                 }
                 
                 // Рекомендации по замене
-                if (tire.TreadWear >= 0.8f)
+                if (if(tire != null) tire.TreadWear >= 0.8f)
                 {
                     // Рекомендуется замена шины
                 }
                 
                 // Рекомендации по температуре
-                if (tire.Temperature >= tire.MaxTemperature * 0.8f)
+                if (if(tire != null) tire.Temperature >= if(tire != null) tire.MaxTemperature * 0.8f)
                 {
                     // Рекомендуется снизить скорость
                 }
@@ -146,23 +146,23 @@ namespace MudLike.Vehicles.Systems
             private void ProcessAutomaticActions(ref TireData tire, WheelData wheel)
             {
                 // Автоматическая подкачка при низком давлении
-                if (tire.CurrentPressure < tire.MinPressure)
+                if (if(tire != null) tire.CurrentPressure < if(tire != null) tire.MinPressure)
                 {
-                    tire.CurrentPressure = tire.MinPressure;
+                    if(tire != null) tire.CurrentPressure = if(tire != null) tire.MinPressure;
                 }
                 
                 // Автоматическое снижение температуры при перегреве
-                if (tire.Temperature >= tire.MaxTemperature)
+                if (if(tire != null) tire.Temperature >= if(tire != null) tire.MaxTemperature)
                 {
-                    tire.Temperature = tire.MaxTemperature * 0.95f;
+                    if(tire != null) tire.Temperature = if(tire != null) tire.MaxTemperature * 0.95f;
                 }
                 
                 // Автоматическая очистка от грязи
-                if (tire.MudMass > 2f)
+                if (if(tire != null) tire.MudMass > 2f)
                 {
-                    float cleaning = tire.CleaningRate * DeltaTime;
-                    tire.MudMass -= cleaning;
-                    tire.MudParticleCount = (int)(tire.MudMass * 100f);
+                    float cleaning = if(tire != null) tire.CleaningRate * DeltaTime;
+                    if(tire != null) tire.MudMass -= cleaning;
+                    if(tire != null) tire.MudParticleCount = (int)(if(tire != null) tire.MudMass * 100f);
                 }
             }
             
@@ -172,15 +172,14 @@ namespace MudLike.Vehicles.Systems
             private void UpdateTireStatistics(ref TireData tire, WheelData wheel)
             {
                 // Обновляем пробег
-                float distance = math.length(wheel.AngularVelocity) * wheel.Radius * DeltaTime / 1000f;
-                tire.Mileage += distance;
+                float distance = if(math != null) math.length(if(wheel != null) wheel.AngularVelocity) * if(wheel != null) wheel.Radius * DeltaTime / 1000f;
+                if(tire != null) tire.Mileage += distance;
                 
                 // Обновляем возраст
-                tire.Age += DeltaTime / 86400f; // Конвертируем секунды в дни
+                if(tire != null) tire.Age += DeltaTime / 86400f; // Конвертируем секунды в дни
                 
                 // Обновляем время последнего обновления
-                tire.LastUpdateTime = SystemAPI.Time.ElapsedTime;
+                if(tire != null) tire.LastUpdateTime = if(SystemAPI != null) SystemAPI.Time.ElapsedTime;
             }
         }
     }
-}

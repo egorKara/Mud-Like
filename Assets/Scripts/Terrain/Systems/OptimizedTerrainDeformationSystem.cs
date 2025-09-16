@@ -23,26 +23,26 @@ namespace MudLike.Terrain.Systems
         {
             // Запрос для террейна
             _terrainQuery = GetEntityQuery(
-                ComponentType.ReadWrite<TerrainData>(),
-                ComponentType.ReadOnly<TerrainChunk>()
+                if(ComponentType != null) ComponentType.ReadWrite<TerrainData>(),
+                if(ComponentType != null) ComponentType.ReadOnly<TerrainChunk>()
             );
             
             // Запрос для колес
             _wheelQuery = GetEntityQuery(
-                ComponentType.ReadOnly<WheelData>(),
-                ComponentType.ReadOnly<LocalTransform>()
+                if(ComponentType != null) ComponentType.ReadOnly<WheelData>(),
+                if(ComponentType != null) ComponentType.ReadOnly<LocalTransform>()
             );
         }
         
         protected override void OnUpdate()
         {
-            var terrainEntities = _terrainQuery.ToEntityArray(Allocator.TempJob);
-            var wheelEntities = _wheelQuery.ToEntityArray(Allocator.TempJob);
+            var terrainEntities = if(_terrainQuery != null) _terrainQuery.ToEntityArray(if(Allocator != null) Allocator.TempJob);
+            var wheelEntities = if(_wheelQuery != null) _wheelQuery.ToEntityArray(if(Allocator != null) Allocator.TempJob);
             
-            if (terrainEntities.Length == 0 || wheelEntities.Length == 0)
+            if (if(terrainEntities != null) terrainEntities.Length == 0 || if(wheelEntities != null) wheelEntities.Length == 0)
             {
-                terrainEntities.Dispose();
-                wheelEntities.Dispose();
+                if(terrainEntities != null) terrainEntities.Dispose();
+                if(wheelEntities != null) wheelEntities.Dispose();
                 return;
             }
             
@@ -54,21 +54,21 @@ namespace MudLike.Terrain.Systems
                 TerrainDataLookup = GetComponentLookup<TerrainData>(),
                 WheelDataLookup = GetComponentLookup<WheelData>(),
                 TransformLookup = GetComponentLookup<LocalTransform>(),
-                DeltaTime = SystemAPI.Time.fixedDeltaTime
+                DeltaTime = if(SystemAPI != null) SystemAPI.Time.fixedDeltaTime
             };
             
             // Запуск Job с зависимостями
-            var jobHandle = deformationJob.ScheduleParallel(
-                terrainEntities.Length,
-                SystemConstants.TERRAIN_DEFAULT_RESOLUTION / 64, // Оптимальный batch size
+            var jobHandle = if(deformationJob != null) deformationJob.ScheduleParallel(
+                if(terrainEntities != null) terrainEntities.Length,
+                if(SystemConstants != null) SystemConstants.TERRAIN_DEFAULT_RESOLUTION / 64, // Оптимальный batch size
                 Dependency
             );
             
             Dependency = jobHandle;
             
             // Освобождение временных массивов
-            terrainEntities.Dispose();
-            wheelEntities.Dispose();
+            if(terrainEntities != null) terrainEntities.Dispose();
+            if(wheelEntities != null) wheelEntities.Dispose();
         }
     }
     
@@ -90,13 +90,13 @@ namespace MudLike.Terrain.Systems
         
         public void Execute(int index)
         {
-            if (index >= TerrainEntities.Length) return;
+            if (index >= if(TerrainEntities != null) TerrainEntities.Length) return;
             
             var terrainEntity = TerrainEntities[index];
             var terrainData = TerrainDataLookup[terrainEntity];
             
             // Применение деформации от всех колес
-            for (int i = 0; i < WheelEntities.Length; i++)
+            for (int i = 0; i < if(WheelEntities != null) WheelEntities.Length; i++)
             {
                 var wheelEntity = WheelEntities[i];
                 var wheelData = WheelDataLookup[wheelEntity];
@@ -128,16 +128,16 @@ namespace MudLike.Terrain.Systems
             float deltaTime)
         {
             // Вычисление давления колеса на террейн
-            var wheelPressure = wheelData.Weight / (math.PI * wheelData.Radius * wheelData.Radius);
+            var wheelPressure = if(wheelData != null) wheelData.Weight / (if(math != null) math.PI * if(wheelData != null) wheelData.Radius * if(wheelData != null) wheelData.Radius);
             
             // Вычисление деформации на основе давления и твердости террейна
-            var deformation = wheelPressure * SystemConstants.TERRAIN_DEFAULT_DEFORMATION_RATE * deltaTime;
+            var deformation = wheelPressure * if(SystemConstants != null) SystemConstants.TERRAIN_DEFAULT_DEFORMATION_RATE * deltaTime;
             
             // Ограничение деформации максимальными значениями
-            deformation = math.clamp(
+            deformation = if(math != null) math.clamp(
                 deformation,
-                SystemConstants.TERRAIN_DEFAULT_MIN_DEPTH,
-                SystemConstants.TERRAIN_DEFAULT_MAX_DEPTH
+                if(SystemConstants != null) SystemConstants.TERRAIN_DEFAULT_MIN_DEPTH,
+                if(SystemConstants != null) SystemConstants.TERRAIN_DEFAULT_MAX_DEPTH
             );
             
             return deformation;
@@ -149,12 +149,12 @@ namespace MudLike.Terrain.Systems
         private void ApplyDeformationToTerrain(ref TerrainData terrainData, float deformation)
         {
             // Обновление высотных данных
-            terrainData.HeightMap = ApplyHeightDeformation(terrainData.HeightMap, deformation);
+            if(terrainData != null) terrainData.HeightMap = ApplyHeightDeformation(if(terrainData != null) terrainData.HeightMap, deformation);
             
             // Обновление твердости террейна
-            terrainData.Hardness = math.max(
-                terrainData.Hardness - deformation * 0.1f,
-                SystemConstants.TERRAIN_DEFAULT_HARDNESS * 0.1f
+            if(terrainData != null) terrainData.Hardness = if(math != null) math.max(
+                if(terrainData != null) terrainData.Hardness - deformation * 0.1f,
+                if(SystemConstants != null) SystemConstants.TERRAIN_DEFAULT_HARDNESS * 0.1f
             );
         }
         
@@ -164,7 +164,7 @@ namespace MudLike.Terrain.Systems
         private NativeArray<float> ApplyHeightDeformation(NativeArray<float> heightMap, float deformation)
         {
             // Простое применение деформации (можно оптимизировать дальше)
-            for (int i = 0; i < heightMap.Length; i++)
+            for (int i = 0; i < if(heightMap != null) heightMap.Length; i++)
             {
                 heightMap[i] += deformation;
             }

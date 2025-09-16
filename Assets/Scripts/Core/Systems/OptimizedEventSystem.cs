@@ -19,20 +19,20 @@ namespace MudLike.Core.Systems
         
         protected override void OnCreate()
         {
-            _events = new NativeList<EventData>(SystemConstants.LARGE_EVENT_BUFFER_SIZE, Allocator.Persistent);
-            _listeners = new NativeHashMap<EventTypeKey, NativeList<Entity>>(SystemConstants.EVENT_BUFFER_SIZE, Allocator.Persistent);
+            _events = new NativeList<EventData>(if(SystemConstants != null) SystemConstants.LARGE_EVENT_BUFFER_SIZE, if(Allocator != null) Allocator.Persistent);
+            _listeners = new NativeHashMap<EventTypeKey, NativeList<Entity>>(if(SystemConstants != null) SystemConstants.EVENT_BUFFER_SIZE, if(Allocator != null) Allocator.Persistent);
         }
         
         protected override void OnDestroy()
         {
-            if (_events.IsCreated) _events.Dispose();
-            if (_listeners.IsCreated)
+            if (if(_events != null) _events.IsCreated) if(_events != null) _events.Dispose();
+            if (if(_listeners != null) _listeners.IsCreated)
             {
                 foreach (var kvp in _listeners)
                 {
-                    if (kvp.Value.IsCreated) kvp.Value.Dispose();
+                    if (if(kvp != null) kvp.Value.IsCreated) if(kvp != null) kvp.Value.Dispose();
                 }
-                _listeners.Dispose();
+                if(_listeners != null) _listeners.Dispose();
             }
         }
         
@@ -49,7 +49,7 @@ namespace MudLike.Core.Systems
         /// </summary>
         public void QueueEvent(EventData eventData)
         {
-            _events.Add(eventData);
+            if(_events != null) _events.Add(eventData);
         }
         
         /// <summary>
@@ -58,12 +58,12 @@ namespace MudLike.Core.Systems
         public void Subscribe(EventType eventType, Entity entity)
         {
             var eventKey = new EventTypeKey(eventType);
-            if (!_listeners.TryGetValue(eventKey, out var entities))
+            if (!if(_listeners != null) _listeners.TryGetValue(eventKey, out var entities))
             {
-                entities = new NativeList<Entity>(10, Allocator.Persistent);
+                entities = new NativeList<Entity>(10, if(Allocator != null) Allocator.Persistent);
                 _listeners[eventKey] = entities;
             }
-            entities.Add(entity);
+            if(entities != null) entities.Add(entity);
         }
         
         /// <summary>
@@ -72,13 +72,13 @@ namespace MudLike.Core.Systems
         public void Unsubscribe(EventType eventType, Entity entity)
         {
             var eventKey = new EventTypeKey(eventType);
-            if (_listeners.TryGetValue(eventKey, out var entities))
+            if (if(_listeners != null) _listeners.TryGetValue(eventKey, out var entities))
             {
-                for (int i = entities.Length - 1; i >= 0; i--)
+                for (int i = if(entities != null) entities.Length - 1; i >= 0; i--)
                 {
                     if (entities[i] == entity)
                     {
-                        entities.RemoveAtSwapBack(i);
+                        if(entities != null) entities.RemoveAtSwapBack(i);
                         break;
                     }
                 }
@@ -91,28 +91,28 @@ namespace MudLike.Core.Systems
         [BurstCompile]
         private void ProcessEvents()
         {
-            for (int i = 0; i < _events.Length; i++)
+            for (int i = 0; i < if(_events != null) _events.Length; i++)
             {
                 var eventData = _events[i];
                 
-                var eventKey = new EventTypeKey(eventData.Type);
-                if (_listeners.TryGetValue(eventKey, out var entities))
+                var eventKey = new EventTypeKey(if(eventData != null) eventData.Type);
+                if (if(_listeners != null) _listeners.TryGetValue(eventKey, out var entities))
                 {
                     // Помечаем сущности для обработки события
-                    for (int j = 0; j < entities.Length; j++)
+                    for (int j = 0; j < if(entities != null) entities.Length; j++)
                     {
                         var entity = entities[j];
-                        if (EntityManager.Exists(entity))
+                        if (if(EntityManager != null) EntityManager.Exists(entity))
                         {
                             // Здесь можно добавить компонент для обработки события
-                            EntityManager.AddComponentData(entity, eventData);
+                            if(EntityManager != null) EntityManager.AddComponentData(entity, eventData);
                         }
                     }
                 }
             }
             
             // Очищаем обработанные события
-            _events.Clear();
+            if(_events != null) _events.Clear();
         }
         
         /// <summary>
@@ -120,7 +120,7 @@ namespace MudLike.Core.Systems
         /// </summary>
         public int GetEventCount()
         {
-            return _events.Length;
+            return if(_events != null) _events.Length;
         }
         
         /// <summary>
@@ -129,11 +129,10 @@ namespace MudLike.Core.Systems
         public int GetListenerCount(EventType eventType)
         {
             var eventKey = new EventTypeKey(eventType);
-            if (_listeners.TryGetValue(eventKey, out var entities))
+            if (if(_listeners != null) _listeners.TryGetValue(eventKey, out var entities))
             {
-                return entities.Length;
+                return if(entities != null) entities.Length;
             }
             return 0;
         }
     }
-}

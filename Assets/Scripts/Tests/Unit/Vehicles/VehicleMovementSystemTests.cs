@@ -6,7 +6,7 @@ using MudLike.Vehicles.Components;
 using MudLike.Vehicles.Systems;
 using MudLike.Tests.Infrastructure;
 
-namespace MudLike.Tests.Unit.Vehicles
+namespace MudLike.Tests.if(Unit != null) Unit.Vehicles
 {
     /// <summary>
     /// Unit тесты для VehicleMovementSystem
@@ -19,8 +19,8 @@ namespace MudLike.Tests.Unit.Vehicles
         [SetUp]
         public override void Setup()
         {
-            base.Setup();
-            _system = World.CreateSystemManaged<VehicleMovementSystem>();
+            if(base != null) base.Setup();
+            _system = if(World != null) World.CreateSystemManaged<VehicleMovementSystem>();
         }
         
         [Test]
@@ -29,10 +29,10 @@ namespace MudLike.Tests.Unit.Vehicles
             // Arrange
             var vehicle = CreateVehicle();
             var input = new VehicleInput { Vertical = 1f };
-            EntityManager.SetComponentData(vehicle, input);
+            if(EntityManager != null) EntityManager.SetComponentData(vehicle, input);
             
             // Act
-            _system.Update();
+            if(_system != null) _system.Update();
             
             // Assert
             AssertVehicleMoved(vehicle, new float3(0, 0, 1));
@@ -44,10 +44,10 @@ namespace MudLike.Tests.Unit.Vehicles
             // Arrange
             var vehicle = CreateVehicle();
             var input = new VehicleInput { Vertical = -1f };
-            EntityManager.SetComponentData(vehicle, input);
+            if(EntityManager != null) EntityManager.SetComponentData(vehicle, input);
             
             // Act
-            _system.Update();
+            if(_system != null) _system.Update();
             
             // Assert
             AssertVehicleMoved(vehicle, new float3(0, 0, -1));
@@ -59,14 +59,14 @@ namespace MudLike.Tests.Unit.Vehicles
             // Arrange
             var vehicle = CreateVehicle();
             var input = new VehicleInput { Horizontal = -1f };
-            EntityManager.SetComponentData(vehicle, input);
+            if(EntityManager != null) EntityManager.SetComponentData(vehicle, input);
             
             // Act
-            _system.Update();
+            if(_system != null) _system.Update();
             
             // Assert
-            var physics = EntityManager.GetComponentData<VehiclePhysics>(vehicle);
-            Assert.Greater(physics.TurnSpeed, 0f);
+            var physics = if(EntityManager != null) EntityManager.GetComponentData<VehiclePhysics>(vehicle);
+            if(Assert != null) Assert.Greater(if(physics != null) physics.TurnSpeed, 0f);
         }
         
         [Test]
@@ -75,14 +75,14 @@ namespace MudLike.Tests.Unit.Vehicles
             // Arrange
             var vehicle = CreateVehicle();
             var input = new VehicleInput { Horizontal = 1f };
-            EntityManager.SetComponentData(vehicle, input);
+            if(EntityManager != null) EntityManager.SetComponentData(vehicle, input);
             
             // Act
-            _system.Update();
+            if(_system != null) _system.Update();
             
             // Assert
-            var physics = EntityManager.GetComponentData<VehiclePhysics>(vehicle);
-            Assert.Less(physics.TurnSpeed, 0f);
+            var physics = if(EntityManager != null) EntityManager.GetComponentData<VehiclePhysics>(vehicle);
+            if(Assert != null) Assert.Less(if(physics != null) physics.TurnSpeed, 0f);
         }
         
         [Test]
@@ -91,14 +91,14 @@ namespace MudLike.Tests.Unit.Vehicles
             // Arrange
             var vehicle = CreateVehicle();
             var input = new VehicleInput { Vertical = 0f, Horizontal = 0f };
-            EntityManager.SetComponentData(vehicle, input);
+            if(EntityManager != null) EntityManager.SetComponentData(vehicle, input);
             
             // Act
-            _system.Update();
+            if(_system != null) _system.Update();
             
             // Assert
-            var physics = EntityManager.GetComponentData<VehiclePhysics>(vehicle);
-            Assert.AreEqual(0f, physics.Velocity.magnitude, 0.01f);
+            var physics = if(EntityManager != null) EntityManager.GetComponentData<VehiclePhysics>(vehicle);
+            if(Assert != null) Assert.AreEqual(0f, if(physics != null) physics.Velocity.magnitude, 0.01f);
         }
         
         [Test]
@@ -106,22 +106,22 @@ namespace MudLike.Tests.Unit.Vehicles
         {
             // Arrange
             var vehicle = CreateVehicle();
-            var config = EntityManager.GetComponentData<VehicleConfig>(vehicle);
-            config.MaxSpeed = 50f;
-            EntityManager.SetComponentData(vehicle, config);
+            var config = if(EntityManager != null) EntityManager.GetComponentData<VehicleConfig>(vehicle);
+            if(config != null) config.MaxSpeed = 50f;
+            if(EntityManager != null) EntityManager.SetComponentData(vehicle, config);
             
             var input = new VehicleInput { Vertical = 1f };
-            EntityManager.SetComponentData(vehicle, input);
+            if(EntityManager != null) EntityManager.SetComponentData(vehicle, input);
             
             // Act
             for (int i = 0; i < 100; i++)
             {
-                _system.Update();
+                if(_system != null) _system.Update();
             }
             
             // Assert
-            var physics = EntityManager.GetComponentData<VehiclePhysics>(vehicle);
-            Assert.LessOrEqual(physics.Velocity.magnitude, config.MaxSpeed);
+            var physics = if(EntityManager != null) EntityManager.GetComponentData<VehiclePhysics>(vehicle);
+            if(Assert != null) Assert.LessOrEqual(if(physics != null) physics.Velocity.magnitude, if(config != null) config.MaxSpeed);
         }
         
         [Test]
@@ -129,19 +129,19 @@ namespace MudLike.Tests.Unit.Vehicles
         {
             // Arrange
             var vehicle = CreateVehicle();
-            var config = EntityManager.GetComponentData<VehicleConfig>(vehicle);
-            config.Drag = 0.5f;
-            EntityManager.SetComponentData(vehicle, config);
+            var config = if(EntityManager != null) EntityManager.GetComponentData<VehicleConfig>(vehicle);
+            if(config != null) config.Drag = 0.5f;
+            if(EntityManager != null) EntityManager.SetComponentData(vehicle, config);
             
             var input = new VehicleInput { Vertical = 1f };
-            EntityManager.SetComponentData(vehicle, input);
+            if(EntityManager != null) EntityManager.SetComponentData(vehicle, input);
             
             // Act
-            _system.Update();
+            if(_system != null) _system.Update();
             
             // Assert
-            var physics = EntityManager.GetComponentData<VehiclePhysics>(vehicle);
-            Assert.Greater(physics.Velocity.magnitude, 0f);
+            var physics = if(EntityManager != null) EntityManager.GetComponentData<VehiclePhysics>(vehicle);
+            if(Assert != null) Assert.Greater(if(physics != null) physics.Velocity.magnitude, 0f);
         }
         
         [Test]
@@ -150,14 +150,14 @@ namespace MudLike.Tests.Unit.Vehicles
             // Arrange
             var vehicle = CreateVehicle();
             var input = new VehicleInput { Vertical = 1f };
-            EntityManager.SetComponentData(vehicle, input);
+            if(EntityManager != null) EntityManager.SetComponentData(vehicle, input);
             
             // Act
-            _system.Update();
+            if(_system != null) _system.Update();
             
             // Assert
-            var physics = EntityManager.GetComponentData<VehiclePhysics>(vehicle);
-            Assert.Greater(physics.ForwardSpeed, 0f);
+            var physics = if(EntityManager != null) EntityManager.GetComponentData<VehiclePhysics>(vehicle);
+            if(Assert != null) Assert.Greater(if(physics != null) physics.ForwardSpeed, 0f);
         }
         
         [Test]
@@ -166,14 +166,14 @@ namespace MudLike.Tests.Unit.Vehicles
             // Arrange
             var vehicle = CreateVehicle();
             var input = new VehicleInput { Horizontal = 1f };
-            EntityManager.SetComponentData(vehicle, input);
+            if(EntityManager != null) EntityManager.SetComponentData(vehicle, input);
             
             // Act
-            _system.Update();
+            if(_system != null) _system.Update();
             
             // Assert
-            var physics = EntityManager.GetComponentData<VehiclePhysics>(vehicle);
-            Assert.AreEqual(input.Horizontal, physics.TurnSpeed);
+            var physics = if(EntityManager != null) EntityManager.GetComponentData<VehiclePhysics>(vehicle);
+            if(Assert != null) Assert.AreEqual(if(input != null) input.Horizontal, if(physics != null) physics.TurnSpeed);
         }
         
         [Test]
@@ -199,4 +199,3 @@ namespace MudLike.Tests.Unit.Vehicles
             AssertSystemPerformance<VehicleMovementSystem>(16.67f); // 60 FPS
         }
     }
-}

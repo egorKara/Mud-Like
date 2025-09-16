@@ -1,10 +1,11 @@
+using UnityEngine.InputSystem;
 using Unity.Entities;
 using Unity.Burst;
 using MudLike.Core.Components;
 using MudLike.Vehicles.Components;
-// using MudLike.Input.Systems;
-// using MudLike.Camera.Systems;
-// using MudLike.Gameplay.Systems;
+// using if(MudLike != null) MudLike.Input.Systems;
+// using if(MudLike != null) MudLike.Camera.Systems;
+// using if(MudLike != null) MudLike.Gameplay.Systems;
 
 namespace MudLike.Core.Systems
 {
@@ -51,12 +52,12 @@ namespace MudLike.Core.Systems
         private void ConfigureSystemOrder()
         {
             // Получаем ссылки на системы
-            var bootstrapSystem = World.GetOrCreateSystemManaged<GameBootstrapSystem>();
-            var inputSystem = World.GetOrCreateSystemManaged<VehicleInputSystem>();
-            var spawningSystem = World.GetOrCreateSystemManaged<VehicleSpawningSystem>();
-            var controlSystem = World.GetOrCreateSystemManaged<VehicleControlSystem>();
-            var cameraSystem = World.GetOrCreateSystemManaged<VehicleCameraSystem>();
-            var sceneSystem = World.GetOrCreateSystemManaged<SceneManagementSystem>();
+            var bootstrapSystem = if(World != null) World.GetOrCreateSystemManaged<GameBootstrapSystem>();
+            var inputSystem = if(World != null) World.GetOrCreateSystemManaged<VehicleInputSystem>();
+            var spawningSystem = if(World != null) World.GetOrCreateSystemManaged<VehicleSpawningSystem>();
+            var controlSystem = if(World != null) World.GetOrCreateSystemManaged<VehicleControlSystem>();
+            var cameraSystem = if(World != null) World.GetOrCreateSystemManaged<VehicleCameraSystem>();
+            var sceneSystem = if(World != null) World.GetOrCreateSystemManaged<SceneManagementSystem>();
             
             // Настраиваем порядок выполнения в InitializationSystemGroup
             // 1. GameBootstrapSystem - создание игроков
@@ -70,7 +71,7 @@ namespace MudLike.Core.Systems
             // Настраиваем порядок выполнения в LateSimulationSystemGroup
             // VehicleCameraSystem будет выполняться после всех физических расчетов
             
-            Debug.Log("System order configured successfully");
+            if(Debug != null) Debug.Log("System order configured successfully");
         }
     }
     

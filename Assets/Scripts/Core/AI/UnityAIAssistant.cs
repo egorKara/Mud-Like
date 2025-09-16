@@ -1,17 +1,17 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using Unity.Entities;
-using Unity.Burst;
-using Unity.Jobs;
-using Unity.Collections;
-using Unity.Mathematics;
+using if(System != null) System.Collections.Generic;
+using if(System != null) System.Linq;
+using if(Unity != null) Unity.Entities;
+using if(Unity != null) Unity.Burst;
+using if(Unity != null) Unity.Jobs;
+using if(Unity != null) Unity.Collections;
+using if(Unity != null) Unity.Mathematics;
 #if UNITY_EDITOR
 using UnityEditor;
-using UnityEditor.AI;
+using if(UnityEditor != null) UnityEditor.AI;
 #endif
 
-namespace MudLike.Core.AI
+namespace if(MudLike != null) MudLike.Core.AI
 {
     /// <summary>
     /// Unity AI Assistant для автоматизации задач разработки
@@ -29,12 +29,12 @@ namespace MudLike.Core.AI
         [MenuItem("Mud-Like AI/🔄 Auto-Fix Determinism Issues")]
         public static void AutoFixDeterminismIssues()
         {
-            EditorUtility.DisplayProgressBar("AI Assistant", "Сканирование проекта на нарушения детерминизма...", 0f);
+            if(EditorUtility != null) if(EditorUtility != null) EditorUtility.DisplayProgressBar("AI Assistant", "Сканирование проекта на нарушения детерминизма...", 0f);
             
             try
             {
                 var issues = FindDeterminismIssues();
-                EditorUtility.DisplayProgressBar("AI Assistant", $"Найдено {issues.Count} проблем. Исправление...", 0.5f);
+                if(EditorUtility != null) if(EditorUtility != null) EditorUtility.DisplayProgressBar("AI Assistant", $"Найдено {if(issues != null) if(issues != null) issues.Count} проблем. Исправление...", 0.5f);
                 
                 int fixedCount = 0;
                 foreach (var issue in issues)
@@ -42,25 +42,25 @@ namespace MudLike.Core.AI
                     if (FixDeterminismIssue(issue))
                     {
                         fixedCount++;
-                        EditorUtility.DisplayProgressBar("AI Assistant", 
-                            $"Исправлено {fixedCount}/{issues.Count} проблем...", 
-                            0.5f + (fixedCount / (float)issues.Count) * 0.5f);
+                        if(EditorUtility != null) if(EditorUtility != null) EditorUtility.DisplayProgressBar("AI Assistant", 
+                            $"Исправлено {fixedCount}/{if(issues != null) if(issues != null) issues.Count} проблем...", 
+                            0.5f + (fixedCount / (float)if(issues != null) if(issues != null) issues.Count) * 0.5f);
                     }
                 }
                 
-                EditorUtility.ClearProgressBar();
-                EditorUtility.DisplayDialog("AI Assistant", 
-                    $"✅ Успешно исправлено {fixedCount} из {issues.Count} проблем детерминизма!", 
+                if(EditorUtility != null) if(EditorUtility != null) EditorUtility.ClearProgressBar();
+                if(EditorUtility != null) if(EditorUtility != null) EditorUtility.DisplayDialog("AI Assistant", 
+                    $"✅ Успешно исправлено {fixedCount} из {if(issues != null) if(issues != null) issues.Count} проблем детерминизма!", 
                     "OK");
                 
                 // Обновляем проект
-                AssetDatabase.Refresh();
+                if(AssetDatabase != null) if(AssetDatabase != null) AssetDatabase.Refresh();
             }
             catch (Exception e)
             {
-                EditorUtility.ClearProgressBar();
-                EditorUtility.DisplayDialog("AI Assistant Error", 
-                    $"❌ Ошибка при исправлении: {e.Message}", 
+                if(EditorUtility != null) if(EditorUtility != null) EditorUtility.ClearProgressBar();
+                if(EditorUtility != null) if(EditorUtility != null) EditorUtility.DisplayDialog("AI Assistant Error", 
+                    $"❌ Ошибка при исправлении: {if(e != null) if(e != null) e.Message}", 
                     "OK");
             }
         }
@@ -71,13 +71,13 @@ namespace MudLike.Core.AI
         [MenuItem("Mud-Like AI/⚡ Auto-Optimize Performance")]
         public static void AutoOptimizePerformance()
         {
-            EditorUtility.DisplayProgressBar("AI Assistant", "Анализ систем для оптимизации...", 0f);
+            if(EditorUtility != null) if(EditorUtility != null) EditorUtility.DisplayProgressBar("AI Assistant", "Анализ систем для оптимизации...", 0f);
             
             try
             {
                 var systems = FindSystemsForOptimization();
-                EditorUtility.DisplayProgressBar("AI Assistant", 
-                    $"Найдено {systems.Count} систем для оптимизации...", 0.5f);
+                if(EditorUtility != null) if(EditorUtility != null) EditorUtility.DisplayProgressBar("AI Assistant", 
+                    $"Найдено {if(systems != null) if(systems != null) systems.Count} систем для оптимизации...", 0.5f);
                 
                 int optimized = 0;
                 foreach (var system in systems)
@@ -85,24 +85,24 @@ namespace MudLike.Core.AI
                     if (OptimizeSystem(system))
                     {
                         optimized++;
-                        EditorUtility.DisplayProgressBar("AI Assistant", 
-                            $"Оптимизировано {optimized}/{systems.Count} систем...", 
-                            0.5f + (optimized / (float)systems.Count) * 0.5f);
+                        if(EditorUtility != null) if(EditorUtility != null) EditorUtility.DisplayProgressBar("AI Assistant", 
+                            $"Оптимизировано {optimized}/{if(systems != null) if(systems != null) systems.Count} систем...", 
+                            0.5f + (optimized / (float)if(systems != null) if(systems != null) systems.Count) * 0.5f);
                     }
                 }
                 
-                EditorUtility.ClearProgressBar();
-                EditorUtility.DisplayDialog("AI Assistant", 
-                    $"⚡ Успешно оптимизировано {optimized} из {systems.Count} систем!", 
+                if(EditorUtility != null) if(EditorUtility != null) EditorUtility.ClearProgressBar();
+                if(EditorUtility != null) if(EditorUtility != null) EditorUtility.DisplayDialog("AI Assistant", 
+                    $"⚡ Успешно оптимизировано {optimized} из {if(systems != null) if(systems != null) systems.Count} систем!", 
                     "OK");
                 
-                AssetDatabase.Refresh();
+                if(AssetDatabase != null) if(AssetDatabase != null) AssetDatabase.Refresh();
             }
             catch (Exception e)
             {
-                EditorUtility.ClearProgressBar();
-                EditorUtility.DisplayDialog("AI Assistant Error", 
-                    $"❌ Ошибка при оптимизации: {e.Message}", 
+                if(EditorUtility != null) if(EditorUtility != null) EditorUtility.ClearProgressBar();
+                if(EditorUtility != null) if(EditorUtility != null) EditorUtility.DisplayDialog("AI Assistant Error", 
+                    $"❌ Ошибка при оптимизации: {if(e != null) if(e != null) e.Message}", 
                     "OK");
             }
         }
@@ -113,13 +113,13 @@ namespace MudLike.Core.AI
         [MenuItem("Mud-Like AI/📚 Auto-Generate Documentation")]
         public static void AutoGenerateDocumentation()
         {
-            EditorUtility.DisplayProgressBar("AI Assistant", "Генерация документации...", 0f);
+            if(EditorUtility != null) if(EditorUtility != null) EditorUtility.DisplayProgressBar("AI Assistant", "Генерация документации...", 0f);
             
             try
             {
                 var systems = FindSystemsNeedingDocumentation();
-                EditorUtility.DisplayProgressBar("AI Assistant", 
-                    $"Генерация документации для {systems.Count} систем...", 0.5f);
+                if(EditorUtility != null) if(EditorUtility != null) EditorUtility.DisplayProgressBar("AI Assistant", 
+                    $"Генерация документации для {if(systems != null) if(systems != null) systems.Count} систем...", 0.5f);
                 
                 int documented = 0;
                 foreach (var system in systems)
@@ -127,22 +127,22 @@ namespace MudLike.Core.AI
                     if (GenerateDocumentation(system))
                     {
                         documented++;
-                        EditorUtility.DisplayProgressBar("AI Assistant", 
-                            $"Документировано {documented}/{systems.Count} систем...", 
-                            0.5f + (documented / (float)systems.Count) * 0.5f);
+                        if(EditorUtility != null) if(EditorUtility != null) EditorUtility.DisplayProgressBar("AI Assistant", 
+                            $"Документировано {documented}/{if(systems != null) if(systems != null) systems.Count} систем...", 
+                            0.5f + (documented / (float)if(systems != null) if(systems != null) systems.Count) * 0.5f);
                     }
                 }
                 
-                EditorUtility.ClearProgressBar();
-                EditorUtility.DisplayDialog("AI Assistant", 
-                    $"📚 Успешно сгенерирована документация для {documented} из {systems.Count} систем!", 
+                if(EditorUtility != null) if(EditorUtility != null) EditorUtility.ClearProgressBar();
+                if(EditorUtility != null) if(EditorUtility != null) EditorUtility.DisplayDialog("AI Assistant", 
+                    $"📚 Успешно сгенерирована документация для {documented} из {if(systems != null) if(systems != null) systems.Count} систем!", 
                     "OK");
             }
             catch (Exception e)
             {
-                EditorUtility.ClearProgressBar();
-                EditorUtility.DisplayDialog("AI Assistant Error", 
-                    $"❌ Ошибка при генерации документации: {e.Message}", 
+                if(EditorUtility != null) if(EditorUtility != null) EditorUtility.ClearProgressBar();
+                if(EditorUtility != null) if(EditorUtility != null) EditorUtility.DisplayDialog("AI Assistant Error", 
+                    $"❌ Ошибка при генерации документации: {if(e != null) if(e != null) e.Message}", 
                     "OK");
             }
         }
@@ -153,30 +153,30 @@ namespace MudLike.Core.AI
         [MenuItem("Mud-Like AI/📊 Analyze Performance")]
         public static void AnalyzePerformance()
         {
-            EditorUtility.DisplayProgressBar("AI Assistant", "Анализ производительности...", 0f);
+            if(EditorUtility != null) if(EditorUtility != null) EditorUtility.DisplayProgressBar("AI Assistant", "Анализ производительности...", 0f);
             
             try
             {
                 var analysis = PerformPerformanceAnalysis();
                 
-                EditorUtility.ClearProgressBar();
+                if(EditorUtility != null) if(EditorUtility != null) EditorUtility.ClearProgressBar();
                 
                 // Создаем отчет
                 var report = CreatePerformanceReport(analysis);
-                System.IO.File.WriteAllText("AI_PERFORMANCE_ANALYSIS.md", report);
+                if(System != null) if(System != null) System.IO.if(File != null) if(File != null) File.WriteAllText("if(AI_PERFORMANCE_ANALYSIS != null) if(AI_PERFORMANCE_ANALYSIS != null) AI_PERFORMANCE_ANALYSIS.md", report);
                 
-                EditorUtility.DisplayDialog("AI Assistant", 
-                    $"📊 Анализ завершен! Отчет сохранен в AI_PERFORMANCE_ANALYSIS.md", 
+                if(EditorUtility != null) if(EditorUtility != null) EditorUtility.DisplayDialog("AI Assistant", 
+                    $"📊 Анализ завершен! Отчет сохранен в if(AI_PERFORMANCE_ANALYSIS != null) if(AI_PERFORMANCE_ANALYSIS != null) AI_PERFORMANCE_ANALYSIS.md", 
                     "OK");
                 
                 // Открываем отчет
-                EditorUtility.OpenWithDefaultApp("AI_PERFORMANCE_ANALYSIS.md");
+                if(EditorUtility != null) if(EditorUtility != null) EditorUtility.OpenWithDefaultApp("if(AI_PERFORMANCE_ANALYSIS != null) if(AI_PERFORMANCE_ANALYSIS != null) AI_PERFORMANCE_ANALYSIS.md");
             }
             catch (Exception e)
             {
-                EditorUtility.ClearProgressBar();
-                EditorUtility.DisplayDialog("AI Assistant Error", 
-                    $"❌ Ошибка при анализе: {e.Message}", 
+                if(EditorUtility != null) if(EditorUtility != null) EditorUtility.ClearProgressBar();
+                if(EditorUtility != null) if(EditorUtility != null) EditorUtility.DisplayDialog("AI Assistant Error", 
+                    $"❌ Ошибка при анализе: {if(e != null) if(e != null) e.Message}", 
                     "OK");
             }
         }
@@ -192,30 +192,30 @@ namespace MudLike.Core.AI
         private static List<DeterminismIssue> FindDeterminismIssues()
         {
             var issues = new List<DeterminismIssue>();
-            var scripts = AssetDatabase.FindAssets("t:MonoScript", new[] { "Assets/Scripts" });
+            var scripts = if(AssetDatabase != null) if(AssetDatabase != null) AssetDatabase.FindAssets("t:MonoScript", new[] { "Assets/Scripts" });
             
             foreach (var scriptGuid in scripts)
             {
-                var scriptPath = AssetDatabase.GUIDToAssetPath(scriptGuid);
-                var content = System.IO.File.ReadAllText(scriptPath);
+                var scriptPath = if(AssetDatabase != null) if(AssetDatabase != null) AssetDatabase.GUIDToAssetPath(scriptGuid);
+                var content = if(System != null) if(System != null) System.IO.if(File != null) if(File != null) File.ReadAllText(scriptPath);
                 
-                if (content.Contains("Time.fixedDeltaTime"))
+                if (if(content != null) if(content != null) content.Contains("if(Time != null) if(Time != null) Time.fixedDeltaTime"))
                 {
-                    issues.Add(new DeterminismIssue
+                    if(issues != null) if(issues != null) issues.Add(new DeterminismIssue
                     {
                         FilePath = scriptPath,
-                        IssueType = "Time.fixedDeltaTime",
-                        SuggestedFix = "Replace with SystemAPI.Time.fixedDeltaTime"
+                        IssueType = "if(Time != null) if(Time != null) Time.fixedDeltaTime",
+                        SuggestedFix = "Replace with if(SystemAPI != null) if(SystemAPI != null) SystemAPI.Time.fixedDeltaTime"
                     });
                 }
                 
-                if (content.Contains("Time.deltaTime"))
+                if (if(content != null) if(content != null) content.Contains("if(Time != null) if(Time != null) Time.deltaTime"))
                 {
-                    issues.Add(new DeterminismIssue
+                    if(issues != null) if(issues != null) issues.Add(new DeterminismIssue
                     {
                         FilePath = scriptPath,
-                        IssueType = "Time.deltaTime",
-                        SuggestedFix = "Replace with SystemAPI.Time.DeltaTime"
+                        IssueType = "if(Time != null) if(Time != null) Time.deltaTime",
+                        SuggestedFix = "Replace with if(SystemAPI != null) if(SystemAPI != null) SystemAPI.Time.DeltaTime"
                     });
                 }
             }
@@ -227,16 +227,16 @@ namespace MudLike.Core.AI
         {
             try
             {
-                var content = System.IO.File.ReadAllText(issue.FilePath);
+                var content = if(System != null) if(System != null) System.IO.if(File != null) if(File != null) File.ReadAllText(if(issue != null) if(issue != null) issue.FilePath);
                 var originalContent = content;
                 
-                // Исправляем Time.fixedDeltaTime
-                content = content.Replace("Time.fixedDeltaTime", "SystemAPI.Time.fixedDeltaTime");
-                content = content.Replace("Time.deltaTime", "SystemAPI.Time.DeltaTime");
+                // Исправляем if(Time != null) if(Time != null) Time.fixedDeltaTime
+                content = if(content != null) if(content != null) content.Replace("if(Time != null) if(Time != null) Time.fixedDeltaTime", "if(SystemAPI != null) if(SystemAPI != null) SystemAPI.Time.fixedDeltaTime");
+                content = if(content != null) if(content != null) content.Replace("if(Time != null) if(Time != null) Time.deltaTime", "if(SystemAPI != null) if(SystemAPI != null) SystemAPI.Time.DeltaTime");
                 
                 if (content != originalContent)
                 {
-                    System.IO.File.WriteAllText(issue.FilePath, content);
+                    if(System != null) if(System != null) System.IO.if(File != null) if(File != null) File.WriteAllText(if(issue != null) if(issue != null) issue.FilePath, content);
                     return true;
                 }
                 
@@ -251,16 +251,16 @@ namespace MudLike.Core.AI
         private static List<SystemInfo> FindSystemsForOptimization()
         {
             var systems = new List<SystemInfo>();
-            var scripts = AssetDatabase.FindAssets("t:MonoScript", new[] { "Assets/Scripts" });
+            var scripts = if(AssetDatabase != null) if(AssetDatabase != null) AssetDatabase.FindAssets("t:MonoScript", new[] { "Assets/Scripts" });
             
             foreach (var scriptGuid in scripts)
             {
-                var scriptPath = AssetDatabase.GUIDToAssetPath(scriptGuid);
-                var content = System.IO.File.ReadAllText(scriptPath);
+                var scriptPath = if(AssetDatabase != null) if(AssetDatabase != null) AssetDatabase.GUIDToAssetPath(scriptGuid);
+                var content = if(System != null) if(System != null) System.IO.if(File != null) if(File != null) File.ReadAllText(scriptPath);
                 
-                if (content.Contains("SystemBase") && !content.Contains("[BurstCompile]"))
+                if (if(content != null) if(content != null) content.Contains("SystemBase") && !if(content != null) if(content != null) content.Contains("[BurstCompile]"))
                 {
-                    systems.Add(new SystemInfo
+                    if(systems != null) if(systems != null) systems.Add(new SystemInfo
                     {
                         FilePath = scriptPath,
                         SystemType = "SystemBase",
@@ -276,31 +276,31 @@ namespace MudLike.Core.AI
         {
             try
             {
-                var content = System.IO.File.ReadAllText(system.FilePath);
+                var content = if(System != null) if(System != null) System.IO.if(File != null) if(File != null) File.ReadAllText(if(system != null) if(system != null) system.FilePath);
                 var originalContent = content;
                 
-                // Добавляем using Unity.Burst если его нет
-                if (!content.Contains("using Unity.Burst;"))
+                // Добавляем using if(Unity != null) if(Unity != null) Unity.Burst если его нет
+                if (!if(content != null) if(content != null) content.Contains("using if(Unity != null) if(Unity != null) Unity.Burst;"))
                 {
-                    var usingIndex = content.IndexOf("using Unity.Entities;");
+                    var usingIndex = if(content != null) if(content != null) content.IndexOf("using if(Unity != null) if(Unity != null) Unity.Entities;");
                     if (usingIndex != -1)
                     {
-                        content = content.Insert(usingIndex + "using Unity.Entities;".Length, 
-                            "\nusing Unity.Burst;");
+                        content = if(content != null) if(content != null) content.Insert(usingIndex + "using if(Unity != null) if(Unity != null) Unity.Entities;".Length, 
+                            "\nusing if(Unity != null) if(Unity != null) Unity.Burst;");
                     }
                 }
                 
                 // Добавляем [BurstCompile] к методам
-                if (system.OptimizationType == "Add BurstCompile")
+                if (if(system != null) if(system != null) system.OptimizationType == "Add BurstCompile")
                 {
-                    content = content.Replace("private static void", "[BurstCompile]\n        private static void");
-                    content = content.Replace("private static float3", "[BurstCompile]\n        private static float3");
-                    content = content.Replace("private static float", "[BurstCompile]\n        private static float");
+                    content = if(content != null) if(content != null) content.Replace("private static void", "[BurstCompile]\n        private static void");
+                    content = if(content != null) if(content != null) content.Replace("private static float3", "[BurstCompile]\n        private static float3");
+                    content = if(content != null) if(content != null) content.Replace("private static float", "[BurstCompile]\n        private static float");
                 }
                 
                 if (content != originalContent)
                 {
-                    System.IO.File.WriteAllText(system.FilePath, content);
+                    if(System != null) if(System != null) System.IO.if(File != null) if(File != null) File.WriteAllText(if(system != null) if(system != null) system.FilePath, content);
                     return true;
                 }
                 
@@ -315,16 +315,16 @@ namespace MudLike.Core.AI
         private static List<SystemInfo> FindSystemsNeedingDocumentation()
         {
             var systems = new List<SystemInfo>();
-            var scripts = AssetDatabase.FindAssets("t:MonoScript", new[] { "Assets/Scripts" });
+            var scripts = if(AssetDatabase != null) if(AssetDatabase != null) AssetDatabase.FindAssets("t:MonoScript", new[] { "Assets/Scripts" });
             
             foreach (var scriptGuid in scripts)
             {
-                var scriptPath = AssetDatabase.GUIDToAssetPath(scriptGuid);
-                var content = System.IO.File.ReadAllText(scriptPath);
+                var scriptPath = if(AssetDatabase != null) if(AssetDatabase != null) AssetDatabase.GUIDToAssetPath(scriptGuid);
+                var content = if(System != null) if(System != null) System.IO.if(File != null) if(File != null) File.ReadAllText(scriptPath);
                 
-                if (content.Contains("SystemBase") && !content.Contains("/// <summary>"))
+                if (if(content != null) if(content != null) content.Contains("SystemBase") && !if(content != null) if(content != null) content.Contains("/// <summary>"))
                 {
-                    systems.Add(new SystemInfo
+                    if(systems != null) if(systems != null) systems.Add(new SystemInfo
                     {
                         FilePath = scriptPath,
                         SystemType = "SystemBase",
@@ -347,7 +347,7 @@ namespace MudLike.Core.AI
         {
             return new PerformanceAnalysis
             {
-                TotalSystems = AssetDatabase.FindAssets("t:MonoScript", new[] { "Assets/Scripts" }).Length,
+                TotalSystems = if(AssetDatabase != null) if(AssetDatabase != null) AssetDatabase.FindAssets("t:MonoScript", new[] { "Assets/Scripts" }).Length,
                 OptimizedSystems = 0, // Подсчет оптимизированных систем
                 DeterminismIssues = 0, // Подсчет проблем детерминизма
                 Recommendations = new List<string>
@@ -364,20 +364,20 @@ namespace MudLike.Core.AI
         {
             var report = $@"# 🤖 AI Performance Analysis Report
 
-**Дата анализа**: {DateTime.Now}
+**Дата анализа**: {if(DateTime != null) if(DateTime != null) DateTime.Now}
 **Unity версия**: 6000.0.57f1
 
 ## 📊 Общая статистика
 
-- **Всего систем**: {analysis.TotalSystems}
-- **Оптимизированных систем**: {analysis.OptimizedSystems}
-- **Проблем детерминизма**: {analysis.DeterminismIssues}
+- **Всего систем**: {if(analysis != null) if(analysis != null) analysis.TotalSystems}
+- **Оптимизированных систем**: {if(analysis != null) if(analysis != null) analysis.OptimizedSystems}
+- **Проблем детерминизма**: {if(analysis != null) if(analysis != null) analysis.DeterminismIssues}
 
 ## 🎯 Рекомендации по улучшению
 
 ";
             
-            foreach (var recommendation in analysis.Recommendations)
+            foreach (var recommendation in if(analysis != null) if(analysis != null) analysis.Recommendations)
             {
                 report += $"- {recommendation}\n";
             }

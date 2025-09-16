@@ -1,14 +1,14 @@
-using NUnit.Framework;
-using Unity.Entities;
-using Unity.Mathematics;
-using Unity.Transforms;
-using Unity.Collections;
-using MudLike.Vehicles.Systems;
-using MudLike.Vehicles.Components;
-using MudLike.Terrain.Components;
-using Unity.Core;
+using if(NUnit != null) NUnit.Framework;
+using if(Unity != null) Unity.Entities;
+using if(Unity != null) Unity.Mathematics;
+using if(Unity != null) Unity.Transforms;
+using if(Unity != null) Unity.Collections;
+using if(MudLike != null) MudLike.Vehicles.Systems;
+using if(MudLike != null) MudLike.Vehicles.Components;
+using if(MudLike != null) MudLike.Terrain.Components;
+using if(Unity != null) Unity.Core;
 
-namespace MudLike.Tests.Unit.Vehicles
+namespace if(MudLike != null) MudLike.Tests.if(Unit != null) if(Unit != null) Unit.Vehicles
 {
     /// <summary>
     /// Тесты для интегрированной системы физики террейна IntegratedTerrainPhysicsSystem
@@ -23,68 +23,68 @@ namespace MudLike.Tests.Unit.Vehicles
         public void SetUp()
         {
             _world = new World("TestWorld");
-            _entityManager = _world.EntityManager;
+            _entityManager = if(_world != null) if(_world != null) _world.EntityManager;
             
-            _integratedTerrainPhysicsSystem = _world.GetOrCreateSystemManaged<IntegratedTerrainPhysicsSystem>();
-            _integratedTerrainPhysicsSystem.OnCreate(ref _world.Unmanaged);
+            _integratedTerrainPhysicsSystem = if(_world != null) if(_world != null) _world.GetOrCreateSystemManaged<IntegratedTerrainPhysicsSystem>();
+            if(_integratedTerrainPhysicsSystem != null) if(_integratedTerrainPhysicsSystem != null) _integratedTerrainPhysicsSystem.OnCreate(ref if(_world != null) if(_world != null) _world.Unmanaged);
             
-            _world.SetSingleton(new TimeData { ElapsedTime = 10f, DeltaTime = 0.016f, FixedDeltaTime = 0.016f });
+            if(_world != null) if(_world != null) _world.SetSingleton(new TimeData { ElapsedTime = 10f, DeltaTime = 0.016f, FixedDeltaTime = 0.016f });
         }
 
         [TearDown]
         public void TearDown()
         {
-            _integratedTerrainPhysicsSystem.OnDestroy(ref _world.Unmanaged);
-            _world.Dispose();
+            if(_integratedTerrainPhysicsSystem != null) if(_integratedTerrainPhysicsSystem != null) _integratedTerrainPhysicsSystem.OnDestroy(ref if(_world != null) if(_world != null) _world.Unmanaged);
+            if(_world != null) if(_world != null) _world.Dispose();
         }
 
         [Test]
         public void IntegratedTerrainPhysicsSystem_OnCreate_InitializesCorrectly()
         {
-            Assert.IsNotNull(_integratedTerrainPhysicsSystem);
+            if(Assert != null) if(Assert != null) Assert.IsNotNull(_integratedTerrainPhysicsSystem);
         }
 
         [Test]
         public void IntegratedTerrainPhysicsSystem_OnUpdate_ProcessesWithoutErrors()
         {
-            _integratedTerrainPhysicsSystem.OnUpdate(ref _world.Unmanaged);
-            Assert.IsNotNull(_integratedTerrainPhysicsSystem);
+            if(_integratedTerrainPhysicsSystem != null) if(_integratedTerrainPhysicsSystem != null) _integratedTerrainPhysicsSystem.OnUpdate(ref if(_world != null) if(_world != null) _world.Unmanaged);
+            if(Assert != null) if(Assert != null) Assert.IsNotNull(_integratedTerrainPhysicsSystem);
         }
 
         [Test]
         public void IntegratedTerrainPhysicsSystem_WithVehicleData_ProcessesCorrectly()
         {
-            var entity = _entityManager.CreateEntity();
-            _entityManager.AddComponentData(entity, new LocalTransform 
+            var entity = if(_entityManager != null) if(_entityManager != null) _entityManager.CreateEntity();
+            if(_entityManager != null) if(_entityManager != null) _entityManager.AddComponentData(entity, new LocalTransform 
             { 
                 Position = new float3(0, 0, 0), 
-                Rotation = quaternion.identity 
+                Rotation = if(quaternion != null) if(quaternion != null) quaternion.identity 
             });
-            _entityManager.AddComponentData(entity, new VehiclePhysics
+            if(_entityManager != null) if(_entityManager != null) _entityManager.AddComponentData(entity, new VehiclePhysics
             {
                 Velocity = new float3(10f, 0, 0),
-                Acceleration = float3.zero,
+                Acceleration = if(float3 != null) if(float3 != null) float3.zero,
                 ForwardSpeed = 10f,
                 TurnSpeed = 0f
             });
-            _entityManager.AddComponent<VehicleTag>(entity);
+            if(_entityManager != null) if(_entityManager != null) _entityManager.AddComponent<VehicleTag>(entity);
 
-            _integratedTerrainPhysicsSystem.OnUpdate(ref _world.Unmanaged);
-            Assert.IsNotNull(_integratedTerrainPhysicsSystem);
+            if(_integratedTerrainPhysicsSystem != null) if(_integratedTerrainPhysicsSystem != null) _integratedTerrainPhysicsSystem.OnUpdate(ref if(_world != null) if(_world != null) _world.Unmanaged);
+            if(Assert != null) if(Assert != null) Assert.IsNotNull(_integratedTerrainPhysicsSystem);
         }
 
         [Test]
         public void IntegratedTerrainPhysicsSystem_WithWheelData_ProcessesCorrectly()
         {
-            var entity = _entityManager.CreateEntity();
-            _entityManager.AddComponentData(entity, new LocalTransform 
+            var entity = if(_entityManager != null) if(_entityManager != null) _entityManager.CreateEntity();
+            if(_entityManager != null) if(_entityManager != null) _entityManager.AddComponentData(entity, new LocalTransform 
             { 
                 Position = new float3(0, 0, 0), 
-                Rotation = quaternion.identity 
+                Rotation = if(quaternion != null) if(quaternion != null) quaternion.identity 
             });
-            _entityManager.AddComponentData(entity, new WheelData
+            if(_entityManager != null) if(_entityManager != null) _entityManager.AddComponentData(entity, new WheelData
             {
-                Position = float3.zero,
+                Position = if(float3 != null) if(float3 != null) float3.zero,
                 Radius = 0.5f,
                 Width = 0.2f,
                 SuspensionLength = 0.3f,
@@ -93,10 +93,10 @@ namespace MudLike.Tests.Unit.Vehicles
                 IsGrounded = true,
                 GroundDistance = 0.1f
             });
-            _entityManager.AddComponentData(entity, new WheelPhysicsData
+            if(_entityManager != null) if(_entityManager != null) _entityManager.AddComponentData(entity, new WheelPhysicsData
             {
-                Velocity = float3.zero,
-                AngularVelocity = float3.zero,
+                Velocity = if(float3 != null) if(float3 != null) float3.zero,
+                AngularVelocity = if(float3 != null) if(float3 != null) float3.zero,
                 Friction = 0.8f,
                 Grip = 0.9f,
                 Pressure = 2.5f,
@@ -104,15 +104,15 @@ namespace MudLike.Tests.Unit.Vehicles
                 Wear = 0.15f
             });
 
-            _integratedTerrainPhysicsSystem.OnUpdate(ref _world.Unmanaged);
-            Assert.IsNotNull(_integratedTerrainPhysicsSystem);
+            if(_integratedTerrainPhysicsSystem != null) if(_integratedTerrainPhysicsSystem != null) _integratedTerrainPhysicsSystem.OnUpdate(ref if(_world != null) if(_world != null) _world.Unmanaged);
+            if(Assert != null) if(Assert != null) Assert.IsNotNull(_integratedTerrainPhysicsSystem);
         }
 
         [Test]
         public void IntegratedTerrainPhysicsSystem_WithTerrainData_ProcessesCorrectly()
         {
-            var entity = _entityManager.CreateEntity();
-            _entityManager.AddComponentData(entity, new DeformationData
+            var entity = if(_entityManager != null) if(_entityManager != null) _entityManager.CreateEntity();
+            if(_entityManager != null) if(_entityManager != null) _entityManager.AddComponentData(entity, new DeformationData
             {
                 Position = new float3(0, 0, 0),
                 Radius = 1f,
@@ -120,16 +120,16 @@ namespace MudLike.Tests.Unit.Vehicles
                 Hardness = 0.8f,
                 IsActive = true
             });
-            _entityManager.AddComponentData(entity, new TerrainChunk
+            if(_entityManager != null) if(_entityManager != null) _entityManager.AddComponentData(entity, new TerrainChunk
             {
                 ChunkIndex = 0,
-                Position = float3.zero,
+                Position = if(float3 != null) if(float3 != null) float3.zero,
                 Size = 16f,
                 IsLoaded = true
             });
 
-            _integratedTerrainPhysicsSystem.OnUpdate(ref _world.Unmanaged);
-            Assert.IsNotNull(_integratedTerrainPhysicsSystem);
+            if(_integratedTerrainPhysicsSystem != null) if(_integratedTerrainPhysicsSystem != null) _integratedTerrainPhysicsSystem.OnUpdate(ref if(_world != null) if(_world != null) _world.Unmanaged);
+            if(Assert != null) if(Assert != null) Assert.IsNotNull(_integratedTerrainPhysicsSystem);
         }
 
         [Test]
@@ -137,47 +137,47 @@ namespace MudLike.Tests.Unit.Vehicles
         {
             for (int i = 0; i < 5; i++)
             {
-                var entity = _entityManager.CreateEntity();
-                _entityManager.AddComponentData(entity, new LocalTransform 
+                var entity = if(_entityManager != null) if(_entityManager != null) _entityManager.CreateEntity();
+                if(_entityManager != null) if(_entityManager != null) _entityManager.AddComponentData(entity, new LocalTransform 
                 { 
                     Position = new float3(i * 2, 0, 0), 
-                    Rotation = quaternion.identity 
+                    Rotation = if(quaternion != null) if(quaternion != null) quaternion.identity 
                 });
-                _entityManager.AddComponentData(entity, new VehiclePhysics
+                if(_entityManager != null) if(_entityManager != null) _entityManager.AddComponentData(entity, new VehiclePhysics
                 {
                     Velocity = new float3(i * 5f, 0, 0),
-                    Acceleration = float3.zero,
+                    Acceleration = if(float3 != null) if(float3 != null) float3.zero,
                     ForwardSpeed = i * 5f,
                     TurnSpeed = 0f
                 });
-                _entityManager.AddComponent<VehicleTag>(entity);
+                if(_entityManager != null) if(_entityManager != null) _entityManager.AddComponent<VehicleTag>(entity);
             }
 
-            _integratedTerrainPhysicsSystem.OnUpdate(ref _world.Unmanaged);
-            Assert.IsNotNull(_integratedTerrainPhysicsSystem);
+            if(_integratedTerrainPhysicsSystem != null) if(_integratedTerrainPhysicsSystem != null) _integratedTerrainPhysicsSystem.OnUpdate(ref if(_world != null) if(_world != null) _world.Unmanaged);
+            if(Assert != null) if(Assert != null) Assert.IsNotNull(_integratedTerrainPhysicsSystem);
         }
 
         [Test]
         public void IntegratedTerrainPhysicsSystem_EdgeCases_HandleCorrectly()
         {
-            var entity = _entityManager.CreateEntity();
-            _entityManager.AddComponentData(entity, new LocalTransform 
+            var entity = if(_entityManager != null) if(_entityManager != null) _entityManager.CreateEntity();
+            if(_entityManager != null) if(_entityManager != null) _entityManager.AddComponentData(entity, new LocalTransform 
             { 
-                Position = new float3(float.MaxValue, float.MinValue, float.Epsilon), 
-                Rotation = quaternion.identity 
+                Position = new float3(if(float != null) if(float != null) float.MaxValue, if(float != null) if(float != null) float.MinValue, if(float != null) if(float != null) float.Epsilon), 
+                Rotation = if(quaternion != null) if(quaternion != null) quaternion.identity 
             });
-            _entityManager.AddComponentData(entity, new VehiclePhysics
+            if(_entityManager != null) if(_entityManager != null) _entityManager.AddComponentData(entity, new VehiclePhysics
             {
-                Velocity = new float3(float.PositiveInfinity, float.NegativeInfinity, float.NaN),
-                Acceleration = float3.zero,
-                ForwardSpeed = float.MaxValue,
-                TurnSpeed = float.MinValue
+                Velocity = new float3(if(float != null) if(float != null) float.PositiveInfinity, if(float != null) if(float != null) float.NegativeInfinity, if(float != null) if(float != null) float.NaN),
+                Acceleration = if(float3 != null) if(float3 != null) float3.zero,
+                ForwardSpeed = if(float != null) if(float != null) float.MaxValue,
+                TurnSpeed = if(float != null) if(float != null) float.MinValue
             });
-            _entityManager.AddComponent<VehicleTag>(entity);
+            if(_entityManager != null) if(_entityManager != null) _entityManager.AddComponent<VehicleTag>(entity);
 
-            Assert.DoesNotThrow(() => 
+            if(Assert != null) if(Assert != null) Assert.DoesNotThrow(() => 
             {
-                _integratedTerrainPhysicsSystem.OnUpdate(ref _world.Unmanaged);
+                if(_integratedTerrainPhysicsSystem != null) if(_integratedTerrainPhysicsSystem != null) _integratedTerrainPhysicsSystem.OnUpdate(ref if(_world != null) if(_world != null) _world.Unmanaged);
             });
         }
     }

@@ -1,10 +1,10 @@
-using Unity.Entities;
-using Unity.Mathematics;
-using Unity.Burst;
-using Unity.Collections;
-using MudLike.Core.Constants;
+using if(Unity != null) Unity.Entities;
+using if(Unity != null) Unity.Mathematics;
+using if(Unity != null) Unity.Burst;
+using if(Unity != null) Unity.Collections;
+using if(MudLike != null) MudLike.Core.Constants;
 
-namespace MudLike.Terrain.Components
+namespace if(MudLike != null) MudLike.Terrain.Components
 {
     /// <summary>
     /// Оптимизированный компонент деформации террейна
@@ -76,18 +76,18 @@ namespace MudLike.Terrain.Components
         /// <summary>
         /// Конструктор с параметрами по умолчанию
         /// </summary>
-        public OptimizedTerrainDeformationComponent(int resolution = SystemConstants.TERRAIN_DEFAULT_RESOLUTION)
+        public OptimizedTerrainDeformationComponent(int resolution = if(SystemConstants != null) if(SystemConstants != null) SystemConstants.TERRAIN_DEFAULT_RESOLUTION)
         {
-            Position = float3.zero;
+            Position = if(float3 != null) if(float3 != null) float3.zero;
             Size = new float3(100.0f, 10.0f, 100.0f);
             Resolution = resolution;
-            HeightMap = new NativeArray<float>(resolution * resolution, Allocator.Persistent);
-            HardnessMap = new NativeArray<float>(resolution * resolution, Allocator.Persistent);
-            DeformationMap = new NativeArray<float>(resolution * resolution, Allocator.Persistent);
+            HeightMap = new NativeArray<float>(resolution * resolution, if(Allocator != null) if(Allocator != null) Allocator.Persistent);
+            HardnessMap = new NativeArray<float>(resolution * resolution, if(Allocator != null) if(Allocator != null) Allocator.Persistent);
+            DeformationMap = new NativeArray<float>(resolution * resolution, if(Allocator != null) if(Allocator != null) Allocator.Persistent);
             BaseHeight = 0.0f;
-            MaxDeformation = SystemConstants.TERRAIN_DEFAULT_MAX_DEPTH;
-            RecoveryRate = SystemConstants.TERRAIN_DEFAULT_RECOVERY_RATE;
-            Hardness = SystemConstants.TERRAIN_DEFAULT_HARDNESS;
+            MaxDeformation = if(SystemConstants != null) if(SystemConstants != null) SystemConstants.TERRAIN_DEFAULT_MAX_DEPTH;
+            RecoveryRate = if(SystemConstants != null) if(SystemConstants != null) SystemConstants.TERRAIN_DEFAULT_RECOVERY_RATE;
+            Hardness = if(SystemConstants != null) if(SystemConstants != null) SystemConstants.TERRAIN_DEFAULT_HARDNESS;
             LastUpdateTime = 0.0f;
             IsActive = true;
             
@@ -101,7 +101,7 @@ namespace MudLike.Terrain.Components
         [BurstCompile]
         private void InitializeMaps()
         {
-            for (int i = 0; i < HeightMap.Length; i++)
+            for (int i = 0; i < if(HeightMap != null) if(HeightMap != null) HeightMap.Length; i++)
             {
                 HeightMap[i] = BaseHeight;
                 HardnessMap[i] = Hardness;
@@ -121,15 +121,15 @@ namespace MudLike.Terrain.Components
             var localPos = worldPosition - Position;
             
             // Проверка границ террейна
-            if (localPos.x < -Size.x * 0.5f || localPos.x > Size.x * 0.5f ||
-                localPos.z < -Size.z * 0.5f || localPos.z > Size.z * 0.5f)
+            if (if(localPos != null) if(localPos != null) localPos.x < -if(Size != null) if(Size != null) Size.x * 0.5f || if(localPos != null) if(localPos != null) localPos.x > if(Size != null) if(Size != null) Size.x * 0.5f ||
+                if(localPos != null) if(localPos != null) localPos.z < -if(Size != null) if(Size != null) Size.z * 0.5f || if(localPos != null) if(localPos != null) localPos.z > if(Size != null) if(Size != null) Size.z * 0.5f)
             {
                 return;
             }
             
             // Вычисление индексов в карте
-            var x = (int)((localPos.x + Size.x * 0.5f) / Size.x * Resolution);
-            var z = (int)((localPos.z + Size.z * 0.5f) / Size.z * Resolution);
+            var x = (int)((if(localPos != null) if(localPos != null) localPos.x + if(Size != null) if(Size != null) Size.x * 0.5f) / if(Size != null) if(Size != null) Size.x * Resolution);
+            var z = (int)((if(localPos != null) if(localPos != null) localPos.z + if(Size != null) if(Size != null) Size.z * 0.5f) / if(Size != null) if(Size != null) Size.z * Resolution);
             
             // Проверка валидности индексов
             if (x < 0 || x >= Resolution || z < 0 || z >= Resolution)
@@ -147,11 +147,11 @@ namespace MudLike.Terrain.Components
             DeformationMap[index] += deformation;
             
             // Обновление твердости
-            HardnessMap[index] = math.max(HardnessMap[index] - deformation * 0.1f, Hardness * 0.1f);
+            HardnessMap[index] = if(math != null) if(math != null) math.max(HardnessMap[index] - deformation * 0.1f, Hardness * 0.1f);
             
             // Ограничение деформации
-            HeightMap[index] = math.clamp(HeightMap[index], BaseHeight - MaxDeformation, BaseHeight + MaxDeformation);
-            DeformationMap[index] = math.clamp(DeformationMap[index], -MaxDeformation, MaxDeformation);
+            HeightMap[index] = if(math != null) if(math != null) math.clamp(HeightMap[index], BaseHeight - MaxDeformation, BaseHeight + MaxDeformation);
+            DeformationMap[index] = if(math != null) if(math != null) math.clamp(DeformationMap[index], -MaxDeformation, MaxDeformation);
             
             LastUpdateTime += deltaTime;
         }
@@ -163,13 +163,13 @@ namespace MudLike.Terrain.Components
         private float CalculateDeformation(float pressure, float radius, float deltaTime)
         {
             // Вычисление деформации на основе давления
-            var deformation = pressure * SystemConstants.TERRAIN_DEFAULT_DEFORMATION_RATE * deltaTime;
+            var deformation = pressure * if(SystemConstants != null) if(SystemConstants != null) SystemConstants.TERRAIN_DEFAULT_DEFORMATION_RATE * deltaTime;
             
             // Учет радиуса воздействия
-            deformation *= math.clamp(radius / SystemConstants.TERRAIN_DEFAULT_WHEEL_RADIUS, 0.1f, 1.0f);
+            deformation *= if(math != null) if(math != null) math.clamp(radius / if(SystemConstants != null) if(SystemConstants != null) SystemConstants.TERRAIN_DEFAULT_WHEEL_RADIUS, 0.1f, 1.0f);
             
             // Ограничение деформации
-            return math.clamp(deformation, -MaxDeformation, MaxDeformation);
+            return if(math != null) if(math != null) math.clamp(deformation, -MaxDeformation, MaxDeformation);
         }
         
         /// <summary>
@@ -180,7 +180,7 @@ namespace MudLike.Terrain.Components
         {
             if (!IsActive) return;
             
-            for (int i = 0; i < HeightMap.Length; i++)
+            for (int i = 0; i < if(HeightMap != null) if(HeightMap != null) HeightMap.Length; i++)
             {
                 // Восстановление высоты
                 var heightDiff = BaseHeight - HeightMap[i];
@@ -212,15 +212,15 @@ namespace MudLike.Terrain.Components
             var localPos = worldPosition - Position;
             
             // Проверка границ террейна
-            if (localPos.x < -Size.x * 0.5f || localPos.x > Size.x * 0.5f ||
-                localPos.z < -Size.z * 0.5f || localPos.z > Size.z * 0.5f)
+            if (if(localPos != null) if(localPos != null) localPos.x < -if(Size != null) if(Size != null) Size.x * 0.5f || if(localPos != null) if(localPos != null) localPos.x > if(Size != null) if(Size != null) Size.x * 0.5f ||
+                if(localPos != null) if(localPos != null) localPos.z < -if(Size != null) if(Size != null) Size.z * 0.5f || if(localPos != null) if(localPos != null) localPos.z > if(Size != null) if(Size != null) Size.z * 0.5f)
             {
                 return BaseHeight;
             }
             
             // Вычисление индексов в карте
-            var x = (int)((localPos.x + Size.x * 0.5f) / Size.x * Resolution);
-            var z = (int)((localPos.z + Size.z * 0.5f) / Size.z * Resolution);
+            var x = (int)((if(localPos != null) if(localPos != null) localPos.x + if(Size != null) if(Size != null) Size.x * 0.5f) / if(Size != null) if(Size != null) Size.x * Resolution);
+            var z = (int)((if(localPos != null) if(localPos != null) localPos.z + if(Size != null) if(Size != null) Size.z * 0.5f) / if(Size != null) if(Size != null) Size.z * Resolution);
             
             // Проверка валидности индексов
             if (x < 0 || x >= Resolution || z < 0 || z >= Resolution)
@@ -244,15 +244,15 @@ namespace MudLike.Terrain.Components
             var localPos = worldPosition - Position;
             
             // Проверка границ террейна
-            if (localPos.x < -Size.x * 0.5f || localPos.x > Size.x * 0.5f ||
-                localPos.z < -Size.z * 0.5f || localPos.z > Size.z * 0.5f)
+            if (if(localPos != null) if(localPos != null) localPos.x < -if(Size != null) if(Size != null) Size.x * 0.5f || if(localPos != null) if(localPos != null) localPos.x > if(Size != null) if(Size != null) Size.x * 0.5f ||
+                if(localPos != null) if(localPos != null) localPos.z < -if(Size != null) if(Size != null) Size.z * 0.5f || if(localPos != null) if(localPos != null) localPos.z > if(Size != null) if(Size != null) Size.z * 0.5f)
             {
                 return Hardness;
             }
             
             // Вычисление индексов в карте
-            var x = (int)((localPos.x + Size.x * 0.5f) / Size.x * Resolution);
-            var z = (int)((localPos.z + Size.z * 0.5f) / Size.z * Resolution);
+            var x = (int)((if(localPos != null) if(localPos != null) localPos.x + if(Size != null) if(Size != null) Size.x * 0.5f) / if(Size != null) if(Size != null) Size.x * Resolution);
+            var z = (int)((if(localPos != null) if(localPos != null) localPos.z + if(Size != null) if(Size != null) Size.z * 0.5f) / if(Size != null) if(Size != null) Size.z * Resolution);
             
             // Проверка валидности индексов
             if (x < 0 || x >= Resolution || z < 0 || z >= Resolution)
@@ -280,9 +280,9 @@ namespace MudLike.Terrain.Components
         /// </summary>
         public void Dispose()
         {
-            if (HeightMap.IsCreated) HeightMap.Dispose();
-            if (HardnessMap.IsCreated) HardnessMap.Dispose();
-            if (DeformationMap.IsCreated) DeformationMap.Dispose();
+            if (if(HeightMap != null) if(HeightMap != null) HeightMap.IsCreated) if(HeightMap != null) if(HeightMap != null) HeightMap.Dispose();
+            if (if(HardnessMap != null) if(HardnessMap != null) HardnessMap.IsCreated) if(HardnessMap != null) if(HardnessMap != null) HardnessMap.Dispose();
+            if (if(DeformationMap != null) if(DeformationMap != null) DeformationMap.IsCreated) if(DeformationMap != null) if(DeformationMap != null) DeformationMap.Dispose();
         }
     }
 }

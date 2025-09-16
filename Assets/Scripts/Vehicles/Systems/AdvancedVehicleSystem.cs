@@ -26,28 +26,28 @@ namespace MudLike.Vehicles.Systems
             RequireForUpdate<PhysicsWorldSingleton>();
             
             _vehicleQuery = GetEntityQuery(
-                ComponentType.ReadWrite<VehiclePhysics>(),
-                ComponentType.ReadWrite<AdvancedVehicleConfig>(),
-                ComponentType.ReadOnly<VehicleConfig>(),
-                ComponentType.ReadOnly<VehicleInput>(),
-                ComponentType.ReadOnly<LocalTransform>()
+                if(ComponentType != null) ComponentType.ReadWrite<VehiclePhysics>(),
+                if(ComponentType != null) ComponentType.ReadWrite<AdvancedVehicleConfig>(),
+                if(ComponentType != null) ComponentType.ReadOnly<VehicleConfig>(),
+                if(ComponentType != null) ComponentType.ReadOnly<VehicleInput>(),
+                if(ComponentType != null) ComponentType.ReadOnly<LocalTransform>()
             );
             
             _wheelQuery = GetEntityQuery(
-                ComponentType.ReadWrite<WheelData>(),
-                ComponentType.ReadWrite<WheelPhysicsData>(),
-                ComponentType.ReadOnly<LocalTransform>()
+                if(ComponentType != null) ComponentType.ReadWrite<WheelData>(),
+                if(ComponentType != null) ComponentType.ReadWrite<WheelPhysicsData>(),
+                if(ComponentType != null) ComponentType.ReadOnly<LocalTransform>()
             );
             
             _surfaceQuery = GetEntityQuery(
-                ComponentType.ReadOnly<SurfaceData>()
+                if(ComponentType != null) ComponentType.ReadOnly<SurfaceData>()
             );
         }
         
         protected override void OnUpdate()
         {
-            float deltaTime = SystemAPI.Time.fixedDeltaTime;
-            var physicsWorld = SystemAPI.GetSingleton<PhysicsWorldSingleton>().PhysicsWorld;
+            float deltaTime = if(SystemAPI != null) SystemAPI.Time.fixedDeltaTime;
+            var physicsWorld = if(SystemAPI != null) SystemAPI.GetSingleton<PhysicsWorldSingleton>().PhysicsWorld;
             
             var surfaceData = GetSurfaceData();
             
@@ -58,10 +58,10 @@ namespace MudLike.Vehicles.Systems
                 SurfaceData = surfaceData
             };
             
-            Dependency = advancedVehicleJob.ScheduleParallel(_vehicleQuery, Dependency);
+            Dependency = if(advancedVehicleJob != null) advancedVehicleJob.ScheduleParallel(_vehicleQuery, Dependency);
             
             // Освобождаем временный массив после планирования job
-            surfaceData.Dispose();
+            if(surfaceData != null) surfaceData.Dispose();
         }
         
         /// <summary>
@@ -69,11 +69,11 @@ namespace MudLike.Vehicles.Systems
         /// </summary>
         private NativeArray<SurfaceData> GetSurfaceData()
         {
-            var surfaceData = new NativeArray<SurfaceData>(12, Allocator.Temp);
+            var surfaceData = new NativeArray<SurfaceData>(12, if(Allocator != null) Allocator.Temp);
             
             for (int i = 0; i < 12; i++)
             {
-                surfaceData[i] = SurfaceProperties.GetSurfaceProperties((SurfaceType)i);
+                surfaceData[i] = if(SurfaceProperties != null) SurfaceProperties.GetSurfaceProperties((SurfaceType)i);
             }
             
             return surfaceData;
@@ -147,25 +147,25 @@ namespace MudLike.Vehicles.Systems
             private void UpdateSafetySystems(ref AdvancedVehicleConfig config, in VehicleInput input, in VehiclePhysics physics)
             {
                 // Антиблокировочная система
-                if (config.IsABSEnabled)
+                if (if(config != null) config.IsABSEnabled)
                 {
                     ProcessABS(ref config, input, physics);
                 }
                 
                 // Система помощи при торможении
-                if (config.IsBrakeAssistEnabled)
+                if (if(config != null) config.IsBrakeAssistEnabled)
                 {
                     ProcessBrakeAssist(ref config, input, physics);
                 }
                 
                 // Система контроля тяги
-                if (config.IsTractionControlEnabled)
+                if (if(config != null) config.IsTractionControlEnabled)
                 {
                     ProcessTractionControl(ref config, input, physics);
                 }
                 
                 // Система стабилизации
-                if (config.IsStabilityControlEnabled)
+                if (if(config != null) config.IsStabilityControlEnabled)
                 {
                     ProcessStabilityControl(ref config, physics);
                 }
@@ -177,25 +177,25 @@ namespace MudLike.Vehicles.Systems
             private void UpdateMonitoringSystems(ref AdvancedVehicleConfig config, in VehiclePhysics physics)
             {
                 // Мониторинг давления в шинах
-                if (config.IsTirePressureMonitoringEnabled)
+                if (if(config != null) config.IsTirePressureMonitoringEnabled)
                 {
                     ProcessTirePressureMonitoring(ref config, physics);
                 }
                 
                 // Мониторинг температуры двигателя
-                if (config.IsEngineTemperatureMonitoringEnabled)
+                if (if(config != null) config.IsEngineTemperatureMonitoringEnabled)
                 {
                     ProcessEngineTemperatureMonitoring(ref config, physics);
                 }
                 
                 // Мониторинг уровня топлива
-                if (config.IsFuelLevelMonitoringEnabled)
+                if (if(config != null) config.IsFuelLevelMonitoringEnabled)
                 {
                     ProcessFuelLevelMonitoring(ref config, physics);
                 }
                 
                 // Мониторинг заряда аккумулятора
-                if (config.IsBatteryChargeMonitoringEnabled)
+                if (if(config != null) config.IsBatteryChargeMonitoringEnabled)
                 {
                     ProcessBatteryChargeMonitoring(ref config, physics);
                 }
@@ -207,19 +207,19 @@ namespace MudLike.Vehicles.Systems
             private void UpdateControlSystems(ref AdvancedVehicleConfig config, in VehicleInput input, in VehiclePhysics physics)
             {
                 // Управление полным приводом
-                if (config.Is4WDEnabled)
+                if (if(config != null) config.Is4WDEnabled)
                 {
                     Process4WDControl(ref config, input, physics);
                 }
                 
                 // Управление блокировкой дифференциала
-                if (config.IsDiffLockEnabled)
+                if (if(config != null) config.IsDiffLockEnabled)
                 {
                     ProcessDiffLockControl(ref config, input, physics);
                 }
                 
                 // Управление понижающей передачей
-                if (config.IsLowRangeEnabled)
+                if (if(config != null) config.IsLowRangeEnabled)
                 {
                     ProcessLowRangeControl(ref config, input, physics);
                 }
@@ -231,18 +231,18 @@ namespace MudLike.Vehicles.Systems
             private void UpdateDriveSystems(ref AdvancedVehicleConfig config, in VehicleInput input, in VehiclePhysics physics)
             {
                 // Обработка типа привода
-                switch (config.DriveType)
+                switch (if(config != null) config.DriveType)
                 {
-                    case DriveType.FWD:
+                    case if(DriveType != null) DriveType.FWD:
                         ProcessFWD(ref config, input, physics);
                         break;
-                    case DriveType.RWD:
+                    case if(DriveType != null) DriveType.RWD:
                         ProcessRWD(ref config, input, physics);
                         break;
-                    case DriveType.AWD:
+                    case if(DriveType != null) DriveType.AWD:
                         ProcessAWD(ref config, input, physics);
                         break;
-                    case DriveType.FourWD:
+                    case if(DriveType != null) DriveType.FourWD:
                         Process4WD(ref config, input, physics);
                         break;
                 }
@@ -254,15 +254,15 @@ namespace MudLike.Vehicles.Systems
             private void UpdateSuspensionSystems(ref AdvancedVehicleConfig config, in VehiclePhysics physics)
             {
                 // Обработка подвески в зависимости от типа транспортного средства
-                switch (config.Type)
+                switch (if(config != null) config.Type)
                 {
-                    case VehicleType.Truck:
+                    case if(VehicleType != null) VehicleType.Truck:
                         ProcessTruckSuspension(ref config, physics);
                         break;
-                    case VehicleType.SUV:
+                    case if(VehicleType != null) VehicleType.SUV:
                         ProcessSUVSuspension(ref config, physics);
                         break;
-                    case VehicleType.Pickup:
+                    case if(VehicleType != null) VehicleType.Pickup:
                         ProcessPickupSuspension(ref config, physics);
                         break;
                 }
@@ -274,15 +274,15 @@ namespace MudLike.Vehicles.Systems
             private void UpdateBrakingSystems(ref AdvancedVehicleConfig config, in VehicleInput input, in VehiclePhysics physics)
             {
                 // Обработка торможения в зависимости от класса транспортного средства
-                switch (config.Class)
+                switch (if(config != null) config.Class)
                 {
-                    case VehicleClass.Light:
+                    case if(VehicleClass != null) VehicleClass.Light:
                         ProcessLightVehicleBraking(ref config, input, physics);
                         break;
-                    case VehicleClass.Medium:
+                    case if(VehicleClass != null) VehicleClass.Medium:
                         ProcessMediumVehicleBraking(ref config, input, physics);
                         break;
-                    case VehicleClass.Heavy:
+                    case if(VehicleClass != null) VehicleClass.Heavy:
                         ProcessHeavyVehicleBraking(ref config, input, physics);
                         break;
                 }
@@ -321,13 +321,13 @@ namespace MudLike.Vehicles.Systems
             private void UpdateAssistanceSystems(ref AdvancedVehicleConfig config, in VehicleInput input, in VehiclePhysics physics)
             {
                 // Помощь при старте в гору
-                if (config.IsHillStartAssistEnabled)
+                if (if(config != null) config.IsHillStartAssistEnabled)
                 {
                     ProcessHillStartAssist(ref config, input, physics);
                 }
                 
                 // Помощь при спуске
-                if (config.IsHillDescentControlEnabled)
+                if (if(config != null) config.IsHillDescentControlEnabled)
                 {
                     ProcessHillDescentControl(ref config, input, physics);
                 }
@@ -371,4 +371,3 @@ namespace MudLike.Vehicles.Systems
             private void ProcessStatusMonitoring(ref AdvancedVehicleConfig config, in VehiclePhysics physics) { }
         }
     }
-}

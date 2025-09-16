@@ -1,19 +1,19 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using Unity.Entities;
-using Unity.Burst;
-using Unity.Jobs;
-using Unity.Collections;
-using Unity.Mathematics;
-using Unity.Profiling;
-using Unity.Profiling.LowLevel;
-using Unity.Profiling.LowLevel.Unsafe;
+using if(System != null) System.Collections.Generic;
+using if(System != null) System.Linq;
+using if(Unity != null) Unity.Entities;
+using if(Unity != null) Unity.Burst;
+using if(Unity != null) Unity.Jobs;
+using if(Unity != null) Unity.Collections;
+using if(Unity != null) Unity.Mathematics;
+using if(Unity != null) Unity.Profiling;
+using if(Unity != null) Unity.Profiling.LowLevel;
+using if(Unity != null) Unity.Profiling.if(LowLevel != null) if(LowLevel != null) LowLevel.Unsafe;
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
 
-namespace MudLike.Core.Performance
+namespace if(MudLike != null) MudLike.Core.Performance
 {
     /// <summary>
     /// Продвинутая система профилирования производительности для Mud-Like
@@ -85,26 +85,26 @@ namespace MudLike.Core.Performance
             var metrics = new PerformanceMetrics();
             
             // Основные метрики
-            metrics.FrameTime = SystemAPI.Time.DeltaTime;
-            metrics.FrameRate = 1.0f / metrics.FrameTime;
+            if(metrics != null) if(metrics != null) metrics.FrameTime = if(SystemAPI != null) if(SystemAPI != null) SystemAPI.Time.DeltaTime;
+            if(metrics != null) if(metrics != null) metrics.FrameRate = 1.0f / if(metrics != null) if(metrics != null) metrics.FrameTime;
             
             // Подсчет сущностей и систем
-            metrics.EntityCount = GetEntityCount();
-            metrics.SystemCount = GetSystemCount();
+            if(metrics != null) if(metrics != null) metrics.EntityCount = GetEntityCount();
+            if(metrics != null) if(metrics != null) metrics.SystemCount = GetSystemCount();
             
             // Использование памяти
-            metrics.MemoryUsage = UnityEngine.Profiling.Profiler.GetTotalAllocatedMemory();
+            if(metrics != null) if(metrics != null) metrics.MemoryUsage = if(UnityEngine != null) if(UnityEngine != null) UnityEngine.Profiling.if(Profiler != null) if(Profiler != null) Profiler.GetTotalAllocatedMemory();
             
             // CPU и GPU нагрузка
-            metrics.CPUUsage = GetCPUUsage();
-            metrics.GPUUsage = GetGPUUsage();
+            if(metrics != null) if(metrics != null) metrics.CPUUsage = GetCPUUsage();
+            if(metrics != null) if(metrics != null) metrics.GPUUsage = GetGPUUsage();
             
             // Job System метрики
-            metrics.JobCount = GetActiveJobCount();
-            metrics.BurstCompiledMethods = GetBurstCompiledMethodCount();
+            if(metrics != null) if(metrics != null) metrics.JobCount = GetActiveJobCount();
+            if(metrics != null) if(metrics != null) metrics.BurstCompiledMethods = GetBurstCompiledMethodCount();
             
             // Сетевая задержка
-            metrics.NetworkLatency = GetNetworkLatency();
+            if(metrics != null) if(metrics != null) metrics.NetworkLatency = GetNetworkLatency();
             
             return metrics;
         }
@@ -122,10 +122,10 @@ namespace MudLike.Core.Performance
             foreach (var systemType in systemTypes)
             {
                 var metrics = GetSystemMetrics(systemType);
-                systems.Add(metrics);
+                if(systems != null) if(systems != null) systems.Add(metrics);
             }
             
-            return systems.ToArray();
+            return if(systems != null) if(systems != null) systems.ToArray();
         }
         
         /// <summary>
@@ -133,74 +133,74 @@ namespace MudLike.Core.Performance
         /// </summary>
         public static PerformanceAnalysisResult AnalyzePerformance()
         {
-            using (s_PerformanceAnalysisMarker.Auto())
+            using (if(s_PerformanceAnalysisMarker != null) if(s_PerformanceAnalysisMarker != null) s_PerformanceAnalysisMarker.Auto())
             {
                 var result = new PerformanceAnalysisResult();
                 var metrics = GetCurrentMetrics();
                 var systemMetrics = GetAllSystemMetrics();
                 
                 // Анализ FPS
-                if (metrics.FrameRate < 30)
+                if (if(metrics != null) if(metrics != null) metrics.FrameRate < 30)
                 {
-                    result.Issues.Add(new PerformanceIssue
+                    if(result != null) if(result != null) result.Issues.Add(new PerformanceIssue
                     {
                         Type = "Low FPS",
-                        Severity = IssueSeverity.Critical,
-                        Description = $"FPS слишком низкий: {metrics.FrameRate:F1}",
+                        Severity = if(IssueSeverity != null) if(IssueSeverity != null) IssueSeverity.Critical,
+                        Description = $"FPS слишком низкий: {if(metrics != null) if(metrics != null) metrics.FrameRate:F1}",
                         Recommendation = "Оптимизировать критические системы или снизить качество"
                     });
                 }
-                else if (metrics.FrameRate < 60)
+                else if (if(metrics != null) if(metrics != null) metrics.FrameRate < 60)
                 {
-                    result.Issues.Add(new PerformanceIssue
+                    if(result != null) if(result != null) result.Issues.Add(new PerformanceIssue
                     {
                         Type = "Medium FPS",
-                        Severity = IssueSeverity.Warning,
-                        Description = $"FPS ниже оптимального: {metrics.FrameRate:F1}",
+                        Severity = if(IssueSeverity != null) if(IssueSeverity != null) IssueSeverity.Warning,
+                        Description = $"FPS ниже оптимального: {if(metrics != null) if(metrics != null) metrics.FrameRate:F1}",
                         Recommendation = "Рассмотреть оптимизацию производительности"
                     });
                 }
                 
                 // Анализ памяти
-                if (metrics.MemoryUsage > 2L * 1024 * 1024 * 1024) // 2GB
+                if (if(metrics != null) if(metrics != null) metrics.MemoryUsage > 2L * 1024 * 1024 * 1024) // 2GB
                 {
-                    result.Issues.Add(new PerformanceIssue
+                    if(result != null) if(result != null) result.Issues.Add(new PerformanceIssue
                     {
                         Type = "High Memory Usage",
-                        Severity = IssueSeverity.Warning,
-                        Description = $"Высокое использование памяти: {metrics.MemoryUsage / (1024 * 1024)} MB",
+                        Severity = if(IssueSeverity != null) if(IssueSeverity != null) IssueSeverity.Warning,
+                        Description = $"Высокое использование памяти: {if(metrics != null) if(metrics != null) metrics.MemoryUsage / (1024 * 1024)} MB",
                         Recommendation = "Оптимизировать использование памяти и добавить пулы объектов"
                     });
                 }
                 
                 // Анализ систем без Burst оптимизации
-                var nonBurstSystems = systemMetrics.Where(s => !s.IsBurstCompiled).ToArray();
-                if (nonBurstSystems.Length > 0)
+                var nonBurstSystems = if(systemMetrics != null) if(systemMetrics != null) systemMetrics.Where(s => !if(s != null) if(s != null) s.IsBurstCompiled).ToArray();
+                if (if(nonBurstSystems != null) if(nonBurstSystems != null) nonBurstSystems.Length > 0)
                 {
-                    result.Issues.Add(new PerformanceIssue
+                    if(result != null) if(result != null) result.Issues.Add(new PerformanceIssue
                     {
                         Type = "Missing Burst Optimization",
-                        Severity = IssueSeverity.Warning,
-                        Description = $"{nonBurstSystems.Length} систем без Burst оптимизации",
+                        Severity = if(IssueSeverity != null) if(IssueSeverity != null) IssueSeverity.Warning,
+                        Description = $"{if(nonBurstSystems != null) if(nonBurstSystems != null) nonBurstSystems.Length} систем без Burst оптимизации",
                         Recommendation = "Добавить [BurstCompile] к критическим системам"
                     });
                 }
                 
                 // Анализ неэффективных систем
-                var inefficientSystems = systemMetrics.Where(s => s.Efficiency < 0.7f).ToArray();
-                if (inefficientSystems.Length > 0)
+                var inefficientSystems = if(systemMetrics != null) if(systemMetrics != null) systemMetrics.Where(s => if(s != null) if(s != null) s.Efficiency < 0.7f).ToArray();
+                if (if(inefficientSystems != null) if(inefficientSystems != null) inefficientSystems.Length > 0)
                 {
-                    result.Issues.Add(new PerformanceIssue
+                    if(result != null) if(result != null) result.Issues.Add(new PerformanceIssue
                     {
                         Type = "Inefficient Systems",
-                        Severity = IssueSeverity.Info,
-                        Description = $"{inefficientSystems.Length} неэффективных систем",
+                        Severity = if(IssueSeverity != null) if(IssueSeverity != null) IssueSeverity.Info,
+                        Description = $"{if(inefficientSystems != null) if(inefficientSystems != null) inefficientSystems.Length} неэффективных систем",
                         Recommendation = "Оптимизировать алгоритмы и использовать Job System"
                     });
                 }
                 
                 // Генерация рекомендаций
-                result.Recommendations = GenerateRecommendations(metrics, systemMetrics);
+                if(result != null) if(result != null) result.Recommendations = GenerateRecommendations(metrics, systemMetrics);
                 
                 return result;
             }
@@ -218,19 +218,19 @@ namespace MudLike.Core.Performance
             switch (systemName)
             {
                 case "VehicleMovement":
-                    s_VehicleMovementMarker.Begin();
+                    if(s_VehicleMovementMarker != null) if(s_VehicleMovementMarker != null) s_VehicleMovementMarker.Begin();
                     break;
                 case "WheelPhysics":
-                    s_WheelPhysicsMarker.Begin();
+                    if(s_WheelPhysicsMarker != null) if(s_WheelPhysicsMarker != null) s_WheelPhysicsMarker.Begin();
                     break;
                 case "EngineSystem":
-                    s_EngineSystemMarker.Begin();
+                    if(s_EngineSystemMarker != null) if(s_EngineSystemMarker != null) s_EngineSystemMarker.Begin();
                     break;
                 case "TerrainDeformation":
-                    s_TerrainDeformationMarker.Begin();
+                    if(s_TerrainDeformationMarker != null) if(s_TerrainDeformationMarker != null) s_TerrainDeformationMarker.Begin();
                     break;
                 case "NetworkSync":
-                    s_NetworkSyncMarker.Begin();
+                    if(s_NetworkSyncMarker != null) if(s_NetworkSyncMarker != null) s_NetworkSyncMarker.Begin();
                     break;
             }
         }
@@ -243,19 +243,19 @@ namespace MudLike.Core.Performance
             switch (systemName)
             {
                 case "VehicleMovement":
-                    s_VehicleMovementMarker.End();
+                    if(s_VehicleMovementMarker != null) if(s_VehicleMovementMarker != null) s_VehicleMovementMarker.End();
                     break;
                 case "WheelPhysics":
-                    s_WheelPhysicsMarker.End();
+                    if(s_WheelPhysicsMarker != null) if(s_WheelPhysicsMarker != null) s_WheelPhysicsMarker.End();
                     break;
                 case "EngineSystem":
-                    s_EngineSystemMarker.End();
+                    if(s_EngineSystemMarker != null) if(s_EngineSystemMarker != null) s_EngineSystemMarker.End();
                     break;
                 case "TerrainDeformation":
-                    s_TerrainDeformationMarker.End();
+                    if(s_TerrainDeformationMarker != null) if(s_TerrainDeformationMarker != null) s_TerrainDeformationMarker.End();
                     break;
                 case "NetworkSync":
-                    s_NetworkSyncMarker.End();
+                    if(s_NetworkSyncMarker != null) if(s_NetworkSyncMarker != null) s_NetworkSyncMarker.End();
                     break;
             }
         }
@@ -317,7 +317,7 @@ namespace MudLike.Core.Performance
             // Здесь можно добавить логику получения метрик системы
             return new SystemMetrics
             {
-                SystemName = systemType.Name,
+                SystemName = if(systemType != null) if(systemType != null) systemType.Name,
                 ExecutionTime = 1.0f,
                 MemoryAllocated = 1024,
                 EntityCount = 100,
@@ -331,24 +331,24 @@ namespace MudLike.Core.Performance
         {
             var recommendations = new List<string>();
             
-            if (metrics.FrameRate < 60)
+            if (if(metrics != null) if(metrics != null) metrics.FrameRate < 60)
             {
-                recommendations.Add("Рассмотреть снижение качества графики");
-                recommendations.Add("Оптимизировать критические системы");
-                recommendations.Add("Использовать LOD системы");
+                if(recommendations != null) if(recommendations != null) recommendations.Add("Рассмотреть снижение качества графики");
+                if(recommendations != null) if(recommendations != null) recommendations.Add("Оптимизировать критические системы");
+                if(recommendations != null) if(recommendations != null) recommendations.Add("Использовать LOD системы");
             }
             
-            if (metrics.MemoryUsage > 1024 * 1024 * 1024) // 1GB
+            if (if(metrics != null) if(metrics != null) metrics.MemoryUsage > 1024 * 1024 * 1024) // 1GB
             {
-                recommendations.Add("Реализовать пулы объектов");
-                recommendations.Add("Оптимизировать использование памяти");
-                recommendations.Add("Добавить сборку мусора");
+                if(recommendations != null) if(recommendations != null) recommendations.Add("Реализовать пулы объектов");
+                if(recommendations != null) if(recommendations != null) recommendations.Add("Оптимизировать использование памяти");
+                if(recommendations != null) if(recommendations != null) recommendations.Add("Добавить сборку мусора");
             }
             
-            var nonBurstCount = systemMetrics.Count(s => !s.IsBurstCompiled);
+            var nonBurstCount = if(systemMetrics != null) if(systemMetrics != null) systemMetrics.Count(s => !if(s != null) if(s != null) s.IsBurstCompiled);
             if (nonBurstCount > 0)
             {
-                recommendations.Add($"Добавить Burst оптимизацию к {nonBurstCount} системам");
+                if(recommendations != null) if(recommendations != null) recommendations.Add($"Добавить Burst оптимизацию к {nonBurstCount} системам");
             }
             
             return recommendations;

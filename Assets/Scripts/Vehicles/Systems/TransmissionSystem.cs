@@ -17,7 +17,7 @@ namespace MudLike.Vehicles.Systems
         /// </summary>
         protected override void OnUpdate()
         {
-            float deltaTime = SystemAPI.Time.fixedDeltaTime;
+            float deltaTime = if(SystemAPI != null) SystemAPI.Time.fixedDeltaTime;
             
             Entities
                 .WithAll<VehicleTag>()
@@ -40,31 +40,31 @@ namespace MudLike.Vehicles.Systems
                                               float deltaTime)
         {
             // Обработка переключения передач
-            if (input.ShiftUp && !transmission.IsShifting)
+            if (if(input != null) input.ShiftUp && !if(transmission != null) transmission.IsShifting)
             {
                 ShiftGearUp(ref transmission);
             }
-            else if (input.ShiftDown && !transmission.IsShifting)
+            else if (if(input != null) input.ShiftDown && !if(transmission != null) transmission.IsShifting)
             {
                 ShiftGearDown(ref transmission);
             }
-            else if (input.Neutral && !transmission.IsShifting)
+            else if (if(input != null) input.Neutral && !if(transmission != null) transmission.IsShifting)
             {
                 SetNeutralGear(ref transmission);
             }
-            else if (input.Reverse && !transmission.IsShifting)
+            else if (if(input != null) input.Reverse && !if(transmission != null) transmission.IsShifting)
             {
                 SetReverseGear(ref transmission);
             }
             
             // Обработка автоматического переключения передач
-            if (!transmission.IsShifting)
+            if (!if(transmission != null) transmission.IsShifting)
             {
                 ProcessAutomaticShifting(ref transmission, engine);
             }
             
             // Обработка процесса переключения передачи
-            if (transmission.IsShifting)
+            if (if(transmission != null) transmission.IsShifting)
             {
                 ProcessGearShifting(ref transmission, deltaTime);
             }
@@ -73,13 +73,13 @@ namespace MudLike.Vehicles.Systems
             float gearRatio = GetCurrentGearRatio(transmission);
             
             // Вычисляем выходной крутящий момент
-            transmission.OutputTorque = engine.CurrentTorque * gearRatio * transmission.Efficiency;
+            if(transmission != null) transmission.OutputTorque = if(engine != null) engine.CurrentTorque * gearRatio * if(transmission != null) transmission.Efficiency;
             
             // Вычисляем выходную мощность
-            transmission.OutputPower = engine.CurrentPower * transmission.Efficiency;
+            if(transmission != null) transmission.OutputPower = if(engine != null) engine.CurrentPower * if(transmission != null) transmission.Efficiency;
             
             // Обновляем физику
-            physics.CurrentGear = transmission.CurrentGear;
+            if(physics != null) physics.CurrentGear = if(transmission != null) transmission.CurrentGear;
         }
         
         /// <summary>
@@ -87,11 +87,11 @@ namespace MudLike.Vehicles.Systems
         /// </summary>
         private static void ShiftGearUp(ref TransmissionData transmission)
         {
-            if (transmission.CurrentGear < transmission.MaxGear)
+            if (if(transmission != null) transmission.CurrentGear < if(transmission != null) transmission.MaxGear)
             {
-                transmission.TargetGear = transmission.CurrentGear + 1;
-                transmission.IsShifting = true;
-                transmission.CurrentShiftTime = 0f;
+                if(transmission != null) transmission.TargetGear = if(transmission != null) transmission.CurrentGear + 1;
+                if(transmission != null) transmission.IsShifting = true;
+                if(transmission != null) transmission.CurrentShiftTime = 0f;
             }
         }
         
@@ -100,11 +100,11 @@ namespace MudLike.Vehicles.Systems
         /// </summary>
         private static void ShiftGearDown(ref TransmissionData transmission)
         {
-            if (transmission.CurrentGear > transmission.MinGear)
+            if (if(transmission != null) transmission.CurrentGear > if(transmission != null) transmission.MinGear)
             {
-                transmission.TargetGear = transmission.CurrentGear - 1;
-                transmission.IsShifting = true;
-                transmission.CurrentShiftTime = 0f;
+                if(transmission != null) transmission.TargetGear = if(transmission != null) transmission.CurrentGear - 1;
+                if(transmission != null) transmission.IsShifting = true;
+                if(transmission != null) transmission.CurrentShiftTime = 0f;
             }
         }
         
@@ -113,9 +113,9 @@ namespace MudLike.Vehicles.Systems
         /// </summary>
         private static void SetNeutralGear(ref TransmissionData transmission)
         {
-            transmission.TargetGear = transmission.NeutralGear;
-            transmission.IsShifting = true;
-            transmission.CurrentShiftTime = 0f;
+            if(transmission != null) transmission.TargetGear = if(transmission != null) transmission.NeutralGear;
+            if(transmission != null) transmission.IsShifting = true;
+            if(transmission != null) transmission.CurrentShiftTime = 0f;
         }
         
         /// <summary>
@@ -123,9 +123,9 @@ namespace MudLike.Vehicles.Systems
         /// </summary>
         private static void SetReverseGear(ref TransmissionData transmission)
         {
-            transmission.TargetGear = transmission.ReverseGear;
-            transmission.IsShifting = true;
-            transmission.CurrentShiftTime = 0f;
+            if(transmission != null) transmission.TargetGear = if(transmission != null) transmission.ReverseGear;
+            if(transmission != null) transmission.IsShifting = true;
+            if(transmission != null) transmission.CurrentShiftTime = 0f;
         }
         
         /// <summary>
@@ -134,12 +134,12 @@ namespace MudLike.Vehicles.Systems
         private static void ProcessAutomaticShifting(ref TransmissionData transmission, in EngineData engine)
         {
             // Переключение вверх
-            if (engine.CurrentRPM > transmission.UpshiftRPM && transmission.CurrentGear < transmission.MaxGear)
+            if (if(engine != null) engine.CurrentRPM > if(transmission != null) transmission.UpshiftRPM && if(transmission != null) transmission.CurrentGear < if(transmission != null) transmission.MaxGear)
             {
                 ShiftGearUp(ref transmission);
             }
             // Переключение вниз
-            else if (engine.CurrentRPM < transmission.DownshiftRPM && transmission.CurrentGear > transmission.MinGear)
+            else if (if(engine != null) engine.CurrentRPM < if(transmission != null) transmission.DownshiftRPM && if(transmission != null) transmission.CurrentGear > if(transmission != null) transmission.MinGear)
             {
                 ShiftGearDown(ref transmission);
             }
@@ -150,14 +150,14 @@ namespace MudLike.Vehicles.Systems
         /// </summary>
         private static void ProcessGearShifting(ref TransmissionData transmission, float deltaTime)
         {
-            transmission.CurrentShiftTime += deltaTime;
+            if(transmission != null) transmission.CurrentShiftTime += deltaTime;
             
-            if (transmission.CurrentShiftTime >= transmission.ShiftTime)
+            if (if(transmission != null) transmission.CurrentShiftTime >= if(transmission != null) transmission.ShiftTime)
             {
                 // Завершаем переключение
-                transmission.CurrentGear = transmission.TargetGear;
-                transmission.IsShifting = false;
-                transmission.CurrentShiftTime = 0f;
+                if(transmission != null) transmission.CurrentGear = if(transmission != null) transmission.TargetGear;
+                if(transmission != null) transmission.IsShifting = false;
+                if(transmission != null) transmission.CurrentShiftTime = 0f;
             }
         }
         
@@ -166,31 +166,30 @@ namespace MudLike.Vehicles.Systems
         /// </summary>
         private static float GetCurrentGearRatio(in TransmissionData transmission)
         {
-            if (transmission.CurrentGear == transmission.NeutralGear)
+            if (if(transmission != null) transmission.CurrentGear == if(transmission != null) transmission.NeutralGear)
                 return 0f;
             
-            if (transmission.CurrentGear == transmission.ReverseGear)
-                return -transmission.FinalDriveRatio;
+            if (if(transmission != null) transmission.CurrentGear == if(transmission != null) transmission.ReverseGear)
+                return -if(transmission != null) transmission.FinalDriveRatio;
             
             // Получаем передаточное число для текущей передачи
             float gearRatio = 0f;
-            switch (transmission.CurrentGear)
+            switch (if(transmission != null) transmission.CurrentGear)
             {
                 case 1:
-                    gearRatio = transmission.GearRatios.x;
+                    gearRatio = if(transmission != null) transmission.GearRatios.x;
                     break;
                 case 2:
-                    gearRatio = transmission.GearRatios.y;
+                    gearRatio = if(transmission != null) transmission.GearRatios.y;
                     break;
                 case 3:
-                    gearRatio = transmission.GearRatios.z;
+                    gearRatio = if(transmission != null) transmission.GearRatios.z;
                     break;
                 case 4:
-                    gearRatio = transmission.GearRatios.w;
+                    gearRatio = if(transmission != null) transmission.GearRatios.w;
                     break;
             }
             
-            return gearRatio * transmission.FinalDriveRatio;
+            return gearRatio * if(transmission != null) transmission.FinalDriveRatio;
         }
     }
-}

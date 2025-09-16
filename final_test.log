@@ -1,0 +1,49 @@
+Unity Editor version:    6000.2.2f1 (ea398eefe1c2)
+Branch:                  6000.2/staging
+Build type:              Release
+Batch mode:              YES
+System name:             Linux
+Distro version:          #1 SMP PREEMPT_DYNAMIC Thu Aug 28 19:47:10 UTC 2025
+Kernel version:          6.16.4-200.fc42.x86_64
+Architecture:            x86_64
+Window Protocol:         Wayland (XWayland)
+Available memory:        11830 MB
+Date:                    2025-09-10T02:27:08Z
+[Licensing::Module] Trying to connect to existing licensing client channel...
+[Licensing::IpcConnector] Successfully connected to: "LicenseClient-egor" at "2025-09-10T02:27:08.411274Z"
+[SignatureVerifier] Application signature verification not supported on this platform.
+[Licensing::Client] Error: HandshakeResponse reported an error:
+	ResponseCode: 505
+	ResponseStatus: Unsupported protocol version '1.17.2'.
+[Licensing::Module] Error: Failed to handshake to channel: "LicenseClient-egor"
+[Licensing::IpcConnector] LicenseClient-egor channel disconnected successfully.
+[Licensing::IpcConnector] Channel LicenseClient-egor-6000.2.2 doesn't exist
+[Licensing::Module] Successfully launched the LicensingClient (PId: 65019)
+Selected window backend: (null) 
+Desktop is 1920 x 1080 @ 60 Hz
+Initialize udev device monitor.
+
+COMMAND LINE ARGUMENTS:
+unity
+-projectPath
+.
+-batchmode
+-quit
+-logFile
+final_test.log
+Successfully changed project path to: /home/egor/github/Mud-Like/.
+
+(unity:65003): Gtk-CRITICAL **: 05:27:08.728: gtk_label_set_text: assertion 'GTK_IS_LABEL (label)' failed
+
+(unity:65003): Gtk-CRITICAL **: 05:27:08.729: gtk_label_set_text: assertion 'GTK_IS_LABEL (label)' failed
+/home/egor/github/Mud-Like
+It looks like another Unity instance is running with this project open.
+
+Multiple Unity instances cannot open the same project.
+
+Project: /home/egor/github/Mud-Like
+Fatal Error! It looks like another Unity instance is running with this project open.
+
+Multiple Unity instances cannot open the same project.
+
+Project: /home/egor/github/Mud-Like

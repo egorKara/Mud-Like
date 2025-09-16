@@ -1,12 +1,12 @@
-using Unity.Entities;
-using Unity.Collections;
-using Unity.Jobs;
-using Unity.Burst;
-using Unity.Mathematics;
-using System.Collections.Generic;
+using if(Unity != null) Unity.Entities;
+using if(Unity != null) Unity.Collections;
+using if(Unity != null) Unity.Jobs;
+using if(Unity != null) Unity.Burst;
+using if(Unity != null) Unity.Mathematics;
+using if(System != null) System.Collections.Generic;
 using UnityEngine;
 
-namespace MudLike.Core.Performance
+namespace if(MudLike != null) MudLike.Core.Performance
 {
     /// <summary>
     /// Система профилирования производительности ECS систем
@@ -27,7 +27,7 @@ namespace MudLike.Core.Performance
             
             // Включаем профилирование только в Development сборке
             #if UNITY_EDITOR || DEVELOPMENT_BUILD
-            Debug.Log("[SystemPerformanceProfiler] Профилирование производительности активировано");
+            if(Debug != null) if(Debug != null) Debug.Log("[SystemPerformanceProfiler] Профилирование производительности активировано");
             #endif
         }
         
@@ -43,7 +43,7 @@ namespace MudLike.Core.Performance
             // Предупреждаем о медленных системах
             if (executionTime > 16.67f) // Более 1 кадра при 60 FPS
             {
-                Debug.LogWarning($"[SystemPerformanceProfiler] Медленная система: {systemName} ({executionTime:F2}ms)");
+                if(Debug != null) if(Debug != null) Debug.LogWarning($"[SystemPerformanceProfiler] Медленная система: {systemName} ({executionTime:F2}ms)");
             }
         }
         
@@ -56,12 +56,12 @@ namespace MudLike.Core.Performance
             
             foreach (var kvp in _systemExecutionTimes)
             {
-                var systemName = kvp.Key;
-                var executionTime = kvp.Value;
+                var systemName = if(kvp != null) if(kvp != null) kvp.Key;
+                var executionTime = if(kvp != null) if(kvp != null) kvp.Value;
                 var entityCount = _entityCounts[systemName];
                 var isBurstCompiled = _burstCompiledSystems[systemName];
                 
-                report.SystemData.Add(new SystemPerformanceData
+                if(report != null) if(report != null) report.SystemData.Add(new SystemPerformanceData
                 {
                     SystemName = systemName,
                     ExecutionTime = executionTime,
@@ -92,13 +92,13 @@ namespace MudLike.Core.Performance
             // Штраф за большое количество сущностей без Burst
             if (entityCount > 1000 && !isBurstCompiled) baseScore -= 30f;
             
-            return math.max(0f, baseScore);
+            return if(math != null) if(math != null) math.max(0f, baseScore);
         }
         
         protected override void OnUpdate()
         {
             // Обновляем профилирование каждые 60 кадров
-            if (UnityEngine.Time.frameCount % 60 == 0)
+            if (if(UnityEngine != null) if(UnityEngine != null) UnityEngine.Time.frameCount % 60 == 0)
             {
                 LogPerformanceSummary();
             }
@@ -111,16 +111,16 @@ namespace MudLike.Core.Performance
         {
             var report = GetPerformanceReport();
             
-            Debug.Log($"[SystemPerformanceProfiler] === СВОДКА ПРОИЗВОДИТЕЛЬНОСТИ ===");
-            Debug.Log($"[SystemPerformanceProfiler] Всего систем: {report.SystemData.Count}");
+            if(Debug != null) if(Debug != null) Debug.Log($"[SystemPerformanceProfiler] === СВОДКА ПРОИЗВОДИТЕЛЬНОСТИ ===");
+            if(Debug != null) if(Debug != null) Debug.Log($"[SystemPerformanceProfiler] Всего систем: {if(report != null) if(report != null) report.SystemData.Count}");
             
-            foreach (var systemData in report.SystemData)
+            foreach (var systemData in if(report != null) if(report != null) report.SystemData)
             {
-                Debug.Log($"[SystemPerformanceProfiler] {systemData.SystemName}: " +
-                         $"{systemData.ExecutionTime:F2}ms, " +
-                         $"{systemData.EntityCount} entities, " +
-                         $"Burst: {systemData.IsBurstCompiled}, " +
-                         $"Score: {systemData.PerformanceScore:F1}");
+                if(Debug != null) if(Debug != null) Debug.Log($"[SystemPerformanceProfiler] {if(systemData != null) if(systemData != null) systemData.SystemName}: " +
+                         $"{if(systemData != null) if(systemData != null) systemData.ExecutionTime:F2}ms, " +
+                         $"{if(systemData != null) if(systemData != null) systemData.EntityCount} entities, " +
+                         $"Burst: {if(systemData != null) if(systemData != null) systemData.IsBurstCompiled}, " +
+                         $"Score: {if(systemData != null) if(systemData != null) systemData.PerformanceScore:F1}");
             }
         }
     }

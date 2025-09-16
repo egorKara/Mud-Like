@@ -20,17 +20,17 @@ namespace MudLike.Terrain.Systems
         protected override void OnCreate()
         {
             _terrainQuery = GetEntityQuery(
-                ComponentType.ReadWrite<TerrainData>()
+                if(ComponentType != null) ComponentType.ReadWrite<TerrainData>()
             );
         }
         
         protected override void OnUpdate()
         {
-            var terrainEntities = _terrainQuery.ToEntityArray(Allocator.TempJob);
+            var terrainEntities = if(_terrainQuery != null) _terrainQuery.ToEntityArray(if(Allocator != null) Allocator.TempJob);
             
-            if (terrainEntities.Length == 0)
+            if (if(terrainEntities != null) terrainEntities.Length == 0)
             {
-                terrainEntities.Dispose();
+                if(terrainEntities != null) terrainEntities.Dispose();
                 return;
             }
             
@@ -39,33 +39,33 @@ namespace MudLike.Terrain.Systems
             {
                 HeightMap = GetTerrainHeightMap(),
                 HardnessMap = GetTerrainHardnessMap(),
-                RecoveryRate = SystemConstants.TERRAIN_DEFAULT_RECOVERY_RATE,
-                DeltaTime = SystemAPI.Time.fixedDeltaTime
+                RecoveryRate = if(SystemConstants != null) SystemConstants.TERRAIN_DEFAULT_RECOVERY_RATE,
+                DeltaTime = if(SystemAPI != null) SystemAPI.Time.fixedDeltaTime
             };
             
             // Запуск Job с оптимальным batch size
-            var jobHandle = recoveryJob.ScheduleParallel(
+            var jobHandle = if(recoveryJob != null) recoveryJob.ScheduleParallel(
                 GetTerrainHeightMap().Length,
-                SystemConstants.TERRAIN_DEFAULT_RESOLUTION / 128,
+                if(SystemConstants != null) SystemConstants.TERRAIN_DEFAULT_RESOLUTION / 128,
                 Dependency
             );
             
             Dependency = jobHandle;
-            terrainEntities.Dispose();
+            if(terrainEntities != null) terrainEntities.Dispose();
         }
         
         private NativeArray<float> GetTerrainHeightMap()
         {
             // Получение высотной карты террейна
             // Реализация зависит от конкретной структуры данных
-            return new NativeArray<float>(SystemConstants.TERRAIN_DEFAULT_RESOLUTION * SystemConstants.TERRAIN_DEFAULT_RESOLUTION, Allocator.TempJob);
+            return new NativeArray<float>(if(SystemConstants != null) SystemConstants.TERRAIN_DEFAULT_RESOLUTION * if(SystemConstants != null) SystemConstants.TERRAIN_DEFAULT_RESOLUTION, if(Allocator != null) Allocator.TempJob);
         }
         
         private NativeArray<float> GetTerrainHardnessMap()
         {
             // Получение карты твердости террейна
             // Реализация зависит от конкретной структуры данных
-            return new NativeArray<float>(SystemConstants.TERRAIN_DEFAULT_RESOLUTION * SystemConstants.TERRAIN_DEFAULT_RESOLUTION, Allocator.TempJob);
+            return new NativeArray<float>(if(SystemConstants != null) SystemConstants.TERRAIN_DEFAULT_RESOLUTION * if(SystemConstants != null) SystemConstants.TERRAIN_DEFAULT_RESOLUTION, if(Allocator != null) Allocator.TempJob);
         }
     }
 }

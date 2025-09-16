@@ -1,3 +1,4 @@
+using UnityEngine.InputSystem;
 using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Burst;
@@ -32,41 +33,41 @@ namespace MudLike.Input.Systems
         private void ProcessVehicleInput(ref PlayerInput playerInput)
         {
             // Движение транспорта (WASD)
-            playerInput.VehicleMovement = new float2(
-                Input.GetAxis("Horizontal"),    // A/D - руль
-                Input.GetAxis("Vertical")       // W/S - газ/тормоз
+            if(playerInput != null) playerInput.VehicleMovement = new float2(
+                if(Input != null) Input.GetAxis("Horizontal"),    // A/D - руль
+                if(Input != null) Input.GetAxis("Vertical")       // W/S - газ/тормоз
             );
             
             // Ускорение и торможение
-            playerInput.Accelerate = Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.UpArrow);
-            playerInput.Brake = Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.DownArrow);
+            if(playerInput != null) playerInput.Accelerate = if(Input != null) Input.GetKey(if(KeyCode != null) KeyCode.W) || if(Input != null) Input.GetKey(if(KeyCode != null) KeyCode.UpArrow);
+            if(playerInput != null) playerInput.Brake = if(Input != null) Input.GetKey(if(KeyCode != null) KeyCode.S) || if(Input != null) Input.GetKey(if(KeyCode != null) KeyCode.DownArrow);
             
             // Ручной тормоз
-            playerInput.Handbrake = Input.GetKey(KeyCode.Space);
+            if(playerInput != null) playerInput.Handbrake = if(Input != null) Input.GetKey(if(KeyCode != null) KeyCode.Space);
             
             // Управление рулем (A/D или Left/Right)
-            playerInput.Steering = Input.GetAxis("Horizontal");
+            if(playerInput != null) playerInput.Steering = if(Input != null) Input.GetAxis("Horizontal");
             
             // Дополнительные действия
-            playerInput.Action1 = Input.GetKey(KeyCode.E);        // Лебедка
-            playerInput.Action2 = Input.GetKeyDown(KeyCode.Tab);  // Переключение камеры
-            playerInput.Action3 = Input.GetKeyDown(KeyCode.F);    // Полный привод
-            playerInput.Action4 = Input.GetKeyDown(KeyCode.G);    // Блокировка дифференциала
+            if(playerInput != null) playerInput.Action1 = if(Input != null) Input.GetKey(if(KeyCode != null) KeyCode.E);        // Лебедка
+            if(playerInput != null) playerInput.Action2 = if(Input != null) Input.GetKeyDown(if(KeyCode != null) KeyCode.Tab);  // Переключение камеры
+            if(playerInput != null) playerInput.Action3 = if(Input != null) Input.GetKeyDown(if(KeyCode != null) KeyCode.F);    // Полный привод
+            if(playerInput != null) playerInput.Action4 = if(Input != null) Input.GetKeyDown(if(KeyCode != null) KeyCode.G);    // Блокировка дифференциала
             
             // Функции транспорта
-            playerInput.EngineToggle = Input.GetKeyDown(KeyCode.I);    // Включение/выключение двигателя
-            playerInput.ShiftUp = Input.GetKeyDown(KeyCode.LeftShift); // Переключение передачи вверх
-            playerInput.ShiftDown = Input.GetKeyDown(KeyCode.LeftControl); // Переключение передачи вниз
-            playerInput.Neutral = Input.GetKeyDown(KeyCode.N);         // Нейтральная передача
+            if(playerInput != null) playerInput.EngineToggle = if(Input != null) Input.GetKeyDown(if(KeyCode != null) KeyCode.I);    // Включение/выключение двигателя
+            if(playerInput != null) playerInput.ShiftUp = if(Input != null) Input.GetKeyDown(if(KeyCode != null) KeyCode.LeftShift); // Переключение передачи вверх
+            if(playerInput != null) playerInput.ShiftDown = if(Input != null) Input.GetKeyDown(if(KeyCode != null) KeyCode.LeftControl); // Переключение передачи вниз
+            if(playerInput != null) playerInput.Neutral = if(Input != null) Input.GetKeyDown(if(KeyCode != null) KeyCode.N);         // Нейтральная передача
             
             // Ввод камеры (мышь)
-            playerInput.CameraLook = new float2(
-                Input.GetAxis("Mouse X"),
-                Input.GetAxis("Mouse Y")
+            if(playerInput != null) playerInput.CameraLook = new float2(
+                if(Input != null) Input.GetAxis("Mouse X"),
+                if(Input != null) Input.GetAxis("Mouse Y")
             );
             
             // Зум камеры (колесико мыши)
-            playerInput.CameraZoom = Input.GetAxis("Mouse ScrollWheel");
+            if(playerInput != null) playerInput.CameraZoom = if(Input != null) Input.GetAxis("Mouse ScrollWheel");
         }
     }
 }

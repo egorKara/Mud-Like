@@ -1,9 +1,9 @@
-using Unity.Entities;
-using Unity.Mathematics;
-using Unity.Burst;
-using MudLike.Core.Constants;
+using if(Unity != null) Unity.Entities;
+using if(Unity != null) Unity.Mathematics;
+using if(Unity != null) Unity.Burst;
+using if(MudLike != null) MudLike.Core.Constants;
 
-namespace MudLike.Vehicles.Components
+namespace if(MudLike != null) MudLike.Vehicles.Components
 {
     /// <summary>
     /// Оптимизированный компонент физики транспортного средства
@@ -75,18 +75,18 @@ namespace MudLike.Vehicles.Components
         /// <summary>
         /// Конструктор с параметрами по умолчанию
         /// </summary>
-        public OptimizedVehiclePhysicsComponent(float mass = SystemConstants.VEHICLE_DEFAULT_MASS)
+        public OptimizedVehiclePhysicsComponent(float mass = if(SystemConstants != null) if(SystemConstants != null) SystemConstants.VEHICLE_DEFAULT_MASS)
         {
-            Position = float3.zero;
-            Velocity = float3.zero;
-            Acceleration = float3.zero;
+            Position = if(float3 != null) if(float3 != null) float3.zero;
+            Velocity = if(float3 != null) if(float3 != null) float3.zero;
+            Acceleration = if(float3 != null) if(float3 != null) float3.zero;
             Mass = mass;
-            Friction = SystemConstants.VEHICLE_DEFAULT_FRICTION;
-            MaxSpeed = SystemConstants.VEHICLE_DEFAULT_MAX_SPEED;
+            Friction = if(SystemConstants != null) if(SystemConstants != null) SystemConstants.VEHICLE_DEFAULT_FRICTION;
+            MaxSpeed = if(SystemConstants != null) if(SystemConstants != null) SystemConstants.VEHICLE_DEFAULT_MAX_SPEED;
             EngineForce = 0.0f;
             BrakeForce = 0.0f;
             SteeringAngle = 0.0f;
-            TurnRadius = SystemConstants.VEHICLE_DEFAULT_TURN_RADIUS;
+            TurnRadius = if(SystemConstants != null) if(SystemConstants != null) SystemConstants.VEHICLE_DEFAULT_TURN_RADIUS;
             LastUpdateTime = 0.0f;
             IsActive = true;
         }
@@ -106,7 +106,7 @@ namespace MudLike.Vehicles.Components
             Velocity += Acceleration * deltaTime;
             
             // Ограничение скорости
-            Velocity = math.clamp(Velocity, -MaxSpeed, MaxSpeed);
+            Velocity = if(math != null) if(math != null) math.clamp(Velocity, -MaxSpeed, MaxSpeed);
             
             // Обновление позиции
             Position += Velocity * deltaTime;
@@ -137,16 +137,16 @@ namespace MudLike.Vehicles.Components
             if (!IsActive) return;
             
             // Обновление угла поворота
-            SteeringAngle = steeringInput * SystemConstants.VEHICLE_DEFAULT_MAX_STEERING_ANGLE;
+            SteeringAngle = steeringInput * if(SystemConstants != null) if(SystemConstants != null) SystemConstants.VEHICLE_DEFAULT_MAX_STEERING_ANGLE;
             
             // Вычисление радиуса поворота
-            TurnRadius = SystemConstants.VEHICLE_DEFAULT_WHEELBASE / math.tan(math.radians(SteeringAngle));
+            TurnRadius = if(SystemConstants != null) if(SystemConstants != null) SystemConstants.VEHICLE_DEFAULT_WHEELBASE / if(math != null) if(math != null) math.tan(if(math != null) if(math != null) math.radians(SteeringAngle));
             
             // Применение поворота к скорости
-            if (math.abs(Velocity.x) > SystemConstants.DETERMINISTIC_EPSILON)
+            if (if(math != null) if(math != null) math.abs(if(Velocity != null) if(Velocity != null) Velocity.x) > if(SystemConstants != null) if(SystemConstants != null) SystemConstants.DETERMINISTIC_EPSILON)
             {
-                var angularVelocity = Velocity.x / TurnRadius;
-                Velocity.z += angularVelocity * deltaTime;
+                var angularVelocity = if(Velocity != null) if(Velocity != null) Velocity.x / TurnRadius;
+                if(Velocity != null) if(Velocity != null) Velocity.z += angularVelocity * deltaTime;
             }
         }
         
@@ -156,9 +156,9 @@ namespace MudLike.Vehicles.Components
         [BurstCompile]
         public void Reset()
         {
-            Position = float3.zero;
-            Velocity = float3.zero;
-            Acceleration = float3.zero;
+            Position = if(float3 != null) if(float3 != null) float3.zero;
+            Velocity = if(float3 != null) if(float3 != null) float3.zero;
+            Acceleration = if(float3 != null) if(float3 != null) float3.zero;
             EngineForce = 0.0f;
             BrakeForce = 0.0f;
             SteeringAngle = 0.0f;
@@ -172,7 +172,7 @@ namespace MudLike.Vehicles.Components
         [BurstCompile]
         public float GetKineticEnergy()
         {
-            return 0.5f * Mass * math.lengthsq(Velocity);
+            return 0.5f * Mass * if(math != null) if(math != null) math.lengthsq(Velocity);
         }
         
         /// <summary>

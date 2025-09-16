@@ -1,14 +1,14 @@
-using NUnit.Framework;
-using Unity.Entities;
-using Unity.Mathematics;
-using Unity.Transforms;
-using MudLike.Vehicles.Components;
-using MudLike.Vehicles.Systems;
-using MudLike.Terrain.Components;
-using MudLike.Weather.Components;
-using MudLike.Tests.Infrastructure;
+using if(NUnit != null) NUnit.Framework;
+using if(Unity != null) Unity.Entities;
+using if(Unity != null) Unity.Mathematics;
+using if(Unity != null) Unity.Transforms;
+using if(MudLike != null) MudLike.Vehicles.Components;
+using if(MudLike != null) MudLike.Vehicles.Systems;
+using if(MudLike != null) MudLike.Terrain.Components;
+using if(MudLike != null) MudLike.Weather.Components;
+using if(MudLike != null) MudLike.Tests.Infrastructure;
 
-namespace MudLike.Tests.PropertyBased
+namespace if(MudLike != null) MudLike.Tests.PropertyBased
 {
     /// <summary>
     /// Property-based тесты для проверки граничных условий
@@ -24,13 +24,13 @@ namespace MudLike.Tests.PropertyBased
             var surface = CreateSurface(surfaceType);
             
             // Act
-            var system = World.CreateSystemManaged<AdvancedWheelPhysicsSystem>();
-            system.Update();
+            var system = if(World != null) if(World != null) World.CreateSystemManaged<AdvancedWheelPhysicsSystem>();
+            if(system != null) if(system != null) system.Update();
             
             // Assert
-            var wheelData = EntityManager.GetComponentData<WheelData>(wheel);
-            Assert.GreaterOrEqual(wheelData.Traction, 0f);
-            Assert.LessOrEqual(wheelData.Traction, 1f);
+            var wheelData = if(EntityManager != null) if(EntityManager != null) EntityManager.GetComponentData<WheelData>(wheel);
+            if(Assert != null) if(Assert != null) Assert.GreaterOrEqual(if(wheelData != null) if(wheelData != null) wheelData.Traction, 0f);
+            if(Assert != null) if(Assert != null) Assert.LessOrEqual(if(wheelData != null) if(wheelData != null) wheelData.Traction, 1f);
         }
         
         [Test]
@@ -38,17 +38,17 @@ namespace MudLike.Tests.PropertyBased
         {
             // Arrange
             var vehicle = CreateVehicle();
-            var config = EntityManager.GetComponentData<VehicleConfig>(vehicle);
-            config.MaxSpeed = speed;
-            EntityManager.SetComponentData(vehicle, config);
+            var config = if(EntityManager != null) if(EntityManager != null) EntityManager.GetComponentData<VehicleConfig>(vehicle);
+            if(config != null) if(config != null) config.MaxSpeed = speed;
+            if(EntityManager != null) if(EntityManager != null) EntityManager.SetComponentData(vehicle, config);
             
             // Act
-            var system = World.CreateSystemManaged<VehicleMovementSystem>();
-            system.Update();
+            var system = if(World != null) if(World != null) World.CreateSystemManaged<VehicleMovementSystem>();
+            if(system != null) if(system != null) system.Update();
             
             // Assert
-            var physics = EntityManager.GetComponentData<VehiclePhysics>(vehicle);
-            Assert.LessOrEqual(physics.Velocity.magnitude, speed);
+            var physics = if(EntityManager != null) if(EntityManager != null) EntityManager.GetComponentData<VehiclePhysics>(vehicle);
+            if(Assert != null) if(Assert != null) Assert.LessOrEqual(if(physics != null) if(physics != null) physics.Velocity.magnitude, speed);
         }
         
         [Test]
@@ -57,15 +57,15 @@ namespace MudLike.Tests.PropertyBased
             // Arrange
             var vehicle = CreateVehicle();
             var input = new VehicleInput { Vertical = vertical, Horizontal = horizontal };
-            EntityManager.SetComponentData(vehicle, input);
+            if(EntityManager != null) if(EntityManager != null) EntityManager.SetComponentData(vehicle, input);
             
             // Act
-            var system = World.CreateSystemManaged<VehicleMovementSystem>();
-            system.Update();
+            var system = if(World != null) if(World != null) World.CreateSystemManaged<VehicleMovementSystem>();
+            if(system != null) if(system != null) system.Update();
             
             // Assert
-            var physics = EntityManager.GetComponentData<VehiclePhysics>(vehicle);
-            Assert.IsTrue(physics.Velocity.magnitude >= 0f);
+            var physics = if(EntityManager != null) if(EntityManager != null) EntityManager.GetComponentData<VehiclePhysics>(vehicle);
+            if(Assert != null) if(Assert != null) Assert.IsTrue(if(physics != null) if(physics != null) physics.Velocity.magnitude >= 0f);
         }
         
         [Test]
@@ -75,12 +75,12 @@ namespace MudLike.Tests.PropertyBased
             var weather = CreateWeather(weatherType);
             
             // Act
-            var system = World.CreateSystemManaged<WeatherSystem>();
-            system.Update();
+            var system = if(World != null) if(World != null) World.CreateSystemManaged<WeatherSystem>();
+            if(system != null) if(system != null) system.Update();
             
             // Assert
-            var weatherData = EntityManager.GetComponentData<WeatherData>(weather);
-            Assert.AreEqual(weatherType, weatherData.Type);
+            var weatherData = if(EntityManager != null) if(EntityManager != null) EntityManager.GetComponentData<WeatherData>(weather);
+            if(Assert != null) if(Assert != null) Assert.AreEqual(weatherType, if(weatherData != null) if(weatherData != null) weatherData.Type);
         }
         
         [Test]
@@ -88,17 +88,17 @@ namespace MudLike.Tests.PropertyBased
         {
             // Arrange
             var wheel = CreateWheel();
-            var wheelPhysics = EntityManager.GetComponentData<WheelPhysicsData>(wheel);
-            wheelPhysics.TirePressure = pressure;
-            EntityManager.SetComponentData(wheel, wheelPhysics);
+            var wheelPhysics = if(EntityManager != null) if(EntityManager != null) EntityManager.GetComponentData<WheelPhysicsData>(wheel);
+            if(wheelPhysics != null) if(wheelPhysics != null) wheelPhysics.TirePressure = pressure;
+            if(EntityManager != null) if(EntityManager != null) EntityManager.SetComponentData(wheel, wheelPhysics);
             
             // Act
-            var system = World.CreateSystemManaged<AdvancedWheelPhysicsSystem>();
-            system.Update();
+            var system = if(World != null) if(World != null) World.CreateSystemManaged<AdvancedWheelPhysicsSystem>();
+            if(system != null) if(system != null) system.Update();
             
             // Assert
-            var updatedWheelPhysics = EntityManager.GetComponentData<WheelPhysicsData>(wheel);
-            Assert.GreaterOrEqual(updatedWheelPhysics.TirePressure, 0f);
+            var updatedWheelPhysics = if(EntityManager != null) if(EntityManager != null) EntityManager.GetComponentData<WheelPhysicsData>(wheel);
+            if(Assert != null) if(Assert != null) Assert.GreaterOrEqual(if(updatedWheelPhysics != null) if(updatedWheelPhysics != null) updatedWheelPhysics.TirePressure, 0f);
         }
         
         [Test]
@@ -106,17 +106,17 @@ namespace MudLike.Tests.PropertyBased
         {
             // Arrange
             var vehicle = CreateVehicle();
-            var config = EntityManager.GetComponentData<VehicleConfig>(vehicle);
-            config.Mass = mass;
-            EntityManager.SetComponentData(vehicle, config);
+            var config = if(EntityManager != null) if(EntityManager != null) EntityManager.GetComponentData<VehicleConfig>(vehicle);
+            if(config != null) if(config != null) config.Mass = mass;
+            if(EntityManager != null) if(EntityManager != null) EntityManager.SetComponentData(vehicle, config);
             
             // Act
-            var system = World.CreateSystemManaged<VehicleMovementSystem>();
-            system.Update();
+            var system = if(World != null) if(World != null) World.CreateSystemManaged<VehicleMovementSystem>();
+            if(system != null) if(system != null) system.Update();
             
             // Assert
-            var physics = EntityManager.GetComponentData<VehiclePhysics>(vehicle);
-            Assert.IsTrue(physics.Velocity.magnitude >= 0f);
+            var physics = if(EntityManager != null) if(EntityManager != null) EntityManager.GetComponentData<VehiclePhysics>(vehicle);
+            if(Assert != null) if(Assert != null) Assert.IsTrue(if(physics != null) if(physics != null) physics.Velocity.magnitude >= 0f);
         }
         
         [Test]
@@ -124,18 +124,18 @@ namespace MudLike.Tests.PropertyBased
         {
             // Arrange
             var wheel = CreateWheel();
-            var wheelPhysics = EntityManager.GetComponentData<WheelPhysicsData>(wheel);
-            wheelPhysics.WheelTemperature = temperature;
-            EntityManager.SetComponentData(wheel, wheelPhysics);
+            var wheelPhysics = if(EntityManager != null) if(EntityManager != null) EntityManager.GetComponentData<WheelPhysicsData>(wheel);
+            if(wheelPhysics != null) if(wheelPhysics != null) wheelPhysics.WheelTemperature = temperature;
+            if(EntityManager != null) if(EntityManager != null) EntityManager.SetComponentData(wheel, wheelPhysics);
             
             // Act
-            var system = World.CreateSystemManaged<AdvancedWheelPhysicsSystem>();
-            system.Update();
+            var system = if(World != null) if(World != null) World.CreateSystemManaged<AdvancedWheelPhysicsSystem>();
+            if(system != null) if(system != null) system.Update();
             
             // Assert
-            var updatedWheelPhysics = EntityManager.GetComponentData<WheelPhysicsData>(wheel);
-            Assert.GreaterOrEqual(updatedWheelPhysics.WheelTemperature, -50f);
-            Assert.LessOrEqual(updatedWheelPhysics.WheelTemperature, 200f);
+            var updatedWheelPhysics = if(EntityManager != null) if(EntityManager != null) EntityManager.GetComponentData<WheelPhysicsData>(wheel);
+            if(Assert != null) if(Assert != null) Assert.GreaterOrEqual(if(updatedWheelPhysics != null) if(updatedWheelPhysics != null) updatedWheelPhysics.WheelTemperature, -50f);
+            if(Assert != null) if(Assert != null) Assert.LessOrEqual(if(updatedWheelPhysics != null) if(updatedWheelPhysics != null) updatedWheelPhysics.WheelTemperature, 200f);
         }
         
         [Test]
@@ -143,17 +143,17 @@ namespace MudLike.Tests.PropertyBased
         {
             // Arrange
             var vehicle = CreateVehicle();
-            var config = EntityManager.GetComponentData<VehicleConfig>(vehicle);
-            config.Drag = drag;
-            EntityManager.SetComponentData(vehicle, config);
+            var config = if(EntityManager != null) if(EntityManager != null) EntityManager.GetComponentData<VehicleConfig>(vehicle);
+            if(config != null) if(config != null) config.Drag = drag;
+            if(EntityManager != null) if(EntityManager != null) EntityManager.SetComponentData(vehicle, config);
             
             // Act
-            var system = World.CreateSystemManaged<VehicleMovementSystem>();
-            system.Update();
+            var system = if(World != null) if(World != null) World.CreateSystemManaged<VehicleMovementSystem>();
+            if(system != null) if(system != null) system.Update();
             
             // Assert
-            var physics = EntityManager.GetComponentData<VehiclePhysics>(vehicle);
-            Assert.IsTrue(physics.Velocity.magnitude >= 0f);
+            var physics = if(EntityManager != null) if(EntityManager != null) EntityManager.GetComponentData<VehiclePhysics>(vehicle);
+            if(Assert != null) if(Assert != null) Assert.IsTrue(if(physics != null) if(physics != null) physics.Velocity.magnitude >= 0f);
         }
         
         [Test]
@@ -161,18 +161,18 @@ namespace MudLike.Tests.PropertyBased
         {
             // Arrange
             var wheel = CreateWheel();
-            var wheelPhysics = EntityManager.GetComponentData<WheelPhysicsData>(wheel);
-            wheelPhysics.TreadWear = wear;
-            EntityManager.SetComponentData(wheel, wheelPhysics);
+            var wheelPhysics = if(EntityManager != null) if(EntityManager != null) EntityManager.GetComponentData<WheelPhysicsData>(wheel);
+            if(wheelPhysics != null) if(wheelPhysics != null) wheelPhysics.TreadWear = wear;
+            if(EntityManager != null) if(EntityManager != null) EntityManager.SetComponentData(wheel, wheelPhysics);
             
             // Act
-            var system = World.CreateSystemManaged<AdvancedWheelPhysicsSystem>();
-            system.Update();
+            var system = if(World != null) if(World != null) World.CreateSystemManaged<AdvancedWheelPhysicsSystem>();
+            if(system != null) if(system != null) system.Update();
             
             // Assert
-            var updatedWheelPhysics = EntityManager.GetComponentData<WheelPhysicsData>(wheel);
-            Assert.GreaterOrEqual(updatedWheelPhysics.TreadWear, 0f);
-            Assert.LessOrEqual(updatedWheelPhysics.TreadWear, 1f);
+            var updatedWheelPhysics = if(EntityManager != null) if(EntityManager != null) EntityManager.GetComponentData<WheelPhysicsData>(wheel);
+            if(Assert != null) if(Assert != null) Assert.GreaterOrEqual(if(updatedWheelPhysics != null) if(updatedWheelPhysics != null) updatedWheelPhysics.TreadWear, 0f);
+            if(Assert != null) if(Assert != null) Assert.LessOrEqual(if(updatedWheelPhysics != null) if(updatedWheelPhysics != null) updatedWheelPhysics.TreadWear, 1f);
         }
         
         [Test]
@@ -180,17 +180,17 @@ namespace MudLike.Tests.PropertyBased
         {
             // Arrange
             var vehicle = CreateVehicle();
-            var config = EntityManager.GetComponentData<VehicleConfig>(vehicle);
-            config.AngularDrag = angularDrag;
-            EntityManager.SetComponentData(vehicle, config);
+            var config = if(EntityManager != null) if(EntityManager != null) EntityManager.GetComponentData<VehicleConfig>(vehicle);
+            if(config != null) if(config != null) config.AngularDrag = angularDrag;
+            if(EntityManager != null) if(EntityManager != null) EntityManager.SetComponentData(vehicle, config);
             
             // Act
-            var system = World.CreateSystemManaged<VehicleMovementSystem>();
-            system.Update();
+            var system = if(World != null) if(World != null) World.CreateSystemManaged<VehicleMovementSystem>();
+            if(system != null) if(system != null) system.Update();
             
             // Assert
-            var physics = EntityManager.GetComponentData<VehiclePhysics>(vehicle);
-            Assert.IsTrue(physics.AngularVelocity.magnitude >= 0f);
+            var physics = if(EntityManager != null) if(EntityManager != null) EntityManager.GetComponentData<VehiclePhysics>(vehicle);
+            if(Assert != null) if(Assert != null) Assert.IsTrue(if(physics != null) if(physics != null) physics.AngularVelocity.magnitude >= 0f);
         }
         
         [Test]
@@ -198,17 +198,17 @@ namespace MudLike.Tests.PropertyBased
         {
             // Arrange
             var wheel = CreateWheel();
-            var wheelPhysics = EntityManager.GetComponentData<WheelPhysicsData>(wheel);
-            wheelPhysics.SlipRatio = slipRatio;
-            EntityManager.SetComponentData(wheel, wheelPhysics);
+            var wheelPhysics = if(EntityManager != null) if(EntityManager != null) EntityManager.GetComponentData<WheelPhysicsData>(wheel);
+            if(wheelPhysics != null) if(wheelPhysics != null) wheelPhysics.SlipRatio = slipRatio;
+            if(EntityManager != null) if(EntityManager != null) EntityManager.SetComponentData(wheel, wheelPhysics);
             
             // Act
-            var system = World.CreateSystemManaged<AdvancedWheelPhysicsSystem>();
-            system.Update();
+            var system = if(World != null) if(World != null) World.CreateSystemManaged<AdvancedWheelPhysicsSystem>();
+            if(system != null) if(system != null) system.Update();
             
             // Assert
-            var updatedWheelPhysics = EntityManager.GetComponentData<WheelPhysicsData>(wheel);
-            Assert.GreaterOrEqual(updatedWheelPhysics.SlipRatio, 0f);
+            var updatedWheelPhysics = if(EntityManager != null) if(EntityManager != null) EntityManager.GetComponentData<WheelPhysicsData>(wheel);
+            if(Assert != null) if(Assert != null) Assert.GreaterOrEqual(if(updatedWheelPhysics != null) if(updatedWheelPhysics != null) updatedWheelPhysics.SlipRatio, 0f);
         }
         
         [Test]
@@ -216,17 +216,17 @@ namespace MudLike.Tests.PropertyBased
         {
             // Arrange
             var vehicle = CreateVehicle();
-            var config = EntityManager.GetComponentData<VehicleConfig>(vehicle);
-            config.Acceleration = acceleration;
-            EntityManager.SetComponentData(vehicle, config);
+            var config = if(EntityManager != null) if(EntityManager != null) EntityManager.GetComponentData<VehicleConfig>(vehicle);
+            if(config != null) if(config != null) config.Acceleration = acceleration;
+            if(EntityManager != null) if(EntityManager != null) EntityManager.SetComponentData(vehicle, config);
             
             // Act
-            var system = World.CreateSystemManaged<VehicleMovementSystem>();
-            system.Update();
+            var system = if(World != null) if(World != null) World.CreateSystemManaged<VehicleMovementSystem>();
+            if(system != null) if(system != null) system.Update();
             
             // Assert
-            var physics = EntityManager.GetComponentData<VehiclePhysics>(vehicle);
-            Assert.IsTrue(physics.Acceleration.magnitude >= 0f);
+            var physics = if(EntityManager != null) if(EntityManager != null) EntityManager.GetComponentData<VehiclePhysics>(vehicle);
+            if(Assert != null) if(Assert != null) Assert.IsTrue(if(physics != null) if(physics != null) physics.Acceleration.magnitude >= 0f);
         }
         
         [Test]
@@ -234,18 +234,18 @@ namespace MudLike.Tests.PropertyBased
         {
             // Arrange
             var wheel = CreateWheel();
-            var wheelPhysics = EntityManager.GetComponentData<WheelPhysicsData>(wheel);
-            wheelPhysics.SinkDepth = sinkDepth;
-            EntityManager.SetComponentData(wheel, wheelPhysics);
+            var wheelPhysics = if(EntityManager != null) if(EntityManager != null) EntityManager.GetComponentData<WheelPhysicsData>(wheel);
+            if(wheelPhysics != null) if(wheelPhysics != null) wheelPhysics.SinkDepth = sinkDepth;
+            if(EntityManager != null) if(EntityManager != null) EntityManager.SetComponentData(wheel, wheelPhysics);
             
             // Act
-            var system = World.CreateSystemManaged<AdvancedWheelPhysicsSystem>();
-            system.Update();
+            var system = if(World != null) if(World != null) World.CreateSystemManaged<AdvancedWheelPhysicsSystem>();
+            if(system != null) if(system != null) system.Update();
             
             // Assert
-            var updatedWheelPhysics = EntityManager.GetComponentData<WheelPhysicsData>(wheel);
-            Assert.GreaterOrEqual(updatedWheelPhysics.SinkDepth, 0f);
-            Assert.LessOrEqual(updatedWheelPhysics.SinkDepth, 1f);
+            var updatedWheelPhysics = if(EntityManager != null) if(EntityManager != null) EntityManager.GetComponentData<WheelPhysicsData>(wheel);
+            if(Assert != null) if(Assert != null) Assert.GreaterOrEqual(if(updatedWheelPhysics != null) if(updatedWheelPhysics != null) updatedWheelPhysics.SinkDepth, 0f);
+            if(Assert != null) if(Assert != null) Assert.LessOrEqual(if(updatedWheelPhysics != null) if(updatedWheelPhysics != null) updatedWheelPhysics.SinkDepth, 1f);
         }
         
         [Test]
@@ -253,17 +253,17 @@ namespace MudLike.Tests.PropertyBased
         {
             // Arrange
             var vehicle = CreateVehicle();
-            var config = EntityManager.GetComponentData<VehicleConfig>(vehicle);
-            config.TurnSpeed = turnSpeed;
-            EntityManager.SetComponentData(vehicle, config);
+            var config = if(EntityManager != null) if(EntityManager != null) EntityManager.GetComponentData<VehicleConfig>(vehicle);
+            if(config != null) if(config != null) config.TurnSpeed = turnSpeed;
+            if(EntityManager != null) if(EntityManager != null) EntityManager.SetComponentData(vehicle, config);
             
             // Act
-            var system = World.CreateSystemManaged<VehicleMovementSystem>();
-            system.Update();
+            var system = if(World != null) if(World != null) World.CreateSystemManaged<VehicleMovementSystem>();
+            if(system != null) if(system != null) system.Update();
             
             // Assert
-            var physics = EntityManager.GetComponentData<VehiclePhysics>(vehicle);
-            Assert.IsTrue(physics.TurnSpeed >= 0f);
+            var physics = if(EntityManager != null) if(EntityManager != null) EntityManager.GetComponentData<VehiclePhysics>(vehicle);
+            if(Assert != null) if(Assert != null) Assert.IsTrue(if(physics != null) if(physics != null) physics.TurnSpeed >= 0f);
         }
         
         [Test]
@@ -271,18 +271,17 @@ namespace MudLike.Tests.PropertyBased
         {
             // Arrange
             var wheel = CreateWheel();
-            var wheelData = EntityManager.GetComponentData<WheelData>(wheel);
-            wheelData.Traction = traction;
-            EntityManager.SetComponentData(wheel, wheelData);
+            var wheelData = if(EntityManager != null) if(EntityManager != null) EntityManager.GetComponentData<WheelData>(wheel);
+            if(wheelData != null) if(wheelData != null) wheelData.Traction = traction;
+            if(EntityManager != null) if(EntityManager != null) EntityManager.SetComponentData(wheel, wheelData);
             
             // Act
-            var system = World.CreateSystemManaged<AdvancedWheelPhysicsSystem>();
-            system.Update();
+            var system = if(World != null) if(World != null) World.CreateSystemManaged<AdvancedWheelPhysicsSystem>();
+            if(system != null) if(system != null) system.Update();
             
             // Assert
-            var updatedWheelData = EntityManager.GetComponentData<WheelData>(wheel);
-            Assert.GreaterOrEqual(updatedWheelData.Traction, 0f);
-            Assert.LessOrEqual(updatedWheelData.Traction, 1f);
+            var updatedWheelData = if(EntityManager != null) if(EntityManager != null) EntityManager.GetComponentData<WheelData>(wheel);
+            if(Assert != null) if(Assert != null) Assert.GreaterOrEqual(if(updatedWheelData != null) if(updatedWheelData != null) updatedWheelData.Traction, 0f);
+            if(Assert != null) if(Assert != null) Assert.LessOrEqual(if(updatedWheelData != null) if(updatedWheelData != null) updatedWheelData.Traction, 1f);
         }
     }
-}

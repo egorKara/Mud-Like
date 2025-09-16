@@ -1,0 +1,60 @@
+Unity Editor version:    6000.2.2f1 (ea398eefe1c2)
+Branch:                  6000.2/staging
+Build type:              Release
+Batch mode:              YES
+System name:             Linux
+Distro version:          #1 SMP PREEMPT_DYNAMIC Thu Aug 28 19:47:10 UTC 2025
+Kernel version:          6.16.4-200.fc42.x86_64
+Architecture:            x86_64
+Window Protocol:         Wayland (XWayland)
+Available memory:        11830 MB
+Date:                    2025-09-10T02:26:55Z
+[Licensing::Module] Trying to connect to existing licensing client channel...
+[Licensing::IpcConnector] Successfully connected to: "LicenseClient-egor" at "2025-09-10T02:26:55.691997Z"
+[SignatureVerifier] Application signature verification not supported on this platform.
+[Licensing::Client] Handshaking with LicensingClient:
+  Version:                 1.17.2+ff71f16
+  Session Id:              d6919ee4526f4397a71cf5fa3f2ad682
+  Correlation Id:          b5f58b5ebe65f44bf8a3c2f3e078bb72
+  External correlation Id: 6110773988149960835
+  Machine Id:              kR9qOl97iLpDtEEVNFDTXnEKX0o=
+[Licensing::Module] Successfully connected to LicensingClient on channel: "LicenseClient-egor" (connect: 0.00s, validation: 0.00s, handshake: 0.00s)
+[Licensing::IpcConnector] Successfully connected to: "LicenseClient-egor-notifications" at "2025-09-10T02:26:55.694152Z"
+[Licensing::Module] Error: Access token is unavailable; failed to update
+[Licensing::Client] Successfully resolved entitlement details
+[Licensing::Module] License group:
+  Id: 10171532083249-UnityPersXXXX
+  Product: Unity Personal
+  Type: Assigned
+  Expiration: Unlimited
+[Licensing::Client] Successfully updated license, isAsync: True, time: 0.00
+[Licensing::Client] Successfully resolved entitlement details
+[Licensing::Module] Licensing Background thread has ended after 0.01s
+Selected window backend: (null) 
+Desktop is 1920 x 1080 @ 60 Hz
+Initialize udev device monitor.
+
+COMMAND LINE ARGUMENTS:
+unity
+-projectPath
+.
+-batchmode
+-quit
+-logFile
+test_compilation.log
+Successfully changed project path to: /home/egor/github/Mud-Like/.
+
+(unity:64771): Gtk-CRITICAL **: 05:26:55.955: gtk_label_set_text: assertion 'GTK_IS_LABEL (label)' failed
+
+(unity:64771): Gtk-CRITICAL **: 05:26:55.955: gtk_label_set_text: assertion 'GTK_IS_LABEL (label)' failed
+/home/egor/github/Mud-Like
+It looks like another Unity instance is running with this project open.
+
+Multiple Unity instances cannot open the same project.
+
+Project: /home/egor/github/Mud-Like
+Fatal Error! It looks like another Unity instance is running with this project open.
+
+Multiple Unity instances cannot open the same project.
+
+Project: /home/egor/github/Mud-Like

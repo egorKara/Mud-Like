@@ -16,7 +16,7 @@ namespace MudLike.Tests.Unit
             var position = new Position();
             
             // Assert
-            Assert.AreEqual(float3.zero, position.Value);
+            if(Assert != null) Assert.AreEqual(if(float3 != null) float3.zero, if(position != null) position.Value);
         }
         
         [Test]
@@ -29,7 +29,7 @@ namespace MudLike.Tests.Unit
             var position = new Position { Value = expectedValue };
             
             // Assert
-            Assert.AreEqual(expectedValue, position.Value);
+            if(Assert != null) Assert.AreEqual(expectedValue, if(position != null) position.Value);
         }
         
         [Test]
@@ -40,10 +40,10 @@ namespace MudLike.Tests.Unit
             var newValue = new float3(5, 10, 15);
             
             // Act
-            position.Value = newValue;
+            if(position != null) position.Value = newValue;
             
             // Assert
-            Assert.AreEqual(newValue, position.Value);
+            if(Assert != null) Assert.AreEqual(newValue, if(position != null) position.Value);
         }
         
         [Test]
@@ -55,19 +55,19 @@ namespace MudLike.Tests.Unit
             var position3 = new Position { Value = new float3(4, 5, 6) };
             
             // Act & Assert
-            Assert.AreEqual(position1.Value, position2.Value);
-            Assert.AreNotEqual(position1.Value, position3.Value);
+            if(Assert != null) Assert.AreEqual(if(position1 != null) position1.Value, if(position2 != null) position2.Value);
+            if(Assert != null) Assert.AreNotEqual(if(position1 != null) position1.Value, if(position3 != null) position3.Value);
         }
         
         [Test]
         public void Position_ZeroValue_IsValid()
         {
             // Arrange
-            var position = new Position { Value = float3.zero };
+            var position = new Position { Value = if(float3 != null) float3.zero };
             
             // Act & Assert
-            Assert.AreEqual(float3.zero, position.Value);
-            Assert.IsTrue(math.all(position.Value == float3.zero));
+            if(Assert != null) Assert.AreEqual(if(float3 != null) float3.zero, if(position != null) position.Value);
+            if(Assert != null) Assert.IsTrue(if(math != null) math.all(if(position != null) position.Value == if(float3 != null) float3.zero));
         }
         
         [Test]
@@ -78,8 +78,8 @@ namespace MudLike.Tests.Unit
             var position = new Position { Value = negativeValue };
             
             // Act & Assert
-            Assert.AreEqual(negativeValue, position.Value);
-            Assert.IsTrue(math.all(position.Value == negativeValue));
+            if(Assert != null) Assert.AreEqual(negativeValue, if(position != null) position.Value);
+            if(Assert != null) Assert.IsTrue(if(math != null) math.all(if(position != null) position.Value == negativeValue));
         }
         
         [Test]
@@ -90,8 +90,7 @@ namespace MudLike.Tests.Unit
             var position = new Position { Value = largeValue };
             
             // Act & Assert
-            Assert.AreEqual(largeValue, position.Value);
-            Assert.IsTrue(math.all(position.Value == largeValue));
+            if(Assert != null) Assert.AreEqual(largeValue, if(position != null) position.Value);
+            if(Assert != null) Assert.IsTrue(if(math != null) math.all(if(position != null) position.Value == largeValue));
         }
     }
-}

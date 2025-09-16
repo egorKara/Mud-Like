@@ -1,0 +1,619 @@
+Unity Editor version:    6000.2.2f1 (ea398eefe1c2)
+Branch:                  6000.2/staging
+Build type:              Release
+Batch mode:              YES
+System name:             Linux
+Distro version:          #1 SMP PREEMPT_DYNAMIC Thu Aug 28 19:47:10 UTC 2025
+Kernel version:          6.16.4-200.fc42.x86_64
+Architecture:            x86_64
+Window Protocol:         Wayland (XWayland)
+Available memory:        11830 MB
+Date:                    2025-09-10T18:19:28Z
+[Licensing::Module] Trying to connect to existing licensing client channel...
+[Licensing::IpcConnector] Channel LicenseClient-egor doesn't exist
+[Licensing::Module] Successfully launched the LicensingClient (PId: 83966)
+Selected window backend: (null) 
+Desktop is 1920 x 1080 @ 60 Hz
+Initialize udev device monitor.
+
+COMMAND LINE ARGUMENTS:
+unity
+-projectPath
+.
+-batchmode
+-quit
+-runTests
+-testResults
+artifacts/unit-test-results.xml
+-logFile
+unit-tests-20250910-211928.log
+Successfully changed project path to: /home/egor/github/Mud-Like/.
+
+(unity:83955): Gtk-CRITICAL **: 21:19:29.073: gtk_label_set_text: assertion 'GTK_IS_LABEL (label)' failed
+
+(unity:83955): Gtk-CRITICAL **: 21:19:29.073: gtk_label_set_text: assertion 'GTK_IS_LABEL (label)' failed
+/home/egor/github/Mud-Like
+[UnityMemory] Configuration Parameters - Can be set up in boot.config
+    "memorysetup-allocator-temp-initial-block-size-main=262144"
+    "memorysetup-allocator-temp-initial-block-size-worker=262144"
+    "memorysetup-bucket-allocator-granularity=16"
+    "memorysetup-bucket-allocator-bucket-count=8"
+    "memorysetup-bucket-allocator-block-size=33554432"
+    "memorysetup-bucket-allocator-block-count=8"
+    "memorysetup-main-allocator-block-size=16777216"
+    "memorysetup-thread-allocator-block-size=16777216"
+    "memorysetup-gfx-main-allocator-block-size=16777216"
+    "memorysetup-gfx-thread-allocator-block-size=16777216"
+    "memorysetup-cache-allocator-block-size=4194304"
+    "memorysetup-typetree-allocator-block-size=2097152"
+    "memorysetup-profiler-bucket-allocator-granularity=16"
+    "memorysetup-profiler-bucket-allocator-bucket-count=8"
+    "memorysetup-profiler-bucket-allocator-block-size=33554432"
+    "memorysetup-profiler-bucket-allocator-block-count=8"
+    "memorysetup-profiler-allocator-block-size=16777216"
+    "memorysetup-profiler-editor-allocator-block-size=1048576"
+    "memorysetup-temp-allocator-size-main=16777216"
+    "memorysetup-job-temp-allocator-block-size=2097152"
+    "memorysetup-job-temp-allocator-block-size-background=1048576"
+    "memorysetup-job-temp-allocator-reduction-small-platforms=262144"
+    "memorysetup-temp-allocator-size-background-worker=32768"
+    "memorysetup-temp-allocator-size-job-worker=262144"
+    "memorysetup-temp-allocator-size-preload-manager=33554432"
+    "memorysetup-temp-allocator-size-nav-mesh-worker=65536"
+    "memorysetup-temp-allocator-size-audio-worker=65536"
+    "memorysetup-temp-allocator-size-cloud-worker=32768"
+    "memorysetup-temp-allocator-size-gi-baking-worker=262144"
+    "memorysetup-temp-allocator-size-gi-baking-worker=262144"
+    "memorysetup-temp-allocator-size-gi-baking-worker=262144"
+    "memorysetup-temp-allocator-size-gi-baking-worker=262144"
+    "memorysetup-temp-allocator-size-gi-baking-worker=262144"
+    "memorysetup-temp-allocator-size-gfx=262144"
+Player connection [140306635926400]  Target information:
+
+Player connection [140306635926400]  * "[IP] 192.168.31.193 [Port] 55504 [Flags] 2 [Guid] 1288811003 [EditorId] 1288811003 [Version] 1048832 [Id] LinuxEditor(16,10.7.0.5) [Debug] 1 [PackageName] LinuxEditor [ProjectName] Editor" 
+
+Player connection [140306635926400]  * "[IP] 10.7.0.5 [Port] 55504 [Flags] 2 [Guid] 1288811003 [EditorId] 1288811003 [Version] 1048832 [Id] LinuxEditor(16,10.7.0.5) [Debug] 1 [PackageName] LinuxEditor [ProjectName] Editor" 
+
+Player connection [140306635926400] Host joined multi-casting on [225.0.0.222:54997]...
+Player connection [140306635926400] Host joined alternative multi-casting on [225.0.0.222:34997]...
+Input System module state changed to: Initialized.
+[Physics::Module] Initialized fallback backend.
+[Physics::Module] Id: 0xdecafbad
+[Licensing::IpcConnector] Successfully connected to: "LicenseClient-egor" at "2025-09-10T18:19:29.382095Z"
+[SignatureVerifier] Application signature verification not supported on this platform.
+[Licensing::Client] Handshaking with LicensingClient:
+  Version:                 1.17.2+ff71f16
+  Session Id:              26442d2b66ee49ac8277d8c2d8be69f6
+  Correlation Id:          5b9c3134f2af3a626fbcd4e5001daf33
+  External correlation Id: 3375124279482136096
+  Machine Id:              kR9qOl97iLpDtEEVNFDTXnEKX0o=
+[Licensing::Module] Successfully connected to LicensingClient on channel: "LicenseClient-egor" (connect: 0.57s, validation: 0.17s, handshake: 0.00s)
+[Licensing::IpcConnector] Successfully connected to: "LicenseClient-egor-notifications" at "2025-09-10T18:19:29.555722Z"
+[Licensing::Module] Connected to LicensingClient (PId: 83966, launch time: 0.00, total connection time: 0.74s)
+[Licensing::Module] Error: Access token is unavailable; failed to update
+[Licensing::Client] Successfully resolved entitlement details
+[Licensing::Module] License group:
+  Id: 10171532083249-UnityPersXXXX
+  Product: Unity Personal
+  Type: Assigned
+  Expiration: Unlimited
+[Licensing::Client] Successfully updated license, isAsync: True, time: 0.04
+[Licensing::Module] Licensing Background thread has ended after 0.88s
+[Package Manager] Connected to IPC stream "Upm-83955" after 0.6 seconds.
+Library Redirect Path: Library/
+[Physics::Module] Selected backend.
+[Physics::Module] Name: PhysX
+[Physics::Module] Id: 0xf2b8ea05
+[Physics::Module] SDK Version: 4.1.2
+[Physics::Module] Integration Version: 1.0.0
+[Physics::Module] Threading Mode: Multi-Threaded
+Refreshing native plugins compatible for Editor in 2.19 ms, found 0 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Initialize engine version: 6000.2.2f1 (ea398eefe1c2)
+[Subsystems] Discovering subsystems at path /home/egor/Unity/Hub/Editor/6000.2.2f1/Editor/Data/Resources/UnitySubsystems
+[Subsystems] Discovering subsystems at path /home/egor/github/Mud-Like/Assets
+kGfxThreadingModeNonThreaded is not supported on OpenGL Core. Reverting to kGfxThreadingModeDirect instead.
+GfxDevice: creating device client; kGfxThreadingModeDirect
+GLX Extensions: GLX_ARB_context_flush_control GLX_ARB_create_context GLX_ARB_create_context_no_error GLX_ARB_create_context_profile GLX_ARB_create_context_robustness GLX_ARB_fbconfig_float GLX_ARB_framebuffer_sRGB GLX_ARB_get_proc_address GLX_ARB_multisample GLX_EXT_buffer_age GLX_EXT_create_context_es2_profile GLX_EXT_create_context_es_profile GLX_EXT_fbconfig_packed_float GLX_EXT_framebuffer_sRGB GLX_EXT_no_config_context GLX_EXT_swap_control GLX_EXT_swap_control_tear GLX_EXT_texture_from_pixmap GLX_EXT_visual_info GLX_EXT_visual_rating GLX_MESA_copy_sub_buffer GLX_MESA_gl_interop GLX_MESA_query_renderer GLX_MESA_swap_control GLX_OML_sync_control GLX_SGIS_multisample GLX_SGIX_fbconfig GLX_SGIX_pbuffer GLX_SGIX_visual_select_group GLX_SGI_make_current_read GLX_SGI_video_sync 
+Renderer: Mesa Intel(R) UHD Graphics 620 (KBL GT2)
+Vendor:   Intel
+Version:  4.6 (Core Profile) Mesa 25.1.7
+GLES:     0
+ GL_3DFX_texture_compression_FXT1 GL_AMD_conservative_depth GL_AMD_depth_clamp_separate GL_AMD_draw_buffers_blend GL_AMD_gpu_shader_int64 GL_AMD_multi_draw_indirect GL_AMD_performance_monitor GL_AMD_pinned_memory GL_AMD_query_buffer_object GL_AMD_seamless_cubemap_per_texture GL_AMD_shader_stencil_export GL_AMD_shader_trinary_minmax GL_AMD_texture_texture4 GL_AMD_vertex_shader_layer GL_AMD_vertex_shader_viewport_index GL_ANGLE_texture_compression_dxt3 GL_ANGLE_texture_compression_dxt5 GL_ARB_ES2_compatibility GL_ARB_ES3_1_compatibility GL_ARB_ES3_2_compatibility GL_ARB_ES3_compatibility GL_ARB_arrays_of_arrays GL_ARB_base_instance GL_ARB_blend_func_extended GL_ARB_buffer_storage GL_ARB_clear_buffer_object GL_ARB_clear_texture GL_ARB_clip_control GL_ARB_compressed_texture_pixel_storage GL_ARB_compute_shader GL_ARB_compute_variable_group_size GL_ARB_conditional_render_inverted GL_ARB_conservative_depth GL_ARB_copy_buffer GL_ARB_copy_image GL_ARB_cull_distance GL_ARB_debug_output GL_ARB_depth_buffer_float GL_ARB
+_depth_clamp GL_ARB_derivative_control GL_ARB_direct_state_access GL_ARB_draw_buffers GL_ARB_draw_buffers_blend GL_ARB_draw_elements_base_vertex GL_ARB_draw_indirect GL_ARB_draw_instanced GL_ARB_enhanced_layouts GL_ARB_explicit_attrib_location GL_ARB_explicit_uniform_location GL_ARB_fragment_coord_conventions GL_ARB_fragment_layer_viewport GL_ARB_fragment_shader GL_ARB_fragment_shader_interlock GL_ARB_framebuffer_no_attachments GL_ARB_framebuffer_object GL_ARB_framebuffer_sRGB GL_ARB_get_program_binary GL_ARB_get_texture_sub_image GL_ARB_gl_spirv GL_ARB_gpu_shader5 GL_ARB_gpu_shader_fp64 GL_ARB_gpu_shader_int64 GL_ARB_half_float_pixel GL_ARB_half_float_vertex GL_ARB_indirect_parameters GL_ARB_instanced_arrays GL_ARB_internalformat_query GL_ARB_internalformat_query2 GL_ARB_invalidate_subdata GL_ARB_map_buffer_alignment GL_ARB_map_buffer_range GL_ARB_multi_bind GL_ARB_multi_draw_indirect GL_ARB_occlusion_query2 GL_ARB_parallel_shader_compile GL_ARB_pipeline_statistics_query GL_ARB_pixel_buffer_object GL_ARB_po
+int_sprite GL_ARB_polygon_offset_clamp GL_ARB_post_depth_coverage GL_ARB_program_interface_query GL_ARB_provoking_vertex GL_ARB_query_buffer_object GL_ARB_robust_buffer_access_behavior GL_ARB_robustness GL_ARB_sample_shading GL_ARB_sampler_objects GL_ARB_seamless_cube_map GL_ARB_seamless_cubemap_per_texture GL_ARB_separate_shader_objects GL_ARB_shader_atomic_counter_ops GL_ARB_shader_atomic_counters GL_ARB_shader_ballot GL_ARB_shader_bit_encoding GL_ARB_shader_clock GL_ARB_shader_draw_parameters GL_ARB_shader_group_vote GL_ARB_shader_image_load_store GL_ARB_shader_image_size GL_ARB_shader_objects GL_ARB_shader_precision GL_ARB_shader_stencil_export GL_ARB_shader_storage_buffer_object GL_ARB_shader_subroutine GL_ARB_shader_texture_image_samples GL_ARB_shader_texture_lod GL_ARB_shader_viewport_layer_array GL_ARB_shading_language_420pack GL_ARB_shading_language_include GL_ARB_shading_language_packing GL_ARB_spirv_extensions GL_ARB_stencil_texturing GL_ARB_sync GL_ARB_tessellation_shader GL_ARB_texture_barrier G
+L_ARB_texture_border_clamp GL_ARB_texture_buffer_object GL_ARB_texture_buffer_object_rgb32 GL_ARB_texture_buffer_range GL_ARB_texture_compression_bptc GL_ARB_texture_compression_rgtc GL_ARB_texture_cube_map_array GL_ARB_texture_filter_anisotropic GL_ARB_texture_float GL_ARB_texture_gather GL_ARB_texture_mirror_clamp_to_edge GL_ARB_texture_multisample GL_ARB_texture_non_power_of_two GL_ARB_texture_query_levels GL_ARB_texture_query_lod GL_ARB_texture_rectangle GL_ARB_texture_rg GL_ARB_texture_rgb10_a2ui GL_ARB_texture_stencil8 GL_ARB_texture_storage GL_ARB_texture_storage_multisample GL_ARB_texture_swizzle GL_ARB_texture_view GL_ARB_timer_query GL_ARB_transform_feedback2 GL_ARB_transform_feedback3 GL_ARB_transform_feedback_instanced GL_ARB_transform_feedback_overflow_query GL_ARB_uniform_buffer_object GL_ARB_vertex_array_bgra GL_ARB_vertex_array_object GL_ARB_vertex_attrib_64bit GL_ARB_vertex_attrib_binding GL_ARB_vertex_buffer_object GL_ARB_vertex_shader GL_ARB_vertex_type_10f_11f_11f_rev GL_ARB_vertex_type_2
+_10_10_10_rev GL_ARB_viewport_array GL_ATI_blend_equation_separate GL_ATI_texture_float GL_EXT_EGL_image_storage GL_EXT_EGL_image_storage_compression GL_EXT_EGL_sync GL_EXT_abgr GL_EXT_blend_equation_separate GL_EXT_debug_label GL_EXT_demote_to_helper_invocation GL_EXT_draw_buffers2 GL_EXT_draw_instanced GL_EXT_framebuffer_blit GL_EXT_framebuffer_multisample GL_EXT_framebuffer_multisample_blit_scaled GL_EXT_framebuffer_object GL_EXT_framebuffer_sRGB GL_EXT_memory_object GL_EXT_memory_object_fd GL_EXT_packed_depth_stencil GL_EXT_packed_float GL_EXT_pixel_buffer_object GL_EXT_polygon_offset_clamp GL_EXT_provoking_vertex GL_EXT_semaphore GL_EXT_semaphore_fd GL_EXT_shader_framebuffer_fetch GL_EXT_shader_framebuffer_fetch_non_coherent GL_EXT_shader_integer_mix GL_EXT_shader_samples_identical GL_EXT_texture_array GL_EXT_texture_compression_dxt1 GL_EXT_texture_compression_rgtc GL_EXT_texture_compression_s3tc GL_EXT_texture_filter_anisotropic GL_EXT_texture_integer GL_EXT_texture_sRGB GL_EXT_texture_sRGB_R8 GL_EXT_t
+exture_sRGB_decode GL_EXT_texture_shadow_lod GL_EXT_texture_shared_exponent GL_EXT_texture_snorm GL_EXT_texture_storage GL_EXT_texture_swizzle GL_EXT_timer_query GL_EXT_transform_feedback GL_EXT_vertex_array_bgra GL_EXT_vertex_attrib_64bit GL_IBM_multimode_draw_arrays GL_INTEL_blackhole_render GL_INTEL_conservative_rasterization GL_INTEL_performance_query GL_INTEL_shader_atomic_float_minmax GL_INTEL_shader_integer_functions2 GL_KHR_blend_equation_advanced GL_KHR_blend_equation_advanced_coherent GL_KHR_context_flush_control GL_KHR_debug GL_KHR_no_error GL_KHR_parallel_shader_compile GL_KHR_robust_buffer_access_behavior GL_KHR_robustness GL_KHR_texture_compression_astc_ldr GL_KHR_texture_compression_astc_sliced_3d GL_MESA_framebuffer_flip_y GL_MESA_pack_invert GL_MESA_shader_integer_functions GL_MESA_texture_const_bandwidth GL_MESA_texture_signed_rgba GL_NV_alpha_to_coverage_dither_control GL_NV_compute_shader_derivatives GL_NV_conditional_render GL_NV_copy_image GL_NV_depth_clamp GL_NV_fragment_shader_interlo
+ck GL_NV_packed_depth_stencil GL_NV_texture_barrier GL_OES_EGL_image GL_S3_s3tc
+OPENGL LOG: Creating OpenGL 4.6 graphics device ; Context level  <OpenGL 4.5> ; Context handle 624981600
+Shader Hidden/ProbeVolume/VoxelizeScene is not supported: GPU does not support conservative rasterization
+Initialize mono
+Mono path[0] = '/home/egor/Unity/Hub/Editor/6000.2.2f1/Editor/Data/Managed'
+Mono path[1] = '/home/egor/Unity/Hub/Editor/6000.2.2f1/Editor/Data/MonoBleedingEdge/lib/mono/unityjit-linux'
+Mono config path = '/home/egor/Unity/Hub/Editor/6000.2.2f1/Editor/Data/MonoBleedingEdge/etc'
+Using monoOptions --debugger-agent=transport=dt_socket,embedding=1,server=y,suspend=n,address=127.0.0.1:56955
+Using cacheserver namespaces - metadata:defaultmetadata, artifacts:defaultartifacts
+Using cacheserver namespaces - metadata:defaultmetadata, artifacts:defaultartifacts
+ImportWorker Server TCP listen port: 0
+AcceleratorClientConnectionCallback - disconnected - :0
+Begin MonoManager ReloadAssembly
+Registering precompiled unity dll's ...
+Register platform support module: /home/egor/Unity/Hub/Editor/6000.2.2f1/Editor/Data/PlaybackEngines/LinuxStandaloneSupport/UnityEditor.LinuxStandalone.Extensions.dll
+Registered in 0.004840 seconds.
+- Loaded All Assemblies, in  0.792 seconds
+Native extension for LinuxStandalone target not found
+Package Manager log level set to [2]
+Mono: successfully reloaded assembly
+- Finished resetting the current domain, in  0.927 seconds
+Domain Reload Profiling: 1718ms
+	BeginReloadAssembly (157ms)
+		ExecutionOrderSort (0ms)
+		DisableScriptedObjects (0ms)
+		BackupInstance (0ms)
+		ReleaseScriptingObjects (0ms)
+		CreateAndSetChildDomain (1ms)
+	RebuildCommonClasses (90ms)
+	RebuildNativeTypeToScriptingClass (25ms)
+	initialDomainReloadingComplete (146ms)
+	LoadAllAssembliesAndSetupDomain (373ms)
+		LoadAssemblies (156ms)
+		RebuildTransferFunctionScriptingTraits (0ms)
+		AnalyzeDomain (366ms)
+			TypeCache.Refresh (364ms)
+				TypeCache.ScanAssembly (335ms)
+			BuildScriptInfoCaches (0ms)
+			ResolveRequiredComponents (1ms)
+	FinalizeReload (928ms)
+		ReleaseScriptCaches (0ms)
+		RebuildScriptCaches (0ms)
+		SetupLoadedEditorAssemblies (834ms)
+			LogAssemblyErrors (0ms)
+			InitializePlatformSupportModulesInManaged (148ms)
+			SetLoadedEditorAssemblies (16ms)
+			BeforeProcessingInitializeOnLoad (230ms)
+			ProcessInitializeOnLoadAttributes (285ms)
+			ProcessInitializeOnLoadMethodAttributes (154ms)
+			AfterProcessingInitializeOnLoad (0ms)
+			EditorAssembliesLoaded (0ms)
+		ExecutionOrderSort2 (0ms)
+		AwakeInstancesAfterBackupRestoration (0ms)
+[Licensing::Client] Successfully resolved entitlement details
+Application.AssetDatabase Initial Refresh Start
+[Package Manager] Restoring resolved packages state from cache
+[Licensing::Client] Successfully resolved entitlement details
+[Package Manager] Registered 78 packages:
+  Packages from [https://packages.unity.com]:
+    com.unity.ads@4.12.0 (location: /home/egor/github/Mud-Like/Library/PackageCache/com.unity.ads@3bb3d269d51b)
+    com.unity.ai.navigation@2.0.9 (location: /home/egor/github/Mud-Like/Library/PackageCache/com.unity.ai.navigation@5218e4bf7edc)
+    com.unity.analytics@3.8.1 (location: /home/egor/github/Mud-Like/Library/PackageCache/com.unity.analytics@6cc66d58ac08)
+    com.unity.burst@1.8.24 (location: /home/egor/github/Mud-Like/Library/PackageCache/com.unity.burst@f7a407abf4d5)
+    com.unity.collab-proxy@2.8.2 (location: /home/egor/github/Mud-Like/Library/PackageCache/com.unity.collab-proxy@c854d1f7d97f)
+    com.unity.collections@2.5.7 (location: /home/egor/github/Mud-Like/Library/PackageCache/com.unity.collections@d49facba0036)
+    com.unity.entities@1.3.14 (location: /home/egor/github/Mud-Like/Library/PackageCache/com.unity.entities@e581b903be8e)
+    com.unity.entities.graphics@1.4.12 (location: /home/egor/github/Mud-Like/Library/PackageCache/com.unity.entities.graphics@2264b12029b8)
+    com.unity.ide.rider@3.0.37 (location: /home/egor/github/Mud-Like/Library/PackageCache/com.unity.ide.rider@0baf0f91edc0)
+    com.unity.ide.visualstudio@2.0.23 (location: /home/egor/github/Mud-Like/Library/PackageCache/com.unity.ide.visualstudio@198cdf337d13)
+    com.unity.inputsystem@1.14.2 (location: /home/egor/github/Mud-Like/Library/PackageCache/com.unity.inputsystem@be6c4fd0abf5)
+    com.unity.mathematics@1.3.2 (location: /home/egor/github/Mud-Like/Library/PackageCache/com.unity.mathematics@8017b507cc74)
+    com.unity.netcode@1.6.2 (location: /home/egor/github/Mud-Like/Library/PackageCache/com.unity.netcode@6e0b1c933670)
+    com.unity.physics@1.3.14 (location: /home/egor/github/Mud-Like/Library/PackageCache/com.unity.physics@b8c0a578fe9d)
+    com.unity.testtools.codecoverage@1.2.6 (location: /home/egor/github/Mud-Like/Library/PackageCache/com.unity.testtools.codecoverage@205a02cbcb39)
+    com.unity.timeline@1.8.9 (location: /home/egor/github/Mud-Like/Library/PackageCache/com.unity.timeline@6b9e48457ddb)
+    com.unity.toolchain.linux-x86_64@2.0.10 (location: /home/egor/github/Mud-Like/Library/PackageCache/com.unity.toolchain.linux-x86_64@5a6ce31f8a65)
+    com.unity.visualscripting@1.9.8 (location: /home/egor/github/Mud-Like/Library/PackageCache/com.unity.visualscripting@b4d700247d4b)
+    com.unity.xr.legacyinputhelpers@2.1.12 (location: /home/egor/github/Mud-Like/Library/PackageCache/com.unity.xr.legacyinputhelpers@b7579e86f3b4)
+    com.unity.sysroot@2.0.10 (location: /home/egor/github/Mud-Like/Library/PackageCache/com.unity.sysroot@7bbbb9339c14)
+    com.unity.sysroot.linux-x86_64@2.0.9 (location: /home/egor/github/Mud-Like/Library/PackageCache/com.unity.sysroot.linux-x86_64@1998d1c7730e)
+    com.unity.settings-manager@2.1.0 (location: /home/egor/github/Mud-Like/Library/PackageCache/com.unity.settings-manager@41738c275190)
+    com.unity.searcher@4.9.3 (location: /home/egor/github/Mud-Like/Library/PackageCache/com.unity.searcher@1e17ce91558d)
+    com.unity.transport@2.5.3 (location: /home/egor/github/Mud-Like/Library/PackageCache/com.unity.transport@b61461f89a69)
+    com.unity.serialization@3.1.2 (location: /home/egor/github/Mud-Like/Library/PackageCache/com.unity.serialization@582cbf30bbfd)
+    com.unity.profiling.core@1.0.2 (location: /home/egor/github/Mud-Like/Library/PackageCache/com.unity.profiling.core@aac7b93912bc)
+    com.unity.nuget.mono-cecil@1.11.5 (location: /home/egor/github/Mud-Like/Library/PackageCache/com.unity.nuget.mono-cecil@d78732e851eb)
+    com.unity.scriptablebuildpipeline@2.4.1 (location: /home/egor/github/Mud-Like/Library/PackageCache/com.unity.scriptablebuildpipeline@4fce4ca980cb)
+    com.unity.test-framework.performance@3.1.0 (location: /home/egor/github/Mud-Like/Library/PackageCache/com.unity.test-framework.performance@92d1d09a72ed)
+    com.unity.services.analytics@6.1.0 (location: /home/egor/github/Mud-Like/Library/PackageCache/com.unity.services.analytics@10a9ca5d5622)
+    com.unity.services.core@1.14.0 (location: /home/egor/github/Mud-Like/Library/PackageCache/com.unity.services.core@9e81a5e38245)
+    com.unity.nuget.newtonsoft-json@3.2.1 (location: /home/egor/github/Mud-Like/Library/PackageCache/com.unity.nuget.newtonsoft-json@74deb55db2a0)
+  Built-in packages:
+    com.unity.2d.sprite@1.0.0 (location: /home/egor/github/Mud-Like/Library/PackageCache/com.unity.2d.sprite@ec779eb7e23a)
+    com.unity.2d.tilemap@1.0.0 (location: /home/egor/github/Mud-Like/Library/PackageCache/com.unity.2d.tilemap@b1f713daaf0d)
+    com.unity.multiplayer.center@1.0.0 (location: /home/egor/github/Mud-Like/Library/PackageCache/com.unity.multiplayer.center@f5e57a8bed06)
+    com.unity.render-pipelines.core@17.2.0 (location: /home/egor/github/Mud-Like/Library/PackageCache/com.unity.render-pipelines.core@68a7d3f5f655)
+    com.unity.render-pipelines.universal@17.2.0 (location: /home/egor/github/Mud-Like/Library/PackageCache/com.unity.render-pipelines.universal@9a08277289e6)
+    com.unity.shadergraph@17.2.0 (location: /home/egor/github/Mud-Like/Library/PackageCache/com.unity.shadergraph@8f872befe967)
+    com.unity.test-framework@1.5.1 (location: /home/egor/github/Mud-Like/Library/PackageCache/com.unity.test-framework@e6ea06881145)
+    com.unity.ugui@2.0.0 (location: /home/egor/github/Mud-Like/Library/PackageCache/com.unity.ugui@9a0f5b97de62)
+    com.unity.ui.builder@2.0.0 (location: /home/egor/github/Mud-Like/Library/PackageCache/com.unity.ui.builder@dbb89d471266)
+    com.unity.modules.accessibility@1.0.0 (location: /home/egor/Unity/Hub/Editor/6000.2.2f1/Editor/Data/Resources/PackageManager/BuiltInPackages/com.unity.modules.accessibility)
+    com.unity.modules.ai@1.0.0 (location: /home/egor/Unity/Hub/Editor/6000.2.2f1/Editor/Data/Resources/PackageManager/BuiltInPackages/com.unity.modules.ai)
+    com.unity.modules.androidjni@1.0.0 (location: /home/egor/Unity/Hub/Editor/6000.2.2f1/Editor/Data/Resources/PackageManager/BuiltInPackages/com.unity.modules.androidjni)
+    com.unity.modules.animation@1.0.0 (location: /home/egor/Unity/Hub/Editor/6000.2.2f1/Editor/Data/Resources/PackageManager/BuiltInPackages/com.unity.modules.animation)
+    com.unity.modules.assetbundle@1.0.0 (location: /home/egor/Unity/Hub/Editor/6000.2.2f1/Editor/Data/Resources/PackageManager/BuiltInPackages/com.unity.modules.assetbundle)
+    com.unity.modules.audio@1.0.0 (location: /home/egor/Unity/Hub/Editor/6000.2.2f1/Editor/Data/Resources/PackageManager/BuiltInPackages/com.unity.modules.audio)
+    com.unity.modules.cloth@1.0.0 (location: /home/egor/Unity/Hub/Editor/6000.2.2f1/Editor/Data/Resources/PackageManager/BuiltInPackages/com.unity.modules.cloth)
+    com.unity.modules.director@1.0.0 (location: /home/egor/Unity/Hub/Editor/6000.2.2f1/Editor/Data/Resources/PackageManager/BuiltInPackages/com.unity.modules.director)
+    com.unity.modules.imageconversion@1.0.0 (location: /home/egor/Unity/Hub/Editor/6000.2.2f1/Editor/Data/Resources/PackageManager/BuiltInPackages/com.unity.modules.imageconversion)
+    com.unity.modules.imgui@1.0.0 (location: /home/egor/Unity/Hub/Editor/6000.2.2f1/Editor/Data/Resources/PackageManager/BuiltInPackages/com.unity.modules.imgui)
+    com.unity.modules.jsonserialize@1.0.0 (location: /home/egor/Unity/Hub/Editor/6000.2.2f1/Editor/Data/Resources/PackageManager/BuiltInPackages/com.unity.modules.jsonserialize)
+    com.unity.modules.particlesystem@1.0.0 (location: /home/egor/Unity/Hub/Editor/6000.2.2f1/Editor/Data/Resources/PackageManager/BuiltInPackages/com.unity.modules.particlesystem)
+    com.unity.modules.physics@1.0.0 (location: /home/egor/Unity/Hub/Editor/6000.2.2f1/Editor/Data/Resources/PackageManager/BuiltInPackages/com.unity.modules.physics)
+    com.unity.modules.physics2d@1.0.0 (location: /home/egor/Unity/Hub/Editor/6000.2.2f1/Editor/Data/Resources/PackageManager/BuiltInPackages/com.unity.modules.physics2d)
+    com.unity.modules.screencapture@1.0.0 (location: /home/egor/Unity/Hub/Editor/6000.2.2f1/Editor/Data/Resources/PackageManager/BuiltInPackages/com.unity.modules.screencapture)
+    com.unity.modules.terrain@1.0.0 (location: /home/egor/Unity/Hub/Editor/6000.2.2f1/Editor/Data/Resources/PackageManager/BuiltInPackages/com.unity.modules.terrain)
+    com.unity.modules.terrainphysics@1.0.0 (location: /home/egor/Unity/Hub/Editor/6000.2.2f1/Editor/Data/Resources/PackageManager/BuiltInPackages/com.unity.modules.terrainphysics)
+    com.unity.modules.tilemap@1.0.0 (location: /home/egor/Unity/Hub/Editor/6000.2.2f1/Editor/Data/Resources/PackageManager/BuiltInPackages/com.unity.modules.tilemap)
+    com.unity.modules.ui@1.0.0 (location: /home/egor/Unity/Hub/Editor/6000.2.2f1/Editor/Data/Resources/PackageManager/BuiltInPackages/com.unity.modules.ui)
+    com.unity.modules.uielements@1.0.0 (location: /home/egor/Unity/Hub/Editor/6000.2.2f1/Editor/Data/Resources/PackageManager/BuiltInPackages/com.unity.modules.uielements)
+    com.unity.modules.umbra@1.0.0 (location: /home/egor/Unity/Hub/Editor/6000.2.2f1/Editor/Data/Resources/PackageManager/BuiltInPackages/com.unity.modules.umbra)
+    com.unity.modules.unityanalytics@1.0.0 (location: /home/egor/Unity/Hub/Editor/6000.2.2f1/Editor/Data/Resources/PackageManager/BuiltInPackages/com.unity.modules.unityanalytics)
+    com.unity.modules.unitywebrequest@1.0.0 (location: /home/egor/Unity/Hub/Editor/6000.2.2f1/Editor/Data/Resources/PackageManager/BuiltInPackages/com.unity.modules.unitywebrequest)
+    com.unity.modules.unitywebrequestassetbundle@1.0.0 (location: /home/egor/Unity/Hub/Editor/6000.2.2f1/Editor/Data/Resources/PackageManager/BuiltInPackages/com.unity.modules.unitywebrequestassetbundle)
+    com.unity.modules.unitywebrequestaudio@1.0.0 (location: /home/egor/Unity/Hub/Editor/6000.2.2f1/Editor/Data/Resources/PackageManager/BuiltInPackages/com.unity.modules.unitywebrequestaudio)
+    com.unity.modules.unitywebrequesttexture@1.0.0 (location: /home/egor/Unity/Hub/Editor/6000.2.2f1/Editor/Data/Resources/PackageManager/BuiltInPackages/com.unity.modules.unitywebrequesttexture)
+    com.unity.modules.unitywebrequestwww@1.0.0 (location: /home/egor/Unity/Hub/Editor/6000.2.2f1/Editor/Data/Resources/PackageManager/BuiltInPackages/com.unity.modules.unitywebrequestwww)
+    com.unity.modules.vehicles@1.0.0 (location: /home/egor/Unity/Hub/Editor/6000.2.2f1/Editor/Data/Resources/PackageManager/BuiltInPackages/com.unity.modules.vehicles)
+    com.unity.modules.video@1.0.0 (location: /home/egor/Unity/Hub/Editor/6000.2.2f1/Editor/Data/Resources/PackageManager/BuiltInPackages/com.unity.modules.video)
+    com.unity.modules.vr@1.0.0 (location: /home/egor/Unity/Hub/Editor/6000.2.2f1/Editor/Data/Resources/PackageManager/BuiltInPackages/com.unity.modules.vr)
+    com.unity.modules.wind@1.0.0 (location: /home/egor/Unity/Hub/Editor/6000.2.2f1/Editor/Data/Resources/PackageManager/BuiltInPackages/com.unity.modules.wind)
+    com.unity.modules.xr@1.0.0 (location: /home/egor/Unity/Hub/Editor/6000.2.2f1/Editor/Data/Resources/PackageManager/BuiltInPackages/com.unity.modules.xr)
+    com.unity.modules.subsystems@1.0.0 (location: /home/egor/Unity/Hub/Editor/6000.2.2f1/Editor/Data/Resources/PackageManager/BuiltInPackages/com.unity.modules.subsystems)
+    com.unity.modules.hierarchycore@1.0.0 (location: /home/egor/Unity/Hub/Editor/6000.2.2f1/Editor/Data/Resources/PackageManager/BuiltInPackages/com.unity.modules.hierarchycore)
+    com.unity.ext.nunit@2.0.5 (location: /home/egor/github/Mud-Like/Library/PackageCache/com.unity.ext.nunit@b16e6d09cd93)
+    com.unity.render-pipelines.universal-config@17.0.3 (location: /home/egor/github/Mud-Like/Library/PackageCache/com.unity.render-pipelines.universal-config@dbe3fd082d8f)
+    com.unity.rendering.light-transport@1.0.1 (location: /home/egor/github/Mud-Like/Library/PackageCache/com.unity.rendering.light-transport@b87e8bb2ed63)
+[Subsystems] No new subsystems found in resolved package list.
+[Package Manager] Done registering packages in 0.02 seconds
+Assembly reference Packages/com.unity.entities/Unity.Scenes.Editor/Internals/Properties/Unity.Properties.Internals.asmref has no target assembly definition
+Assembly reference Packages/com.unity.entities/Unity.Scenes.Editor/Internals/Properties/Unity.Properties.Internals.asmref has no target assembly definition
+Assembly for Assembly Definition File 'Assets/Scripts/DOTS/MudLike.DOTS.asmdef' will not be compiled, because it has no scripts associated with it.
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /home/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:LogFormat (UnityEngine.LogType,string,object[])
+UnityEngine.Debug:LogWarningFormat (string,object[])
+UnityEditor.Scripting.ScriptCompilation.EditorCompilation:WarnIfThereAreAssembliesWithoutAnyScripts (UnityEditor.Scripting.ScriptCompilation.ScriptAssemblySettings,UnityEditor.Scripting.ScriptCompilation.ScriptAssembly[]) (at /home/bokken/build/output/unity/unity/Editor/Mono/Scripting/ScriptCompilation/EditorCompilation.cs:780)
+UnityEditor.Scripting.ScriptCompilation.EditorCompilation:CompileScriptsWithSettings (UnityEditor.Scripting.ScriptCompilation.ScriptAssemblySettings) (at /home/bokken/build/output/unity/unity/Editor/Mono/Scripting/ScriptCompilation/EditorCompilation.cs:833)
+UnityEditor.Scripting.ScriptCompilation.EditorCompilation:CompileScripts (UnityEditor.Scripting.ScriptCompilation.EditorScriptCompilationOptions,UnityEditor.BuildTarget,int,string[]) (at /home/bokken/build/output/unity/unity/Editor/Mono/Scripting/ScriptCompilation/EditorCompilation.cs:716)
+UnityEditor.Scripting.ScriptCompilation.EditorCompilationInterface/<>c__DisplayClass21_0:<CompileScripts>b__0 () (at /home/bokken/build/output/unity/unity/Editor/Mono/Scripting/ScriptCompilation/EditorCompilationInterface.cs:184)
+UnityEditor.Scripting.ScriptCompilation.EditorCompilationInterface:EmitExceptionAsError<UnityEditor.Scripting.ScriptCompilation.EditorCompilation/CompileStatus> (System.Func`1<UnityEditor.Scripting.ScriptCompilation.EditorCompilation/CompileStatus>,UnityEditor.Scripting.ScriptCompilation.EditorCompilation/CompileStatus) (at /home/bokken/build/output/unity/unity/Editor/Mono/Scripting/ScriptCompilation/EditorCompilationInterface.cs:49)
+UnityEditor.Scripting.ScriptCompilation.EditorCompilationInterface:CompileScripts (UnityEditor.Scripting.ScriptCompilation.EditorScriptCompilationOptions,UnityEditor.BuildTarget,int,string[]) (at /home/bokken/build/output/unity/unity/Editor/Mono/Scripting/ScriptCompilation/EditorCompilationInterface.cs:184)
+
+(Filename: /home/bokken/build/output/unity/unity/Editor/Mono/Scripting/ScriptCompilation/EditorCompilation.cs Line: 780)
+
+Assembly for Assembly Definition File 'Assets/Scripts/Networking/MudLike.Networking.asmdef' will not be compiled, because it has no scripts associated with it.
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /home/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:LogFormat (UnityEngine.LogType,string,object[])
+UnityEngine.Debug:LogWarningFormat (string,object[])
+UnityEditor.Scripting.ScriptCompilation.EditorCompilation:WarnIfThereAreAssembliesWithoutAnyScripts (UnityEditor.Scripting.ScriptCompilation.ScriptAssemblySettings,UnityEditor.Scripting.ScriptCompilation.ScriptAssembly[]) (at /home/bokken/build/output/unity/unity/Editor/Mono/Scripting/ScriptCompilation/EditorCompilation.cs:780)
+UnityEditor.Scripting.ScriptCompilation.EditorCompilation:CompileScriptsWithSettings (UnityEditor.Scripting.ScriptCompilation.ScriptAssemblySettings) (at /home/bokken/build/output/unity/unity/Editor/Mono/Scripting/ScriptCompilation/EditorCompilation.cs:833)
+UnityEditor.Scripting.ScriptCompilation.EditorCompilation:CompileScripts (UnityEditor.Scripting.ScriptCompilation.EditorScriptCompilationOptions,UnityEditor.BuildTarget,int,string[]) (at /home/bokken/build/output/unity/unity/Editor/Mono/Scripting/ScriptCompilation/EditorCompilation.cs:716)
+UnityEditor.Scripting.ScriptCompilation.EditorCompilationInterface/<>c__DisplayClass21_0:<CompileScripts>b__0 () (at /home/bokken/build/output/unity/unity/Editor/Mono/Scripting/ScriptCompilation/EditorCompilationInterface.cs:184)
+UnityEditor.Scripting.ScriptCompilation.EditorCompilationInterface:EmitExceptionAsError<UnityEditor.Scripting.ScriptCompilation.EditorCompilation/CompileStatus> (System.Func`1<UnityEditor.Scripting.ScriptCompilation.EditorCompilation/CompileStatus>,UnityEditor.Scripting.ScriptCompilation.EditorCompilation/CompileStatus) (at /home/bokken/build/output/unity/unity/Editor/Mono/Scripting/ScriptCompilation/EditorCompilationInterface.cs:49)
+UnityEditor.Scripting.ScriptCompilation.EditorCompilationInterface:CompileScripts (UnityEditor.Scripting.ScriptCompilation.EditorScriptCompilationOptions,UnityEditor.BuildTarget,int,string[]) (at /home/bokken/build/output/unity/unity/Editor/Mono/Scripting/ScriptCompilation/EditorCompilationInterface.cs:184)
+
+(Filename: /home/bokken/build/output/unity/unity/Editor/Mono/Scripting/ScriptCompilation/EditorCompilation.cs Line: 780)
+
+[40m[32minfo[39m[22m[49m: Microsoft.Hosting.Lifetime[14]
+      Now listening on: http://unix:/tmp/ilpp.sock-6e2e01d6069344bde9c61f0f80cbfc67
+[40m[32minfo[39m[22m[49m: Microsoft.Hosting.Lifetime[0]
+      Application started. Press Ctrl+C to shut down.
+[40m[32minfo[39m[22m[49m: Microsoft.Hosting.Lifetime[0]
+      Hosting environment: Production
+[40m[32minfo[39m[22m[49m: Microsoft.Hosting.Lifetime[0]
+      Content root path: /home/egor/github/Mud-Like/
+[40m[32minfo[39m[22m[49m: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 POST http://ilpp/UnityILPP.PostProcessing/Ping application/grpc -
+[40m[32minfo[39m[22m[49m: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'gRPC - /UnityILPP.PostProcessing/Ping'
+[40m[32minfo[39m[22m[49m: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'gRPC - /UnityILPP.PostProcessing/Ping'
+[40m[32minfo[39m[22m[49m: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 POST http://ilpp/UnityILPP.PostProcessing/Ping application/grpc - - 200 - application/grpc 89.2885ms
+Starting: /home/egor/Unity/Hub/Editor/6000.2.2f1/Editor/Data/bee_backend --ipc --defer-dag-verification --dagfile="Library/Bee/2400b0aE.dag" --continue-on-failure --profile="Library/Bee/backend1.traceevents" ScriptAssemblies
+WorkingDir: /home/egor/github/Mud-Like
+[40m[32minfo[39m[22m[49m: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 POST http://ilpp/UnityILPP.PostProcessing/ConfigurePostProcessors application/grpc -
+[40m[32minfo[39m[22m[49m: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'gRPC - /UnityILPP.PostProcessing/ConfigurePostProcessors'
+[40m[1m[33mwarn[39m[22m[49m: Unity.ILPP.Runner.PostProcessingAssemblyLoadContext[0]
+      Assembly system.runtime.interopservices.windowsruntime has duplicate hint path. Ignoring "/home/egor/Unity/Hub/Editor/6000.2.2f1/Editor/Data/UnityReferenceAssemblies/unity-4.8-api/Facades/System.Runtime.InteropServices.WindowsRuntime.dll" in favor of "/home/egor/Unity/Hub/Editor/6000.2.2f1/Editor/Data/NetStandard/Extensions/2.0.0/System.Runtime.InteropServices.WindowsRuntime.dll"
+[40m[1m[33mwarn[39m[22m[49m: Unity.ILPP.Runner.PostProcessingAssemblyLoadContext[0]
+      Assembly system.componentmodel.composition has duplicate hint path. Ignoring "/home/egor/Unity/Hub/Editor/6000.2.2f1/Editor/Data/UnityReferenceAssemblies/unity-4.8-api/System.ComponentModel.Composition.dll" in favor of "/home/egor/Unity/Hub/Editor/6000.2.2f1/Editor/Data/NetStandard/compat/2.1.0/shims/netfx/System.ComponentModel.Composition.dll"
+[40m[32minfo[39m[22m[49m: Unity.ILPP.Runner.PostProcessingAssemblyLoadContext[0]
+      Resolved Unity.Burst.Cecil, Version=0.11.4.0, Culture=neutral, PublicKeyToken=50cebf1cceb9d05e with Library/PackageCache/com.unity.burst@f7a407abf4d5/Unity.Burst.CodeGen/Unity.Burst.Cecil.dll
+[40m[32minfo[39m[22m[49m: Unity.ILPP.Runner.PostProcessingAssemblyLoadContext[0]
+      Resolved Mono.Cecil, Version=0.11.5.0, Culture=neutral, PublicKeyToken=50cebf1cceb9d05e with Library/PackageCache/com.unity.nuget.mono-cecil@d78732e851eb/Mono.Cecil.dll
+[40m[32minfo[39m[22m[49m: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'gRPC - /UnityILPP.PostProcessing/ConfigurePostProcessors'
+[40m[32minfo[39m[22m[49m: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 POST http://ilpp/UnityILPP.PostProcessing/ConfigurePostProcessors application/grpc - - 200 - application/grpc 60.6578ms
+DisplayProgressbar: Compiling Scripts
+ExitCode: 0 Duration: 0s757ms
+[1081/1478  0s] ILPP-Configuration Library/ilpp-configuration.nevergeneratedoutput
+*** Tundra build success (0.69 seconds), 1 items updated, 1478 evaluated
+AssetDatabase: script compilation time: 1.963351s
+Total cache size 267840361
+Total cache size after purge 267840361, took 00:00:00.3251224
+Begin MonoManager ReloadAssembly
+Symbol file LoadedFromMemory is not a mono symbol file
+- Loaded All Assemblies, in  2.163 seconds
+Refreshing native plugins compatible for Editor in 2.91 ms, found 1 plugins.
+Native extension for LinuxStandalone target not found
+Assembly reference Packages/com.unity.entities/Unity.Scenes.Editor/Internals/Properties/Unity.Properties.Internals.asmref has no target assembly definition
+Refreshing native plugins compatible for Editor in 3.37 ms, found 1 plugins.
+TypeManager.Initialize took: 2974ms
+Loaded VersionHandlerImpl
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /home/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+Google.Logger:Log (string,Google.LogLevel)
+Google.VersionHandlerImpl:Log (string,bool,Google.LogLevel)
+Google.VersionHandlerImpl:.cctor ()
+Google.VersionHandlerImpl/DotNetVersionUpdater:.cctor ()
+System.Runtime.CompilerServices.RuntimeHelpers:RunClassConstructor (System.RuntimeTypeHandle)
+UnityEditor.EditorAssemblies:ProcessInitializeOnLoadAttributes (System.Type[]) (at /home/bokken/build/output/unity/unity/Editor/Mono/EditorAssemblies.cs:124)
+
+(Filename: /home/bokken/build/output/unity/unity/Editor/Mono/EditorAssemblies.cs Line: 124)
+
+Assets/MobileDependencyResolver/Editor/Google.IOSResolver.dll metadata will be checked
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /home/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+Google.Logger:Log (string,Google.LogLevel)
+Google.VersionHandlerImpl:Log (string,bool,Google.LogLevel)
+Google.VersionHandlerImpl/FileMetadataSet:FindWithPendingUpdates (Google.VersionHandlerImpl/FileMetadataSet)
+Google.VersionHandlerImpl:UpdateVersionedAssets (bool,System.Action)
+Google.VersionHandlerImpl:UpdateVersionedAssets (bool)
+Google.VersionHandlerImpl:UpdateVersionedAssets ()
+Google.VersionHandlerImpl:UpdateVersionedAssetsOnUpdate ()
+Google.VersionHandlerImpl:<VersionHandlerImpl>m__B ()
+Google.RunOnMainThread:ExecuteNext ()
+Google.RunOnMainThread:<ExecuteAll>m__A ()
+Google.RunOnMainThread:RunAction (System.Action)
+Google.RunOnMainThread:ExecuteAll ()
+Google.RunOnMainThread:Run (System.Action,bool)
+Google.VersionHandlerImpl:.cctor ()
+Google.VersionHandlerImpl/DotNetVersionUpdater:.cctor ()
+System.Runtime.CompilerServices.RuntimeHelpers:RunClassConstructor (System.RuntimeTypeHandle)
+UnityEditor.EditorAssemblies:ProcessInitializeOnLoadAttributes (System.Type[]) (at /home/bokken/build/output/unity/unity/Editor/Mono/EditorAssemblies.cs:124)
+
+(Filename: /home/bokken/build/output/unity/unity/Editor/Mono/EditorAssemblies.cs Line: 124)
+
+Assets/MobileDependencyResolver/Editor/Google.JarResolver.dll metadata will be checked
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /home/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+Google.Logger:Log (string,Google.LogLevel)
+Google.VersionHandlerImpl:Log (string,bool,Google.LogLevel)
+Google.VersionHandlerImpl/FileMetadataSet:FindWithPendingUpdates (Google.VersionHandlerImpl/FileMetadataSet)
+Google.VersionHandlerImpl:UpdateVersionedAssets (bool,System.Action)
+Google.VersionHandlerImpl:UpdateVersionedAssets (bool)
+Google.VersionHandlerImpl:UpdateVersionedAssets ()
+Google.VersionHandlerImpl:UpdateVersionedAssetsOnUpdate ()
+Google.VersionHandlerImpl:<VersionHandlerImpl>m__B ()
+Google.RunOnMainThread:ExecuteNext ()
+Google.RunOnMainThread:<ExecuteAll>m__A ()
+Google.RunOnMainThread:RunAction (System.Action)
+Google.RunOnMainThread:ExecuteAll ()
+Google.RunOnMainThread:Run (System.Action,bool)
+Google.VersionHandlerImpl:.cctor ()
+Google.VersionHandlerImpl/DotNetVersionUpdater:.cctor ()
+System.Runtime.CompilerServices.RuntimeHelpers:RunClassConstructor (System.RuntimeTypeHandle)
+UnityEditor.EditorAssemblies:ProcessInitializeOnLoadAttributes (System.Type[]) (at /home/bokken/build/output/unity/unity/Editor/Mono/EditorAssemblies.cs:124)
+
+(Filename: /home/bokken/build/output/unity/unity/Editor/Mono/EditorAssemblies.cs Line: 124)
+
+Assets/MobileDependencyResolver/Editor/Google.VersionHandler.dll metadata will be checked
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /home/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+Google.Logger:Log (string,Google.LogLevel)
+Google.VersionHandlerImpl:Log (string,bool,Google.LogLevel)
+Google.VersionHandlerImpl/FileMetadataSet:FindWithPendingUpdates (Google.VersionHandlerImpl/FileMetadataSet)
+Google.VersionHandlerImpl:UpdateVersionedAssets (bool,System.Action)
+Google.VersionHandlerImpl:UpdateVersionedAssets (bool)
+Google.VersionHandlerImpl:UpdateVersionedAssets ()
+Google.VersionHandlerImpl:UpdateVersionedAssetsOnUpdate ()
+Google.VersionHandlerImpl:<VersionHandlerImpl>m__B ()
+Google.RunOnMainThread:ExecuteNext ()
+Google.RunOnMainThread:<ExecuteAll>m__A ()
+Google.RunOnMainThread:RunAction (System.Action)
+Google.RunOnMainThread:ExecuteAll ()
+Google.RunOnMainThread:Run (System.Action,bool)
+Google.VersionHandlerImpl:.cctor ()
+Google.VersionHandlerImpl/DotNetVersionUpdater:.cctor ()
+System.Runtime.CompilerServices.RuntimeHelpers:RunClassConstructor (System.RuntimeTypeHandle)
+UnityEditor.EditorAssemblies:ProcessInitializeOnLoadAttributes (System.Type[]) (at /home/bokken/build/output/unity/unity/Editor/Mono/EditorAssemblies.cs:124)
+
+(Filename: /home/bokken/build/output/unity/unity/Editor/Mono/EditorAssemblies.cs Line: 124)
+
+Assets/MobileDependencyResolver/Editor/Google.VersionHandlerImpl.dll metadata will be checked
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /home/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+Google.Logger:Log (string,Google.LogLevel)
+Google.VersionHandlerImpl:Log (string,bool,Google.LogLevel)
+Google.VersionHandlerImpl/FileMetadataSet:FindWithPendingUpdates (Google.VersionHandlerImpl/FileMetadataSet)
+Google.VersionHandlerImpl:UpdateVersionedAssets (bool,System.Action)
+Google.VersionHandlerImpl:UpdateVersionedAssets (bool)
+Google.VersionHandlerImpl:UpdateVersionedAssets ()
+Google.VersionHandlerImpl:UpdateVersionedAssetsOnUpdate ()
+Google.VersionHandlerImpl:<VersionHandlerImpl>m__B ()
+Google.RunOnMainThread:ExecuteNext ()
+Google.RunOnMainThread:<ExecuteAll>m__A ()
+Google.RunOnMainThread:RunAction (System.Action)
+Google.RunOnMainThread:ExecuteAll ()
+Google.RunOnMainThread:Run (System.Action,bool)
+Google.VersionHandlerImpl:.cctor ()
+Google.VersionHandlerImpl/DotNetVersionUpdater:.cctor ()
+System.Runtime.CompilerServices.RuntimeHelpers:RunClassConstructor (System.RuntimeTypeHandle)
+UnityEditor.EditorAssemblies:ProcessInitializeOnLoadAttributes (System.Type[]) (at /home/bokken/build/output/unity/unity/Editor/Mono/EditorAssemblies.cs:124)
+
+(Filename: /home/bokken/build/output/unity/unity/Editor/Mono/EditorAssemblies.cs Line: 124)
+
+Assets/MobileDependencyResolver/Editor/mobile-dependency-resolver.txt metadata will be checked
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /home/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+Google.Logger:Log (string,Google.LogLevel)
+Google.VersionHandlerImpl:Log (string,bool,Google.LogLevel)
+Google.VersionHandlerImpl/FileMetadataSet:FindWithPendingUpdates (Google.VersionHandlerImpl/FileMetadataSet)
+Google.VersionHandlerImpl:UpdateVersionedAssets (bool,System.Action)
+Google.VersionHandlerImpl:UpdateVersionedAssets (bool)
+Google.VersionHandlerImpl:UpdateVersionedAssets ()
+Google.VersionHandlerImpl:UpdateVersionedAssetsOnUpdate ()
+Google.VersionHandlerImpl:<VersionHandlerImpl>m__B ()
+Google.RunOnMainThread:ExecuteNext ()
+Google.RunOnMainThread:<ExecuteAll>m__A ()
+Google.RunOnMainThread:RunAction (System.Action)
+Google.RunOnMainThread:ExecuteAll ()
+Google.RunOnMainThread:Run (System.Action,bool)
+Google.VersionHandlerImpl:.cctor ()
+Google.VersionHandlerImpl/DotNetVersionUpdater:.cctor ()
+System.Runtime.CompilerServices.RuntimeHelpers:RunClassConstructor (System.RuntimeTypeHandle)
+UnityEditor.EditorAssemblies:ProcessInitializeOnLoadAttributes (System.Type[]) (at /home/bokken/build/output/unity/unity/Editor/Mono/EditorAssemblies.cs:124)
+
+(Filename: /home/bokken/build/output/unity/unity/Editor/Mono/EditorAssemblies.cs Line: 124)
+
+Detected .NET version 4.5
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /home/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+Google.Logger:Log (string,Google.LogLevel)
+Google.VersionHandlerImpl:Log (string,bool,Google.LogLevel)
+Google.VersionHandlerImpl/DotNetVersionUpdater:.cctor ()
+System.Runtime.CompilerServices.RuntimeHelpers:RunClassConstructor (System.RuntimeTypeHandle)
+UnityEditor.EditorAssemblies:ProcessInitializeOnLoadAttributes (System.Type[]) (at /home/bokken/build/output/unity/unity/Editor/Mono/EditorAssemblies.cs:124)
+
+(Filename: /home/bokken/build/output/unity/unity/Editor/Mono/EditorAssemblies.cs Line: 124)
+
+Mono: successfully reloaded assembly
+- Finished resetting the current domain, in 13.502 seconds
+Domain Reload Profiling: 15651ms
+	BeginReloadAssembly (328ms)
+		ExecutionOrderSort (0ms)
+		DisableScriptedObjects (29ms)
+		BackupInstance (0ms)
+		ReleaseScriptingObjects (0ms)
+		CreateAndSetChildDomain (90ms)
+	RebuildCommonClasses (79ms)
+	RebuildNativeTypeToScriptingClass (20ms)
+	initialDomainReloadingComplete (69ms)
+	LoadAllAssembliesAndSetupDomain (1652ms)
+		LoadAssemblies (884ms)
+		RebuildTransferFunctionScriptingTraits (0ms)
+		AnalyzeDomain (909ms)
+			TypeCache.Refresh (713ms)
+				TypeCache.ScanAssembly (671ms)
+			BuildScriptInfoCaches (167ms)
+			ResolveRequiredComponents (24ms)
+	FinalizeReload (13504ms)
+		ReleaseScriptCaches (0ms)
+		RebuildScriptCaches (0ms)
+		SetupLoadedEditorAssemblies (13048ms)
+			LogAssemblyErrors (0ms)
+			InitializePlatformSupportModulesInManaged (115ms)
+			SetLoadedEditorAssemblies (16ms)
+			BeforeProcessingInitializeOnLoad (453ms)
+			ProcessInitializeOnLoadAttributes (11669ms)
+			ProcessInitializeOnLoadMethodAttributes (785ms)
+			AfterProcessingInitializeOnLoad (9ms)
+			EditorAssembliesLoaded (1ms)
+		ExecutionOrderSort2 (0ms)
+		AwakeInstancesAfterBackupRestoration (12ms)
+Asset Pipeline Refresh (id=ffbe559635e4416c5a15f1288e17c23d): Total: 20.466 seconds - Initiated by InitialRefreshV2(ForceSynchronousImport)
+	Summary:
+		Imports: total=0 (actual=0, local cache=0, cache server=0)
+		Asset DB Process Time: managed=0 ms, native=15743 ms
+		Asset DB Callback time: managed=387 ms, native=26 ms
+		Scripting: domain reloads=1, domain reload time=2164 ms, compile time=1967 ms, other=177 ms
+		Project Asset Count: scripts=2211, non-scripts=3046
+		Asset File Changes: new=0, changed=0, moved=0, deleted=0
+		Scan Filter Count: 1
+	InvokeCustomDependenciesCallbacks: 0.010ms
+	InvokePackagesCallback: 27.723ms
+	ApplyChangesToAssetFolders: 1.034ms
+	Scan: 1227.136ms
+	OnSourceAssetsModified: 0.008ms
+	CategorizeAssetsWithTransientArtifact: 231.883ms
+	ProcessAssetsWithTransientArtifactChanges: 241.114ms
+	CategorizeAssets: 126.965ms
+	ImportOutOfDateAssets: 13538.977ms (11565.584ms without children)
+		CompileScripts: 1966.722ms
+		ReloadNativeAssets: 0.001ms
+		UnloadImportedAssets: 0.638ms
+		EnsureUptoDateAssetsAreRegisteredWithGuidPM: 2.388ms
+		InitializingProgressBar: 0.001ms
+		PostProcessAllAssetNotificationsAddChangedAssets: 0.001ms
+		OnDemandSchedulerStart: 3.643ms
+	PostProcessAllAssets: 387.009ms
+	GatherAllCurrentPrimaryArtifactRevisions: 0.000ms
+	UnloadStreamsBegin: 3.582ms
+	PersistCurrentRevisions: 0.490ms
+	UnloadStreamsEnd: 0.001ms
+	GenerateScriptTypeHashes: 6.472ms
+	Untracked: 4680.468ms
+
+Application.AssetDatabase Initial Refresh End
+AutoLocale: current locale expects 'C' but got 'en_US.UTF-8'Launched and connected shader compiler UnityShaderCompiler after 0.06 seconds
+Scanning for USB devices : 8.483ms
+Initializing Unity extensions:
+UpdateMenuTitleForLanguage: 10
+[MODES] ModeService[none].Initialize
+[MODES] ModeService[none].LoadModes
+[MODES] Loading mode Default (0) for mode-current-id-Mud-Like
+Unloading 125 Unused Serialized files (Serialized files now loaded: 0)
+Unloading 9206 unused Assets / (8.2 MB). Loaded Objects now: 9858.
+Memory consumption went from 214.5 MB to 206.3 MB.
+Total: 56.691001 ms (FindLiveObjects: 1.466412 ms CreateObjectMapping: 3.546049 ms MarkObjects: 32.598081 ms  DeleteObjects: 19.078489 ms)
+
+Batchmode quit successfully invoked - shutting down!
+Unloading 3 Unused Serialized files (Serialized files now loaded: 0)
+Unloading 1 unused Assets / (0.5 KB). Loaded Objects now: 9865.
+Memory consumption went from 196.6 MB to 196.6 MB.
+Total: 25.423543 ms (FindLiveObjects: 0.848946 ms CreateObjectMapping: 0.955452 ms MarkObjects: 23.566611 ms  DeleteObjects: 0.050099 ms)
+
+[Physics::Module] Cleanup current backend.
+[Physics::Module] Id: 0xf2b8ea05
+Input System module state changed to: ShutdownInProgress.
+Input System polling thread exited.
+Input System module state changed to: Shutdown.
+[Licensing::IpcConnector] LicenseClient-egor-notifications channel disconnected successfully.
+[Licensing::IpcConnector] LicenseClient-egor channel disconnected successfully.
+AcceleratorClientConnectionCallback - disconnected - :0
+[40m[32minfo[39m[22m[49m: Microsoft.Hosting.Lifetime[0]
+      Application is shutting down...
+[40m[32minfo[39m[22m[49m: Unity.ILPP.Runner.PostProcessingAssemblyLoadContext[0]
+      ALC ILPP context 1 is unloading
+Cleanup mono
+debugger-agent: Unable to listen on 59
+Exiting batchmode successfully now!
+
+SDL leaked 2 allocations

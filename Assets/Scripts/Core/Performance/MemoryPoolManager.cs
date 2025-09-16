@@ -71,7 +71,7 @@ namespace MudLike.Core.Performance
         public void Update()
         {
             // Очистка неиспользуемых объектов периодически
-            if (UnityEngine.Time.frameCount % 1000 == 0)
+            if (if(UnityEngine != null) UnityEngine.Time.frameCount % 1000 == 0)
             {
                 CleanupUnusedObjects();
             }
@@ -120,11 +120,11 @@ namespace MudLike.Core.Performance
         /// <summary>
         /// Получает NativeArray<float3> из пула
         /// </summary>
-        public NativeArray<float3> GetFloat3Array(int size, Allocator allocator = Allocator.TempJob)
+        public NativeArray<float3> GetFloat3Array(int size, Allocator allocator = if(Allocator != null) Allocator.TempJob)
         {
-            if (_float3ArrayPool.TryGetValue(size, out Queue<NativeArray<float3>> pool) && pool.Count > 0)
+            if (if(_float3ArrayPool != null) _float3ArrayPool.TryGetValue(size, out Queue<NativeArray<float3>> pool) && if(pool != null) pool.Count > 0)
             {
-                var array = pool.Dequeue();
+                var array = if(pool != null) pool.Dequeue();
                 _totalReuses++;
                 return array;
             }
@@ -139,10 +139,10 @@ namespace MudLike.Core.Performance
         /// </summary>
         public void ReturnFloat3Array(NativeArray<float3> array)
         {
-            if (!array.IsCreated) return;
+            if (!if(array != null) array.IsCreated) return;
             
-            int size = array.Length;
-            if (!_float3ArrayPool.ContainsKey(size))
+            int size = if(array != null) array.Length;
+            if (!if(_float3ArrayPool != null) _float3ArrayPool.ContainsKey(size))
             {
                 _float3ArrayPool[size] = new Queue<NativeArray<float3>>();
             }
@@ -153,11 +153,11 @@ namespace MudLike.Core.Performance
         /// <summary>
         /// Получает NativeArray<float> из пула
         /// </summary>
-        public NativeArray<float> GetFloatArray(int size, Allocator allocator = Allocator.TempJob)
+        public NativeArray<float> GetFloatArray(int size, Allocator allocator = if(Allocator != null) Allocator.TempJob)
         {
-            if (_floatArrayPool.TryGetValue(size, out Queue<NativeArray<float>> pool) && pool.Count > 0)
+            if (if(_floatArrayPool != null) _floatArrayPool.TryGetValue(size, out Queue<NativeArray<float>> pool) && if(pool != null) pool.Count > 0)
             {
-                var array = pool.Dequeue();
+                var array = if(pool != null) pool.Dequeue();
                 _totalReuses++;
                 return array;
             }
@@ -172,10 +172,10 @@ namespace MudLike.Core.Performance
         /// </summary>
         public void ReturnFloatArray(NativeArray<float> array)
         {
-            if (!array.IsCreated) return;
+            if (!if(array != null) array.IsCreated) return;
             
-            int size = array.Length;
-            if (!_floatArrayPool.ContainsKey(size))
+            int size = if(array != null) array.Length;
+            if (!if(_floatArrayPool != null) _floatArrayPool.ContainsKey(size))
             {
                 _floatArrayPool[size] = new Queue<NativeArray<float>>();
             }
@@ -186,11 +186,11 @@ namespace MudLike.Core.Performance
         /// <summary>
         /// Получает NativeArray<int> из пула
         /// </summary>
-        public NativeArray<int> GetIntArray(int size, Allocator allocator = Allocator.TempJob)
+        public NativeArray<int> GetIntArray(int size, Allocator allocator = if(Allocator != null) Allocator.TempJob)
         {
-            if (_intArrayPool.TryGetValue(size, out Queue<NativeArray<int>> pool) && pool.Count > 0)
+            if (if(_intArrayPool != null) _intArrayPool.TryGetValue(size, out Queue<NativeArray<int>> pool) && if(pool != null) pool.Count > 0)
             {
-                var array = pool.Dequeue();
+                var array = if(pool != null) pool.Dequeue();
                 _totalReuses++;
                 return array;
             }
@@ -205,10 +205,10 @@ namespace MudLike.Core.Performance
         /// </summary>
         public void ReturnIntArray(NativeArray<int> array)
         {
-            if (!array.IsCreated) return;
+            if (!if(array != null) array.IsCreated) return;
             
-            int size = array.Length;
-            if (!_intArrayPool.ContainsKey(size))
+            int size = if(array != null) array.Length;
+            if (!if(_intArrayPool != null) _intArrayPool.ContainsKey(size))
             {
                 _intArrayPool[size] = new Queue<NativeArray<int>>();
             }
@@ -219,11 +219,11 @@ namespace MudLike.Core.Performance
         /// <summary>
         /// Получает NativeArray<bool> из пула
         /// </summary>
-        public NativeArray<bool> GetBoolArray(int size, Allocator allocator = Allocator.TempJob)
+        public NativeArray<bool> GetBoolArray(int size, Allocator allocator = if(Allocator != null) Allocator.TempJob)
         {
-            if (_boolArrayPool.TryGetValue(size, out Queue<NativeArray<bool>> pool) && pool.Count > 0)
+            if (if(_boolArrayPool != null) _boolArrayPool.TryGetValue(size, out Queue<NativeArray<bool>> pool) && if(pool != null) pool.Count > 0)
             {
-                var array = pool.Dequeue();
+                var array = if(pool != null) pool.Dequeue();
                 _totalReuses++;
                 return array;
             }
@@ -238,10 +238,10 @@ namespace MudLike.Core.Performance
         /// </summary>
         public void ReturnBoolArray(NativeArray<bool> array)
         {
-            if (!array.IsCreated) return;
+            if (!if(array != null) array.IsCreated) return;
             
-            int size = array.Length;
-            if (!_boolArrayPool.ContainsKey(size))
+            int size = if(array != null) array.Length;
+            if (!if(_boolArrayPool != null) _boolArrayPool.ContainsKey(size))
             {
                 _boolArrayPool[size] = new Queue<NativeArray<bool>>();
             }
@@ -252,12 +252,12 @@ namespace MudLike.Core.Performance
         /// <summary>
         /// Получает NativeList<float3> из пула
         /// </summary>
-        public NativeList<float3> GetFloat3List(Allocator allocator = Allocator.TempJob)
+        public NativeList<float3> GetFloat3List(Allocator allocator = if(Allocator != null) Allocator.TempJob)
         {
-            if (_float3ListPool.Count > 0)
+            if (if(_float3ListPool != null) _float3ListPool.Count > 0)
             {
-                var list = _float3ListPool.Dequeue();
-                list.Clear();
+                var list = if(_float3ListPool != null) _float3ListPool.Dequeue();
+                if(list != null) list.Clear();
                 _totalReuses++;
                 return list;
             }
@@ -272,21 +272,21 @@ namespace MudLike.Core.Performance
         /// </summary>
         public void ReturnFloat3List(NativeList<float3> list)
         {
-            if (!list.IsCreated) return;
+            if (!if(list != null) list.IsCreated) return;
             
-            list.Clear();
-            _float3ListPool.Enqueue(list);
+            if(list != null) list.Clear();
+            if(_float3ListPool != null) _float3ListPool.Enqueue(list);
         }
         
         /// <summary>
         /// Получает NativeList<float> из пула
         /// </summary>
-        public NativeList<float> GetFloatList(Allocator allocator = Allocator.TempJob)
+        public NativeList<float> GetFloatList(Allocator allocator = if(Allocator != null) Allocator.TempJob)
         {
-            if (_floatListPool.Count > 0)
+            if (if(_floatListPool != null) _floatListPool.Count > 0)
             {
-                var list = _floatListPool.Dequeue();
-                list.Clear();
+                var list = if(_floatListPool != null) _floatListPool.Dequeue();
+                if(list != null) list.Clear();
                 _totalReuses++;
                 return list;
             }
@@ -301,21 +301,21 @@ namespace MudLike.Core.Performance
         /// </summary>
         public void ReturnFloatList(NativeList<float> list)
         {
-            if (!list.IsCreated) return;
+            if (!if(list != null) list.IsCreated) return;
             
-            list.Clear();
-            _floatListPool.Enqueue(list);
+            if(list != null) list.Clear();
+            if(_floatListPool != null) _floatListPool.Enqueue(list);
         }
         
         /// <summary>
         /// Получает NativeList<int> из пула
         /// </summary>
-        public NativeList<int> GetIntList(Allocator allocator = Allocator.TempJob)
+        public NativeList<int> GetIntList(Allocator allocator = if(Allocator != null) Allocator.TempJob)
         {
-            if (_intListPool.Count > 0)
+            if (if(_intListPool != null) _intListPool.Count > 0)
             {
-                var list = _intListPool.Dequeue();
-                list.Clear();
+                var list = if(_intListPool != null) _intListPool.Dequeue();
+                if(list != null) list.Clear();
                 _totalReuses++;
                 return list;
             }
@@ -330,21 +330,21 @@ namespace MudLike.Core.Performance
         /// </summary>
         public void ReturnIntList(NativeList<int> list)
         {
-            if (!list.IsCreated) return;
+            if (!if(list != null) list.IsCreated) return;
             
-            list.Clear();
-            _intListPool.Enqueue(list);
+            if(list != null) list.Clear();
+            if(_intListPool != null) _intListPool.Enqueue(list);
         }
         
         /// <summary>
         /// Получает NativeList<bool> из пула
         /// </summary>
-        public NativeList<bool> GetBoolList(Allocator allocator = Allocator.TempJob)
+        public NativeList<bool> GetBoolList(Allocator allocator = if(Allocator != null) Allocator.TempJob)
         {
-            if (_boolListPool.Count > 0)
+            if (if(_boolListPool != null) _boolListPool.Count > 0)
             {
-                var list = _boolListPool.Dequeue();
-                list.Clear();
+                var list = if(_boolListPool != null) _boolListPool.Dequeue();
+                if(list != null) list.Clear();
                 _totalReuses++;
                 return list;
             }
@@ -359,21 +359,21 @@ namespace MudLike.Core.Performance
         /// </summary>
         public void ReturnBoolList(NativeList<bool> list)
         {
-            if (!list.IsCreated) return;
+            if (!if(list != null) list.IsCreated) return;
             
-            list.Clear();
-            _boolListPool.Enqueue(list);
+            if(list != null) list.Clear();
+            if(_boolListPool != null) _boolListPool.Enqueue(list);
         }
         
         /// <summary>
         /// Получает NativeQueue<float3> из пула
         /// </summary>
-        public NativeQueue<float3> GetFloat3Queue(Allocator allocator = Allocator.TempJob)
+        public NativeQueue<float3> GetFloat3Queue(Allocator allocator = if(Allocator != null) Allocator.TempJob)
         {
-            if (_float3QueuePool.Count > 0)
+            if (if(_float3QueuePool != null) _float3QueuePool.Count > 0)
             {
-                var queue = _float3QueuePool.Dequeue();
-                while (queue.TryDequeue(out _)) { } // Очистка очереди
+                var queue = if(_float3QueuePool != null) _float3QueuePool.Dequeue();
+                while (if(queue != null) queue.TryDequeue(out _)) { } // Очистка очереди
                 _totalReuses++;
                 return queue;
             }
@@ -388,21 +388,21 @@ namespace MudLike.Core.Performance
         /// </summary>
         public void ReturnFloat3Queue(NativeQueue<float3> queue)
         {
-            if (!queue.IsCreated) return;
+            if (!if(queue != null) queue.IsCreated) return;
             
-            while (queue.TryDequeue(out _)) { } // Очистка очереди
-            _float3QueuePool.Enqueue(queue);
+            while (if(queue != null) queue.TryDequeue(out _)) { } // Очистка очереди
+            if(_float3QueuePool != null) _float3QueuePool.Enqueue(queue);
         }
         
         /// <summary>
         /// Получает NativeQueue<float> из пула
         /// </summary>
-        public NativeQueue<float> GetFloatQueue(Allocator allocator = Allocator.TempJob)
+        public NativeQueue<float> GetFloatQueue(Allocator allocator = if(Allocator != null) Allocator.TempJob)
         {
-            if (_floatQueuePool.Count > 0)
+            if (if(_floatQueuePool != null) _floatQueuePool.Count > 0)
             {
-                var queue = _floatQueuePool.Dequeue();
-                while (queue.TryDequeue(out _)) { } // Очистка очереди
+                var queue = if(_floatQueuePool != null) _floatQueuePool.Dequeue();
+                while (if(queue != null) queue.TryDequeue(out _)) { } // Очистка очереди
                 _totalReuses++;
                 return queue;
             }
@@ -417,21 +417,21 @@ namespace MudLike.Core.Performance
         /// </summary>
         public void ReturnFloatQueue(NativeQueue<float> queue)
         {
-            if (!queue.IsCreated) return;
+            if (!if(queue != null) queue.IsCreated) return;
             
-            while (queue.TryDequeue(out _)) { } // Очистка очереди
-            _floatQueuePool.Enqueue(queue);
+            while (if(queue != null) queue.TryDequeue(out _)) { } // Очистка очереди
+            if(_floatQueuePool != null) _floatQueuePool.Enqueue(queue);
         }
         
         /// <summary>
         /// Получает NativeQueue<int> из пула
         /// </summary>
-        public NativeQueue<int> GetIntQueue(Allocator allocator = Allocator.TempJob)
+        public NativeQueue<int> GetIntQueue(Allocator allocator = if(Allocator != null) Allocator.TempJob)
         {
-            if (_intQueuePool.Count > 0)
+            if (if(_intQueuePool != null) _intQueuePool.Count > 0)
             {
-                var queue = _intQueuePool.Dequeue();
-                while (queue.TryDequeue(out _)) { } // Очистка очереди
+                var queue = if(_intQueuePool != null) _intQueuePool.Dequeue();
+                while (if(queue != null) queue.TryDequeue(out _)) { } // Очистка очереди
                 _totalReuses++;
                 return queue;
             }
@@ -446,21 +446,21 @@ namespace MudLike.Core.Performance
         /// </summary>
         public void ReturnIntQueue(NativeQueue<int> queue)
         {
-            if (!queue.IsCreated) return;
+            if (!if(queue != null) queue.IsCreated) return;
             
-            while (queue.TryDequeue(out _)) { } // Очистка очереди
-            _intQueuePool.Enqueue(queue);
+            while (if(queue != null) queue.TryDequeue(out _)) { } // Очистка очереди
+            if(_intQueuePool != null) _intQueuePool.Enqueue(queue);
         }
         
         /// <summary>
         /// Получает NativeHashMap<int, float3> из пула
         /// </summary>
-        public NativeHashMap<int, float3> GetIntFloat3HashMap(Allocator allocator = Allocator.TempJob)
+        public NativeHashMap<int, float3> GetIntFloat3HashMap(Allocator allocator = if(Allocator != null) Allocator.TempJob)
         {
-            if (_intFloat3HashMapPool.Count > 0)
+            if (if(_intFloat3HashMapPool != null) _intFloat3HashMapPool.Count > 0)
             {
-                var hashMap = _intFloat3HashMapPool.Dequeue();
-                hashMap.Clear();
+                var hashMap = if(_intFloat3HashMapPool != null) _intFloat3HashMapPool.Dequeue();
+                if(hashMap != null) hashMap.Clear();
                 _totalReuses++;
                 return hashMap;
             }
@@ -475,21 +475,21 @@ namespace MudLike.Core.Performance
         /// </summary>
         public void ReturnIntFloat3HashMap(NativeHashMap<int, float3> hashMap)
         {
-            if (!hashMap.IsCreated) return;
+            if (!if(hashMap != null) hashMap.IsCreated) return;
             
-            hashMap.Clear();
-            _intFloat3HashMapPool.Enqueue(hashMap);
+            if(hashMap != null) hashMap.Clear();
+            if(_intFloat3HashMapPool != null) _intFloat3HashMapPool.Enqueue(hashMap);
         }
         
         /// <summary>
         /// Получает NativeHashMap<int, float> из пула
         /// </summary>
-        public NativeHashMap<int, float> GetIntFloatHashMap(Allocator allocator = Allocator.TempJob)
+        public NativeHashMap<int, float> GetIntFloatHashMap(Allocator allocator = if(Allocator != null) Allocator.TempJob)
         {
-            if (_intFloatHashMapPool.Count > 0)
+            if (if(_intFloatHashMapPool != null) _intFloatHashMapPool.Count > 0)
             {
-                var hashMap = _intFloatHashMapPool.Dequeue();
-                hashMap.Clear();
+                var hashMap = if(_intFloatHashMapPool != null) _intFloatHashMapPool.Dequeue();
+                if(hashMap != null) hashMap.Clear();
                 _totalReuses++;
                 return hashMap;
             }
@@ -504,21 +504,21 @@ namespace MudLike.Core.Performance
         /// </summary>
         public void ReturnIntFloatHashMap(NativeHashMap<int, float> hashMap)
         {
-            if (!hashMap.IsCreated) return;
+            if (!if(hashMap != null) hashMap.IsCreated) return;
             
-            hashMap.Clear();
-            _intFloatHashMapPool.Enqueue(hashMap);
+            if(hashMap != null) hashMap.Clear();
+            if(_intFloatHashMapPool != null) _intFloatHashMapPool.Enqueue(hashMap);
         }
         
         /// <summary>
         /// Получает NativeHashMap<int, int> из пула
         /// </summary>
-        public NativeHashMap<int, int> GetIntIntHashMap(Allocator allocator = Allocator.TempJob)
+        public NativeHashMap<int, int> GetIntIntHashMap(Allocator allocator = if(Allocator != null) Allocator.TempJob)
         {
-            if (_intIntHashMapPool.Count > 0)
+            if (if(_intIntHashMapPool != null) _intIntHashMapPool.Count > 0)
             {
-                var hashMap = _intIntHashMapPool.Dequeue();
-                hashMap.Clear();
+                var hashMap = if(_intIntHashMapPool != null) _intIntHashMapPool.Dequeue();
+                if(hashMap != null) hashMap.Clear();
                 _totalReuses++;
                 return hashMap;
             }
@@ -533,10 +533,10 @@ namespace MudLike.Core.Performance
         /// </summary>
         public void ReturnIntIntHashMap(NativeHashMap<int, int> hashMap)
         {
-            if (!hashMap.IsCreated) return;
+            if (!if(hashMap != null) hashMap.IsCreated) return;
             
-            hashMap.Clear();
-            _intIntHashMapPool.Enqueue(hashMap);
+            if(hashMap != null) hashMap.Clear();
+            if(_intIntHashMapPool != null) _intIntHashMapPool.Enqueue(hashMap);
         }
         
         /// <summary>
@@ -558,13 +558,13 @@ namespace MudLike.Core.Performance
         {
             foreach (var kvp in pool)
             {
-                var queue = kvp.Value;
-                while (queue.Count > 10) // Оставляем только 10 объектов
+                var queue = if(kvp != null) kvp.Value;
+                while (if(queue != null) queue.Count > 10) // Оставляем только 10 объектов
                 {
-                    var array = queue.Dequeue();
-                    if (array.IsCreated)
+                    var array = if(queue != null) queue.Dequeue();
+                    if (if(array != null) array.IsCreated)
                     {
-                        array.Dispose();
+                        if(array != null) array.Dispose();
                         _totalDeallocations++;
                     }
                 }
@@ -606,13 +606,13 @@ namespace MudLike.Core.Performance
         {
             foreach (var kvp in pool)
             {
-                var queue = kvp.Value;
-                while (queue.Count > 0)
+                var queue = if(kvp != null) kvp.Value;
+                while (if(queue != null) queue.Count > 0)
                 {
-                    var array = queue.Dequeue();
-                    if (array.IsCreated)
+                    var array = if(queue != null) queue.Dequeue();
+                    if (if(array != null) array.IsCreated)
                     {
-                        array.Dispose();
+                        if(array != null) array.Dispose();
                     }
                 }
             }
@@ -623,12 +623,12 @@ namespace MudLike.Core.Performance
         /// </summary>
         private void DisposeListPool<T>(Queue<NativeList<T>> pool) where T : unmanaged
         {
-            while (pool.Count > 0)
+            while (if(pool != null) pool.Count > 0)
             {
-                var list = pool.Dequeue();
-                if (list.IsCreated)
+                var list = if(pool != null) pool.Dequeue();
+                if (if(list != null) list.IsCreated)
                 {
-                    list.Dispose();
+                    if(list != null) list.Dispose();
                 }
             }
         }
@@ -638,12 +638,12 @@ namespace MudLike.Core.Performance
         /// </summary>
         private void DisposeQueuePool<T>(Queue<NativeQueue<T>> pool) where T : unmanaged
         {
-            while (pool.Count > 0)
+            while (if(pool != null) pool.Count > 0)
             {
-                var queue = pool.Dequeue();
-                if (queue.IsCreated)
+                var queue = if(pool != null) pool.Dequeue();
+                if (if(queue != null) queue.IsCreated)
                 {
-                    queue.Dispose();
+                    if(queue != null) queue.Dispose();
                 }
             }
         }
@@ -653,12 +653,12 @@ namespace MudLike.Core.Performance
         /// </summary>
         private void DisposeHashMapPool<T>(Queue<NativeHashMap<int, T>> pool) where T : unmanaged
         {
-            while (pool.Count > 0)
+            while (if(pool != null) pool.Count > 0)
             {
-                var hashMap = pool.Dequeue();
-                if (hashMap.IsCreated)
+                var hashMap = if(pool != null) pool.Dequeue();
+                if (if(hashMap != null) hashMap.IsCreated)
                 {
-                    hashMap.Dispose();
+                    if(hashMap != null) hashMap.Dispose();
                 }
             }
         }
@@ -688,4 +688,3 @@ namespace MudLike.Core.Performance
         public int TotalDeallocations;
         public float ReuseRate;
     }
-}

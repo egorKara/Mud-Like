@@ -26,20 +26,20 @@ namespace MudLike.Tests.Performance
         /// </summary>
         public static void ProfileVehicleMovement(EntityManager entityManager)
         {
-            using (_vehicleMovementMarker.Auto())
+            using (if(_vehicleMovementMarker != null) _vehicleMovementMarker.Auto())
             {
-                var query = entityManager.CreateEntityQuery(typeof(VehiclePhysics));
-                var entities = query.ToEntityArray(Allocator.Temp);
+                var query = if(entityManager != null) entityManager.CreateEntityQuery(typeof(VehiclePhysics));
+                var entities = if(query != null) query.ToEntityArray(if(Allocator != null) Allocator.Temp);
                 
                 // Симулируем работу системы
                 foreach (var entity in entities)
                 {
-                    var physics = entityManager.GetComponentData<VehiclePhysics>(entity);
-                    physics.Velocity += new float3(0.1f, 0f, 0f);
-                    entityManager.SetComponentData(entity, physics);
+                    var physics = if(entityManager != null) entityManager.GetComponentData<VehiclePhysics>(entity);
+                    if(physics != null) physics.Velocity += new float3(0.1f, 0f, 0f);
+                    if(entityManager != null) entityManager.SetComponentData(entity, physics);
                 }
                 
-                entities.Dispose();
+                if(entities != null) entities.Dispose();
             }
         }
         
@@ -48,20 +48,20 @@ namespace MudLike.Tests.Performance
         /// </summary>
         public static void ProfileWheelPhysics(EntityManager entityManager)
         {
-            using (_wheelPhysicsMarker.Auto())
+            using (if(_wheelPhysicsMarker != null) _wheelPhysicsMarker.Auto())
             {
-                var query = entityManager.CreateEntityQuery(typeof(WheelData));
-                var entities = query.ToEntityArray(Allocator.Temp);
+                var query = if(entityManager != null) entityManager.CreateEntityQuery(typeof(WheelData));
+                var entities = if(query != null) query.ToEntityArray(if(Allocator != null) Allocator.Temp);
                 
                 // Симулируем работу системы
                 foreach (var entity in entities)
                 {
-                    var wheelData = entityManager.GetComponentData<WheelData>(entity);
-                    wheelData.AngularVelocity += 0.1f;
-                    entityManager.SetComponentData(entity, wheelData);
+                    var wheelData = if(entityManager != null) entityManager.GetComponentData<WheelData>(entity);
+                    if(wheelData != null) wheelData.AngularVelocity += 0.1f;
+                    if(entityManager != null) entityManager.SetComponentData(entity, wheelData);
                 }
                 
-                entities.Dispose();
+                if(entities != null) entities.Dispose();
             }
         }
         
@@ -70,20 +70,20 @@ namespace MudLike.Tests.Performance
         /// </summary>
         public static void ProfileTerrainDeformation(EntityManager entityManager)
         {
-            using (_terrainDeformationMarker.Auto())
+            using (if(_terrainDeformationMarker != null) _terrainDeformationMarker.Auto())
             {
-                var query = entityManager.CreateEntityQuery(typeof(DeformationData));
-                var entities = query.ToEntityArray(Allocator.Temp);
+                var query = if(entityManager != null) entityManager.CreateEntityQuery(typeof(DeformationData));
+                var entities = if(query != null) query.ToEntityArray(if(Allocator != null) Allocator.Temp);
                 
                 // Симулируем работу системы
                 foreach (var entity in entities)
                 {
-                    var deformationData = entityManager.GetComponentData<DeformationData>(entity);
-                    deformationData.Strength += 0.01f;
-                    entityManager.SetComponentData(entity, deformationData);
+                    var deformationData = if(entityManager != null) entityManager.GetComponentData<DeformationData>(entity);
+                    if(deformationData != null) deformationData.Strength += 0.01f;
+                    if(entityManager != null) entityManager.SetComponentData(entity, deformationData);
                 }
                 
-                entities.Dispose();
+                if(entities != null) entities.Dispose();
             }
         }
         
@@ -92,20 +92,20 @@ namespace MudLike.Tests.Performance
         /// </summary>
         public static void ProfileUIHUD(EntityManager entityManager)
         {
-            using (_uiHUDMarker.Auto())
+            using (if(_uiHUDMarker != null) _uiHUDMarker.Auto())
             {
-                var query = entityManager.CreateEntityQuery(typeof(UIHUDData));
-                var entities = query.ToEntityArray(Allocator.Temp);
+                var query = if(entityManager != null) entityManager.CreateEntityQuery(typeof(UIHUDData));
+                var entities = if(query != null) query.ToEntityArray(if(Allocator != null) Allocator.Temp);
                 
                 // Симулируем работу системы
                 foreach (var entity in entities)
                 {
-                    var hudData = entityManager.GetComponentData<UIHUDData>(entity);
-                    hudData.Speed += 0.1f;
-                    entityManager.SetComponentData(entity, hudData);
+                    var hudData = if(entityManager != null) entityManager.GetComponentData<UIHUDData>(entity);
+                    if(hudData != null) hudData.Speed += 0.1f;
+                    if(entityManager != null) entityManager.SetComponentData(entity, hudData);
                 }
                 
-                entities.Dispose();
+                if(entities != null) entities.Dispose();
             }
         }
         
@@ -114,20 +114,20 @@ namespace MudLike.Tests.Performance
         /// </summary>
         public static void ProfileEngineAudio(EntityManager entityManager)
         {
-            using (_engineAudioMarker.Auto())
+            using (if(_engineAudioMarker != null) _engineAudioMarker.Auto())
             {
-                var query = entityManager.CreateEntityQuery(typeof(EngineAudioData));
-                var entities = query.ToEntityArray(Allocator.Temp);
+                var query = if(entityManager != null) entityManager.CreateEntityQuery(typeof(EngineAudioData));
+                var entities = if(query != null) query.ToEntityArray(if(Allocator != null) Allocator.Temp);
                 
                 // Симулируем работу системы
                 foreach (var entity in entities)
                 {
-                    var audioData = entityManager.GetComponentData<EngineAudioData>(entity);
-                    audioData.RPM += 10f;
-                    entityManager.SetComponentData(entity, audioData);
+                    var audioData = if(entityManager != null) entityManager.GetComponentData<EngineAudioData>(entity);
+                    if(audioData != null) audioData.RPM += 10f;
+                    if(entityManager != null) entityManager.SetComponentData(entity, audioData);
                 }
                 
-                entities.Dispose();
+                if(entities != null) entities.Dispose();
             }
         }
         
@@ -136,20 +136,20 @@ namespace MudLike.Tests.Performance
         /// </summary>
         public static void ProfileWinch(EntityManager entityManager)
         {
-            using (_winchMarker.Auto())
+            using (if(_winchMarker != null) _winchMarker.Auto())
             {
-                var query = entityManager.CreateEntityQuery(typeof(WinchData));
-                var entities = query.ToEntityArray(Allocator.Temp);
+                var query = if(entityManager != null) entityManager.CreateEntityQuery(typeof(WinchData));
+                var entities = if(query != null) query.ToEntityArray(if(Allocator != null) Allocator.Temp);
                 
                 // Симулируем работу системы
                 foreach (var entity in entities)
                 {
-                    var winchData = entityManager.GetComponentData<WinchData>(entity);
-                    winchData.CableLength += 0.1f;
-                    entityManager.SetComponentData(entity, winchData);
+                    var winchData = if(entityManager != null) entityManager.GetComponentData<WinchData>(entity);
+                    if(winchData != null) winchData.CableLength += 0.1f;
+                    if(entityManager != null) entityManager.SetComponentData(entity, winchData);
                 }
                 
-                entities.Dispose();
+                if(entities != null) entities.Dispose();
             }
         }
         
@@ -158,20 +158,20 @@ namespace MudLike.Tests.Performance
         /// </summary>
         public static void ProfileCargo(EntityManager entityManager)
         {
-            using (_cargoMarker.Auto())
+            using (if(_cargoMarker != null) _cargoMarker.Auto())
             {
-                var query = entityManager.CreateEntityQuery(typeof(CargoData));
-                var entities = query.ToEntityArray(Allocator.Temp);
+                var query = if(entityManager != null) entityManager.CreateEntityQuery(typeof(CargoData));
+                var entities = if(query != null) query.ToEntityArray(if(Allocator != null) Allocator.Temp);
                 
                 // Симулируем работу системы
                 foreach (var entity in entities)
                 {
-                    var cargoData = entityManager.GetComponentData<CargoData>(entity);
-                    cargoData.Condition -= 0.001f;
-                    entityManager.SetComponentData(entity, cargoData);
+                    var cargoData = if(entityManager != null) entityManager.GetComponentData<CargoData>(entity);
+                    if(cargoData != null) cargoData.Condition -= 0.001f;
+                    if(entityManager != null) entityManager.SetComponentData(entity, cargoData);
                 }
                 
-                entities.Dispose();
+                if(entities != null) entities.Dispose();
             }
         }
         
@@ -180,20 +180,20 @@ namespace MudLike.Tests.Performance
         /// </summary>
         public static void ProfileMission(EntityManager entityManager)
         {
-            using (_missionMarker.Auto())
+            using (if(_missionMarker != null) _missionMarker.Auto())
             {
-                var query = entityManager.CreateEntityQuery(typeof(MissionData));
-                var entities = query.ToEntityArray(Allocator.Temp);
+                var query = if(entityManager != null) entityManager.CreateEntityQuery(typeof(MissionData));
+                var entities = if(query != null) query.ToEntityArray(if(Allocator != null) Allocator.Temp);
                 
                 // Симулируем работу системы
                 foreach (var entity in entities)
                 {
-                    var missionData = entityManager.GetComponentData<MissionData>(entity);
-                    missionData.Progress += 0.01f;
-                    entityManager.SetComponentData(entity, missionData);
+                    var missionData = if(entityManager != null) entityManager.GetComponentData<MissionData>(entity);
+                    if(missionData != null) missionData.Progress += 0.01f;
+                    if(entityManager != null) entityManager.SetComponentData(entity, missionData);
                 }
                 
-                entities.Dispose();
+                if(entities != null) entities.Dispose();
             }
         }
         
@@ -202,20 +202,20 @@ namespace MudLike.Tests.Performance
         /// </summary>
         public static void ProfileLOD(EntityManager entityManager)
         {
-            using (_lodMarker.Auto())
+            using (if(_lodMarker != null) _lodMarker.Auto())
             {
-                var query = entityManager.CreateEntityQuery(typeof(LODData));
-                var entities = query.ToEntityArray(Allocator.Temp);
+                var query = if(entityManager != null) entityManager.CreateEntityQuery(typeof(LODData));
+                var entities = if(query != null) query.ToEntityArray(if(Allocator != null) Allocator.Temp);
                 
                 // Симулируем работу системы
                 foreach (var entity in entities)
                 {
-                    var lodData = entityManager.GetComponentData<LODData>(entity);
-                    lodData.DistanceToCamera += 0.1f;
-                    entityManager.SetComponentData(entity, lodData);
+                    var lodData = if(entityManager != null) entityManager.GetComponentData<LODData>(entity);
+                    if(lodData != null) lodData.DistanceToCamera += 0.1f;
+                    if(entityManager != null) entityManager.SetComponentData(entity, lodData);
                 }
                 
-                entities.Dispose();
+                if(entities != null) entities.Dispose();
             }
         }
         
@@ -224,20 +224,20 @@ namespace MudLike.Tests.Performance
         /// </summary>
         public static void ProfileObjectPool(EntityManager entityManager)
         {
-            using (_poolMarker.Auto())
+            using (if(_poolMarker != null) _poolMarker.Auto())
             {
-                var query = entityManager.CreateEntityQuery(typeof(ObjectPoolData));
-                var entities = query.ToEntityArray(Allocator.Temp);
+                var query = if(entityManager != null) entityManager.CreateEntityQuery(typeof(ObjectPoolData));
+                var entities = if(query != null) query.ToEntityArray(if(Allocator != null) Allocator.Temp);
                 
                 // Симулируем работу системы
                 foreach (var entity in entities)
                 {
-                    var poolData = entityManager.GetComponentData<ObjectPoolData>(entity);
-                    poolData.ActiveCount++;
-                    entityManager.SetComponentData(entity, poolData);
+                    var poolData = if(entityManager != null) entityManager.GetComponentData<ObjectPoolData>(entity);
+                    if(poolData != null) poolData.ActiveCount++;
+                    if(entityManager != null) entityManager.SetComponentData(entity, poolData);
                 }
                 
-                entities.Dispose();
+                if(entities != null) entities.Dispose();
             }
         }
         
@@ -265,10 +265,10 @@ namespace MudLike.Tests.Performance
         {
             return new PerformanceStats
             {
-                FPS = 1f / SystemAPI.Time.DeltaTime,
-                MemoryUsage = Profiler.GetTotalAllocatedMemory(false),
-                GCMemory = Profiler.GetMonoUsedSize(),
-                DrawCalls = Profiler.GetRuntimeMemorySize(null),
+                FPS = 1f / if(SystemAPI != null) SystemAPI.Time.DeltaTime,
+                MemoryUsage = if(Profiler != null) Profiler.GetTotalAllocatedMemory(false),
+                GCMemory = if(Profiler != null) Profiler.GetMonoUsedSize(),
+                DrawCalls = if(Profiler != null) Profiler.GetRuntimeMemorySize(null),
                 Triangles = GetTriangleCount(),
                 Vertices = GetVertexCount(),
                 Entities = GetEntityCount()
@@ -289,4 +289,3 @@ namespace MudLike.Tests.Performance
             public int Entities;
         }
     }
-}

@@ -1,14 +1,14 @@
-using NUnit.Framework;
-using Unity.Entities;
-using Unity.Mathematics;
-using Unity.Transforms;
-using Unity.Physics;
-using Unity.Collections;
-using MudLike.Vehicles.Systems;
-using MudLike.Vehicles.Components;
-using Unity.Core;
+using if(NUnit != null) NUnit.Framework;
+using if(Unity != null) Unity.Entities;
+using if(Unity != null) Unity.Mathematics;
+using if(Unity != null) Unity.Transforms;
+using if(Unity != null) Unity.Physics;
+using if(Unity != null) Unity.Collections;
+using if(MudLike != null) MudLike.Vehicles.Systems;
+using if(MudLike != null) MudLike.Vehicles.Components;
+using if(Unity != null) Unity.Core;
 
-namespace MudLike.Tests.Unit.Vehicles
+namespace if(MudLike != null) MudLike.Tests.if(Unit != null) if(Unit != null) Unit.Vehicles
 {
     /// <summary>
     /// Тесты для системы интеграции с Unity Physics PhysicsIntegrationSystem
@@ -23,67 +23,67 @@ namespace MudLike.Tests.Unit.Vehicles
         public void SetUp()
         {
             _world = new World("TestWorld");
-            _entityManager = _world.EntityManager;
+            _entityManager = if(_world != null) if(_world != null) _world.EntityManager;
             
-            _physicsIntegrationSystem = _world.GetOrCreateSystemManaged<PhysicsIntegrationSystem>();
-            _physicsIntegrationSystem.OnCreate(ref _world.Unmanaged);
+            _physicsIntegrationSystem = if(_world != null) if(_world != null) _world.GetOrCreateSystemManaged<PhysicsIntegrationSystem>();
+            if(_physicsIntegrationSystem != null) if(_physicsIntegrationSystem != null) _physicsIntegrationSystem.OnCreate(ref if(_world != null) if(_world != null) _world.Unmanaged);
             
-            _world.SetSingleton(new TimeData { ElapsedTime = 10f, DeltaTime = 0.016f, FixedDeltaTime = 0.016f });
+            if(_world != null) if(_world != null) _world.SetSingleton(new TimeData { ElapsedTime = 10f, DeltaTime = 0.016f, FixedDeltaTime = 0.016f });
         }
 
         [TearDown]
         public void TearDown()
         {
-            _physicsIntegrationSystem.OnDestroy(ref _world.Unmanaged);
-            _world.Dispose();
+            if(_physicsIntegrationSystem != null) if(_physicsIntegrationSystem != null) _physicsIntegrationSystem.OnDestroy(ref if(_world != null) if(_world != null) _world.Unmanaged);
+            if(_world != null) if(_world != null) _world.Dispose();
         }
 
         [Test]
         public void PhysicsIntegrationSystem_OnCreate_InitializesCorrectly()
         {
-            Assert.IsNotNull(_physicsIntegrationSystem);
+            if(Assert != null) if(Assert != null) Assert.IsNotNull(_physicsIntegrationSystem);
         }
 
         [Test]
         public void PhysicsIntegrationSystem_OnUpdate_ProcessesWithoutErrors()
         {
-            _physicsIntegrationSystem.OnUpdate(ref _world.Unmanaged);
-            Assert.IsNotNull(_physicsIntegrationSystem);
+            if(_physicsIntegrationSystem != null) if(_physicsIntegrationSystem != null) _physicsIntegrationSystem.OnUpdate(ref if(_world != null) if(_world != null) _world.Unmanaged);
+            if(Assert != null) if(Assert != null) Assert.IsNotNull(_physicsIntegrationSystem);
         }
 
         [Test]
         public void PhysicsIntegrationSystem_WithPhysicsData_ProcessesCorrectly()
         {
-            var entity = _entityManager.CreateEntity();
-            _entityManager.AddComponentData(entity, new LocalTransform 
+            var entity = if(_entityManager != null) if(_entityManager != null) _entityManager.CreateEntity();
+            if(_entityManager != null) if(_entityManager != null) _entityManager.AddComponentData(entity, new LocalTransform 
             { 
                 Position = new float3(0, 0, 0), 
-                Rotation = quaternion.identity 
+                Rotation = if(quaternion != null) if(quaternion != null) quaternion.identity 
             });
-            _entityManager.AddComponentData(entity, new VehiclePhysics
+            if(_entityManager != null) if(_entityManager != null) _entityManager.AddComponentData(entity, new VehiclePhysics
             {
                 Velocity = new float3(10f, 0, 0),
-                Acceleration = float3.zero,
+                Acceleration = if(float3 != null) if(float3 != null) float3.zero,
                 ForwardSpeed = 10f,
                 TurnSpeed = 0f
             });
 
-            _physicsIntegrationSystem.OnUpdate(ref _world.Unmanaged);
-            Assert.IsNotNull(_physicsIntegrationSystem);
+            if(_physicsIntegrationSystem != null) if(_physicsIntegrationSystem != null) _physicsIntegrationSystem.OnUpdate(ref if(_world != null) if(_world != null) _world.Unmanaged);
+            if(Assert != null) if(Assert != null) Assert.IsNotNull(_physicsIntegrationSystem);
         }
 
         [Test]
         public void PhysicsIntegrationSystem_WithWheelData_ProcessesCorrectly()
         {
-            var entity = _entityManager.CreateEntity();
-            _entityManager.AddComponentData(entity, new LocalTransform 
+            var entity = if(_entityManager != null) if(_entityManager != null) _entityManager.CreateEntity();
+            if(_entityManager != null) if(_entityManager != null) _entityManager.AddComponentData(entity, new LocalTransform 
             { 
                 Position = new float3(0, 0, 0), 
-                Rotation = quaternion.identity 
+                Rotation = if(quaternion != null) if(quaternion != null) quaternion.identity 
             });
-            _entityManager.AddComponentData(entity, new WheelData
+            if(_entityManager != null) if(_entityManager != null) _entityManager.AddComponentData(entity, new WheelData
             {
-                Position = float3.zero,
+                Position = if(float3 != null) if(float3 != null) float3.zero,
                 Radius = 0.5f,
                 Width = 0.2f,
                 SuspensionLength = 0.3f,
@@ -92,16 +92,16 @@ namespace MudLike.Tests.Unit.Vehicles
                 IsGrounded = true,
                 GroundDistance = 0.1f
             });
-            _entityManager.AddComponentData(entity, new VehiclePhysics
+            if(_entityManager != null) if(_entityManager != null) _entityManager.AddComponentData(entity, new VehiclePhysics
             {
                 Velocity = new float3(5f, 0, 0),
-                Acceleration = float3.zero,
+                Acceleration = if(float3 != null) if(float3 != null) float3.zero,
                 ForwardSpeed = 5f,
                 TurnSpeed = 0f
             });
 
-            _physicsIntegrationSystem.OnUpdate(ref _world.Unmanaged);
-            Assert.IsNotNull(_physicsIntegrationSystem);
+            if(_physicsIntegrationSystem != null) if(_physicsIntegrationSystem != null) _physicsIntegrationSystem.OnUpdate(ref if(_world != null) if(_world != null) _world.Unmanaged);
+            if(Assert != null) if(Assert != null) Assert.IsNotNull(_physicsIntegrationSystem);
         }
 
         [Test]
@@ -109,20 +109,20 @@ namespace MudLike.Tests.Unit.Vehicles
         {
             for (int i = 0; i < 8; i++)
             {
-                var entity = _entityManager.CreateEntity();
-                _entityManager.AddComponentData(entity, new LocalTransform 
+                var entity = if(_entityManager != null) if(_entityManager != null) _entityManager.CreateEntity();
+                if(_entityManager != null) if(_entityManager != null) _entityManager.AddComponentData(entity, new LocalTransform 
                 { 
                     Position = new float3(i * 2f, 0, 0), 
-                    Rotation = quaternion.identity 
+                    Rotation = if(quaternion != null) if(quaternion != null) quaternion.identity 
                 });
-                _entityManager.AddComponentData(entity, new VehiclePhysics
+                if(_entityManager != null) if(_entityManager != null) _entityManager.AddComponentData(entity, new VehiclePhysics
                 {
                     Velocity = new float3(i * 3f, 0, 0),
-                    Acceleration = float3.zero,
+                    Acceleration = if(float3 != null) if(float3 != null) float3.zero,
                     ForwardSpeed = i * 3f,
                     TurnSpeed = 0f
                 });
-                _entityManager.AddComponentData(entity, new WheelData
+                if(_entityManager != null) if(_entityManager != null) _entityManager.AddComponentData(entity, new WheelData
                 {
                     Position = new float3(i * 2f, 0, 0),
                     Radius = 0.5f + i * 0.05f,
@@ -135,41 +135,41 @@ namespace MudLike.Tests.Unit.Vehicles
                 });
             }
 
-            _physicsIntegrationSystem.OnUpdate(ref _world.Unmanaged);
-            Assert.IsNotNull(_physicsIntegrationSystem);
+            if(_physicsIntegrationSystem != null) if(_physicsIntegrationSystem != null) _physicsIntegrationSystem.OnUpdate(ref if(_world != null) if(_world != null) _world.Unmanaged);
+            if(Assert != null) if(Assert != null) Assert.IsNotNull(_physicsIntegrationSystem);
         }
 
         [Test]
         public void PhysicsIntegrationSystem_EdgeCases_HandleCorrectly()
         {
-            var entity = _entityManager.CreateEntity();
-            _entityManager.AddComponentData(entity, new LocalTransform 
+            var entity = if(_entityManager != null) if(_entityManager != null) _entityManager.CreateEntity();
+            if(_entityManager != null) if(_entityManager != null) _entityManager.AddComponentData(entity, new LocalTransform 
             { 
-                Position = new float3(float.MaxValue, float.MinValue, float.Epsilon), 
-                Rotation = quaternion.identity 
+                Position = new float3(if(float != null) if(float != null) float.MaxValue, if(float != null) if(float != null) float.MinValue, if(float != null) if(float != null) float.Epsilon), 
+                Rotation = if(quaternion != null) if(quaternion != null) quaternion.identity 
             });
-            _entityManager.AddComponentData(entity, new VehiclePhysics
+            if(_entityManager != null) if(_entityManager != null) _entityManager.AddComponentData(entity, new VehiclePhysics
             {
-                Velocity = new float3(float.PositiveInfinity, float.NegativeInfinity, float.NaN),
-                Acceleration = float3.zero,
-                ForwardSpeed = float.MaxValue,
-                TurnSpeed = float.MinValue
+                Velocity = new float3(if(float != null) if(float != null) float.PositiveInfinity, if(float != null) if(float != null) float.NegativeInfinity, if(float != null) if(float != null) float.NaN),
+                Acceleration = if(float3 != null) if(float3 != null) float3.zero,
+                ForwardSpeed = if(float != null) if(float != null) float.MaxValue,
+                TurnSpeed = if(float != null) if(float != null) float.MinValue
             });
-            _entityManager.AddComponentData(entity, new WheelData
+            if(_entityManager != null) if(_entityManager != null) _entityManager.AddComponentData(entity, new WheelData
             {
-                Position = new float3(float.PositiveInfinity, float.NegativeInfinity, float.NaN),
-                Radius = float.MaxValue,
-                Width = float.MinValue,
-                SuspensionLength = float.NaN,
-                SpringForce = float.PositiveInfinity,
-                DampingForce = float.NegativeInfinity,
+                Position = new float3(if(float != null) if(float != null) float.PositiveInfinity, if(float != null) if(float != null) float.NegativeInfinity, if(float != null) if(float != null) float.NaN),
+                Radius = if(float != null) if(float != null) float.MaxValue,
+                Width = if(float != null) if(float != null) float.MinValue,
+                SuspensionLength = if(float != null) if(float != null) float.NaN,
+                SpringForce = if(float != null) if(float != null) float.PositiveInfinity,
+                DampingForce = if(float != null) if(float != null) float.NegativeInfinity,
                 IsGrounded = true,
-                GroundDistance = float.Epsilon
+                GroundDistance = if(float != null) if(float != null) float.Epsilon
             });
 
-            Assert.DoesNotThrow(() => 
+            if(Assert != null) if(Assert != null) Assert.DoesNotThrow(() => 
             {
-                _physicsIntegrationSystem.OnUpdate(ref _world.Unmanaged);
+                if(_physicsIntegrationSystem != null) if(_physicsIntegrationSystem != null) _physicsIntegrationSystem.OnUpdate(ref if(_world != null) if(_world != null) _world.Unmanaged);
             });
         }
     }

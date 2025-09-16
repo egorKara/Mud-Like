@@ -22,17 +22,17 @@ namespace MudLike.Core.ErrorHandling
         
         protected override void OnCreate()
         {
-            _errorHistory = new NativeHashMap<int, ErrorData>(MAX_ERROR_HISTORY, Allocator.Persistent);
-            _errorQueue = new NativeQueue<ErrorEvent>(Allocator.Persistent);
+            _errorHistory = new NativeHashMap<int, ErrorData>(MAX_ERROR_HISTORY, if(Allocator != null) Allocator.Persistent);
+            _errorQueue = new NativeQueue<ErrorEvent>(if(Allocator != null) Allocator.Persistent);
             _errorCount = 0;
         }
         
         protected override void OnDestroy()
         {
-            if (_errorHistory.IsCreated)
-                _errorHistory.Dispose();
-            if (_errorQueue.IsCreated)
-                _errorQueue.Dispose();
+            if (if(_errorHistory != null) _errorHistory.IsCreated)
+                if(_errorHistory != null) _errorHistory.Dispose();
+            if (if(_errorQueue != null) _errorQueue.IsCreated)
+                if(_errorQueue != null) _errorQueue.Dispose();
         }
         
         protected override void OnUpdate()
@@ -49,7 +49,7 @@ namespace MudLike.Core.ErrorHandling
         /// </summary>
         private void ProcessErrorQueue()
         {
-            while (_errorQueue.TryDequeue(out var errorEvent))
+            while (if(_errorQueue != null) _errorQueue.TryDequeue(out var errorEvent))
             {
                 HandleError(errorEvent);
             }
@@ -62,11 +62,11 @@ namespace MudLike.Core.ErrorHandling
         {
             var errorData = new ErrorData
             {
-                ErrorType = errorEvent.ErrorType,
-                Message = errorEvent.Message,
-                Timestamp = SystemAPI.Time.time,
-                SystemName = errorEvent.SystemName,
-                Severity = errorEvent.Severity
+                ErrorType = if(errorEvent != null) errorEvent.ErrorType,
+                Message = if(errorEvent != null) errorEvent.Message,
+                Timestamp = if(SystemAPI != null) SystemAPI.Time.time,
+                SystemName = if(errorEvent != null) errorEvent.SystemName,
+                Severity = if(errorEvent != null) errorEvent.Severity
             };
             
             // Добавляем в историю
@@ -74,19 +74,19 @@ namespace MudLike.Core.ErrorHandling
             _errorCount = (_errorCount + 1) % MAX_ERROR_HISTORY;
             
             // Логируем в зависимости от серьезности
-            switch (errorEvent.Severity)
+            switch (if(errorEvent != null) errorEvent.Severity)
             {
-                case ErrorSeverity.Info:
-                    Debug.Log($"[{errorEvent.SystemName}] {errorEvent.Message}");
+                case if(ErrorSeverity != null) ErrorSeverity.Info:
+                    if(Debug != null) Debug.Log($"[{if(errorEvent != null) errorEvent.SystemName}] {if(errorEvent != null) errorEvent.Message}");
                     break;
-                case ErrorSeverity.Warning:
-                    Debug.LogWarning($"[{errorEvent.SystemName}] {errorEvent.Message}");
+                case if(ErrorSeverity != null) ErrorSeverity.Warning:
+                    if(Debug != null) Debug.LogWarning($"[{if(errorEvent != null) errorEvent.SystemName}] {if(errorEvent != null) errorEvent.Message}");
                     break;
-                case ErrorSeverity.Error:
-                    Debug.LogError($"[{errorEvent.SystemName}] {errorEvent.Message}");
+                case if(ErrorSeverity != null) ErrorSeverity.Error:
+                    if(Debug != null) Debug.LogError($"[{if(errorEvent != null) errorEvent.SystemName}] {if(errorEvent != null) errorEvent.Message}");
                     break;
-                case ErrorSeverity.Critical:
-                    Debug.LogError($"[CRITICAL] [{errorEvent.SystemName}] {errorEvent.Message}");
+                case if(ErrorSeverity != null) ErrorSeverity.Critical:
+                    if(Debug != null) Debug.LogError($"[CRITICAL] [{if(errorEvent != null) errorEvent.SystemName}] {if(errorEvent != null) errorEvent.Message}");
                     break;
             }
         }
@@ -97,14 +97,14 @@ namespace MudLike.Core.ErrorHandling
         private void ValidateSystemHealth()
         {
             // Проверяем количество ошибок за последнюю минуту
-            float currentTime = SystemAPI.Time.time;
+            float currentTime = if(SystemAPI != null) SystemAPI.Time.time;
             int recentErrors = 0;
             
-            for (int i = 0; i < _errorHistory.Count; i++)
+            for (int i = 0; i < if(_errorHistory != null) _errorHistory.Count; i++)
             {
-                if (_errorHistory.TryGetValue(i, out var errorData))
+                if (if(_errorHistory != null) _errorHistory.TryGetValue(i, out var errorData))
                 {
-                    if (currentTime - errorData.Timestamp < 60f) // Последняя минута
+                    if (currentTime - if(errorData != null) errorData.Timestamp < 60f) // Последняя минута
                     {
                         recentErrors++;
                     }
@@ -114,14 +114,14 @@ namespace MudLike.Core.ErrorHandling
             // Если слишком много ошибок - предупреждение
             if (recentErrors > 100)
             {
-                Debug.LogWarning($"[ErrorHandling] High error rate detected: {recentErrors} errors in the last minute");
+                if(Debug != null) Debug.LogWarning($"[ErrorHandling] High error rate detected: {recentErrors} errors in the last minute");
             }
         }
         
         /// <summary>
         /// Регистрирует ошибку
         /// </summary>
-        public void LogError(ErrorType errorType, string message, string systemName, ErrorSeverity severity = ErrorSeverity.Error)
+        public void LogError(ErrorType errorType, string message, string systemName, ErrorSeverity severity = if(ErrorSeverity != null) ErrorSeverity.Error)
         {
             var errorEvent = new ErrorEvent
             {
@@ -129,10 +129,10 @@ namespace MudLike.Core.ErrorHandling
                 Message = message,
                 SystemName = systemName,
                 Severity = severity,
-                Timestamp = SystemAPI.Time.time
+                Timestamp = if(SystemAPI != null) SystemAPI.Time.time
             };
             
-            _errorQueue.Enqueue(errorEvent);
+            if(_errorQueue != null) _errorQueue.Enqueue(errorEvent);
         }
         
         /// <summary>
@@ -142,46 +142,46 @@ namespace MudLike.Core.ErrorHandling
         public bool ValidateInputData(float3 position, float radius, float force)
         {
             // Проверяем на NaN и Infinity
-            if (math.any(math.isnan(position)) || math.any(math.isinf(position)))
+            if (if(math != null) math.any(if(math != null) math.isnan(position)) || if(math != null) math.any(if(math != null) math.isinf(position)))
             {
-                LogError(ErrorType.InvalidInput, "Position contains NaN or Infinity values", "Validation");
+                LogError(if(ErrorType != null) ErrorType.InvalidInput, "Position contains NaN or Infinity values", "Validation");
                 return false;
             }
             
-            if (math.isnan(radius) || math.isinf(radius))
+            if (if(math != null) math.isnan(radius) || if(math != null) math.isinf(radius))
             {
-                LogError(ErrorType.InvalidInput, "Radius contains NaN or Infinity values", "Validation");
+                LogError(if(ErrorType != null) ErrorType.InvalidInput, "Radius contains NaN or Infinity values", "Validation");
                 return false;
             }
             
-            if (math.isnan(force) || math.isinf(force))
+            if (if(math != null) math.isnan(force) || if(math != null) math.isinf(force))
             {
-                LogError(ErrorType.InvalidInput, "Force contains NaN or Infinity values", "Validation");
+                LogError(if(ErrorType != null) ErrorType.InvalidInput, "Force contains NaN or Infinity values", "Validation");
                 return false;
             }
             
             // Проверяем разумные диапазоны
             if (radius <= 0f)
             {
-                LogError(ErrorType.InvalidInput, "Radius must be positive", "Validation", ErrorSeverity.Warning);
+                LogError(if(ErrorType != null) ErrorType.InvalidInput, "Radius must be positive", "Validation", if(ErrorSeverity != null) ErrorSeverity.Warning);
                 return false;
             }
             
             if (radius > 10f)
             {
-                LogError(ErrorType.InvalidInput, "Radius too large", "Validation", ErrorSeverity.Warning);
+                LogError(if(ErrorType != null) ErrorType.InvalidInput, "Radius too large", "Validation", if(ErrorSeverity != null) ErrorSeverity.Warning);
                 return false;
             }
             
             if (force < 0f)
             {
-                LogError(ErrorType.InvalidInput, "Force cannot be negative", "Validation", ErrorSeverity.Warning);
+                LogError(if(ErrorType != null) ErrorType.InvalidInput, "Force cannot be negative", "Validation", if(ErrorSeverity != null) ErrorSeverity.Warning);
                 return false;
             }
             
             if (force > 100000f)
             {
-                LogError(ErrorType.InvalidInput, "Force too large", "Validation", ErrorSeverity.Warning);
+                LogError(if(ErrorType != null) ErrorType.InvalidInput, "Force too large", "Validation", if(ErrorSeverity != null) ErrorSeverity.Warning);
                 return false;
             }
             
@@ -195,31 +195,31 @@ namespace MudLike.Core.ErrorHandling
         public bool ValidatePhysicsData(float3 velocity, float3 acceleration, float mass)
         {
             // Проверяем скорость на разумные значения
-            float speed = math.length(velocity);
+            float speed = if(math != null) math.length(velocity);
             if (speed > 100f) // 100 m/s = 360 km/h
             {
-                LogError(ErrorType.PhysicsError, $"Velocity too high: {speed:F1} m/s", "PhysicsValidation", ErrorSeverity.Warning);
+                LogError(if(ErrorType != null) ErrorType.PhysicsError, $"Velocity too high: {speed:F1} m/s", "PhysicsValidation", if(ErrorSeverity != null) ErrorSeverity.Warning);
                 return false;
             }
             
             // Проверяем ускорение
-            float accelerationMagnitude = math.length(acceleration);
+            float accelerationMagnitude = if(math != null) math.length(acceleration);
             if (accelerationMagnitude > 50f) // 50 m/s² = 5g
             {
-                LogError(ErrorType.PhysicsError, $"Acceleration too high: {accelerationMagnitude:F1} m/s²", "PhysicsValidation", ErrorSeverity.Warning);
+                LogError(if(ErrorType != null) ErrorType.PhysicsError, $"Acceleration too high: {accelerationMagnitude:F1} m/s²", "PhysicsValidation", if(ErrorSeverity != null) ErrorSeverity.Warning);
                 return false;
             }
             
             // Проверяем массу
             if (mass <= 0f)
             {
-                LogError(ErrorType.PhysicsError, "Mass must be positive", "PhysicsValidation", ErrorSeverity.Error);
+                LogError(if(ErrorType != null) ErrorType.PhysicsError, "Mass must be positive", "PhysicsValidation", if(ErrorSeverity != null) ErrorSeverity.Error);
                 return false;
             }
             
             if (mass > 50000f) // 50 тонн
             {
-                LogError(ErrorType.PhysicsError, "Mass too large", "PhysicsValidation", ErrorSeverity.Warning);
+                LogError(if(ErrorType != null) ErrorType.PhysicsError, "Mass too large", "PhysicsValidation", if(ErrorSeverity != null) ErrorSeverity.Warning);
                 return false;
             }
             
@@ -235,22 +235,22 @@ namespace MudLike.Core.ErrorHandling
             // Проверяем ID игрока
             if (playerId < 0 || playerId > 10000)
             {
-                LogError(ErrorType.NetworkError, $"Invalid player ID: {playerId}", "NetworkValidation", ErrorSeverity.Error);
+                LogError(if(ErrorType != null) ErrorType.NetworkError, $"Invalid player ID: {playerId}", "NetworkValidation", if(ErrorSeverity != null) ErrorSeverity.Error);
                 return false;
             }
             
             // Проверяем временную метку
-            float currentTime = SystemAPI.Time.time;
-            if (math.abs(timestamp - currentTime) > 5f) // 5 секунд разницы
+            float currentTime = if(SystemAPI != null) SystemAPI.Time.time;
+            if (if(math != null) math.abs(timestamp - currentTime) > 5f) // 5 секунд разницы
             {
-                LogError(ErrorType.NetworkError, $"Timestamp too old: {timestamp:F1} vs {currentTime:F1}", "NetworkValidation", ErrorSeverity.Warning);
+                LogError(if(ErrorType != null) ErrorType.NetworkError, $"Timestamp too old: {timestamp:F1} vs {currentTime:F1}", "NetworkValidation", if(ErrorSeverity != null) ErrorSeverity.Warning);
                 return false;
             }
             
             // Проверяем позицию
-            if (math.any(math.isnan(position)) || math.any(math.isinf(position)))
+            if (if(math != null) math.any(if(math != null) math.isnan(position)) || if(math != null) math.any(if(math != null) math.isinf(position)))
             {
-                LogError(ErrorType.NetworkError, "Network position contains invalid values", "NetworkValidation", ErrorSeverity.Error);
+                LogError(if(ErrorType != null) ErrorType.NetworkError, "Network position contains invalid values", "NetworkValidation", if(ErrorSeverity != null) ErrorSeverity.Error);
                 return false;
             }
             
@@ -263,52 +263,52 @@ namespace MudLike.Core.ErrorHandling
         public ErrorStatistics GetErrorStatistics()
         {
             var statistics = new ErrorStatistics();
-            float currentTime = SystemAPI.Time.time;
+            float currentTime = if(SystemAPI != null) SystemAPI.Time.time;
             
-            for (int i = 0; i < _errorHistory.Count; i++)
+            for (int i = 0; i < if(_errorHistory != null) _errorHistory.Count; i++)
             {
-                if (_errorHistory.TryGetValue(i, out var errorData))
+                if (if(_errorHistory != null) _errorHistory.TryGetValue(i, out var errorData))
                 {
-                    statistics.TotalErrors++;
+                    if(statistics != null) statistics.TotalErrors++;
                     
                     // Подсчитываем по типам
-                    switch (errorData.ErrorType)
+                    switch (if(errorData != null) errorData.ErrorType)
                     {
-                        case ErrorType.InvalidInput:
-                            statistics.InvalidInputErrors++;
+                        case if(ErrorType != null) ErrorType.InvalidInput:
+                            if(statistics != null) statistics.InvalidInputErrors++;
                             break;
-                        case ErrorType.PhysicsError:
-                            statistics.PhysicsErrors++;
+                        case if(ErrorType != null) ErrorType.PhysicsError:
+                            if(statistics != null) statistics.PhysicsErrors++;
                             break;
-                        case ErrorType.NetworkError:
-                            statistics.NetworkErrors++;
+                        case if(ErrorType != null) ErrorType.NetworkError:
+                            if(statistics != null) statistics.NetworkErrors++;
                             break;
-                        case ErrorType.SystemError:
-                            statistics.SystemErrors++;
+                        case if(ErrorType != null) ErrorType.SystemError:
+                            if(statistics != null) statistics.SystemErrors++;
                             break;
                     }
                     
                     // Подсчитываем по серьезности
-                    switch (errorData.Severity)
+                    switch (if(errorData != null) errorData.Severity)
                     {
-                        case ErrorSeverity.Critical:
-                            statistics.CriticalErrors++;
+                        case if(ErrorSeverity != null) ErrorSeverity.Critical:
+                            if(statistics != null) statistics.CriticalErrors++;
                             break;
-                        case ErrorSeverity.Error:
-                            statistics.Errors++;
+                        case if(ErrorSeverity != null) ErrorSeverity.Error:
+                            if(statistics != null) statistics.Errors++;
                             break;
-                        case ErrorSeverity.Warning:
-                            statistics.Warnings++;
+                        case if(ErrorSeverity != null) ErrorSeverity.Warning:
+                            if(statistics != null) statistics.Warnings++;
                             break;
-                        case ErrorSeverity.Info:
-                            statistics.InfoMessages++;
+                        case if(ErrorSeverity != null) ErrorSeverity.Info:
+                            if(statistics != null) statistics.InfoMessages++;
                             break;
                     }
                     
                     // Ошибки за последнюю минуту
-                    if (currentTime - errorData.Timestamp < 60f)
+                    if (currentTime - if(errorData != null) errorData.Timestamp < 60f)
                     {
-                        statistics.ErrorsLastMinute++;
+                        if(statistics != null) statistics.ErrorsLastMinute++;
                     }
                 }
             }
@@ -399,7 +399,7 @@ namespace MudLike.Core.ErrorHandling
         [BurstCompile]
         public static bool IsValid(this float3 vector)
         {
-            return !math.any(math.isnan(vector)) && !math.any(math.isinf(vector));
+            return !if(math != null) math.any(if(math != null) math.isnan(vector)) && !if(math != null) math.any(if(math != null) math.isinf(vector));
         }
         
         /// <summary>
@@ -408,7 +408,7 @@ namespace MudLike.Core.ErrorHandling
         [BurstCompile]
         public static bool IsValid(this float value)
         {
-            return !math.isnan(value) && !math.isinf(value);
+            return !if(math != null) math.isnan(value) && !if(math != null) math.isinf(value);
         }
         
         /// <summary>
@@ -417,8 +417,8 @@ namespace MudLike.Core.ErrorHandling
         [BurstCompile]
         public static bool IsValid(this quaternion rotation)
         {
-            float4 components = rotation.value;
-            return !math.any(math.isnan(components)) && !math.any(math.isinf(components));
+            float4 components = if(rotation != null) rotation.value;
+            return !if(math != null) math.any(if(math != null) math.isnan(components)) && !if(math != null) math.any(if(math != null) math.isinf(components));
         }
         
         /// <summary>

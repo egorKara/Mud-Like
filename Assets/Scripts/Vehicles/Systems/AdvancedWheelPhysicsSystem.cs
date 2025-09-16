@@ -25,21 +25,21 @@ namespace MudLike.Vehicles.Systems
             RequireForUpdate<PhysicsWorldSingleton>();
             
             _wheelQuery = GetEntityQuery(
-                ComponentType.ReadWrite<WheelData>(),
-                ComponentType.ReadWrite<WheelPhysicsData>(),
-                ComponentType.ReadOnly<LocalTransform>(),
-                ComponentType.ReadOnly<VehiclePhysics>()
+                if(ComponentType != null) ComponentType.ReadWrite<WheelData>(),
+                if(ComponentType != null) ComponentType.ReadWrite<WheelPhysicsData>(),
+                if(ComponentType != null) ComponentType.ReadOnly<LocalTransform>(),
+                if(ComponentType != null) ComponentType.ReadOnly<VehiclePhysics>()
             );
             
             _surfaceQuery = GetEntityQuery(
-                ComponentType.ReadOnly<SurfaceData>()
+                if(ComponentType != null) ComponentType.ReadOnly<SurfaceData>()
             );
         }
         
         protected override void OnUpdate()
         {
-            float deltaTime = SystemAPI.Time.fixedDeltaTime;
-            var physicsWorld = SystemAPI.GetSingleton<PhysicsWorldSingleton>().PhysicsWorld;
+            float deltaTime = if(SystemAPI != null) SystemAPI.Time.fixedDeltaTime;
+            var physicsWorld = if(SystemAPI != null) SystemAPI.GetSingleton<PhysicsWorldSingleton>().PhysicsWorld;
             
             var wheelPhysicsJob = new AdvancedWheelPhysicsJob
             {
@@ -48,7 +48,7 @@ namespace MudLike.Vehicles.Systems
                 SurfaceData = GetSurfaceData()
             };
             
-            Dependency = wheelPhysicsJob.ScheduleParallel(_wheelQuery, Dependency);
+            Dependency = if(wheelPhysicsJob != null) wheelPhysicsJob.ScheduleParallel(_wheelQuery, Dependency);
         }
         
         /// <summary>
@@ -56,11 +56,11 @@ namespace MudLike.Vehicles.Systems
         /// </summary>
         private NativeArray<SurfaceData> GetSurfaceData()
         {
-            var surfaceData = new NativeArray<SurfaceData>(11, Allocator.Temp);
+            var surfaceData = new NativeArray<SurfaceData>(11, if(Allocator != null) Allocator.Temp);
             
             for (int i = 0; i < 11; i++)
             {
-                surfaceData[i] = SurfaceProperties.GetSurfaceProperties((SurfaceType)i);
+                surfaceData[i] = if(SurfaceProperties != null) SurfaceProperties.GetSurfaceProperties((SurfaceType)i);
             }
             
             return surfaceData;
@@ -93,16 +93,16 @@ namespace MudLike.Vehicles.Systems
                                                    in VehiclePhysics vehiclePhysics)
             {
                 // Выполняем raycast для определения поверхности
-                float3 rayStart = wheelTransform.Position;
-                float3 rayDirection = -math.up();
-                float rayDistance = wheel.SuspensionLength + wheel.Radius;
+                float3 rayStart = if(wheelTransform != null) wheelTransform.Position;
+                float3 rayDirection = -if(math != null) math.up();
+                float rayDistance = if(wheel != null) wheel.SuspensionLength + if(wheel != null) wheel.Radius;
                 
-                if (PhysicsWorld.CastRay(rayStart, rayDirection, rayDistance, out RaycastHit hit))
+                if (if(PhysicsWorld != null) PhysicsWorld.CastRay(rayStart, rayDirection, rayDistance, out RaycastHit hit))
                 {
-                    wheel.IsGrounded = true;
-                    wheel.GroundPoint = hit.Position;
-                    wheel.GroundNormal = hit.SurfaceNormal;
-                    wheel.GroundDistance = hit.Distance;
+                    if(wheel != null) wheel.IsGrounded = true;
+                    if(wheel != null) wheel.GroundPoint = if(hit != null) hit.Position;
+                    if(wheel != null) wheel.GroundNormal = if(hit != null) hit.SurfaceNormal;
+                    if(wheel != null) wheel.GroundDistance = if(hit != null) hit.Distance;
                     
                     // Определяем тип поверхности
                     SurfaceType surfaceType = DetermineSurfaceType(hit);
@@ -123,11 +123,11 @@ namespace MudLike.Vehicles.Systems
                 else
                 {
                     // Колесо не касается земли
-                    wheel.IsGrounded = false;
+                    if(wheel != null) wheel.IsGrounded = false;
                     ResetWheelPhysics(ref wheelPhysics);
                 }
                 
-                wheelPhysics.LastUpdateTime = (float)SystemAPI.Time.ElapsedTime;
+                if(wheelPhysics != null) wheelPhysics.LastUpdateTime = (float)if(SystemAPI != null) SystemAPI.Time.ElapsedTime;
             }
             
             /// <summary>
@@ -137,7 +137,7 @@ namespace MudLike.Vehicles.Systems
             {
                 // В реальной реализации здесь будет определение по материалам
                 // Пока что используем случайный тип для демонстрации
-                return (SurfaceType)((int)(SystemAPI.Time.ElapsedTime * 0.1f) % 11);
+                return (SurfaceType)((int)(if(SystemAPI != null) SystemAPI.Time.ElapsedTime * 0.1f) % 11);
             }
             
             /// <summary>
@@ -150,39 +150,39 @@ namespace MudLike.Vehicles.Systems
                                              float deltaTime)
             {
                 // Вычисляем скорость проскальзывания
-                float wheelSpeed = wheel.AngularVelocity * wheel.Radius;
-                float vehicleSpeed = math.length(vehiclePhysics.Velocity);
-                wheelPhysics.SlipRatio = math.abs(wheelSpeed - vehicleSpeed) / math.max(wheelSpeed, 0.1f);
+                float wheelSpeed = if(wheel != null) wheel.AngularVelocity * if(wheel != null) wheel.Radius;
+                float vehicleSpeed = if(math != null) math.length(if(vehiclePhysics != null) vehiclePhysics.Velocity);
+                if(wheelPhysics != null) wheelPhysics.SlipRatio = if(math != null) math.abs(wheelSpeed - vehicleSpeed) / if(math != null) math.max(wheelSpeed, 0.1f);
                 
                 // Вычисляем угол проскальзывания
-                float3 velocityDirection = math.normalize(vehiclePhysics.Velocity);
-                float3 wheelDirection = math.forward(wheelTransform.Rotation);
-                wheelPhysics.SlipAngle = math.acos(math.clamp(math.dot(velocityDirection, wheelDirection), -1f, 1f));
+                float3 velocityDirection = if(math != null) math.normalize(if(vehiclePhysics != null) vehiclePhysics.Velocity);
+                float3 wheelDirection = if(math != null) math.forward(if(wheelTransform != null) wheelTransform.Rotation);
+                if(wheelPhysics != null) wheelPhysics.SlipAngle = if(math != null) math.acos(if(math != null) math.clamp(if(math != null) math.dot(velocityDirection, wheelDirection), -1f, 1f));
                 
                 // Обновляем сцепление с поверхностью
-                wheelPhysics.SurfaceTraction = CalculateSurfaceTraction(surface, wheelPhysics, wheel);
+                if(wheelPhysics != null) wheelPhysics.SurfaceTraction = CalculateSurfaceTraction(surface, wheelPhysics, wheel);
                 
                 // Вычисляем глубину погружения
-                wheelPhysics.SinkDepth = CalculateSinkDepth(surface, wheel, vehiclePhysics);
+                if(wheelPhysics != null) wheelPhysics.SinkDepth = CalculateSinkDepth(surface, wheel, vehiclePhysics);
                 
                 // Обновляем сопротивление качению
-                wheelPhysics.RollingResistance = CalculateRollingResistance(surface, wheel, vehiclePhysics);
+                if(wheelPhysics != null) wheelPhysics.RollingResistance = CalculateRollingResistance(surface, wheel, vehiclePhysics);
                 
                 // Вычисляем вязкое сопротивление
-                wheelPhysics.ViscousResistance = CalculateViscousResistance(surface, wheelPhysics, wheel);
+                if(wheelPhysics != null) wheelPhysics.ViscousResistance = CalculateViscousResistance(surface, wheelPhysics, wheel);
                 
                 // Вычисляем выталкивающую силу
-                wheelPhysics.BuoyancyForce = CalculateBuoyancyForce(surface, wheelPhysics, wheel);
+                if(wheelPhysics != null) wheelPhysics.BuoyancyForce = CalculateBuoyancyForce(surface, wheelPhysics, wheel);
                 
                 // Обновляем время контакта
-                if (wheelPhysics.LastSurfaceType == (int)surface.SurfaceType)
+                if (if(wheelPhysics != null) wheelPhysics.LastSurfaceType == (int)if(surface != null) surface.SurfaceType)
                 {
-                    wheelPhysics.ContactTime += deltaTime;
+                    if(wheelPhysics != null) wheelPhysics.ContactTime += deltaTime;
                 }
                 else
                 {
-                    wheelPhysics.ContactTime = 0f;
-                    wheelPhysics.LastSurfaceType = (int)surface.SurfaceType;
+                    if(wheelPhysics != null) wheelPhysics.ContactTime = 0f;
+                    if(wheelPhysics != null) wheelPhysics.LastSurfaceType = (int)if(surface != null) surface.SurfaceType;
                 }
             }
             
@@ -191,22 +191,22 @@ namespace MudLike.Vehicles.Systems
             /// </summary>
             private float CalculateSurfaceTraction(SurfaceData surface, WheelPhysicsData wheelPhysics, WheelData wheel)
             {
-                float baseTraction = surface.TractionCoefficient;
+                float baseTraction = if(surface != null) surface.TractionCoefficient;
                 
                 // Влияние температуры
-                float temperatureFactor = math.clamp(wheelPhysics.WheelTemperature / 100f, 0.5f, 1.5f);
+                float temperatureFactor = if(math != null) math.clamp(if(wheelPhysics != null) wheelPhysics.WheelTemperature / 100f, 0.5f, 1.5f);
                 
                 // Влияние износа протектора
-                float wearFactor = 1f - wheelPhysics.TreadWear * 0.5f;
+                float wearFactor = 1f - if(wheelPhysics != null) wheelPhysics.TreadWear * 0.5f;
                 
                 // Влияние давления в шине
-                float pressureFactor = math.clamp(wheelPhysics.TirePressure / wheelPhysics.MaxTirePressure, 0.7f, 1.2f);
+                float pressureFactor = if(math != null) math.clamp(if(wheelPhysics != null) wheelPhysics.TirePressure / if(wheelPhysics != null) wheelPhysics.MaxTirePressure, 0.7f, 1.2f);
                 
                 // Влияние скорости проскальзывания
-                float slipFactor = math.clamp(1f - wheelPhysics.SlipRatio, 0.1f, 1f);
+                float slipFactor = if(math != null) math.clamp(1f - if(wheelPhysics != null) wheelPhysics.SlipRatio, 0.1f, 1f);
                 
                 // Влияние влажности
-                float moistureFactor = math.clamp(1f - surface.Moisture * 0.5f, 0.3f, 1f);
+                float moistureFactor = if(math != null) math.clamp(1f - if(surface != null) surface.Moisture * 0.5f, 0.3f, 1f);
                 
                 return baseTraction * temperatureFactor * wearFactor * pressureFactor * slipFactor * moistureFactor;
             }
@@ -216,16 +216,16 @@ namespace MudLike.Vehicles.Systems
             /// </summary>
             private float CalculateSinkDepth(SurfaceData surface, WheelData wheel, VehiclePhysics vehiclePhysics)
             {
-                if (surface.PenetrationDepth <= 0f)
+                if (if(surface != null) surface.PenetrationDepth <= 0f)
                     return 0f;
                 
                 // Давление колеса на поверхность
-                float wheelPressure = vehiclePhysics.Mass * 9.81f / (math.PI * wheel.Radius * wheel.Radius);
+                float wheelPressure = if(vehiclePhysics != null) vehiclePhysics.Mass * 9.81f / (if(math != null) math.PI * if(wheel != null) wheel.Radius * if(wheel != null) wheel.Radius);
                 
                 // Глубина погружения зависит от давления и плотности поверхности
-                float sinkDepth = wheelPressure / (surface.Density * 9.81f) * surface.PenetrationDepth;
+                float sinkDepth = wheelPressure / (if(surface != null) surface.Density * 9.81f) * if(surface != null) surface.PenetrationDepth;
                 
-                return math.clamp(sinkDepth, 0f, surface.PenetrationDepth);
+                return if(math != null) math.clamp(sinkDepth, 0f, if(surface != null) surface.PenetrationDepth);
             }
             
             /// <summary>
@@ -233,13 +233,13 @@ namespace MudLike.Vehicles.Systems
             /// </summary>
             private float CalculateRollingResistance(SurfaceData surface, WheelData wheel, VehiclePhysics vehiclePhysics)
             {
-                float baseResistance = surface.RollingResistance;
+                float baseResistance = if(surface != null) surface.RollingResistance;
                 
                 // Влияние скорости
-                float speedFactor = 1f + math.length(vehiclePhysics.Velocity) * 0.01f;
+                float speedFactor = 1f + if(math != null) math.length(if(vehiclePhysics != null) vehiclePhysics.Velocity) * 0.01f;
                 
                 // Влияние глубины погружения
-                float sinkFactor = 1f + wheelPhysics.SinkDepth * 2f;
+                float sinkFactor = 1f + if(wheelPhysics != null) wheelPhysics.SinkDepth * 2f;
                 
                 return baseResistance * speedFactor * sinkFactor;
             }
@@ -249,12 +249,12 @@ namespace MudLike.Vehicles.Systems
             /// </summary>
             private float CalculateViscousResistance(SurfaceData surface, WheelPhysicsData wheelPhysics, WheelData wheel)
             {
-                if (surface.Viscosity <= 0f)
+                if (if(surface != null) surface.Viscosity <= 0f)
                     return 0f;
                 
                 // Вязкое сопротивление пропорционально скорости и вязкости
-                float velocity = math.length(wheelPhysics.SlipLinearVelocity);
-                return surface.Viscosity * velocity * wheel.Radius;
+                float velocity = if(math != null) math.length(if(wheelPhysics != null) wheelPhysics.SlipLinearVelocity);
+                return if(surface != null) surface.Viscosity * velocity * if(wheel != null) wheel.Radius;
             }
             
             /// <summary>
@@ -262,14 +262,14 @@ namespace MudLike.Vehicles.Systems
             /// </summary>
             private float CalculateBuoyancyForce(SurfaceData surface, WheelPhysicsData wheelPhysics, WheelData wheel)
             {
-                if (surface.Density <= 0f || wheelPhysics.SinkDepth <= 0f)
+                if (if(surface != null) surface.Density <= 0f || if(wheelPhysics != null) wheelPhysics.SinkDepth <= 0f)
                     return 0f;
                 
                 // Объем погруженной части колеса
-                float submergedVolume = math.PI * wheel.Radius * wheel.Radius * wheelPhysics.SinkDepth;
+                float submergedVolume = if(math != null) math.PI * if(wheel != null) wheel.Radius * if(wheel != null) wheel.Radius * if(wheelPhysics != null) wheelPhysics.SinkDepth;
                 
                 // Сила Архимеда
-                return surface.Density * 9.81f * submergedVolume;
+                return if(surface != null) surface.Density * 9.81f * submergedVolume;
             }
             
             /// <summary>
@@ -282,41 +282,41 @@ namespace MudLike.Vehicles.Systems
                                              float deltaTime)
             {
                 // Вычисляем продольную силу сцепления
-                float3 forwardDirection = math.forward(wheelTransform.Rotation);
-                float3 velocityDirection = math.normalize(vehiclePhysics.Velocity);
+                float3 forwardDirection = if(math != null) math.forward(if(wheelTransform != null) wheelTransform.Rotation);
+                float3 velocityDirection = if(math != null) math.normalize(if(vehiclePhysics != null) vehiclePhysics.Velocity);
                 
-                wheelPhysics.LongitudinalTractionForce = wheelPhysics.SurfaceTraction * 
-                    math.dot(forwardDirection, velocityDirection) * vehiclePhysics.Mass * 9.81f;
+                if(wheelPhysics != null) wheelPhysics.LongitudinalTractionForce = if(wheelPhysics != null) wheelPhysics.SurfaceTraction * 
+                    if(math != null) math.dot(forwardDirection, velocityDirection) * if(vehiclePhysics != null) vehiclePhysics.Mass * 9.81f;
                 
                 // Вычисляем боковую силу сцепления
-                float3 rightDirection = math.right(wheelTransform.Rotation);
-                wheelPhysics.LateralTractionForce = wheelPhysics.SurfaceTraction * 
-                    math.dot(rightDirection, velocityDirection) * vehiclePhysics.Mass * 9.81f;
+                float3 rightDirection = if(math != null) math.right(if(wheelTransform != null) wheelTransform.Rotation);
+                if(wheelPhysics != null) wheelPhysics.LateralTractionForce = if(wheelPhysics != null) wheelPhysics.SurfaceTraction * 
+                    if(math != null) math.dot(rightDirection, velocityDirection) * if(vehiclePhysics != null) vehiclePhysics.Mass * 9.81f;
                 
                 // Общая сила сцепления
-                wheelPhysics.CurrentTractionForce = math.sqrt(
-                    wheelPhysics.LongitudinalTractionForce * wheelPhysics.LongitudinalTractionForce +
-                    wheelPhysics.LateralTractionForce * wheelPhysics.LateralTractionForce
+                if(wheelPhysics != null) wheelPhysics.CurrentTractionForce = if(math != null) math.sqrt(
+                    if(wheelPhysics != null) wheelPhysics.LongitudinalTractionForce * if(wheelPhysics != null) wheelPhysics.LongitudinalTractionForce +
+                    if(wheelPhysics != null) wheelPhysics.LateralTractionForce * if(wheelPhysics != null) wheelPhysics.LateralTractionForce
                 );
                 
                 // Ограничиваем максимальную силу сцепления
-                wheelPhysics.CurrentTractionForce = math.min(wheelPhysics.CurrentTractionForce, wheelPhysics.MaxTractionForce);
+                if(wheelPhysics != null) wheelPhysics.CurrentTractionForce = if(math != null) math.min(if(wheelPhysics != null) wheelPhysics.CurrentTractionForce, if(wheelPhysics != null) wheelPhysics.MaxTractionForce);
                 
                 // Вычисляем силу трения
-                float3 frictionForce = -vehiclePhysics.Velocity * wheelPhysics.SurfaceTraction * 100f;
+                float3 frictionForce = -if(vehiclePhysics != null) vehiclePhysics.Velocity * if(wheelPhysics != null) wheelPhysics.SurfaceTraction * 100f;
                 
                 // Добавляем вязкое сопротивление
-                frictionForce += -vehiclePhysics.Velocity * wheelPhysics.ViscousResistance;
+                frictionForce += -if(vehiclePhysics != null) vehiclePhysics.Velocity * if(wheelPhysics != null) wheelPhysics.ViscousResistance;
                 
                 // Ограничиваем силу трения
-                float maxFriction = wheelPhysics.CurrentTractionForce;
-                if (math.length(frictionForce) > maxFriction)
+                float maxFriction = if(wheelPhysics != null) wheelPhysics.CurrentTractionForce;
+                if (if(math != null) math.length(frictionForce) > maxFriction)
                 {
-                    frictionForce = math.normalize(frictionForce) * maxFriction;
+                    frictionForce = if(math != null) math.normalize(frictionForce) * maxFriction;
                 }
                 
-                wheel.FrictionForce = frictionForce;
-                wheel.Traction = wheelPhysics.SurfaceTraction;
+                if(wheel != null) wheel.FrictionForce = frictionForce;
+                if(wheel != null) wheel.Traction = if(wheelPhysics != null) wheelPhysics.SurfaceTraction;
             }
             
             /// <summary>
@@ -328,23 +328,23 @@ namespace MudLike.Vehicles.Systems
                                                      float deltaTime)
             {
                 // Вычисляем энергию проскальзывания
-                wheelPhysics.SlipEnergy = wheelPhysics.SlipRatio * math.length(vehiclePhysics.Velocity) * deltaTime;
+                if(wheelPhysics != null) wheelPhysics.SlipEnergy = if(wheelPhysics != null) wheelPhysics.SlipRatio * if(math != null) math.length(if(vehiclePhysics != null) vehiclePhysics.Velocity) * deltaTime;
                 
                 // Нагрев от проскальзывания
-                float heating = wheelPhysics.SlipEnergy * 0.1f;
-                wheelPhysics.WheelTemperature += heating * deltaTime;
+                float heating = if(wheelPhysics != null) wheelPhysics.SlipEnergy * 0.1f;
+                if(wheelPhysics != null) wheelPhysics.WheelTemperature += heating * deltaTime;
                 
                 // Охлаждение
-                float cooling = wheelPhysics.CoolingRate * (wheelPhysics.WheelTemperature - 20f) * deltaTime;
-                wheelPhysics.WheelTemperature -= cooling * deltaTime;
+                float cooling = if(wheelPhysics != null) wheelPhysics.CoolingRate * (if(wheelPhysics != null) wheelPhysics.WheelTemperature - 20f) * deltaTime;
+                if(wheelPhysics != null) wheelPhysics.WheelTemperature -= cooling * deltaTime;
                 
                 // Ограничиваем температуру
-                wheelPhysics.WheelTemperature = math.clamp(wheelPhysics.WheelTemperature, 20f, 200f);
+                if(wheelPhysics != null) wheelPhysics.WheelTemperature = if(math != null) math.clamp(if(wheelPhysics != null) wheelPhysics.WheelTemperature, 20f, 200f);
                 
                 // Износ протектора
-                float wear = wheelPhysics.SlipEnergy * 0.001f;
-                wheelPhysics.TreadWear += wear * deltaTime;
-                wheelPhysics.TreadWear = math.clamp(wheelPhysics.TreadWear, 0f, 1f);
+                float wear = if(wheelPhysics != null) wheelPhysics.SlipEnergy * 0.001f;
+                if(wheelPhysics != null) wheelPhysics.TreadWear += wear * deltaTime;
+                if(wheelPhysics != null) wheelPhysics.TreadWear = if(math != null) math.clamp(if(wheelPhysics != null) wheelPhysics.TreadWear, 0f, 1f);
             }
             
             /// <summary>
@@ -356,21 +356,21 @@ namespace MudLike.Vehicles.Systems
                                         float deltaTime)
             {
                 // Накопление грязи
-                if (surface.SurfaceType == SurfaceType.Mud || surface.SurfaceType == SurfaceType.Swamp)
+                if (if(surface != null) surface.SurfaceType == if(SurfaceType != null) SurfaceType.Mud || if(surface != null) surface.SurfaceType == if(SurfaceType != null) SurfaceType.Swamp)
                 {
-                    float mudAccumulation = surface.Viscosity * wheelPhysics.SinkDepth * deltaTime;
-                    wheelPhysics.MudMass += mudAccumulation;
-                    wheelPhysics.MudParticleCount += (int)(mudAccumulation * 100f);
+                    float mudAccumulation = if(surface != null) surface.Viscosity * if(wheelPhysics != null) wheelPhysics.SinkDepth * deltaTime;
+                    if(wheelPhysics != null) wheelPhysics.MudMass += mudAccumulation;
+                    if(wheelPhysics != null) wheelPhysics.MudParticleCount += (int)(mudAccumulation * 100f);
                 }
                 
                 // Очистка от грязи
-                float cleaning = wheelPhysics.CleaningRate * wheelPhysics.MudMass * deltaTime;
-                wheelPhysics.MudMass -= cleaning;
-                wheelPhysics.MudParticleCount = (int)(wheelPhysics.MudMass * 100f);
+                float cleaning = if(wheelPhysics != null) wheelPhysics.CleaningRate * if(wheelPhysics != null) wheelPhysics.MudMass * deltaTime;
+                if(wheelPhysics != null) wheelPhysics.MudMass -= cleaning;
+                if(wheelPhysics != null) wheelPhysics.MudParticleCount = (int)(if(wheelPhysics != null) wheelPhysics.MudMass * 100f);
                 
                 // Ограничиваем количество грязи
-                wheelPhysics.MudMass = math.clamp(wheelPhysics.MudMass, 0f, 10f);
-                wheelPhysics.MudParticleCount = math.clamp(wheelPhysics.MudParticleCount, 0, 1000);
+                if(wheelPhysics != null) wheelPhysics.MudMass = if(math != null) math.clamp(if(wheelPhysics != null) wheelPhysics.MudMass, 0f, 10f);
+                if(wheelPhysics != null) wheelPhysics.MudParticleCount = if(math != null) math.clamp(if(wheelPhysics != null) wheelPhysics.MudParticleCount, 0, 1000);
             }
             
             /// <summary>
@@ -378,18 +378,17 @@ namespace MudLike.Vehicles.Systems
             /// </summary>
             private void ResetWheelPhysics(ref WheelPhysicsData wheelPhysics)
             {
-                wheelPhysics.SlipRatio = 0f;
-                wheelPhysics.SlipAngle = 0f;
-                wheelPhysics.SurfaceTraction = 0f;
-                wheelPhysics.SinkDepth = 0f;
-                wheelPhysics.RollingResistance = 0f;
-                wheelPhysics.ViscousResistance = 0f;
-                wheelPhysics.BuoyancyForce = 0f;
-                wheelPhysics.CurrentTractionForce = 0f;
-                wheelPhysics.LateralTractionForce = 0f;
-                wheelPhysics.LongitudinalTractionForce = 0f;
-                wheelPhysics.ContactTime = 0f;
+                if(wheelPhysics != null) wheelPhysics.SlipRatio = 0f;
+                if(wheelPhysics != null) wheelPhysics.SlipAngle = 0f;
+                if(wheelPhysics != null) wheelPhysics.SurfaceTraction = 0f;
+                if(wheelPhysics != null) wheelPhysics.SinkDepth = 0f;
+                if(wheelPhysics != null) wheelPhysics.RollingResistance = 0f;
+                if(wheelPhysics != null) wheelPhysics.ViscousResistance = 0f;
+                if(wheelPhysics != null) wheelPhysics.BuoyancyForce = 0f;
+                if(wheelPhysics != null) wheelPhysics.CurrentTractionForce = 0f;
+                if(wheelPhysics != null) wheelPhysics.LateralTractionForce = 0f;
+                if(wheelPhysics != null) wheelPhysics.LongitudinalTractionForce = 0f;
+                if(wheelPhysics != null) wheelPhysics.ContactTime = 0f;
             }
         }
     }
-}

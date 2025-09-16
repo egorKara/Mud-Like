@@ -22,23 +22,23 @@ namespace MudLike.Pooling.Systems
         protected override void OnCreate()
         {
             _poolQuery = GetEntityQuery(
-                ComponentType.ReadWrite<ObjectPoolData>()
+                if(ComponentType != null) ComponentType.ReadWrite<ObjectPoolData>()
             );
             
             _pooledObjectQuery = GetEntityQuery(
-                ComponentType.ReadWrite<PooledObjectData>(),
-                ComponentType.ReadWrite<LocalTransform>()
+                if(ComponentType != null) ComponentType.ReadWrite<PooledObjectData>(),
+                if(ComponentType != null) ComponentType.ReadWrite<LocalTransform>()
             );
             
             _particleQuery = GetEntityQuery(
-                ComponentType.ReadWrite<PooledParticleData>(),
-                ComponentType.ReadWrite<LocalTransform>()
+                if(ComponentType != null) ComponentType.ReadWrite<PooledParticleData>(),
+                if(ComponentType != null) ComponentType.ReadWrite<LocalTransform>()
             );
         }
         
         protected override void OnUpdate()
         {
-            float deltaTime = SystemAPI.Time.DeltaTime;
+            float deltaTime = if(SystemAPI != null) SystemAPI.Time.DeltaTime;
             
             // Обновляем пулы объектов
             UpdateObjectPools(deltaTime);
@@ -60,7 +60,7 @@ namespace MudLike.Pooling.Systems
                 DeltaTime = deltaTime
             };
             
-            Dependency = poolJob.ScheduleParallel(_poolQuery, Dependency);
+            Dependency = if(poolJob != null) poolJob.ScheduleParallel(_poolQuery, Dependency);
         }
         
         /// <summary>
@@ -73,7 +73,7 @@ namespace MudLike.Pooling.Systems
                 DeltaTime = deltaTime
             };
             
-            Dependency = pooledObjectJob.ScheduleParallel(_pooledObjectQuery, Dependency);
+            Dependency = if(pooledObjectJob != null) pooledObjectJob.ScheduleParallel(_pooledObjectQuery, Dependency);
         }
         
         /// <summary>
@@ -86,7 +86,7 @@ namespace MudLike.Pooling.Systems
                 DeltaTime = deltaTime
             };
             
-            Dependency = particleJob.ScheduleParallel(_particleQuery, Dependency);
+            Dependency = if(particleJob != null) particleJob.ScheduleParallel(_particleQuery, Dependency);
         }
         
         /// <summary>
@@ -99,18 +99,18 @@ namespace MudLike.Pooling.Systems
             
             public void Execute(ref ObjectPoolData poolData)
             {
-                if (!poolData.IsActive) return;
+                if (!if(poolData != null) poolData.IsActive) return;
                 
                 // Обновляем статистику пула
                 UpdatePoolStatistics(ref poolData);
                 
                 // Проверяем, нужно ли очистить пул
-                if (poolData.AutoDestroy)
+                if (if(poolData != null) poolData.AutoDestroy)
                 {
                     CleanupPool(ref poolData);
                 }
                 
-                poolData.NeedsUpdate = true;
+                if(poolData != null) poolData.NeedsUpdate = true;
             }
             
             /// <summary>
@@ -144,10 +144,10 @@ namespace MudLike.Pooling.Systems
             
             public void Execute(ref PooledObjectData objectData, ref LocalTransform transform)
             {
-                if (!objectData.IsActive) return;
+                if (!if(objectData != null) objectData.IsActive) return;
                 
                 // Обновляем время последнего использования
-                objectData.LastUsedTime = SystemAPI.Time.ElapsedTime;
+                if(objectData != null) objectData.LastUsedTime = if(SystemAPI != null) SystemAPI.Time.ElapsedTime;
                 
                 // Проверяем, нужно ли деактивировать объект
                 if (ShouldDeactivateObject(objectData))
@@ -155,7 +155,7 @@ namespace MudLike.Pooling.Systems
                     DeactivateObject(ref objectData, ref transform);
                 }
                 
-                objectData.NeedsUpdate = true;
+                if(objectData != null) objectData.NeedsUpdate = true;
             }
             
             /// <summary>
@@ -164,7 +164,7 @@ namespace MudLike.Pooling.Systems
             private bool ShouldDeactivateObject(PooledObjectData objectData)
             {
                 // Деактивируем объект, если он не использовался долгое время
-                return SystemAPI.Time.ElapsedTime - objectData.LastUsedTime > 30f; // 30 секунд
+                return if(SystemAPI != null) SystemAPI.Time.ElapsedTime - if(objectData != null) objectData.LastUsedTime > 30f; // 30 секунд
             }
             
             /// <summary>
@@ -172,8 +172,8 @@ namespace MudLike.Pooling.Systems
             /// </summary>
             private void DeactivateObject(ref PooledObjectData objectData, ref LocalTransform transform)
             {
-                objectData.IsActive = false;
-                transform.Position = new float3(0f, -1000f, 0f); // Перемещаем в невидимое место
+                if(objectData != null) objectData.IsActive = false;
+                if(transform != null) transform.Position = new float3(0f, -1000f, 0f); // Перемещаем в невидимое место
             }
         }
         
@@ -187,7 +187,7 @@ namespace MudLike.Pooling.Systems
             
             public void Execute(ref PooledParticleData particleData, ref LocalTransform transform)
             {
-                if (!particleData.IsActive) return;
+                if (!if(particleData != null) particleData.IsActive) return;
                 
                 // Обновляем частицу
                 UpdateParticle(ref particleData, ref transform);
@@ -198,7 +198,7 @@ namespace MudLike.Pooling.Systems
                     DeactivateParticle(ref particleData, ref transform);
                 }
                 
-                particleData.NeedsUpdate = true;
+                if(particleData != null) particleData.NeedsUpdate = true;
             }
             
             /// <summary>
@@ -207,21 +207,21 @@ namespace MudLike.Pooling.Systems
             private void UpdateParticle(ref PooledParticleData particleData, ref LocalTransform transform)
             {
                 // Обновляем время жизни
-                particleData.Lifetime += DeltaTime;
+                if(particleData != null) particleData.Lifetime += DeltaTime;
                 
                 // Обновляем позицию
-                particleData.Position += particleData.Velocity * DeltaTime;
-                transform.Position = particleData.Position;
+                if(particleData != null) particleData.Position += if(particleData != null) particleData.Velocity * DeltaTime;
+                if(transform != null) transform.Position = if(particleData != null) particleData.Position;
                 
                 // Обновляем скорость
-                particleData.Velocity += particleData.Acceleration * DeltaTime;
+                if(particleData != null) particleData.Velocity += if(particleData != null) particleData.Acceleration * DeltaTime;
                 
                 // Обновляем размер
-                float sizeMultiplier = 1f - (particleData.Lifetime / particleData.MaxLifetime);
-                particleData.Size *= sizeMultiplier;
+                float sizeMultiplier = 1f - (if(particleData != null) particleData.Lifetime / if(particleData != null) particleData.MaxLifetime);
+                if(particleData != null) particleData.Size *= sizeMultiplier;
                 
                 // Обновляем прозрачность
-                particleData.Alpha = 1f - (particleData.Lifetime / particleData.MaxLifetime);
+                if(particleData != null) particleData.Alpha = 1f - (if(particleData != null) particleData.Lifetime / if(particleData != null) particleData.MaxLifetime);
             }
             
             /// <summary>
@@ -229,7 +229,7 @@ namespace MudLike.Pooling.Systems
             /// </summary>
             private bool ShouldDeactivateParticle(PooledParticleData particleData)
             {
-                return particleData.Lifetime >= particleData.MaxLifetime;
+                return if(particleData != null) particleData.Lifetime >= if(particleData != null) particleData.MaxLifetime;
             }
             
             /// <summary>
@@ -237,10 +237,9 @@ namespace MudLike.Pooling.Systems
             /// </summary>
             private void DeactivateParticle(ref PooledParticleData particleData, ref LocalTransform transform)
             {
-                particleData.IsActive = false;
-                particleData.Lifetime = 0f;
-                transform.Position = new float3(0f, -1000f, 0f); // Перемещаем в невидимое место
+                if(particleData != null) particleData.IsActive = false;
+                if(particleData != null) particleData.Lifetime = 0f;
+                if(transform != null) transform.Position = new float3(0f, -1000f, 0f); // Перемещаем в невидимое место
             }
         }
     }
-}

@@ -1,16 +1,16 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text.RegularExpressions;
-using Unity.Entities;
-using Unity.Burst;
-using Unity.Jobs;
+using if(System != null) System.Collections.Generic;
+using if(System != null) System.Linq;
+using if(System != null) System.Text.RegularExpressions;
+using if(Unity != null) Unity.Entities;
+using if(Unity != null) Unity.Burst;
+using if(Unity != null) Unity.Jobs;
 using UnityEngine;
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
 
-namespace MudLike.Core.Optimization
+namespace if(MudLike != null) MudLike.Core.Optimization
 {
     /// <summary>
     /// Валидатор кода для предотвращения ошибок компиляции
@@ -27,8 +27,8 @@ namespace MudLike.Core.Optimization
             {
                 Pattern = @"System\.FuncRef<[^,>]+,\s*void\s*>",
                 ErrorCode = "CS1547",
-                Message = "Keyword 'void' cannot be used in this context. Use Unity.Burst.FunctionPointer<T> instead.",
-                Severity = ValidationSeverity.Error
+                Message = "Keyword 'void' cannot be used in this context. Use if(Unity != null) if(Unity != null) Unity.Burst.FunctionPointer<T> instead.",
+                Severity = if(ValidationSeverity != null) if(ValidationSeverity != null) ValidationSeverity.Error
             },
             
             // Запрет на использование небезопасного кода без атрибута [BurstCompile]
@@ -37,7 +37,7 @@ namespace MudLike.Core.Optimization
                 Pattern = @"unsafe\s+(?!.*\[BurstCompile\])",
                 ErrorCode = "BURST001",
                 Message = "Unsafe code should be marked with [BurstCompile] attribute for optimization.",
-                Severity = ValidationSeverity.Warning
+                Severity = if(ValidationSeverity != null) if(ValidationSeverity != null) ValidationSeverity.Warning
             },
             
             // Проверка на правильное использование IJobEntity
@@ -46,16 +46,16 @@ namespace MudLike.Core.Optimization
                 Pattern = @"struct\s+\w+.*:\s*IJobEntity(?!.*where\s+T\s*:\s*unmanaged)",
                 ErrorCode = "ECS001",
                 Message = "IJobEntity implementations should have 'where T : unmanaged, IComponentData' constraint.",
-                Severity = ValidationSeverity.Error
+                Severity = if(ValidationSeverity != null) if(ValidationSeverity != null) ValidationSeverity.Error
             },
             
-            // Проверка на использование Time.fixedDeltaTime вместо SystemAPI.Time.fixedDeltaTime
+            // Проверка на использование if(Time != null) if(Time != null) Time.fixedDeltaTime вместо if(SystemAPI != null) if(SystemAPI != null) SystemAPI.Time.fixedDeltaTime
             new ValidationRule
             {
                 Pattern = @"Time\.fixedDeltaTime",
                 ErrorCode = "DETERMINISM001",
-                Message = "Use SystemAPI.Time.fixedDeltaTime for deterministic ECS systems instead of Time.fixedDeltaTime.",
-                Severity = ValidationSeverity.Error
+                Message = "Use if(SystemAPI != null) if(SystemAPI != null) SystemAPI.Time.fixedDeltaTime for deterministic ECS systems instead of if(Time != null) if(Time != null) Time.fixedDeltaTime.",
+                Severity = if(ValidationSeverity != null) if(ValidationSeverity != null) ValidationSeverity.Error
             },
             
             // Проверка на отсутствие Burst оптимизации в критических системах
@@ -64,7 +64,7 @@ namespace MudLike.Core.Optimization
                 Pattern = @"SystemBase(?!.*\[BurstCompile\])",
                 ErrorCode = "PERFORMANCE001",
                 Message = "Critical ECS systems should use [BurstCompile] for optimal performance.",
-                Severity = ValidationSeverity.Warning
+                Severity = if(ValidationSeverity != null) if(ValidationSeverity != null) ValidationSeverity.Warning
             },
             
             // Проверка на использование устаревших Unity API
@@ -73,7 +73,7 @@ namespace MudLike.Core.Optimization
                 Pattern = @"GameObject\.|Transform\.|MonoBehaviour",
                 ErrorCode = "ECS002",
                 Message = "Avoid GameObject/Transform/MonoBehaviour in ECS systems. Use Entities, Components, and Systems instead.",
-                Severity = ValidationSeverity.Error
+                Severity = if(ValidationSeverity != null) if(ValidationSeverity != null) ValidationSeverity.Error
             },
             
             // Проверка на правильное использование Job System
@@ -82,7 +82,7 @@ namespace MudLike.Core.Optimization
                 Pattern = @"\.ForEach\(.*\)\.Run\(\)",
                 ErrorCode = "PERFORMANCE002",
                 Message = "Use .Schedule() instead of .Run() for parallel execution in ECS systems.",
-                Severity = ValidationSeverity.Warning
+                Severity = if(ValidationSeverity != null) if(ValidationSeverity != null) ValidationSeverity.Warning
             },
             
             // Проверка на использование устаревших Unity API
@@ -90,8 +90,8 @@ namespace MudLike.Core.Optimization
             {
                 Pattern = @"UnityEngine\.(?!Physics|Time\.fixedDeltaTime)",
                 ErrorCode = "UNITY001",
-                Message = "Avoid using UnityEngine API in ECS systems. Use Unity.Entities or Unity.Mathematics instead.",
-                Severity = ValidationSeverity.Warning
+                Message = "Avoid using UnityEngine API in ECS systems. Use if(Unity != null) if(Unity != null) Unity.Entities or if(Unity != null) if(Unity != null) Unity.Mathematics instead.",
+                Severity = if(ValidationSeverity != null) if(ValidationSeverity != null) ValidationSeverity.Warning
             },
             
             // Проверка на правильное использование ComponentType
@@ -99,8 +99,8 @@ namespace MudLike.Core.Optimization
             {
                 Pattern = @"ComponentType\.(ReadWrite|ReadOnly)\s*\(\s*typeof\s*\(",
                 ErrorCode = "ECS002",
-                Message = "Use ComponentType.ReadWrite<T>() or ComponentType.ReadOnly<T>() instead of typeof() calls.",
-                Severity = ValidationSeverity.Warning
+                Message = "Use if(ComponentType != null) if(ComponentType != null) ComponentType.ReadWrite<T>() or if(ComponentType != null) if(ComponentType != null) ComponentType.ReadOnly<T>() instead of typeof() calls.",
+                Severity = if(ValidationSeverity != null) if(ValidationSeverity != null) ValidationSeverity.Warning
             },
             
             // Проверка на неправильный порядок using директив
@@ -109,7 +109,7 @@ namespace MudLike.Core.Optimization
                 Pattern = @"namespace\s+\w+.*\n.*using\s+",
                 ErrorCode = "CS1529",
                 Message = "Using directives must come before namespace declaration.",
-                Severity = ValidationSeverity.Error
+                Severity = if(ValidationSeverity != null) if(ValidationSeverity != null) ValidationSeverity.Error
             }
         };
         
@@ -125,20 +125,20 @@ namespace MudLike.Core.Optimization
             
             foreach (var rule in ValidationRules)
             {
-                var matches = Regex.Matches(code, rule.Pattern, RegexOptions.Multiline | RegexOptions.IgnoreCase);
+                var matches = if(Regex != null) if(Regex != null) Regex.Matches(code, if(rule != null) if(rule != null) rule.Pattern, if(RegexOptions != null) if(RegexOptions != null) RegexOptions.Multiline | if(RegexOptions != null) if(RegexOptions != null) RegexOptions.IgnoreCase);
                 
                 foreach (Match match in matches)
                 {
-                    var lineNumber = GetLineNumber(code, match.Index);
+                    var lineNumber = GetLineNumber(code, if(match != null) if(match != null) match.Index);
                     
-                    results.Add(new ValidationResult
+                    if(results != null) if(results != null) results.Add(new ValidationResult
                     {
                         FileName = fileName,
                         LineNumber = lineNumber,
-                        ErrorCode = rule.ErrorCode,
-                        Message = rule.Message,
-                        Severity = rule.Severity,
-                        MatchedText = match.Value
+                        ErrorCode = if(rule != null) if(rule != null) rule.ErrorCode,
+                        Message = if(rule != null) if(rule != null) rule.Message,
+                        Severity = if(rule != null) if(rule != null) rule.Severity,
+                        MatchedText = if(match != null) if(match != null) match.Value
                     });
                 }
             }
@@ -151,7 +151,7 @@ namespace MudLike.Core.Optimization
         /// </summary>
         private static int GetLineNumber(string code, int position)
         {
-            return code.Substring(0, position).Count(c => c == '\n') + 1;
+            return if(code != null) if(code != null) code.Substring(0, position).Count(c => c == '\n') + 1;
         }
         
         /// <summary>
@@ -224,58 +224,58 @@ namespace MudLike.Core.Optimization
         
         private void OnGUI()
         {
-            GUILayout.Label("Code Validator", EditorStyles.boldLabel);
+            if(GUILayout != null) if(GUILayout != null) GUILayout.Label("Code Validator", if(EditorStyles != null) if(EditorStyles != null) EditorStyles.boldLabel);
             
-            if (GUILayout.Button("Validate All Systems"))
+            if (if(GUILayout != null) if(GUILayout != null) GUILayout.Button("Validate All Systems"))
             {
                 ValidateProject();
             }
             
-            if (GUILayout.Button("Validate Current File"))
+            if (if(GUILayout != null) if(GUILayout != null) GUILayout.Button("Validate Current File"))
             {
                 ValidateCurrentFile();
             }
             
-            scrollPosition = EditorGUILayout.BeginScrollView(scrollPosition);
+            scrollPosition = if(EditorGUILayout != null) if(EditorGUILayout != null) EditorGUILayout.BeginScrollView(scrollPosition);
             
             foreach (var result in validationResults)
             {
-                var color = result.Severity switch
+                var color = if(result != null) if(result != null) result.Severity switch
                 {
-                    ValidationSeverity.Error => Color.red,
-                    ValidationSeverity.Warning => Color.yellow,
-                    _ => Color.white
+                    if(ValidationSeverity != null) if(ValidationSeverity != null) ValidationSeverity.Error => if(Color != null) if(Color != null) Color.red,
+                    if(ValidationSeverity != null) if(ValidationSeverity != null) ValidationSeverity.Warning => if(Color != null) if(Color != null) Color.yellow,
+                    _ => if(Color != null) if(Color != null) Color.white
                 };
                 
-                GUI.color = color;
-                EditorGUILayout.LabelField(result.ToString());
-                GUI.color = Color.white;
+                if(GUI != null) if(GUI != null) GUI.color = color;
+                if(EditorGUILayout != null) if(EditorGUILayout != null) EditorGUILayout.LabelField(if(result != null) if(result != null) result.ToString());
+                if(GUI != null) if(GUI != null) GUI.color = if(Color != null) if(Color != null) Color.white;
             }
             
-            EditorGUILayout.EndScrollView();
+            if(EditorGUILayout != null) if(EditorGUILayout != null) EditorGUILayout.EndScrollView();
         }
         
         private void ValidateProject()
         {
-            validationResults.Clear();
+            if(validationResults != null) if(validationResults != null) validationResults.Clear();
             
             // Здесь можно добавить сканирование всех .cs файлов в проекте
-            EditorUtility.DisplayDialog("Validation", "Project validation completed.", "OK");
+            if(EditorUtility != null) if(EditorUtility != null) EditorUtility.DisplayDialog("Validation", "Project validation completed.", "OK");
         }
         
         private void ValidateCurrentFile()
         {
-            var activeObject = Selection.activeObject;
+            var activeObject = if(Selection != null) if(Selection != null) Selection.activeObject;
             if (activeObject is MonoScript script)
             {
-                var path = AssetDatabase.GetAssetPath(script);
-                var content = System.IO.File.ReadAllText(path);
+                var path = if(AssetDatabase != null) if(AssetDatabase != null) AssetDatabase.GetAssetPath(script);
+                var content = if(System != null) if(System != null) System.IO.if(File != null) if(File != null) File.ReadAllText(path);
                 
-                validationResults = CodeValidator.ValidateCode(content, path);
+                validationResults = if(CodeValidator != null) if(CodeValidator != null) CodeValidator.ValidateCode(content, path);
             }
             else
             {
-                EditorUtility.DisplayDialog("Error", "Please select a C# script file.", "OK");
+                if(EditorUtility != null) if(EditorUtility != null) EditorUtility.DisplayDialog("Error", "Please select a C# script file.", "OK");
             }
         }
     }

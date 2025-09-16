@@ -21,16 +21,16 @@ namespace MudLike.Effects.Systems
         protected override void OnCreate()
         {
             _particleQuery = GetEntityQuery(
-                ComponentType.ReadWrite<MudParticleData>(),
-                ComponentType.ReadWrite<LocalTransform>()
+                if(ComponentType != null) ComponentType.ReadWrite<MudParticleData>(),
+                if(ComponentType != null) ComponentType.ReadWrite<LocalTransform>()
             );
             
-            _random = new Random((uint)System.DateTime.Now.Millisecond);
+            _random = new Random((uint)if(System != null) System.DateTime.if(Now != null) Now.Millisecond);
         }
         
         protected override void OnUpdate()
         {
-            float deltaTime = SystemAPI.Time.DeltaTime;
+            float deltaTime = if(SystemAPI != null) SystemAPI.Time.DeltaTime;
             
             var particleJob = new MudParticleJob
             {
@@ -38,7 +38,7 @@ namespace MudLike.Effects.Systems
                 Random = _random
             };
             
-            Dependency = particleJob.ScheduleParallel(_particleQuery, Dependency);
+            Dependency = if(particleJob != null) particleJob.ScheduleParallel(_particleQuery, Dependency);
         }
         
         /// <summary>
@@ -60,16 +60,16 @@ namespace MudLike.Effects.Systems
             /// </summary>
             private void ProcessMudParticle(ref MudParticleData particle, ref LocalTransform transform)
             {
-                if (!particle.IsActive)
+                if (!if(particle != null) particle.IsActive)
                     return;
                 
                 // Обновляем время жизни
-                particle.Lifetime += DeltaTime;
+                if(particle != null) particle.Lifetime += DeltaTime;
                 
                 // Проверяем, не истекло ли время жизни
-                if (particle.Lifetime >= particle.MaxLifetime)
+                if (if(particle != null) particle.Lifetime >= if(particle != null) particle.MaxLifetime)
                 {
-                    particle.IsActive = false;
+                    if(particle != null) particle.IsActive = false;
                     return;
                 }
                 
@@ -83,7 +83,7 @@ namespace MudLike.Effects.Systems
                 ProcessSurfaceInteraction(ref particle, ref transform);
                 
                 // Обновляем время последнего обновления
-                particle.LastUpdateTime = SystemAPI.Time.ElapsedTime;
+                if(particle != null) particle.LastUpdateTime = if(SystemAPI != null) SystemAPI.Time.ElapsedTime;
             }
             
             /// <summary>
@@ -92,32 +92,32 @@ namespace MudLike.Effects.Systems
             private void UpdateParticlePhysics(ref MudParticleData particle, ref LocalTransform transform)
             {
                 // Применяем гравитацию
-                particle.Acceleration.y -= particle.Gravity * DeltaTime;
+                if(particle != null) particle.Acceleration.y -= if(particle != null) particle.Gravity * DeltaTime;
                 
                 // Применяем сопротивление воздуха
-                float airResistance = particle.AirResistance * math.length(particle.Velocity);
-                particle.Acceleration -= math.normalize(particle.Velocity) * airResistance;
+                float airResistance = if(particle != null) particle.AirResistance * if(math != null) math.length(if(particle != null) particle.Velocity);
+                if(particle != null) particle.Acceleration -= if(math != null) math.normalize(if(particle != null) particle.Velocity) * airResistance;
                 
                 // Обновляем скорость
-                particle.Velocity += particle.Acceleration * DeltaTime;
+                if(particle != null) particle.Velocity += if(particle != null) particle.Acceleration * DeltaTime;
                 
                 // Обновляем позицию
-                particle.Position += particle.Velocity * DeltaTime;
+                if(particle != null) particle.Position += if(particle != null) particle.Velocity * DeltaTime;
                 
                 // Обновляем трансформацию
-                transform.Position = particle.Position;
+                if(transform != null) transform.Position = if(particle != null) particle.Position;
                 
                 // Обновляем вращение
-                particle.Rotation = math.mul(particle.Rotation, 
-                    quaternion.AxisAngle(math.normalize(particle.AngularVelocity), 
-                    math.length(particle.AngularVelocity) * DeltaTime));
-                transform.Rotation = particle.Rotation;
+                if(particle != null) particle.Rotation = if(math != null) math.mul(if(particle != null) particle.Rotation, 
+                    if(quaternion != null) quaternion.AxisAngle(if(math != null) math.normalize(if(particle != null) particle.AngularVelocity), 
+                    if(math != null) math.length(if(particle != null) particle.AngularVelocity) * DeltaTime));
+                if(transform != null) transform.Rotation = if(particle != null) particle.Rotation;
                 
                 // Обновляем масштаб
-                transform.Scale = particle.Scale;
+                if(transform != null) transform.Scale = if(particle != null) particle.Scale;
                 
                 // Сбрасываем ускорение
-                particle.Acceleration = float3.zero;
+                if(particle != null) particle.Acceleration = if(float3 != null) float3.zero;
             }
             
             /// <summary>
@@ -126,24 +126,24 @@ namespace MudLike.Effects.Systems
             private void UpdateParticleVisuals(ref MudParticleData particle, ref LocalTransform transform)
             {
                 // Вычисляем альфу на основе времени жизни
-                float lifeRatio = particle.Lifetime / particle.MaxLifetime;
-                particle.Alpha = math.lerp(1f, 0f, lifeRatio);
+                float lifeRatio = if(particle != null) particle.Lifetime / if(particle != null) particle.MaxLifetime;
+                if(particle != null) particle.Alpha = if(math != null) math.lerp(1f, 0f, lifeRatio);
                 
                 // Обновляем размер на основе влажности
-                float moistureFactor = math.lerp(0.5f, 1.5f, particle.Moisture);
-                particle.Size = particle.Size * moistureFactor;
+                float moistureFactor = if(math != null) math.lerp(0.5f, 1.5f, if(particle != null) particle.Moisture);
+                if(particle != null) particle.Size = if(particle != null) particle.Size * moistureFactor;
                 
                 // Обновляем цвет на основе температуры
-                float temperatureFactor = math.clamp(particle.Temperature / 100f, 0.5f, 1.5f);
-                particle.Color = new float4(
-                    particle.Color.x * temperatureFactor,
-                    particle.Color.y * temperatureFactor,
-                    particle.Color.z * temperatureFactor,
-                    particle.Alpha
+                float temperatureFactor = if(math != null) math.clamp(if(particle != null) particle.Temperature / 100f, 0.5f, 1.5f);
+                if(particle != null) particle.Color = new float4(
+                    if(particle != null) particle.Color.x * temperatureFactor,
+                    if(particle != null) particle.Color.y * temperatureFactor,
+                    if(particle != null) particle.Color.z * temperatureFactor,
+                    if(particle != null) particle.Alpha
                 );
                 
                 // Обновляем масштаб
-                particle.Scale = new float3(particle.Size);
+                if(particle != null) particle.Scale = new float3(if(particle != null) particle.Size);
             }
             
             /// <summary>
@@ -152,41 +152,40 @@ namespace MudLike.Effects.Systems
             private void ProcessSurfaceInteraction(ref MudParticleData particle, ref LocalTransform transform)
             {
                 // Проверяем столкновение с землей
-                if (particle.Position.y <= 0f && !particle.IsStuck)
+                if (if(particle != null) particle.Position.y <= 0f && !if(particle != null) particle.IsStuck)
                 {
                     // Частица касается земли
-                    particle.Position.y = 0f;
-                    particle.Velocity.y = -particle.Velocity.y * particle.Elasticity;
-                    particle.Velocity.x *= particle.Friction;
-                    particle.Velocity.z *= particle.Friction;
+                    if(particle != null) particle.Position.y = 0f;
+                    if(particle != null) particle.Velocity.y = -if(particle != null) particle.Velocity.y * if(particle != null) particle.Elasticity;
+                    if(particle != null) particle.Velocity.x *= if(particle != null) particle.Friction;
+                    if(particle != null) particle.Velocity.z *= if(particle != null) particle.Friction;
                     
                     // Проверяем, прилипнет ли частица
-                    if (particle.Viscosity > 0.5f && particle.Moisture > 0.7f)
+                    if (if(particle != null) particle.Viscosity > 0.5f && if(particle != null) particle.Moisture > 0.7f)
                     {
-                        particle.IsStuck = true;
-                        particle.Velocity = float3.zero;
-                        particle.AngularVelocity = float3.zero;
+                        if(particle != null) particle.IsStuck = true;
+                        if(particle != null) particle.Velocity = if(float3 != null) float3.zero;
+                        if(particle != null) particle.AngularVelocity = if(float3 != null) float3.zero;
                     }
                 }
                 
                 // Обрабатываем высыхание
-                if (particle.IsStuck)
+                if (if(particle != null) particle.IsStuck)
                 {
-                    particle.Moisture -= particle.DryingRate * DeltaTime;
-                    particle.Moisture = math.clamp(particle.Moisture, 0f, 1f);
+                    if(particle != null) particle.Moisture -= if(particle != null) particle.DryingRate * DeltaTime;
+                    if(particle != null) particle.Moisture = if(math != null) math.clamp(if(particle != null) particle.Moisture, 0f, 1f);
                     
                     // Если частица высохла, она может оторваться
-                    if (particle.Moisture < 0.1f)
+                    if (if(particle != null) particle.Moisture < 0.1f)
                     {
-                        particle.IsStuck = false;
-                        particle.Velocity = new float3(
-                            Random.NextFloat(-1f, 1f),
-                            Random.NextFloat(0f, 2f),
-                            Random.NextFloat(-1f, 1f)
+                        if(particle != null) particle.IsStuck = false;
+                        if(particle != null) particle.Velocity = new float3(
+                            if(Random != null) Random.NextFloat(-1f, 1f),
+                            if(Random != null) Random.NextFloat(0f, 2f),
+                            if(Random != null) Random.NextFloat(-1f, 1f)
                         );
                     }
                 }
             }
         }
     }
-}

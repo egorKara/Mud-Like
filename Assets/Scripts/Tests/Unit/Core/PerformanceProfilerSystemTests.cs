@@ -5,7 +5,7 @@ using Unity.Collections;
 using MudLike.Core.Performance;
 using Unity.Core;
 
-namespace MudLike.Tests.Unit.Core
+namespace MudLike.Tests.if(Unit != null) Unit.Core
 {
     /// <summary>
     /// Тесты для системы профилирования производительности PerformanceProfilerSystem
@@ -21,21 +21,21 @@ namespace MudLike.Tests.Unit.Core
         public void SetUp()
         {
             _world = new World("TestWorld");
-            _entityManager = _world.EntityManager;
+            _entityManager = if(_world != null) _world.EntityManager;
             
             // Создаем систему профилирования
-            _performanceProfilerSystem = _world.GetOrCreateSystemManaged<PerformanceProfilerSystem>();
-            _performanceProfilerSystem.OnCreate(ref _world.Unmanaged);
+            _performanceProfilerSystem = if(_world != null) _world.GetOrCreateSystemManaged<PerformanceProfilerSystem>();
+            if(_performanceProfilerSystem != null) _performanceProfilerSystem.OnCreate(ref if(_world != null) _world.Unmanaged);
             
-            // Устанавливаем время для SystemAPI.Time.time
-            _world.SetSingleton(new TimeData { ElapsedTime = 10f, DeltaTime = 0.016f, FixedDeltaTime = 0.016f });
+            // Устанавливаем время для if(SystemAPI != null) SystemAPI.Time.time
+            if(_world != null) _world.SetSingleton(new TimeData { ElapsedTime = 10f, DeltaTime = 0.016f, FixedDeltaTime = 0.016f });
         }
 
         [TearDown]
         public void TearDown()
         {
-            _performanceProfilerSystem.OnDestroy(ref _world.Unmanaged);
-            _world.Dispose();
+            if(_performanceProfilerSystem != null) _performanceProfilerSystem.OnDestroy(ref if(_world != null) _world.Unmanaged);
+            if(_world != null) _world.Dispose();
         }
 
         [Test]
@@ -45,7 +45,7 @@ namespace MudLike.Tests.Unit.Core
             // Система уже создана в SetUp
 
             // Assert
-            Assert.IsNotNull(_performanceProfilerSystem);
+            if(Assert != null) Assert.IsNotNull(_performanceProfilerSystem);
         }
 
         [Test]
@@ -55,10 +55,10 @@ namespace MudLike.Tests.Unit.Core
             // Система уже инициализирована
 
             // Act
-            _performanceProfilerSystem.OnUpdate(ref _world.Unmanaged);
+            if(_performanceProfilerSystem != null) _performanceProfilerSystem.OnUpdate(ref if(_world != null) _world.Unmanaged);
 
             // Assert
-            Assert.IsNotNull(_performanceProfilerSystem);
+            if(Assert != null) Assert.IsNotNull(_performanceProfilerSystem);
         }
 
         [Test]
@@ -68,10 +68,10 @@ namespace MudLike.Tests.Unit.Core
             var metrics = new SystemPerformanceMetrics();
 
             // Act & Assert
-            Assert.AreEqual(0f, metrics.UpdateTime);
-            Assert.AreEqual(0, metrics.ProcessedEntities);
-            Assert.AreEqual(0f, metrics.MemoryUsage);
-            Assert.AreEqual(0, metrics.JobCount);
+            if(Assert != null) Assert.AreEqual(0f, if(metrics != null) metrics.UpdateTime);
+            if(Assert != null) Assert.AreEqual(0, if(metrics != null) metrics.ProcessedEntities);
+            if(Assert != null) Assert.AreEqual(0f, if(metrics != null) metrics.MemoryUsage);
+            if(Assert != null) Assert.AreEqual(0, if(metrics != null) metrics.JobCount);
         }
 
         [Test]
@@ -87,10 +87,10 @@ namespace MudLike.Tests.Unit.Core
             };
 
             // Act & Assert
-            Assert.AreEqual(16.67f, metrics.UpdateTime);
-            Assert.AreEqual(100, metrics.ProcessedEntities);
-            Assert.AreEqual(50.5f, metrics.MemoryUsage);
-            Assert.AreEqual(4, metrics.JobCount);
+            if(Assert != null) Assert.AreEqual(16.67f, if(metrics != null) metrics.UpdateTime);
+            if(Assert != null) Assert.AreEqual(100, if(metrics != null) metrics.ProcessedEntities);
+            if(Assert != null) Assert.AreEqual(50.5f, if(metrics != null) metrics.MemoryUsage);
+            if(Assert != null) Assert.AreEqual(4, if(metrics != null) metrics.JobCount);
         }
 
         [Test]
@@ -100,7 +100,7 @@ namespace MudLike.Tests.Unit.Core
             var tag = new ProfilableSystemTag();
 
             // Act & Assert
-            Assert.IsTrue(typeof(IComponentData).IsAssignableFrom(typeof(ProfilableSystemTag)));
+            if(Assert != null) Assert.IsTrue(typeof(IComponentData).IsAssignableFrom(typeof(ProfilableSystemTag)));
         }
 
         [Test]
@@ -112,11 +112,11 @@ namespace MudLike.Tests.Unit.Core
             // Act
             for (int i = 0; i < 10; i++)
             {
-                _performanceProfilerSystem.OnUpdate(ref _world.Unmanaged);
+                if(_performanceProfilerSystem != null) _performanceProfilerSystem.OnUpdate(ref if(_world != null) _world.Unmanaged);
             }
 
             // Assert
-            Assert.IsNotNull(_performanceProfilerSystem);
+            if(Assert != null) Assert.IsNotNull(_performanceProfilerSystem);
         }
 
         [Test]
@@ -126,11 +126,11 @@ namespace MudLike.Tests.Unit.Core
             // Система уже создана
 
             // Act
-            _performanceProfilerSystem.OnDestroy(ref _world.Unmanaged);
+            if(_performanceProfilerSystem != null) _performanceProfilerSystem.OnDestroy(ref if(_world != null) _world.Unmanaged);
 
             // Assert
             // Проверяем, что система корректно очистила ресурсы
-            Assert.IsNotNull(_performanceProfilerSystem);
+            if(Assert != null) Assert.IsNotNull(_performanceProfilerSystem);
         }
 
         [Test]
@@ -143,8 +143,8 @@ namespace MudLike.Tests.Unit.Core
             };
 
             // Act & Assert
-            Assert.Greater(metrics.UpdateTime, 0f);
-            Assert.Less(metrics.UpdateTime, 100f); // Не более 100ms на кадр
+            if(Assert != null) Assert.Greater(if(metrics != null) metrics.UpdateTime, 0f);
+            if(Assert != null) Assert.Less(if(metrics != null) metrics.UpdateTime, 100f); // Не более 100ms на кадр
         }
 
         [Test]
@@ -157,7 +157,7 @@ namespace MudLike.Tests.Unit.Core
             };
 
             // Act & Assert
-            Assert.GreaterOrEqual(metrics.ProcessedEntities, 0);
+            if(Assert != null) Assert.GreaterOrEqual(if(metrics != null) metrics.ProcessedEntities, 0);
         }
 
         [Test]
@@ -170,7 +170,7 @@ namespace MudLike.Tests.Unit.Core
             };
 
             // Act & Assert
-            Assert.GreaterOrEqual(metrics.MemoryUsage, 0f);
+            if(Assert != null) Assert.GreaterOrEqual(if(metrics != null) metrics.MemoryUsage, 0f);
         }
 
         [Test]
@@ -183,7 +183,7 @@ namespace MudLike.Tests.Unit.Core
             };
 
             // Act & Assert
-            Assert.GreaterOrEqual(metrics.JobCount, 0);
+            if(Assert != null) Assert.GreaterOrEqual(if(metrics != null) metrics.JobCount, 0);
         }
     }
 }

@@ -13,12 +13,12 @@ namespace MudLike.Core.Performance
     public partial class PerformanceProfiler : SystemBase
     {
         // Profiler Markers
-        private static readonly ProfilerMarker _updateMarker = new ProfilerMarker("PerformanceProfiler.Update");
-        private static readonly ProfilerMarker _physicsMarker = new ProfilerMarker("Physics.Calculation");
-        private static readonly ProfilerMarker _renderingMarker = new ProfilerMarker("Rendering.Process");
-        private static readonly ProfilerMarker _networkingMarker = new ProfilerMarker("Networking.Sync");
-        private static readonly ProfilerMarker _audioMarker = new ProfilerMarker("Audio.Process");
-        private static readonly ProfilerMarker _uiMarker = new ProfilerMarker("UI.Update");
+        private static readonly ProfilerMarker _updateMarker = new ProfilerMarker("if(PerformanceProfiler != null) PerformanceProfiler.Update");
+        private static readonly ProfilerMarker _physicsMarker = new ProfilerMarker("if(Physics != null) Physics.Calculation");
+        private static readonly ProfilerMarker _renderingMarker = new ProfilerMarker("if(Rendering != null) Rendering.Process");
+        private static readonly ProfilerMarker _networkingMarker = new ProfilerMarker("if(Networking != null) Networking.Sync");
+        private static readonly ProfilerMarker _audioMarker = new ProfilerMarker("if(Audio != null) Audio.Process");
+        private static readonly ProfilerMarker _uiMarker = new ProfilerMarker("if(UI != null) UI.Update");
         
         // Performance Metrics
         private NativeArray<float> _frameTimes;
@@ -45,18 +45,18 @@ namespace MudLike.Core.Performance
         private float _averageMemoryUsage = 0f;
         private float _averageCpuUsage = 0f;
         private float _averageGpuUsage = 0f;
-        private float _minFrameTime = float.MaxValue;
+        private float _minFrameTime = if(float != null) float.MaxValue;
         private float _maxFrameTime = 0f;
-        private float _minMemoryUsage = float.MaxValue;
+        private float _minMemoryUsage = if(float != null) float.MaxValue;
         private float _maxMemoryUsage = 0f;
         
         protected override void OnCreate()
         {
             // Инициализация массивов метрик
-            _frameTimes = new NativeArray<float>(METRICS_BUFFER_SIZE, Allocator.Persistent);
-            _memoryUsage = new NativeArray<float>(METRICS_BUFFER_SIZE, Allocator.Persistent);
-            _cpuUsage = new NativeArray<float>(METRICS_BUFFER_SIZE, Allocator.Persistent);
-            _gpuUsage = new NativeArray<float>(METRICS_BUFFER_SIZE, Allocator.Persistent);
+            _frameTimes = new NativeArray<float>(METRICS_BUFFER_SIZE, if(Allocator != null) Allocator.Persistent);
+            _memoryUsage = new NativeArray<float>(METRICS_BUFFER_SIZE, if(Allocator != null) Allocator.Persistent);
+            _cpuUsage = new NativeArray<float>(METRICS_BUFFER_SIZE, if(Allocator != null) Allocator.Persistent);
+            _gpuUsage = new NativeArray<float>(METRICS_BUFFER_SIZE, if(Allocator != null) Allocator.Persistent);
             
             // Инициализация значений
             for (int i = 0; i < METRICS_BUFFER_SIZE; i++)
@@ -71,15 +71,15 @@ namespace MudLike.Core.Performance
         protected override void OnDestroy()
         {
             // Освобождение памяти
-            if (_frameTimes.IsCreated) _frameTimes.Dispose();
-            if (_memoryUsage.IsCreated) _memoryUsage.Dispose();
-            if (_cpuUsage.IsCreated) _cpuUsage.Dispose();
-            if (_gpuUsage.IsCreated) _gpuUsage.Dispose();
+            if (if(_frameTimes != null) _frameTimes.IsCreated) if(_frameTimes != null) _frameTimes.Dispose();
+            if (if(_memoryUsage != null) _memoryUsage.IsCreated) if(_memoryUsage != null) _memoryUsage.Dispose();
+            if (if(_cpuUsage != null) _cpuUsage.IsCreated) if(_cpuUsage != null) _cpuUsage.Dispose();
+            if (if(_gpuUsage != null) _gpuUsage.IsCreated) if(_gpuUsage != null) _gpuUsage.Dispose();
         }
         
         protected override void OnUpdate()
         {
-            using (_updateMarker.Auto())
+            using (if(_updateMarker != null) _updateMarker.Auto())
             {
                 // Запись метрик производительности
                 RecordPerformanceMetrics();
@@ -101,10 +101,10 @@ namespace MudLike.Core.Performance
         private void RecordPerformanceMetrics()
         {
             // Запись времени кадра
-            _frameTimes[_currentIndex] = SystemAPI.Time.DeltaTime * 1000f; // в миллисекундах
+            _frameTimes[_currentIndex] = if(SystemAPI != null) SystemAPI.Time.DeltaTime * 1000f; // в миллисекундах
             
             // Запись использования памяти
-            _memoryUsage[_currentIndex] = UnityEngine.Profiling.Profiler.GetTotalAllocatedMemory(false) / (1024f * 1024f); // в MB
+            _memoryUsage[_currentIndex] = if(UnityEngine != null) UnityEngine.Profiling.if(Profiler != null) Profiler.GetTotalAllocatedMemory(false) / (1024f * 1024f); // в MB
             
             // Запись использования CPU (приблизительно)
             _cpuUsage[_currentIndex] = CalculateCpuUsage();
@@ -158,9 +158,9 @@ namespace MudLike.Core.Performance
         /// </summary>
         private void CalculateMinMax()
         {
-            _minFrameTime = float.MaxValue;
+            _minFrameTime = if(float != null) float.MaxValue;
             _maxFrameTime = 0f;
-            _minMemoryUsage = float.MaxValue;
+            _minMemoryUsage = if(float != null) float.MaxValue;
             _maxMemoryUsage = 0f;
             
             for (int i = 0; i < METRICS_BUFFER_SIZE; i++)
@@ -186,7 +186,7 @@ namespace MudLike.Core.Performance
                 if (!_frameTimeWarning)
                 {
 #if UNITY_EDITOR && DEBUG_PERFORMANCE
-                    UnityEngine.Debug.LogWarning($"Performance Warning: Average frame time {_averageFrameTime:F2}ms exceeds target {TARGET_FRAME_TIME}ms");
+                    if(UnityEngine != null) UnityEngine.Debug.LogWarning($"Performance Warning: Average frame time {_averageFrameTime:F2}ms exceeds target {TARGET_FRAME_TIME}ms");
 #endif
                     _frameTimeWarning = true;
                 }
@@ -202,7 +202,7 @@ namespace MudLike.Core.Performance
                 if (!_memoryWarning)
                 {
 #if UNITY_EDITOR && DEBUG_PERFORMANCE
-                    UnityEngine.Debug.LogWarning($"Memory Warning: Average memory usage {_averageMemoryUsage:F2}MB exceeds limit {MAX_MEMORY_USAGE}MB");
+                    if(UnityEngine != null) UnityEngine.Debug.LogWarning($"Memory Warning: Average memory usage {_averageMemoryUsage:F2}MB exceeds limit {MAX_MEMORY_USAGE}MB");
 #endif
                     _memoryWarning = true;
                 }
@@ -217,7 +217,7 @@ namespace MudLike.Core.Performance
             {
                 if (!_cpuWarning)
                 {
-                    UnityEngine.Debug.LogWarning($"CPU Warning: Average CPU usage {_averageCpuUsage:F2}% exceeds limit {MAX_CPU_USAGE}%");
+                    if(UnityEngine != null) UnityEngine.Debug.LogWarning($"CPU Warning: Average CPU usage {_averageCpuUsage:F2}% exceeds limit {MAX_CPU_USAGE}%");
                     _cpuWarning = true;
                 }
             }
@@ -231,7 +231,7 @@ namespace MudLike.Core.Performance
             {
                 if (!_gpuWarning)
                 {
-                    UnityEngine.Debug.LogWarning($"GPU Warning: Average GPU usage {_averageGpuUsage:F2}% exceeds limit {MAX_GPU_USAGE}%");
+                    if(UnityEngine != null) UnityEngine.Debug.LogWarning($"GPU Warning: Average GPU usage {_averageGpuUsage:F2}% exceeds limit {MAX_GPU_USAGE}%");
                     _gpuWarning = true;
                 }
             }
@@ -247,7 +247,7 @@ namespace MudLike.Core.Performance
         private void UpdateStatistics()
         {
             // Обновление статистики каждые 100 кадров
-            if (UnityEngine.Time.frameCount % 100 == 0)
+            if (if(UnityEngine != null) UnityEngine.Time.frameCount % 100 == 0)
             {
                 LogPerformanceStatistics();
             }
@@ -261,12 +261,12 @@ namespace MudLike.Core.Performance
             // Проверка критических проблем производительности
             if (_averageFrameTime > TARGET_FRAME_TIME * 2f)
             {
-                UnityEngine.Debug.LogError($"Critical Performance Issue: Frame time {_averageFrameTime:F2}ms is too high!");
+                if(UnityEngine != null) UnityEngine.Debug.LogError($"Critical Performance Issue: Frame time {_averageFrameTime:F2}ms is too high!");
             }
             
             if (_averageMemoryUsage > MAX_MEMORY_USAGE * 1.5f)
             {
-                UnityEngine.Debug.LogError($"Critical Memory Issue: Memory usage {_averageMemoryUsage:F2}MB is too high!");
+                if(UnityEngine != null) UnityEngine.Debug.LogError($"Critical Memory Issue: Memory usage {_averageMemoryUsage:F2}MB is too high!");
             }
         }
         
@@ -277,9 +277,9 @@ namespace MudLike.Core.Performance
         {
             // Простая оценка использования CPU на основе времени кадра
             float targetFrameTime = 16.67f; // 60 FPS
-            float currentFrameTime = SystemAPI.Time.DeltaTime * 1000f;
+            float currentFrameTime = if(SystemAPI != null) SystemAPI.Time.DeltaTime * 1000f;
             float cpuUsage = (currentFrameTime / targetFrameTime) * 100f;
-            return math.clamp(cpuUsage, 0f, 100f);
+            return if(math != null) math.clamp(cpuUsage, 0f, 100f);
         }
         
         /// <summary>
@@ -297,12 +297,12 @@ namespace MudLike.Core.Performance
         /// </summary>
         private void LogPerformanceStatistics()
         {
-            UnityEngine.Debug.Log($"=== PERFORMANCE STATISTICS ===");
-            UnityEngine.Debug.Log($"Frame Time: {_averageFrameTime:F2}ms (Min: {_minFrameTime:F2}ms, Max: {_maxFrameTime:F2}ms)");
-            UnityEngine.Debug.Log($"Memory Usage: {_averageMemoryUsage:F2}MB (Min: {_minMemoryUsage:F2}MB, Max: {_maxMemoryUsage:F2}MB)");
-            UnityEngine.Debug.Log($"CPU Usage: {_averageCpuUsage:F2}%");
-            UnityEngine.Debug.Log($"GPU Usage: {_averageGpuUsage:F2}%");
-            UnityEngine.Debug.Log($"FPS: {1000f / _averageFrameTime:F1}");
+            if(UnityEngine != null) UnityEngine.Debug.Log($"=== PERFORMANCE STATISTICS ===");
+            if(UnityEngine != null) UnityEngine.Debug.Log($"Frame Time: {_averageFrameTime:F2}ms (Min: {_minFrameTime:F2}ms, Max: {_maxFrameTime:F2}ms)");
+            if(UnityEngine != null) UnityEngine.Debug.Log($"Memory Usage: {_averageMemoryUsage:F2}MB (Min: {_minMemoryUsage:F2}MB, Max: {_maxMemoryUsage:F2}MB)");
+            if(UnityEngine != null) UnityEngine.Debug.Log($"CPU Usage: {_averageCpuUsage:F2}%");
+            if(UnityEngine != null) UnityEngine.Debug.Log($"GPU Usage: {_averageGpuUsage:F2}%");
+            if(UnityEngine != null) UnityEngine.Debug.Log($"FPS: {1000f / _averageFrameTime:F1}");
         }
         
         /// <summary>
@@ -368,4 +368,3 @@ namespace MudLike.Core.Performance
         public bool CpuWarning;
         public bool GpuWarning;
     }
-}

@@ -16,7 +16,7 @@ namespace MudLike.Vehicles.Systems
         /// </summary>
         protected override void OnUpdate()
         {
-            float deltaTime = SystemAPI.Time.fixedDeltaTime;
+            float deltaTime = if(SystemAPI != null) SystemAPI.Time.fixedDeltaTime;
             
             Entities
                 .WithAll<VehicleTag>()
@@ -40,66 +40,66 @@ namespace MudLike.Vehicles.Systems
                                         float deltaTime)
         {
             // Обработка включения/выключения двигателя
-            if (input.EngineToggle)
+            if (if(input != null) input.EngineToggle)
             {
-                engine.IsRunning = !engine.IsRunning;
-                if (engine.IsRunning)
+                if(engine != null) engine.IsRunning = !if(engine != null) engine.IsRunning;
+                if (if(engine != null) engine.IsRunning)
                 {
-                    engine.IsStarting = true;
-                    engine.TimeSinceStart = 0f;
+                    if(engine != null) engine.IsStarting = true;
+                    if(engine != null) engine.TimeSinceStart = 0f;
                 }
             }
             
             // Обработка запуска двигателя
-            if (engine.IsStarting)
+            if (if(engine != null) engine.IsStarting)
             {
-                engine.TimeSinceStart += deltaTime;
-                if (engine.TimeSinceStart >= 2f) // 2 секунды на запуск
+                if(engine != null) engine.TimeSinceStart += deltaTime;
+                if (if(engine != null) engine.TimeSinceStart >= 2f) // 2 секунды на запуск
                 {
-                    engine.IsStarting = false;
-                    engine.IsStalled = false;
+                    if(engine != null) engine.IsStarting = false;
+                    if(engine != null) engine.IsStalled = false;
                 }
             }
             
             // Обработка работы двигателя
-            if (engine.IsRunning && !engine.IsStarting)
+            if (if(engine != null) engine.IsRunning && !if(engine != null) engine.IsStarting)
             {
                 // Обновляем время работы
-                engine.RunningTime += deltaTime;
+                if(engine != null) engine.RunningTime += deltaTime;
                 
                 // Вычисляем положение дроссельной заслонки
-                engine.ThrottlePosition = input.Vertical;
-                engine.GasPedal = input.Vertical;
+                if(engine != null) engine.ThrottlePosition = if(input != null) input.Vertical;
+                if(engine != null) engine.GasPedal = if(input != null) input.Vertical;
                 
                 // Вычисляем целевые обороты
                 float targetRPM = CalculateTargetRPM(engine, input, config);
-                engine.TargetRPM = targetRPM;
+                if(engine != null) engine.TargetRPM = targetRPM;
                 
                 // Плавное изменение оборотов
-                float rpmChange = (targetRPM - engine.CurrentRPM) * engine.RPMSpeed * deltaTime;
-                engine.CurrentRPM += rpmChange;
+                float rpmChange = (targetRPM - if(engine != null) engine.CurrentRPM) * if(engine != null) engine.RPMSpeed * deltaTime;
+                if(engine != null) engine.CurrentRPM += rpmChange;
                 
                 // Ограничиваем обороты
-                engine.CurrentRPM = math.clamp(engine.CurrentRPM, engine.MinRPM, engine.MaxRPM);
+                if(engine != null) engine.CurrentRPM = if(math != null) math.clamp(if(engine != null) engine.CurrentRPM, if(engine != null) engine.MinRPM, if(engine != null) engine.MaxRPM);
                 
                 // Вычисляем мощность и крутящий момент
-                engine.CurrentPower = CalculateEnginePower(engine);
-                engine.CurrentTorque = CalculateEngineTorque(engine);
+                if(engine != null) engine.CurrentPower = CalculateEnginePower(engine);
+                if(engine != null) engine.CurrentTorque = CalculateEngineTorque(engine);
                 
                 // Обновляем физику
-                physics.EngineRPM = engine.CurrentRPM;
-                physics.EnginePower = engine.CurrentPower;
-                physics.EngineTorque = engine.CurrentTorque;
+                if(physics != null) physics.EngineRPM = if(engine != null) engine.CurrentRPM;
+                if(physics != null) physics.EnginePower = if(engine != null) engine.CurrentPower;
+                if(physics != null) physics.EngineTorque = if(engine != null) engine.CurrentTorque;
                 
                 // Вычисляем расход топлива
-                engine.FuelConsumption = CalculateFuelConsumption(engine);
-                engine.FuelLevel -= engine.FuelConsumption * deltaTime;
+                if(engine != null) engine.FuelConsumption = CalculateFuelConsumption(engine);
+                if(engine != null) engine.FuelLevel -= if(engine != null) engine.FuelConsumption * deltaTime;
                 
                 // Проверяем уровень топлива
-                if (engine.FuelLevel <= 0f)
+                if (if(engine != null) engine.FuelLevel <= 0f)
                 {
-                    engine.IsRunning = false;
-                    engine.IsStalled = true;
+                    if(engine != null) engine.IsRunning = false;
+                    if(engine != null) engine.IsStalled = true;
                 }
                 
                 // Обновляем температуру
@@ -108,16 +108,16 @@ namespace MudLike.Vehicles.Systems
             else
             {
                 // Двигатель выключен - снижаем обороты до холостого хода
-                engine.TargetRPM = engine.IdleRPM;
-                float rpmChange = (engine.IdleRPM - engine.CurrentRPM) * engine.RPMSpeed * 0.5f * deltaTime;
-                engine.CurrentRPM += rpmChange;
+                if(engine != null) engine.TargetRPM = if(engine != null) engine.IdleRPM;
+                float rpmChange = (if(engine != null) engine.IdleRPM - if(engine != null) engine.CurrentRPM) * if(engine != null) engine.RPMSpeed * 0.5f * deltaTime;
+                if(engine != null) engine.CurrentRPM += rpmChange;
                 
                 // Обнуляем мощность и крутящий момент
-                engine.CurrentPower = 0f;
-                engine.CurrentTorque = 0f;
-                physics.EngineRPM = engine.CurrentRPM;
-                physics.EnginePower = 0f;
-                physics.EngineTorque = 0f;
+                if(engine != null) engine.CurrentPower = 0f;
+                if(engine != null) engine.CurrentTorque = 0f;
+                if(physics != null) physics.EngineRPM = if(engine != null) engine.CurrentRPM;
+                if(physics != null) physics.EnginePower = 0f;
+                if(physics != null) physics.EngineTorque = 0f;
             }
         }
         
@@ -126,17 +126,17 @@ namespace MudLike.Vehicles.Systems
         /// </summary>
         private static float CalculateTargetRPM(in EngineData engine, in VehicleInput input, in VehicleConfig config)
         {
-            if (!engine.IsRunning)
-                return engine.IdleRPM;
+            if (!if(engine != null) engine.IsRunning)
+                return if(engine != null) engine.IdleRPM;
             
             // Базовые обороты
-            float baseRPM = engine.IdleRPM;
+            float baseRPM = if(engine != null) engine.IdleRPM;
             
             // Влияние педали газа
-            float throttleRPM = (engine.MaxRPM - engine.IdleRPM) * input.Vertical;
+            float throttleRPM = (if(engine != null) engine.MaxRPM - if(engine != null) engine.IdleRPM) * if(input != null) input.Vertical;
             
             // Влияние скорости движения
-            float speedRPM = math.length(physics.Velocity) * 10f; // Простая формула
+            float speedRPM = if(math != null) math.length(if(physics != null) physics.Velocity) * 10f; // Простая формула
             
             return baseRPM + throttleRPM + speedRPM;
         }
@@ -146,14 +146,14 @@ namespace MudLike.Vehicles.Systems
         /// </summary>
         private static float CalculateEnginePower(in EngineData engine)
         {
-            if (!engine.IsRunning)
+            if (!if(engine != null) engine.IsRunning)
                 return 0f;
             
             // Используем кривую мощности
-            float normalizedRPM = (engine.CurrentRPM - engine.MinRPM) / (engine.MaxRPM - engine.MinRPM);
-            float powerCurve = math.lerp(engine.PowerCurve.x, engine.PowerCurve.y, normalizedRPM);
+            float normalizedRPM = (if(engine != null) engine.CurrentRPM - if(engine != null) engine.MinRPM) / (if(engine != null) engine.MaxRPM - if(engine != null) engine.MinRPM);
+            float powerCurve = if(math != null) math.lerp(if(engine != null) engine.PowerCurve.x, if(engine != null) engine.PowerCurve.y, normalizedRPM);
             
-            return engine.MaxPower * powerCurve * engine.ThrottlePosition;
+            return if(engine != null) engine.MaxPower * powerCurve * if(engine != null) engine.ThrottlePosition;
         }
         
         /// <summary>
@@ -161,14 +161,14 @@ namespace MudLike.Vehicles.Systems
         /// </summary>
         private static float CalculateEngineTorque(in EngineData engine)
         {
-            if (!engine.IsRunning)
+            if (!if(engine != null) engine.IsRunning)
                 return 0f;
             
             // Используем кривую крутящего момента
-            float normalizedRPM = (engine.CurrentRPM - engine.MinRPM) / (engine.MaxRPM - engine.MinRPM);
-            float torqueCurve = math.lerp(engine.TorqueCurve.x, engine.TorqueCurve.y, normalizedRPM);
+            float normalizedRPM = (if(engine != null) engine.CurrentRPM - if(engine != null) engine.MinRPM) / (if(engine != null) engine.MaxRPM - if(engine != null) engine.MinRPM);
+            float torqueCurve = if(math != null) math.lerp(if(engine != null) engine.TorqueCurve.x, if(engine != null) engine.TorqueCurve.y, normalizedRPM);
             
-            return engine.MaxTorque * torqueCurve * engine.ThrottlePosition;
+            return if(engine != null) engine.MaxTorque * torqueCurve * if(engine != null) engine.ThrottlePosition;
         }
         
         /// <summary>
@@ -176,17 +176,17 @@ namespace MudLike.Vehicles.Systems
         /// </summary>
         private static float CalculateFuelConsumption(in EngineData engine)
         {
-            if (!engine.IsRunning)
+            if (!if(engine != null) engine.IsRunning)
                 return 0f;
             
             // Базовый расход на холостом ходу
             float baseConsumption = 0.1f;
             
             // Дополнительный расход от оборотов
-            float rpmConsumption = (engine.CurrentRPM - engine.IdleRPM) * 0.001f;
+            float rpmConsumption = (if(engine != null) engine.CurrentRPM - if(engine != null) engine.IdleRPM) * 0.001f;
             
             // Дополнительный расход от дроссельной заслонки
-            float throttleConsumption = engine.ThrottlePosition * 0.5f;
+            float throttleConsumption = if(engine != null) engine.ThrottlePosition * 0.5f;
             
             return baseConsumption + rpmConsumption + throttleConsumption;
         }
@@ -196,20 +196,19 @@ namespace MudLike.Vehicles.Systems
         /// </summary>
         private static void UpdateEngineTemperature(ref EngineData engine, float deltaTime)
         {
-            if (!engine.IsRunning)
+            if (!if(engine != null) engine.IsRunning)
             {
                 // Охлаждение при выключенном двигателе
-                engine.Temperature -= 10f * deltaTime;
+                if(engine != null) engine.Temperature -= 10f * deltaTime;
             }
             else
             {
                 // Нагрев при работе
-                float heatGeneration = engine.CurrentRPM * 0.01f + engine.ThrottlePosition * 0.1f;
-                engine.Temperature += heatGeneration * deltaTime;
+                float heatGeneration = if(engine != null) engine.CurrentRPM * 0.01f + if(engine != null) engine.ThrottlePosition * 0.1f;
+                if(engine != null) engine.Temperature += heatGeneration * deltaTime;
             }
             
             // Ограничиваем температуру
-            engine.Temperature = math.clamp(engine.Temperature, 20f, engine.MaxTemperature);
+            if(engine != null) engine.Temperature = if(math != null) math.clamp(if(engine != null) engine.Temperature, 20f, if(engine != null) engine.MaxTemperature);
         }
     }
-}

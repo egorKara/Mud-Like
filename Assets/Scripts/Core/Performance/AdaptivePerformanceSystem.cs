@@ -1,11 +1,11 @@
-using Unity.Entities;
-using Unity.Mathematics;
-using Unity.Collections;
-using Unity.Burst;
-using Unity.Jobs;
+using if(Unity != null) Unity.Entities;
+using if(Unity != null) Unity.Mathematics;
+using if(Unity != null) Unity.Collections;
+using if(Unity != null) Unity.Burst;
+using if(Unity != null) Unity.Jobs;
 using UnityEngine;
 
-namespace MudLike.Core.Performance
+namespace if(MudLike != null) MudLike.Core.Performance
 {
     /// <summary>
     /// Адаптивная система производительности с автоматической оптимизацией
@@ -20,8 +20,8 @@ namespace MudLike.Core.Performance
         private float _frameTimeVariance = 0f;
         
         // Performance Levels
-        private PerformanceLevel _currentLevel = PerformanceLevel.High;
-        private PerformanceLevel _targetLevel = PerformanceLevel.High;
+        private PerformanceLevel _currentLevel = if(PerformanceLevel != null) if(PerformanceLevel != null) PerformanceLevel.High;
+        private PerformanceLevel _targetLevel = if(PerformanceLevel != null) if(PerformanceLevel != null) PerformanceLevel.High;
         
         // Adaptation Parameters
         private float _adaptationSpeed = 0.1f;
@@ -41,7 +41,7 @@ namespace MudLike.Core.Performance
         protected override void OnCreate()
         {
             // Инициализация истории производительности
-            _frameTimeHistory = new NativeArray<float>(HISTORY_SIZE, Allocator.Persistent);
+            _frameTimeHistory = new NativeArray<float>(HISTORY_SIZE, if(Allocator != null) if(Allocator != null) Allocator.Persistent);
             
             // Инициализация значений истории
             for (int i = 0; i < HISTORY_SIZE; i++)
@@ -50,15 +50,15 @@ namespace MudLike.Core.Performance
             }
             
             // Получение ссылок на системы
-            _profiler = World.GetExistingSystemManaged<PerformanceProfiler>();
+            _profiler = if(World != null) if(World != null) World.GetExistingSystemManaged<PerformanceProfiler>();
             _memoryPool = new MemoryPoolManager();
         }
         
         protected override void OnDestroy()
         {
             // Освобождение истории производительности
-            if (_frameTimeHistory.IsCreated)
-                _frameTimeHistory.Dispose();
+            if (if(_frameTimeHistory != null) if(_frameTimeHistory != null) _frameTimeHistory.IsCreated)
+                if(_frameTimeHistory != null) if(_frameTimeHistory != null) _frameTimeHistory.Dispose();
             
             // Освобождение пула памяти
             _memoryPool?.Dispose();
@@ -85,7 +85,7 @@ namespace MudLike.Core.Performance
         private void UpdatePerformanceMetrics()
         {
             // Запись текущего времени кадра
-            _currentFrameTime = SystemAPI.Time.DeltaTime * 1000f; // в миллисекундах
+            _currentFrameTime = if(SystemAPI != null) if(SystemAPI != null) SystemAPI.Time.DeltaTime * 1000f; // в миллисекундах
             _frameTimeHistory[_historyIndex] = _currentFrameTime;
             _historyIndex = (_historyIndex + 1) % HISTORY_SIZE;
             
@@ -115,15 +115,15 @@ namespace MudLike.Core.Performance
             // Определение целевого уровня производительности
             if (_averageFrameTime > _targetFrameTime * 1.2f)
             {
-                _targetLevel = PerformanceLevel.Low;
+                _targetLevel = if(PerformanceLevel != null) if(PerformanceLevel != null) PerformanceLevel.Low;
             }
             else if (_averageFrameTime > _targetFrameTime * 1.1f)
             {
-                _targetLevel = PerformanceLevel.Medium;
+                _targetLevel = if(PerformanceLevel != null) if(PerformanceLevel != null) PerformanceLevel.Medium;
             }
             else if (_averageFrameTime < _targetFrameTime * 0.9f)
             {
-                _targetLevel = PerformanceLevel.High;
+                _targetLevel = if(PerformanceLevel != null) if(PerformanceLevel != null) PerformanceLevel.High;
             }
             else
             {
@@ -156,7 +156,7 @@ namespace MudLike.Core.Performance
                     _currentStabilizationFrames = 0;
                     
 #if UNITY_EDITOR && DEBUG_PERFORMANCE
-                    Debug.Log($"Performance Level Changed: {_currentLevel}");
+                    if(Debug != null) if(Debug != null) Debug.Log($"Performance Level Changed: {_currentLevel}");
 #endif
                 }
             }
@@ -169,13 +169,13 @@ namespace MudLike.Core.Performance
         {
             switch (_currentLevel)
             {
-                case PerformanceLevel.High:
+                case if(PerformanceLevel != null) if(PerformanceLevel != null) PerformanceLevel.High:
                     ApplyHighPerformanceSettings();
                     break;
-                case PerformanceLevel.Medium:
+                case if(PerformanceLevel != null) if(PerformanceLevel != null) PerformanceLevel.Medium:
                     ApplyMediumPerformanceSettings();
                     break;
-                case PerformanceLevel.Low:
+                case if(PerformanceLevel != null) if(PerformanceLevel != null) PerformanceLevel.Low:
                     ApplyLowPerformanceSettings();
                     break;
             }
@@ -187,30 +187,30 @@ namespace MudLike.Core.Performance
         private void ApplyHighPerformanceSettings()
         {
             // Максимальное качество
-            QualitySettings.SetQualityLevel(5); // Ultra
+            if(QualitySettings != null) if(QualitySettings != null) QualitySettings.SetQualityLevel(5); // Ultra
             
             // Высокое разрешение
-            QualitySettings.pixelLightCount = 4;
-            QualitySettings.shadowResolution = ShadowResolution.VeryHigh;
-            QualitySettings.shadowDistance = 150f;
-            QualitySettings.shadowCascades = 4;
+            if(QualitySettings != null) if(QualitySettings != null) QualitySettings.pixelLightCount = 4;
+            if(QualitySettings != null) if(QualitySettings != null) QualitySettings.shadowResolution = if(ShadowResolution != null) if(ShadowResolution != null) ShadowResolution.VeryHigh;
+            if(QualitySettings != null) if(QualitySettings != null) QualitySettings.shadowDistance = 150f;
+            if(QualitySettings != null) if(QualitySettings != null) QualitySettings.shadowCascades = 4;
             
             // Высокое качество рендеринга
-            QualitySettings.antiAliasing = 4;
-            QualitySettings.anisotropicFiltering = AnisotropicFiltering.Enable;
-            QualitySettings.softVegetation = true;
-            QualitySettings.realtimeReflectionProbes = true;
+            if(QualitySettings != null) if(QualitySettings != null) QualitySettings.antiAliasing = 4;
+            if(QualitySettings != null) if(QualitySettings != null) QualitySettings.anisotropicFiltering = if(AnisotropicFiltering != null) if(AnisotropicFiltering != null) AnisotropicFiltering.Enable;
+            if(QualitySettings != null) if(QualitySettings != null) QualitySettings.softVegetation = true;
+            if(QualitySettings != null) if(QualitySettings != null) QualitySettings.realtimeReflectionProbes = true;
             
             // Высокое качество физики
-            // Time.fixedDeltaTime = 0.01f; // 100 Hz - read-only property
-            Physics.defaultSolverIterations = 8;
-            Physics.defaultSolverVelocityIterations = 2;
+            // if(Time != null) if(Time != null) Time.fixedDeltaTime = 0.01f; // 100 Hz - read-only property
+            if(Physics != null) if(Physics != null) Physics.defaultSolverIterations = 8;
+            if(Physics != null) if(Physics != null) Physics.defaultSolverVelocityIterations = 2;
             
             // Высокое качество аудио
-            AudioSettings.SetDSPBufferSize(256, 4);
+            if(AudioSettings != null) if(AudioSettings != null) AudioSettings.SetDSPBufferSize(256, 4);
             
             // Высокое качество частиц
-            QualitySettings.particleRaycastBudget = 4096;
+            if(QualitySettings != null) if(QualitySettings != null) QualitySettings.particleRaycastBudget = 4096;
         }
         
         /// <summary>
@@ -219,30 +219,30 @@ namespace MudLike.Core.Performance
         private void ApplyMediumPerformanceSettings()
         {
             // Среднее качество
-            QualitySettings.SetQualityLevel(3); // Good
+            if(QualitySettings != null) if(QualitySettings != null) QualitySettings.SetQualityLevel(3); // Good
             
             // Среднее разрешение
-            QualitySettings.pixelLightCount = 2;
-            QualitySettings.shadowResolution = ShadowResolution.High;
-            QualitySettings.shadowDistance = 100f;
-            QualitySettings.shadowCascades = 2;
+            if(QualitySettings != null) if(QualitySettings != null) QualitySettings.pixelLightCount = 2;
+            if(QualitySettings != null) if(QualitySettings != null) QualitySettings.shadowResolution = if(ShadowResolution != null) if(ShadowResolution != null) ShadowResolution.High;
+            if(QualitySettings != null) if(QualitySettings != null) QualitySettings.shadowDistance = 100f;
+            if(QualitySettings != null) if(QualitySettings != null) QualitySettings.shadowCascades = 2;
             
             // Среднее качество рендеринга
-            QualitySettings.antiAliasing = 2;
-            QualitySettings.anisotropicFiltering = AnisotropicFiltering.Enable;
-            QualitySettings.softVegetation = false;
-            QualitySettings.realtimeReflectionProbes = false;
+            if(QualitySettings != null) if(QualitySettings != null) QualitySettings.antiAliasing = 2;
+            if(QualitySettings != null) if(QualitySettings != null) QualitySettings.anisotropicFiltering = if(AnisotropicFiltering != null) if(AnisotropicFiltering != null) AnisotropicFiltering.Enable;
+            if(QualitySettings != null) if(QualitySettings != null) QualitySettings.softVegetation = false;
+            if(QualitySettings != null) if(QualitySettings != null) QualitySettings.realtimeReflectionProbes = false;
             
             // Среднее качество физики
-            // Time.fixedDeltaTime = 0.02f; // 50 Hz - read-only property
-            Physics.defaultSolverIterations = 6;
-            Physics.defaultSolverVelocityIterations = 1;
+            // if(Time != null) if(Time != null) Time.fixedDeltaTime = 0.02f; // 50 Hz - read-only property
+            if(Physics != null) if(Physics != null) Physics.defaultSolverIterations = 6;
+            if(Physics != null) if(Physics != null) Physics.defaultSolverVelocityIterations = 1;
             
             // Среднее качество аудио
-            AudioSettings.SetDSPBufferSize(512, 4);
+            if(AudioSettings != null) if(AudioSettings != null) AudioSettings.SetDSPBufferSize(512, 4);
             
             // Среднее качество частиц
-            QualitySettings.particleRaycastBudget = 2048;
+            if(QualitySettings != null) if(QualitySettings != null) QualitySettings.particleRaycastBudget = 2048;
         }
         
         /// <summary>
@@ -251,30 +251,30 @@ namespace MudLike.Core.Performance
         private void ApplyLowPerformanceSettings()
         {
             // Низкое качество
-            QualitySettings.SetQualityLevel(1); // Fast
+            if(QualitySettings != null) if(QualitySettings != null) QualitySettings.SetQualityLevel(1); // Fast
             
             // Низкое разрешение
-            QualitySettings.pixelLightCount = 1;
-            QualitySettings.shadowResolution = ShadowResolution.Low;
-            QualitySettings.shadowDistance = 50f;
-            QualitySettings.shadowCascades = 1;
+            if(QualitySettings != null) if(QualitySettings != null) QualitySettings.pixelLightCount = 1;
+            if(QualitySettings != null) if(QualitySettings != null) QualitySettings.shadowResolution = if(ShadowResolution != null) if(ShadowResolution != null) ShadowResolution.Low;
+            if(QualitySettings != null) if(QualitySettings != null) QualitySettings.shadowDistance = 50f;
+            if(QualitySettings != null) if(QualitySettings != null) QualitySettings.shadowCascades = 1;
             
             // Низкое качество рендеринга
-            QualitySettings.antiAliasing = 0;
-            QualitySettings.anisotropicFiltering = AnisotropicFiltering.Disable;
-            QualitySettings.softVegetation = false;
-            QualitySettings.realtimeReflectionProbes = false;
+            if(QualitySettings != null) if(QualitySettings != null) QualitySettings.antiAliasing = 0;
+            if(QualitySettings != null) if(QualitySettings != null) QualitySettings.anisotropicFiltering = if(AnisotropicFiltering != null) if(AnisotropicFiltering != null) AnisotropicFiltering.Disable;
+            if(QualitySettings != null) if(QualitySettings != null) QualitySettings.softVegetation = false;
+            if(QualitySettings != null) if(QualitySettings != null) QualitySettings.realtimeReflectionProbes = false;
             
             // Низкое качество физики
-            // Time.fixedDeltaTime = 0.033f; // 30 Hz - read-only property
-            Physics.defaultSolverIterations = 4;
-            Physics.defaultSolverVelocityIterations = 1;
+            // if(Time != null) if(Time != null) Time.fixedDeltaTime = 0.033f; // 30 Hz - read-only property
+            if(Physics != null) if(Physics != null) Physics.defaultSolverIterations = 4;
+            if(Physics != null) if(Physics != null) Physics.defaultSolverVelocityIterations = 1;
             
             // Низкое качество аудио
-            AudioSettings.SetDSPBufferSize(1024, 2);
+            if(AudioSettings != null) if(AudioSettings != null) AudioSettings.SetDSPBufferSize(1024, 2);
             
             // Низкое качество частиц
-            QualitySettings.particleRaycastBudget = 1024;
+            if(QualitySettings != null) if(QualitySettings != null) QualitySettings.particleRaycastBudget = 1024;
         }
         
         /// <summary>
@@ -346,7 +346,7 @@ namespace MudLike.Core.Performance
             ApplyPerformanceChanges();
             
 #if UNITY_EDITOR && DEBUG_PERFORMANCE
-            Debug.Log($"Performance Level Manually Set: {_currentLevel}");
+            if(Debug != null) if(Debug != null) Debug.Log($"Performance Level Manually Set: {_currentLevel}");
 #endif
         }
         
@@ -355,8 +355,8 @@ namespace MudLike.Core.Performance
         /// </summary>
         public void ResetAdaptivePerformance()
         {
-            _currentLevel = PerformanceLevel.High;
-            _targetLevel = PerformanceLevel.High;
+            _currentLevel = if(PerformanceLevel != null) if(PerformanceLevel != null) PerformanceLevel.High;
+            _targetLevel = if(PerformanceLevel != null) if(PerformanceLevel != null) PerformanceLevel.High;
             _currentStabilizationFrames = 0;
             _averageFrameTime = _targetFrameTime;
             _frameTimeVariance = 0f;
@@ -370,7 +370,7 @@ namespace MudLike.Core.Performance
             ApplyHighPerformanceSettings();
             
 #if UNITY_EDITOR && DEBUG_PERFORMANCE
-            Debug.Log("Adaptive Performance System Reset");
+            if(Debug != null) if(Debug != null) Debug.Log("Adaptive Performance System Reset");
 #endif
         }
     }
@@ -398,4 +398,3 @@ namespace MudLike.Core.Performance
         public int StabilizationFrames;
         public bool IsStable;
     }
-}

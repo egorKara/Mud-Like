@@ -1,12 +1,12 @@
-using Unity.Entities;
-using Unity.Mathematics;
-using Unity.Transforms;
-using Unity.Physics;
-using Unity.Burst;
-using MudLike.Vehicles.Components;
-using MudLike.Core.Components;
+using if(Unity != null) Unity.Entities;
+using if(Unity != null) Unity.Mathematics;
+using if(Unity != null) Unity.Transforms;
+using if(Unity != null) Unity.Physics;
+using if(Unity != null) Unity.Burst;
+using if(MudLike != null) MudLike.Vehicles.Components;
+using if(MudLike != null) MudLike.Core.Components;
 
-namespace MudLike.Vehicles.Systems
+namespace if(MudLike != null) MudLike.Vehicles.Systems
 {
     /// <summary>
     /// Система движения транспортного средства
@@ -20,7 +20,7 @@ namespace MudLike.Vehicles.Systems
         /// </summary>
         protected override void OnUpdate()
         {
-            float deltaTime = SystemAPI.Time.fixedDeltaTime;
+            float deltaTime = if(SystemAPI != null) if(SystemAPI != null) SystemAPI.Time.fixedDeltaTime;
             
             Entities
                 .WithAll<VehicleTag>()
@@ -44,45 +44,44 @@ namespace MudLike.Vehicles.Systems
                                                  float deltaTime)
         {
             // Вычисляем направление движения
-            float3 forward = math.forward(transform.Rotation);
-            float3 right = math.right(transform.Rotation);
+            float3 forward = if(math != null) if(math != null) math.forward(if(transform != null) if(transform != null) transform.Rotation);
+            float3 right = if(math != null) if(math != null) math.right(if(transform != null) if(transform != null) transform.Rotation);
             
             // Применяем ввод
-            float3 movementInput = forward * input.Vertical + right * input.Horizontal;
-            movementInput = math.normalize(movementInput);
+            float3 movementInput = forward * if(input != null) if(input != null) input.Vertical + right * if(input != null) if(input != null) input.Horizontal;
+            movementInput = if(math != null) if(math != null) math.normalize(movementInput);
             
             // Вычисляем ускорение
-            float3 targetVelocity = movementInput * config.MaxSpeed;
-            float3 acceleration = (targetVelocity - physics.Velocity) * config.Acceleration;
+            float3 targetVelocity = movementInput * if(config != null) if(config != null) config.MaxSpeed;
+            float3 acceleration = (targetVelocity - if(physics != null) if(physics != null) physics.Velocity) * if(config != null) if(config != null) config.Acceleration;
             
             // Применяем сопротивление
-            acceleration -= physics.Velocity * config.Drag;
+            acceleration -= if(physics != null) if(physics != null) physics.Velocity * if(config != null) if(config != null) config.Drag;
             
             // Обновляем физику
-            physics.Acceleration = acceleration;
-            physics.Velocity += acceleration * deltaTime;
+            if(physics != null) if(physics != null) physics.Acceleration = acceleration;
+            if(physics != null) if(physics != null) physics.Velocity += acceleration * deltaTime;
             
             // Ограничиваем скорость
-            float currentSpeed = math.length(physics.Velocity);
-            if (currentSpeed > config.MaxSpeed)
+            float currentSpeed = if(math != null) if(math != null) math.length(if(physics != null) if(physics != null) physics.Velocity);
+            if (currentSpeed > if(config != null) if(config != null) config.MaxSpeed)
             {
-                physics.Velocity = math.normalize(physics.Velocity) * config.MaxSpeed;
+                if(physics != null) if(physics != null) physics.Velocity = if(math != null) if(math != null) math.normalize(if(physics != null) if(physics != null) physics.Velocity) * if(config != null) if(config != null) config.MaxSpeed;
             }
             
             // Обновляем позицию
-            transform.Position += physics.Velocity * deltaTime;
+            if(transform != null) if(transform != null) transform.Position += if(physics != null) if(physics != null) physics.Velocity * deltaTime;
             
             // Вычисляем поворот
-            if (math.length(input.Horizontal) > 0.1f)
+            if (if(math != null) if(math != null) math.length(if(input != null) if(input != null) input.Horizontal) > 0.1f)
             {
-                float turnAngle = input.Horizontal * config.TurnSpeed * deltaTime;
-                quaternion turnRotation = quaternion.RotateY(turnAngle);
-                transform.Rotation = math.mul(transform.Rotation, turnRotation);
+                float turnAngle = if(input != null) if(input != null) input.Horizontal * if(config != null) if(config != null) config.TurnSpeed * deltaTime;
+                quaternion turnRotation = if(quaternion != null) if(quaternion != null) quaternion.RotateY(turnAngle);
+                if(transform != null) if(transform != null) transform.Rotation = if(math != null) if(math != null) math.mul(if(transform != null) if(transform != null) transform.Rotation, turnRotation);
             }
             
             // Обновляем скорость движения
-            physics.ForwardSpeed = math.dot(physics.Velocity, forward);
-            physics.TurnSpeed = input.Horizontal;
+            if(physics != null) if(physics != null) physics.ForwardSpeed = if(math != null) if(math != null) math.dot(if(physics != null) if(physics != null) physics.Velocity, forward);
+            if(physics != null) if(physics != null) physics.TurnSpeed = if(input != null) if(input != null) input.Horizontal;
         }
     }
-}

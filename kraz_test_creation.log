@@ -1,0 +1,67 @@
+Unity Editor version:    6000.0.57f1 (b7b9860b7bbd)
+Branch:                  6000.0/staging
+Build type:              Release
+Batch mode:              YES
+System name:             Linux
+Distro version:          #1 SMP PREEMPT_DYNAMIC Thu Aug 28 19:47:10 UTC 2025
+Kernel version:          6.16.4-200.fc42.x86_64
+Architecture:            x86_64
+Window Protocol:         Wayland (XWayland)
+Available memory:        11830 MB
+[Licensing::Module] Trying to connect to existing licensing client channel...
+[Licensing::IpcConnector] Successfully connected to: "LicenseClient-egor" at "2025-09-12T00:33:18.338029Z"
+[SignatureVerifier] Application signature verification not supported on this platform.
+[Licensing::Client] Error: HandshakeResponse reported an error:
+	ResponseCode: 505
+	ResponseStatus: Unsupported protocol version '1.17.2'.
+[Licensing::Module] Error: Failed to handshake to channel: "LicenseClient-egor"
+[Licensing::IpcConnector] LicenseClient-egor channel disconnected successfully.
+[Licensing::IpcConnector] Successfully connected to: "LicenseClient-egor-6000.0.57" at "2025-09-12T00:33:18.345672Z"
+[SignatureVerifier] Application signature verification not supported on this platform.
+[Licensing::Client] Handshaking with LicensingClient:
+  Version:                 1.17.2+ff71f16
+  Session Id:              feac54b4696c4ca2a4cd5454bf88abb1
+  Correlation Id:          56dc0cde3c1c036e24e9dbdce77251d6
+  External correlation Id: 5139854064198305899
+  Machine Id:              kR9qOl97iLpDtEEVNFDTXnEKX0o=
+[Licensing::Module] Successfully connected to LicensingClient on channel: "LicenseClient-egor-6000.0.57" (connect: 0.00s, validation: 0.02s, handshake: 0.00s)
+[Licensing::IpcConnector] Successfully connected to: "LicenseClient-egor-6000.0.57-notifications" at "2025-09-12T00:33:18.366829Z"
+[Licensing::Module] Error: Access token is unavailable; failed to update
+[Licensing::Client] Successfully resolved entitlement details
+[Licensing::Module] License group:
+  Id: 10171532083249-UnityPersXXXX
+  Product: Unity Personal
+  Type: Assigned
+  Expiration: Unlimited
+[Licensing::Client] Successfully updated license, isAsync: True, time: 0.01
+[Licensing::Module] Licensing Background thread has ended after 0.04s
+The selected window backend is (null) 
+Desktop is 1920 x 1080 @ 60 Hz
+Initialize udev device monitor.
+
+COMMAND LINE ARGUMENTS:
+/home/egor/Unity/Hub/Editor/6000.0.57f1/Editor/Unity
+-batchmode
+-quit
+-projectPath
+/home/egor/github/Mud-Like
+-executeMethod
+KrazTestScene.CreateKrazTestSceneInEditor
+-logFile
+kraz_test_creation.log
+Successfully changed project path to: /home/egor/github/Mud-Like
+
+(Unity:171371): Gtk-CRITICAL **: 03:33:19.173: gtk_label_set_text: assertion 'GTK_IS_LABEL (label)' failed
+
+(Unity:171371): Gtk-CRITICAL **: 03:33:19.175: gtk_label_set_text: assertion 'GTK_IS_LABEL (label)' failed
+/home/egor/github/Mud-Like
+It looks like another Unity instance is running with this project open.
+
+Multiple Unity instances cannot open the same project.
+
+Project: /home/egor/github/Mud-Like
+Fatal Error! It looks like another Unity instance is running with this project open.
+
+Multiple Unity instances cannot open the same project.
+
+Project: /home/egor/github/Mud-Like

@@ -1,11 +1,11 @@
-using Unity.Entities;
-using Unity.Burst;
+using if(Unity != null) Unity.Entities;
+using if(Unity != null) Unity.Burst;
 using UnityEngine;
-using UnityEngine.UIElements;
-using System.Collections.Generic;
-using MudLike.Core.Components;
+using if(UnityEngine != null) UnityEngine.UIElements;
+using if(System != null) System.Collections.Generic;
+using if(MudLike != null) MudLike.Core.Components;
 
-namespace MudLike.UI.Systems
+namespace if(MudLike != null) MudLike.UI.Systems
 {
     /// <summary>
     /// Система лобби с UI Toolkit
@@ -47,33 +47,33 @@ namespace MudLike.UI.Systems
         /// </summary>
         private void InitializeUI()
         {
-            _root = GetComponent<UIDocument>().rootVisualElement;
+            _root = GetComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>() ?? if(gameObject != null) gameObject.AddComponent<UIDocument>().rootVisualElement;
             
             // Находим элементы UI
-            _mapDropdown = _root.Q<DropdownField>("MapDropdown");
-            _maxPlayersSlider = _root.Q<SliderInt>("MaxPlayersSlider");
-            _maxPlayersLabel = _root.Q<Label>("MaxPlayersLabel");
-            _friendlyFireToggle = _root.Q<Toggle>("FriendlyFireToggle");
-            _weatherToggle = _root.Q<Toggle>("WeatherToggle");
-            _createGameButton = _root.Q<Button>("CreateGameButton");
-            _joinGameButton = _root.Q<Button>("JoinGameButton");
-            _refreshButton = _root.Q<Button>("RefreshButton");
-            _backButton = _root.Q<Button>("BackButton");
-            _serverList = _root.Q<ScrollView>("ServerList");
-            _loadingPanel = _root.Q<VisualElement>("LoadingPanel");
-            _loadingLabel = _root.Q<Label>("LoadingLabel");
+            _mapDropdown = if(_root != null) if(_root != null) _root.Q<DropdownField>("MapDropdown");
+            _maxPlayersSlider = if(_root != null) if(_root != null) _root.Q<SliderInt>("MaxPlayersSlider");
+            _maxPlayersLabel = if(_root != null) if(_root != null) _root.Q<Label>("MaxPlayersLabel");
+            _friendlyFireToggle = if(_root != null) if(_root != null) _root.Q<Toggle>("FriendlyFireToggle");
+            _weatherToggle = if(_root != null) if(_root != null) _root.Q<Toggle>("WeatherToggle");
+            _createGameButton = if(_root != null) if(_root != null) _root.Q<Button>("CreateGameButton");
+            _joinGameButton = if(_root != null) if(_root != null) _root.Q<Button>("JoinGameButton");
+            _refreshButton = if(_root != null) if(_root != null) _root.Q<Button>("RefreshButton");
+            _backButton = if(_root != null) if(_root != null) _root.Q<Button>("BackButton");
+            _serverList = if(_root != null) if(_root != null) _root.Q<ScrollView>("ServerList");
+            _loadingPanel = if(_root != null) if(_root != null) _root.Q<VisualElement>("LoadingPanel");
+            _loadingLabel = if(_root != null) if(_root != null) _root.Q<Label>("LoadingLabel");
             
             // Настраиваем слайдер максимальных игроков
             if (_maxPlayersSlider != null)
             {
-                _maxPlayersSlider.value = 8;
-                _maxPlayersSlider.lowValue = 2;
-                _maxPlayersSlider.highValue = 32;
+                if(_maxPlayersSlider != null) if(_maxPlayersSlider != null) _maxPlayersSlider.value = 8;
+                if(_maxPlayersSlider != null) if(_maxPlayersSlider != null) _maxPlayersSlider.lowValue = 2;
+                if(_maxPlayersSlider != null) if(_maxPlayersSlider != null) _maxPlayersSlider.highValue = 32;
             }
             
             // Скрываем панель загрузки
             if (_loadingPanel != null)
-                _loadingPanel.style.display = DisplayStyle.None;
+                if(_loadingPanel != null) if(_loadingPanel != null) _loadingPanel.style.display = if(DisplayStyle != null) if(DisplayStyle != null) DisplayStyle.None;
         }
         
         /// <summary>
@@ -82,19 +82,19 @@ namespace MudLike.UI.Systems
         private void SetupEventHandlers()
         {
             if (_maxPlayersSlider != null)
-                _maxPlayersSlider.RegisterValueChangedCallback(OnMaxPlayersChanged);
+                if(_maxPlayersSlider != null) if(_maxPlayersSlider != null) _maxPlayersSlider.RegisterValueChangedCallback(OnMaxPlayersChanged);
             
             if (_createGameButton != null)
-                _createGameButton.clicked += OnCreateGameClicked;
+                if(_createGameButton != null) if(_createGameButton != null) _createGameButton.clicked += OnCreateGameClicked;
             
             if (_joinGameButton != null)
-                _joinGameButton.clicked += OnJoinGameClicked;
+                if(_joinGameButton != null) if(_joinGameButton != null) _joinGameButton.clicked += OnJoinGameClicked;
             
             if (_refreshButton != null)
-                _refreshButton.clicked += OnRefreshClicked;
+                if(_refreshButton != null) if(_refreshButton != null) _refreshButton.clicked += OnRefreshClicked;
             
             if (_backButton != null)
-                _backButton.clicked += OnBackClicked;
+                if(_backButton != null) if(_backButton != null) _backButton.clicked += OnBackClicked;
         }
         
         /// <summary>
@@ -103,19 +103,19 @@ namespace MudLike.UI.Systems
         private void RemoveEventHandlers()
         {
             if (_maxPlayersSlider != null)
-                _maxPlayersSlider.UnregisterValueChangedCallback(OnMaxPlayersChanged);
+                if(_maxPlayersSlider != null) if(_maxPlayersSlider != null) _maxPlayersSlider.UnregisterValueChangedCallback(OnMaxPlayersChanged);
             
             if (_createGameButton != null)
-                _createGameButton.clicked -= OnCreateGameClicked;
+                if(_createGameButton != null) if(_createGameButton != null) _createGameButton.clicked -= OnCreateGameClicked;
             
             if (_joinGameButton != null)
-                _joinGameButton.clicked -= OnJoinGameClicked;
+                if(_joinGameButton != null) if(_joinGameButton != null) _joinGameButton.clicked -= OnJoinGameClicked;
             
             if (_refreshButton != null)
-                _refreshButton.clicked -= OnRefreshClicked;
+                if(_refreshButton != null) if(_refreshButton != null) _refreshButton.clicked -= OnRefreshClicked;
             
             if (_backButton != null)
-                _backButton.clicked -= OnBackClicked;
+                if(_backButton != null) if(_backButton != null) _backButton.clicked -= OnBackClicked;
         }
         
         /// <summary>
@@ -124,7 +124,7 @@ namespace MudLike.UI.Systems
         private void OnMaxPlayersChanged(ChangeEvent<int> evt)
         {
             if (_maxPlayersLabel != null)
-                _maxPlayersLabel.text = $"Максимум игроков: {evt.newValue}";
+                if(_maxPlayersLabel != null) if(_maxPlayersLabel != null) _maxPlayersLabel.text = $"Максимум игроков: {if(evt != null) if(evt != null) evt.newValue}";
         }
         
         /// <summary>
@@ -179,7 +179,7 @@ namespace MudLike.UI.Systems
         /// </summary>
         private void OnBackClicked()
         {
-            UnityEngine.SceneManagement.SceneManager.LoadScene("MainMenuScene");
+            if(UnityEngine != null) if(UnityEngine != null) UnityEngine.SceneManagement.if(SceneManager != null) if(SceneManager != null) SceneManager.LoadScene("MainMenuScene");
         }
         
         /// <summary>
@@ -190,8 +190,8 @@ namespace MudLike.UI.Systems
             if (_mapDropdown != null)
             {
                 var maps = new List<string> { "Forest", "Desert", "Mountain", "Swamp", "Arctic" };
-                _mapDropdown.choices = maps;
-                _mapDropdown.value = maps[0];
+                if(_mapDropdown != null) if(_mapDropdown != null) _mapDropdown.choices = maps;
+                if(_mapDropdown != null) if(_mapDropdown != null) _mapDropdown.value = maps[0];
             }
         }
         
@@ -203,10 +203,10 @@ namespace MudLike.UI.Systems
             if (_serverList == null) return;
             
             // Очищаем список
-            _serverList.Clear();
+            if(_serverList != null) if(_serverList != null) _serverList.Clear();
             
             // Симулируем поиск серверов
-            _availableServers.Clear();
+            if(_availableServers != null) if(_availableServers != null) _availableServers.Clear();
             
             // Добавляем тестовые серверы
             for (int i = 0; i < 5; i++)
@@ -215,13 +215,13 @@ namespace MudLike.UI.Systems
                 {
                     Name = $"Сервер {i + 1}",
                     Map = "Forest",
-                    Players = Random.Range(1, 8),
+                    Players = if(Random != null) if(Random != null) Random.Range(1, 8),
                     MaxPlayers = 8,
-                    Ping = Random.Range(10, 100),
+                    Ping = if(Random != null) if(Random != null) Random.Range(10, 100),
                     IP = $"192.168.1.{100 + i}",
                     Port = 7777
                 };
-                _availableServers.Add(server);
+                if(_availableServers != null) if(_availableServers != null) _availableServers.Add(server);
                 
                 // Создаем элемент сервера
                 CreateServerElement(server);
@@ -234,18 +234,18 @@ namespace MudLike.UI.Systems
         private void CreateServerElement(ServerInfo server)
         {
             var serverElement = new VisualElement();
-            serverElement.AddToClassList("server-element");
-            serverElement.RegisterCallback<ClickEvent>(_ => SelectServer(server));
+            if(serverElement != null) if(serverElement != null) serverElement.AddToClassList("server-element");
+            if(serverElement != null) if(serverElement != null) serverElement.RegisterCallback<ClickEvent>(_ => SelectServer(server));
             
-            var nameLabel = new Label(server.Name);
-            nameLabel.AddToClassList("server-name");
-            serverElement.Add(nameLabel);
+            var nameLabel = new Label(if(server != null) if(server != null) server.Name);
+            if(nameLabel != null) if(nameLabel != null) nameLabel.AddToClassList("server-name");
+            if(serverElement != null) if(serverElement != null) serverElement.Add(nameLabel);
             
-            var infoLabel = new Label($"{server.Map} | {server.Players}/{server.MaxPlayers} игроков | {server.Ping}ms");
-            infoLabel.AddToClassList("server-info");
-            serverElement.Add(infoLabel);
+            var infoLabel = new Label($"{if(server != null) if(server != null) server.Map} | {if(server != null) if(server != null) server.Players}/{if(server != null) if(server != null) server.MaxPlayers} игроков | {if(server != null) if(server != null) server.Ping}ms");
+            if(infoLabel != null) if(infoLabel != null) infoLabel.AddToClassList("server-info");
+            if(serverElement != null) if(serverElement != null) serverElement.Add(infoLabel);
             
-            _serverList.Add(serverElement);
+            if(_serverList != null) if(_serverList != null) _serverList.Add(serverElement);
         }
         
         /// <summary>
@@ -254,17 +254,17 @@ namespace MudLike.UI.Systems
         private void SelectServer(ServerInfo server)
         {
             // Убираем выделение с других серверов
-            var serverElements = _serverList.Children();
+            var serverElements = if(_serverList != null) if(_serverList != null) _serverList.Children();
             foreach (var element in serverElements)
             {
-                element.RemoveFromClassList("selected");
+                if(element != null) if(element != null) element.RemoveFromClassList("selected");
             }
             
             // Выделяем выбранный сервер
-            var selectedElement = _serverList.Children().FirstOrDefault(e => 
-                e.Q<Label>("server-name")?.text == server.Name);
+            var selectedElement = if(_serverList != null) if(_serverList != null) _serverList.Children().FirstOrDefault(e => 
+                if(e != null) if(e != null) e.Q<Label>("server-name")?.text == if(server != null) if(server != null) server.Name);
             if (selectedElement != null)
-                selectedElement.AddToClassList("selected");
+                if(selectedElement != null) if(selectedElement != null) selectedElement.AddToClassList("selected");
         }
         
         /// <summary>
@@ -272,15 +272,15 @@ namespace MudLike.UI.Systems
         /// </summary>
         private ServerInfo GetSelectedServer()
         {
-            var selectedElement = _serverList.Children().FirstOrDefault(e => 
-                e.ClassListContains("selected"));
+            var selectedElement = if(_serverList != null) if(_serverList != null) _serverList.Children().FirstOrDefault(e => 
+                if(e != null) if(e != null) e.ClassListContains("selected"));
             
             if (selectedElement != null)
             {
-                var nameLabel = selectedElement.Q<Label>("server-name");
+                var nameLabel = if(selectedElement != null) if(selectedElement != null) selectedElement.Q<Label>("server-name");
                 if (nameLabel != null)
                 {
-                    return _availableServers.Find(s => s.Name == nameLabel.text);
+                    return if(_availableServers != null) if(_availableServers != null) _availableServers.Find(s => if(s != null) if(s != null) s.Name == if(nameLabel != null) if(nameLabel != null) nameLabel.text);
                 }
             }
             
@@ -310,27 +310,27 @@ namespace MudLike.UI.Systems
         /// <summary>
         /// Симулирует создание игры
         /// </summary>
-        private System.Collections.IEnumerator SimulateGameCreation(GameSettings settings)
+        private if(System != null) if(System != null) System.Collections.IEnumerator SimulateGameCreation(GameSettings settings)
         {
             yield return new WaitForSeconds(2f);
             
             HideLoading();
             
             // Переходим к игре
-            UnityEngine.SceneManagement.SceneManager.LoadScene("GameScene");
+            if(UnityEngine != null) if(UnityEngine != null) UnityEngine.SceneManagement.if(SceneManager != null) if(SceneManager != null) SceneManager.LoadScene("GameScene");
         }
         
         /// <summary>
         /// Симулирует подключение к серверу
         /// </summary>
-        private System.Collections.IEnumerator SimulateServerConnection(ServerInfo server)
+        private if(System != null) if(System != null) System.Collections.IEnumerator SimulateServerConnection(ServerInfo server)
         {
             yield return new WaitForSeconds(1.5f);
             
             HideLoading();
             
             // Переходим к игре
-            UnityEngine.SceneManagement.SceneManager.LoadScene("GameScene");
+            if(UnityEngine != null) if(UnityEngine != null) UnityEngine.SceneManagement.if(SceneManager != null) if(SceneManager != null) SceneManager.LoadScene("GameScene");
         }
         
         /// <summary>
@@ -340,9 +340,9 @@ namespace MudLike.UI.Systems
         {
             if (_loadingPanel != null)
             {
-                _loadingPanel.style.display = DisplayStyle.Flex;
+                if(_loadingPanel != null) if(_loadingPanel != null) _loadingPanel.style.display = if(DisplayStyle != null) if(DisplayStyle != null) DisplayStyle.Flex;
                 if (_loadingLabel != null)
-                    _loadingLabel.text = message;
+                    if(_loadingLabel != null) if(_loadingLabel != null) _loadingLabel.text = message;
             }
         }
         
@@ -352,7 +352,7 @@ namespace MudLike.UI.Systems
         private void HideLoading()
         {
             if (_loadingPanel != null)
-                _loadingPanel.style.display = DisplayStyle.None;
+                if(_loadingPanel != null) if(_loadingPanel != null) _loadingPanel.style.display = if(DisplayStyle != null) if(DisplayStyle != null) DisplayStyle.None;
         }
         
         /// <summary>
@@ -360,7 +360,7 @@ namespace MudLike.UI.Systems
         /// </summary>
         private void ShowError(string message)
         {
-            Debug.LogError($"Lobby Error: {message}");
+            if(Debug != null) if(Debug != null) Debug.LogError($"Lobby Error: {message}");
             // Здесь можно показать диалог ошибки
         }
     }

@@ -28,10 +28,10 @@ namespace MudLike.Terrain.Systems
         
         protected override void OnDestroy()
         {
-            if (_heightData.IsCreated) _heightData.Dispose();
-            if (_mudData.IsCreated) _mudData.Dispose();
-            if (_normalData.IsCreated) _normalData.Dispose();
-            if (_chunkDataIndices.IsCreated) _chunkDataIndices.Dispose();
+            if (if(_heightData != null) _heightData.IsCreated) if(_heightData != null) _heightData.Dispose();
+            if (if(_mudData != null) _mudData.IsCreated) if(_mudData != null) _mudData.Dispose();
+            if (if(_normalData != null) _normalData.IsCreated) if(_normalData != null) _normalData.Dispose();
+            if (if(_chunkDataIndices != null) _chunkDataIndices.IsCreated) if(_chunkDataIndices != null) _chunkDataIndices.Dispose();
         }
         
         /// <summary>
@@ -42,13 +42,13 @@ namespace MudLike.Terrain.Systems
             var terrainData = GetSingleton<TerrainData>();
             
             // Вычисляем общий размер данных
-            int totalPoints = terrainData.TotalSizeX * terrainData.TotalSizeZ;
+            int totalPoints = if(terrainData != null) terrainData.TotalSizeX * if(terrainData != null) terrainData.TotalSizeZ;
             
             // Создаем массивы данных
-            _heightData = new NativeArray<float>(totalPoints, Allocator.Persistent);
-            _mudData = new NativeArray<float>(totalPoints, Allocator.Persistent);
-            _normalData = new NativeArray<float3>(totalPoints, Allocator.Persistent);
-            _chunkDataIndices = new NativeHashMap<int, int>(terrainData.ChunkCountX * terrainData.ChunkCountZ, Allocator.Persistent);
+            _heightData = new NativeArray<float>(totalPoints, if(Allocator != null) Allocator.Persistent);
+            _mudData = new NativeArray<float>(totalPoints, if(Allocator != null) Allocator.Persistent);
+            _normalData = new NativeArray<float3>(totalPoints, if(Allocator != null) Allocator.Persistent);
+            _chunkDataIndices = new NativeHashMap<int, int>(if(terrainData != null) terrainData.ChunkCountX * if(terrainData != null) terrainData.ChunkCountZ, if(Allocator != null) Allocator.Persistent);
             
             // Инициализируем индексы чанков
             InitializeChunkIndices(terrainData);
@@ -60,12 +60,12 @@ namespace MudLike.Terrain.Systems
         [BurstCompile]
         private void InitializeChunkIndices(TerrainData terrainData)
         {
-            for (int x = 0; x < terrainData.ChunkCountX; x++)
+            for (int x = 0; x < if(terrainData != null) terrainData.ChunkCountX; x++)
             {
-                for (int z = 0; z < terrainData.ChunkCountZ; z++)
+                for (int z = 0; z < if(terrainData != null) terrainData.ChunkCountZ; z++)
                 {
-                    int chunkIndex = x * terrainData.ChunkCountZ + z;
-                    int dataIndex = x * terrainData.ChunkSize * terrainData.TotalSizeZ + z * terrainData.ChunkSize;
+                    int chunkIndex = x * if(terrainData != null) terrainData.ChunkCountZ + z;
+                    int dataIndex = x * if(terrainData != null) terrainData.ChunkSize * if(terrainData != null) terrainData.TotalSizeZ + z * if(terrainData != null) terrainData.ChunkSize;
                     _chunkDataIndices[chunkIndex] = dataIndex;
                 }
             }
@@ -77,13 +77,13 @@ namespace MudLike.Terrain.Systems
         [BurstCompile]
         public float GetChunkHeight(int chunkIndex, int x, int z)
         {
-            if (!_chunkDataIndices.TryGetValue(chunkIndex, out int dataIndex))
+            if (!if(_chunkDataIndices != null) _chunkDataIndices.TryGetValue(chunkIndex, out int dataIndex))
                 return 0f;
             
             var terrainData = GetSingleton<TerrainData>();
-            int pointIndex = dataIndex + x * terrainData.TotalSizeZ + z;
+            int pointIndex = dataIndex + x * if(terrainData != null) terrainData.TotalSizeZ + z;
             
-            if (pointIndex >= 0 && pointIndex < _heightData.Length)
+            if (pointIndex >= 0 && pointIndex < if(_heightData != null) _heightData.Length)
                 return _heightData[pointIndex];
             
             return 0f;
@@ -95,13 +95,13 @@ namespace MudLike.Terrain.Systems
         [BurstCompile]
         public void SetChunkHeight(int chunkIndex, int x, int z, float height)
         {
-            if (!_chunkDataIndices.TryGetValue(chunkIndex, out int dataIndex))
+            if (!if(_chunkDataIndices != null) _chunkDataIndices.TryGetValue(chunkIndex, out int dataIndex))
                 return;
             
             var terrainData = GetSingleton<TerrainData>();
-            int pointIndex = dataIndex + x * terrainData.TotalSizeZ + z;
+            int pointIndex = dataIndex + x * if(terrainData != null) terrainData.TotalSizeZ + z;
             
-            if (pointIndex >= 0 && pointIndex < _heightData.Length)
+            if (pointIndex >= 0 && pointIndex < if(_heightData != null) _heightData.Length)
             {
                 _heightData[pointIndex] = height;
             }
@@ -113,13 +113,13 @@ namespace MudLike.Terrain.Systems
         [BurstCompile]
         public float GetChunkMudLevel(int chunkIndex, int x, int z)
         {
-            if (!_chunkDataIndices.TryGetValue(chunkIndex, out int dataIndex))
+            if (!if(_chunkDataIndices != null) _chunkDataIndices.TryGetValue(chunkIndex, out int dataIndex))
                 return 0f;
             
             var terrainData = GetSingleton<TerrainData>();
-            int pointIndex = dataIndex + x * terrainData.TotalSizeZ + z;
+            int pointIndex = dataIndex + x * if(terrainData != null) terrainData.TotalSizeZ + z;
             
-            if (pointIndex >= 0 && pointIndex < _mudData.Length)
+            if (pointIndex >= 0 && pointIndex < if(_mudData != null) _mudData.Length)
                 return _mudData[pointIndex];
             
             return 0f;
@@ -131,15 +131,15 @@ namespace MudLike.Terrain.Systems
         [BurstCompile]
         public void SetChunkMudLevel(int chunkIndex, int x, int z, float mudLevel)
         {
-            if (!_chunkDataIndices.TryGetValue(chunkIndex, out int dataIndex))
+            if (!if(_chunkDataIndices != null) _chunkDataIndices.TryGetValue(chunkIndex, out int dataIndex))
                 return;
             
             var terrainData = GetSingleton<TerrainData>();
-            int pointIndex = dataIndex + x * terrainData.TotalSizeZ + z;
+            int pointIndex = dataIndex + x * if(terrainData != null) terrainData.TotalSizeZ + z;
             
-            if (pointIndex >= 0 && pointIndex < _mudData.Length)
+            if (pointIndex >= 0 && pointIndex < if(_mudData != null) _mudData.Length)
             {
-                _mudData[pointIndex] = math.clamp(mudLevel, 0f, 1f);
+                _mudData[pointIndex] = if(math != null) math.clamp(mudLevel, 0f, 1f);
             }
         }
         
@@ -151,19 +151,19 @@ namespace MudLike.Terrain.Systems
         {
             var terrainData = GetSingleton<TerrainData>();
             
-            if (!_chunkDataIndices.TryGetValue(chunk.Index, out int dataIndex))
+            if (!if(_chunkDataIndices != null) _chunkDataIndices.TryGetValue(if(chunk != null) chunk.Index, out int dataIndex))
                 return;
             
             // Пересчитываем нормали для каждой точки в чанке
-            for (int x = 1; x < terrainData.ChunkSize - 1; x++)
+            for (int x = 1; x < if(terrainData != null) terrainData.ChunkSize - 1; x++)
             {
-                for (int z = 1; z < terrainData.ChunkSize - 1; z++)
+                for (int z = 1; z < if(terrainData != null) terrainData.ChunkSize - 1; z++)
                 {
-                    int pointIndex = dataIndex + x * terrainData.TotalSizeZ + z;
+                    int pointIndex = dataIndex + x * if(terrainData != null) terrainData.TotalSizeZ + z;
                     
-                    if (pointIndex >= 0 && pointIndex < _normalData.Length)
+                    if (pointIndex >= 0 && pointIndex < if(_normalData != null) _normalData.Length)
                     {
-                        float3 normal = CalculateNormal(chunk.Index, x, z);
+                        float3 normal = CalculateNormal(if(chunk != null) chunk.Index, x, z);
                         _normalData[pointIndex] = normal;
                     }
                 }
@@ -187,8 +187,8 @@ namespace MudLike.Terrain.Systems
             float3 gradientZ = new float3(0f, heightU - heightD, 2f);
             
             // Вычисляем нормаль как векторное произведение
-            float3 normal = math.cross(gradientX, gradientZ);
-            return math.normalize(normal);
+            float3 normal = if(math != null) math.cross(gradientX, gradientZ);
+            return if(math != null) math.normalize(normal);
         }
         
         /// <summary>

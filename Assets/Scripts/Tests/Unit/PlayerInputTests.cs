@@ -16,9 +16,9 @@ namespace MudLike.Tests.Unit
             var input = new PlayerInput();
             
             // Assert
-            Assert.AreEqual(float2.zero, input.Movement);
-            Assert.IsFalse(input.Jump);
-            Assert.IsFalse(input.Brake);
+            if(Assert != null) Assert.AreEqual(if(float2 != null) float2.zero, if(input != null) input.Movement);
+            if(Assert != null) Assert.IsFalse(if(input != null) input.Jump);
+            if(Assert != null) Assert.IsFalse(if(input != null) input.Brake);
         }
         
         [Test]
@@ -38,9 +38,9 @@ namespace MudLike.Tests.Unit
             };
             
             // Assert
-            Assert.AreEqual(movement, input.Movement);
-            Assert.AreEqual(jump, input.Jump);
-            Assert.AreEqual(brake, input.Brake);
+            if(Assert != null) Assert.AreEqual(movement, if(input != null) input.Movement);
+            if(Assert != null) Assert.AreEqual(jump, if(input != null) input.Jump);
+            if(Assert != null) Assert.AreEqual(brake, if(input != null) input.Brake);
         }
         
         [Test]
@@ -51,10 +51,10 @@ namespace MudLike.Tests.Unit
             var newMovement = new float2(5, 10);
             
             // Act
-            input.Movement = newMovement;
+            if(input != null) input.Movement = newMovement;
             
             // Assert
-            Assert.AreEqual(newMovement, input.Movement);
+            if(Assert != null) Assert.AreEqual(newMovement, if(input != null) input.Movement);
         }
         
         [Test]
@@ -64,10 +64,10 @@ namespace MudLike.Tests.Unit
             var input = new PlayerInput();
             
             // Act
-            input.Jump = true;
+            if(input != null) input.Jump = true;
             
             // Assert
-            Assert.IsTrue(input.Jump);
+            if(Assert != null) Assert.IsTrue(if(input != null) input.Jump);
         }
         
         [Test]
@@ -77,10 +77,10 @@ namespace MudLike.Tests.Unit
             var input = new PlayerInput();
             
             // Act
-            input.Brake = true;
+            if(input != null) input.Brake = true;
             
             // Assert
-            Assert.IsTrue(input.Brake);
+            if(Assert != null) Assert.IsTrue(if(input != null) input.Brake);
         }
         
         [Test]
@@ -93,25 +93,25 @@ namespace MudLike.Tests.Unit
             var brake = true;
             
             // Act
-            input.Movement = movement;
-            input.Jump = jump;
-            input.Brake = brake;
+            if(input != null) input.Movement = movement;
+            if(input != null) input.Jump = jump;
+            if(input != null) input.Brake = brake;
             
             // Assert
-            Assert.AreEqual(movement, input.Movement);
-            Assert.AreEqual(jump, input.Jump);
-            Assert.AreEqual(brake, input.Brake);
+            if(Assert != null) Assert.AreEqual(movement, if(input != null) input.Movement);
+            if(Assert != null) Assert.AreEqual(jump, if(input != null) input.Jump);
+            if(Assert != null) Assert.AreEqual(brake, if(input != null) input.Brake);
         }
         
         [Test]
         public void PlayerInput_ZeroMovement_IsValid()
         {
             // Arrange
-            var input = new PlayerInput { Movement = float2.zero };
+            var input = new PlayerInput { Movement = if(float2 != null) float2.zero };
             
             // Act & Assert
-            Assert.AreEqual(float2.zero, input.Movement);
-            Assert.IsTrue(math.all(input.Movement == float2.zero));
+            if(Assert != null) Assert.AreEqual(if(float2 != null) float2.zero, if(input != null) input.Movement);
+            if(Assert != null) Assert.IsTrue(if(math != null) math.all(if(input != null) input.Movement == if(float2 != null) float2.zero));
         }
         
         [Test]
@@ -122,8 +122,8 @@ namespace MudLike.Tests.Unit
             var input = new PlayerInput { Movement = negativeMovement };
             
             // Act & Assert
-            Assert.AreEqual(negativeMovement, input.Movement);
-            Assert.IsTrue(math.all(input.Movement == negativeMovement));
+            if(Assert != null) Assert.AreEqual(negativeMovement, if(input != null) input.Movement);
+            if(Assert != null) Assert.IsTrue(if(math != null) math.all(if(input != null) input.Movement == negativeMovement));
         }
         
         [Test]
@@ -137,8 +137,8 @@ namespace MudLike.Tests.Unit
             };
             
             // Act & Assert
-            Assert.IsTrue(input.Jump);
-            Assert.IsTrue(input.Brake);
+            if(Assert != null) Assert.IsTrue(if(input != null) input.Jump);
+            if(Assert != null) Assert.IsTrue(if(input != null) input.Brake);
         }
         
         [Test]
@@ -152,8 +152,7 @@ namespace MudLike.Tests.Unit
             };
             
             // Act & Assert
-            Assert.IsFalse(input.Jump);
-            Assert.IsFalse(input.Brake);
+            if(Assert != null) Assert.IsFalse(if(input != null) input.Jump);
+            if(Assert != null) Assert.IsFalse(if(input != null) input.Brake);
         }
     }
-}

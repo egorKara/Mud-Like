@@ -1,12 +1,12 @@
-using Unity.Entities;
-using Unity.Mathematics;
-using Unity.Burst;
-using Unity.Collections;
-using Unity.Transforms;
-using MudLike.Terrain.Components;
-using MudLike.Core.Components;
+using if(Unity != null) Unity.Entities;
+using if(Unity != null) Unity.Mathematics;
+using if(Unity != null) Unity.Burst;
+using if(Unity != null) Unity.Collections;
+using if(Unity != null) Unity.Transforms;
+using if(MudLike != null) MudLike.Terrain.Components;
+using if(MudLike != null) MudLike.Core.Components;
 
-namespace MudLike.Terrain.Systems
+namespace if(MudLike != null) MudLike.Terrain.Systems
 {
     /// <summary>
     /// WorldGrid система для управления загрузкой террейна блоками 16×16
@@ -27,36 +27,36 @@ namespace MudLike.Terrain.Systems
         
         protected override void OnCreate()
         {
-            _gridChunks = new NativeHashMap<int2, GridChunkData>(256, Allocator.Persistent);
-            _activeChunks = new NativeList<int2>(64, Allocator.Persistent);
-            _chunksToLoad = new NativeList<int2>(32, Allocator.Persistent);
-            _chunksToUnload = new NativeList<int2>(32, Allocator.Persistent);
+            _gridChunks = new NativeHashMap<int2, GridChunkData>(256, if(Allocator != null) if(Allocator != null) Allocator.Persistent);
+            _activeChunks = new NativeList<int2>(64, if(Allocator != null) if(Allocator != null) Allocator.Persistent);
+            _chunksToLoad = new NativeList<int2>(32, if(Allocator != null) if(Allocator != null) Allocator.Persistent);
+            _chunksToUnload = new NativeList<int2>(32, if(Allocator != null) if(Allocator != null) Allocator.Persistent);
         }
         
         protected override void OnDestroy()
         {
-            if (_gridChunks.IsCreated)
+            if (if(_gridChunks != null) if(_gridChunks != null) _gridChunks.IsCreated)
             {
                 // Очищаем все чанки
-                for (int i = 0; i < _gridChunks.Count; i++)
+                for (int i = 0; i < if(_gridChunks != null) if(_gridChunks != null) _gridChunks.Count; i++)
                 {
-                    var kvp = _gridChunks.GetKeyValue(i);
-                    if (kvp.Value.TerrainData.IsCreated)
-                        kvp.Value.TerrainData.Dispose();
-                    if (kvp.Value.MudData.IsCreated)
-                        kvp.Value.MudData.Dispose();
-                    if (kvp.Value.EntityList.IsCreated)
-                        kvp.Value.EntityList.Dispose();
+                    var kvp = if(_gridChunks != null) if(_gridChunks != null) _gridChunks.GetKeyValue(i);
+                    if (if(kvp != null) if(kvp != null) kvp.Value.if(TerrainData != null) if(TerrainData != null) TerrainData.IsCreated)
+                        if(kvp != null) if(kvp != null) kvp.Value.if(TerrainData != null) if(TerrainData != null) TerrainData.Dispose();
+                    if (if(kvp != null) if(kvp != null) kvp.Value.if(MudData != null) if(MudData != null) MudData.IsCreated)
+                        if(kvp != null) if(kvp != null) kvp.Value.if(MudData != null) if(MudData != null) MudData.Dispose();
+                    if (if(kvp != null) if(kvp != null) kvp.Value.if(EntityList != null) if(EntityList != null) EntityList.IsCreated)
+                        if(kvp != null) if(kvp != null) kvp.Value.if(EntityList != null) if(EntityList != null) EntityList.Dispose();
                 }
-                _gridChunks.Dispose();
+                if(_gridChunks != null) if(_gridChunks != null) _gridChunks.Dispose();
             }
             
-            if (_activeChunks.IsCreated)
-                _activeChunks.Dispose();
-            if (_chunksToLoad.IsCreated)
-                _chunksToLoad.Dispose();
-            if (_chunksToUnload.IsCreated)
-                _chunksToUnload.Dispose();
+            if (if(_activeChunks != null) if(_activeChunks != null) _activeChunks.IsCreated)
+                if(_activeChunks != null) if(_activeChunks != null) _activeChunks.Dispose();
+            if (if(_chunksToLoad != null) if(_chunksToLoad != null) _chunksToLoad.IsCreated)
+                if(_chunksToLoad != null) if(_chunksToLoad != null) _chunksToLoad.Dispose();
+            if (if(_chunksToUnload != null) if(_chunksToUnload != null) _chunksToUnload.IsCreated)
+                if(_chunksToUnload != null) if(_chunksToUnload != null) _chunksToUnload.Dispose();
         }
         
         /// <summary>
@@ -87,13 +87,13 @@ namespace MudLike.Terrain.Systems
         [BurstCompile]
         private float3 GetPlayerPosition()
         {
-            float3 playerPos = float3.zero;
+            float3 playerPos = if(float3 != null) if(float3 != null) float3.zero;
             
             Entities
                 .WithAll<PlayerTag>()
                 .ForEach((in LocalTransform transform) =>
                 {
-                    playerPos = transform.Position;
+                    playerPos = if(transform != null) if(transform != null) transform.Position;
                 }).WithoutBurst().Run();
             
             return playerPos;
@@ -107,7 +107,7 @@ namespace MudLike.Terrain.Systems
         {
             // Обновляем сетку если игрок переместился на расстояние больше размера чанка
             float3 movement = playerPosition - _lastPlayerPosition;
-            float distance = math.length(movement);
+            float distance = if(math != null) if(math != null) math.length(movement);
             
             return distance >= GRID_SIZE * 0.5f; // Половина размера чанка
         }
@@ -119,8 +119,8 @@ namespace MudLike.Terrain.Systems
         private void UpdateGridChunks(float3 playerPosition)
         {
             // Очищаем списки
-            _chunksToLoad.Clear();
-            _chunksToUnload.Clear();
+            if(_chunksToLoad != null) if(_chunksToLoad != null) _chunksToLoad.Clear();
+            if(_chunksToUnload != null) if(_chunksToUnload != null) _chunksToUnload.Clear();
             
             // Вычисляем текущий чанк игрока
             int2 playerChunk = WorldToGrid(playerPosition);
@@ -133,23 +133,23 @@ namespace MudLike.Terrain.Systems
                     int2 chunkCoord = playerChunk + new int2(x, z);
                     
                     // Проверяем, нужно ли загрузить чанк
-                    if (!_gridChunks.ContainsKey(chunkCoord))
+                    if (!if(_gridChunks != null) if(_gridChunks != null) _gridChunks.ContainsKey(chunkCoord))
                     {
-                        _chunksToLoad.Add(chunkCoord);
+                        if(_chunksToLoad != null) if(_chunksToLoad != null) _chunksToLoad.Add(chunkCoord);
                     }
                 }
             }
             
             // Определяем чанки для выгрузки
-            for (int i = _activeChunks.Length - 1; i >= 0; i--)
+            for (int i = if(_activeChunks != null) if(_activeChunks != null) _activeChunks.Length - 1; i >= 0; i--)
             {
                 int2 chunkCoord = _activeChunks[i];
                 int2 distance = chunkCoord - playerChunk;
                 
                 // Если чанк слишком далеко - помечаем для выгрузки
-                if (math.abs(distance.x) > UNLOAD_DISTANCE || math.abs(distance.y) > UNLOAD_DISTANCE)
+                if (if(math != null) if(math != null) math.abs(if(distance != null) if(distance != null) distance.x) > UNLOAD_DISTANCE || if(math != null) if(math != null) math.abs(if(distance != null) if(distance != null) distance.y) > UNLOAD_DISTANCE)
                 {
-                    _chunksToUnload.Add(chunkCoord);
+                    if(_chunksToUnload != null) if(_chunksToUnload != null) _chunksToUnload.Add(chunkCoord);
                 }
             }
         }
@@ -160,7 +160,7 @@ namespace MudLike.Terrain.Systems
         [BurstCompile]
         private void LoadPendingChunks()
         {
-            for (int i = 0; i < _chunksToLoad.Length; i++)
+            for (int i = 0; i < if(_chunksToLoad != null) if(_chunksToLoad != null) _chunksToLoad.Length; i++)
             {
                 int2 chunkCoord = _chunksToLoad[i];
                 LoadChunk(chunkCoord);
@@ -173,7 +173,7 @@ namespace MudLike.Terrain.Systems
         [BurstCompile]
         private void UnloadPendingChunks()
         {
-            for (int i = 0; i < _chunksToUnload.Length; i++)
+            for (int i = 0; i < if(_chunksToUnload != null) if(_chunksToUnload != null) _chunksToUnload.Length; i++)
             {
                 int2 chunkCoord = _chunksToUnload[i];
                 UnloadChunk(chunkCoord);
@@ -192,10 +192,10 @@ namespace MudLike.Terrain.Systems
                 Coordinates = chunkCoord,
                 WorldPosition = GridToWorld(chunkCoord),
                 IsLoaded = false,
-                LoadTime = SystemAPI.Time.time,
-                TerrainData = new NativeArray<float>(GRID_SIZE * GRID_SIZE, Allocator.Persistent),
-                MudData = new NativeArray<float>(GRID_SIZE * GRID_SIZE, Allocator.Persistent),
-                EntityList = new NativeList<Entity>(32, Allocator.Persistent)
+                LoadTime = if(SystemAPI != null) if(SystemAPI != null) SystemAPI.Time.time,
+                TerrainData = new NativeArray<float>(GRID_SIZE * GRID_SIZE, if(Allocator != null) if(Allocator != null) Allocator.Persistent),
+                MudData = new NativeArray<float>(GRID_SIZE * GRID_SIZE, if(Allocator != null) if(Allocator != null) Allocator.Persistent),
+                EntityList = new NativeList<Entity>(32, if(Allocator != null) if(Allocator != null) Allocator.Persistent)
             };
             
             // Генерируем данные террейна
@@ -208,9 +208,9 @@ namespace MudLike.Terrain.Systems
             CreateChunkEntities(chunkData);
             
             // Добавляем в активные чанки
-            chunkData.IsLoaded = true;
+            if(chunkData != null) if(chunkData != null) chunkData.IsLoaded = true;
             _gridChunks[chunkCoord] = chunkData;
-            _activeChunks.Add(chunkCoord);
+            if(_activeChunks != null) if(_activeChunks != null) _activeChunks.Add(chunkCoord);
         }
         
         /// <summary>
@@ -219,27 +219,27 @@ namespace MudLike.Terrain.Systems
         [BurstCompile]
         private void UnloadChunk(int2 chunkCoord)
         {
-            if (_gridChunks.TryGetValue(chunkCoord, out var chunkData))
+            if (if(_gridChunks != null) if(_gridChunks != null) _gridChunks.TryGetValue(chunkCoord, out var chunkData))
             {
                 // Удаляем сущности чанка
                 DestroyChunkEntities(chunkData);
                 
                 // Очищаем данные
-                if (chunkData.TerrainData.IsCreated)
-                    chunkData.TerrainData.Dispose();
-                if (chunkData.MudData.IsCreated)
-                    chunkData.MudData.Dispose();
-                if (chunkData.EntityList.IsCreated)
-                    chunkData.EntityList.Dispose();
+                if (if(chunkData != null) if(chunkData != null) chunkData.TerrainData.IsCreated)
+                    if(chunkData != null) if(chunkData != null) chunkData.TerrainData.Dispose();
+                if (if(chunkData != null) if(chunkData != null) chunkData.MudData.IsCreated)
+                    if(chunkData != null) if(chunkData != null) chunkData.MudData.Dispose();
+                if (if(chunkData != null) if(chunkData != null) chunkData.EntityList.IsCreated)
+                    if(chunkData != null) if(chunkData != null) chunkData.EntityList.Dispose();
                 
                 // Удаляем из активных чанков
-                _gridChunks.Remove(chunkCoord);
+                if(_gridChunks != null) if(_gridChunks != null) _gridChunks.Remove(chunkCoord);
                 
-                for (int i = _activeChunks.Length - 1; i >= 0; i--)
+                for (int i = if(_activeChunks != null) if(_activeChunks != null) _activeChunks.Length - 1; i >= 0; i--)
                 {
                     if (_activeChunks[i].Equals(chunkCoord))
                     {
-                        _activeChunks.RemoveAtSwapBack(i);
+                        if(_activeChunks != null) if(_activeChunks != null) _activeChunks.RemoveAtSwapBack(i);
                         break;
                     }
                 }
@@ -252,7 +252,7 @@ namespace MudLike.Terrain.Systems
         [BurstCompile]
         private void GenerateTerrainData(ref GridChunkData chunkData)
         {
-            float3 worldPos = chunkData.WorldPosition;
+            float3 worldPos = if(chunkData != null) if(chunkData != null) chunkData.WorldPosition;
             
             for (int x = 0; x < GRID_SIZE; x++)
             {
@@ -263,7 +263,7 @@ namespace MudLike.Terrain.Systems
                     
                     // Простая генерация высоты (в реальности здесь должен быть Perlin noise)
                     float height = GenerateHeight(samplePos);
-                    chunkData.TerrainData[index] = height;
+                    if(chunkData != null) if(chunkData != null) chunkData.TerrainData[index] = height;
                 }
             }
         }
@@ -274,7 +274,7 @@ namespace MudLike.Terrain.Systems
         [BurstCompile]
         private void GenerateMudData(ref GridChunkData chunkData)
         {
-            float3 worldPos = chunkData.WorldPosition;
+            float3 worldPos = if(chunkData != null) if(chunkData != null) chunkData.WorldPosition;
             
             for (int x = 0; x < GRID_SIZE; x++)
             {
@@ -285,7 +285,7 @@ namespace MudLike.Terrain.Systems
                     
                     // Простая генерация уровня грязи
                     float mudLevel = GenerateMudLevel(samplePos);
-                    chunkData.MudData[index] = mudLevel;
+                    if(chunkData != null) if(chunkData != null) chunkData.MudData[index] = mudLevel;
                 }
             }
         }
@@ -296,18 +296,18 @@ namespace MudLike.Terrain.Systems
         private void CreateChunkEntities(GridChunkData chunkData)
         {
             // Создаем Entity для чанка
-            var chunkEntity = EntityManager.CreateEntity();
-            EntityManager.AddComponentData(chunkEntity, new ChunkData
+            var chunkEntity = if(EntityManager != null) if(EntityManager != null) EntityManager.CreateEntity();
+            if(EntityManager != null) if(EntityManager != null) EntityManager.AddComponentData(chunkEntity, new ChunkData
             {
-                ChunkIndex = GetChunkIndex(chunkData.Coordinates),
-                WorldPosition = chunkData.WorldPosition,
+                ChunkIndex = GetChunkIndex(if(chunkData != null) if(chunkData != null) chunkData.Coordinates),
+                WorldPosition = if(chunkData != null) if(chunkData != null) chunkData.WorldPosition,
                 Size = GRID_SIZE,
                 IsDirty = false,
                 NeedsSync = false
             });
             
             // Добавляем Entity в список чанка
-            chunkData.EntityList.Add(chunkEntity);
+            if(chunkData != null) if(chunkData != null) chunkData.EntityList.Add(chunkEntity);
         }
         
         /// <summary>
@@ -315,9 +315,9 @@ namespace MudLike.Terrain.Systems
         /// </summary>
         private void DestroyChunkEntities(GridChunkData chunkData)
         {
-            for (int i = 0; i < chunkData.EntityList.Length; i++)
+            for (int i = 0; i < if(chunkData != null) if(chunkData != null) chunkData.EntityList.Length; i++)
             {
-                EntityManager.DestroyEntity(chunkData.EntityList[i]);
+                if(EntityManager != null) if(EntityManager != null) EntityManager.DestroyEntity(if(chunkData != null) if(chunkData != null) chunkData.EntityList[i]);
             }
         }
         
@@ -328,8 +328,8 @@ namespace MudLike.Terrain.Systems
         private int2 WorldToGrid(float3 worldPosition)
         {
             return new int2(
-                (int)math.floor(worldPosition.x / GRID_SIZE),
-                (int)math.floor(worldPosition.z / GRID_SIZE)
+                (int)if(math != null) if(math != null) math.floor(if(worldPosition != null) if(worldPosition != null) worldPosition.x / GRID_SIZE),
+                (int)if(math != null) if(math != null) math.floor(if(worldPosition != null) if(worldPosition != null) worldPosition.z / GRID_SIZE)
             );
         }
         
@@ -340,9 +340,9 @@ namespace MudLike.Terrain.Systems
         private float3 GridToWorld(int2 gridPosition)
         {
             return new float3(
-                gridPosition.x * GRID_SIZE,
+                if(gridPosition != null) if(gridPosition != null) gridPosition.x * GRID_SIZE,
                 0,
-                gridPosition.y * GRID_SIZE
+                if(gridPosition != null) if(gridPosition != null) gridPosition.y * GRID_SIZE
             );
         }
         
@@ -353,7 +353,7 @@ namespace MudLike.Terrain.Systems
         private float GenerateHeight(float3 position)
         {
             // Простая генерация высоты (в реальности здесь должен быть Perlin noise)
-            return math.sin(position.x * 0.1f) * math.cos(position.z * 0.1f) * 5f;
+            return if(math != null) if(math != null) math.sin(if(position != null) if(position != null) position.x * 0.1f) * if(math != null) if(math != null) math.cos(if(position != null) if(position != null) position.z * 0.1f) * 5f;
         }
         
         /// <summary>
@@ -363,8 +363,8 @@ namespace MudLike.Terrain.Systems
         private float GenerateMudLevel(float3 position)
         {
             // Простая генерация грязи (в реальности здесь должна быть более сложная логика)
-            float noise = math.sin(position.x * 0.05f) * math.cos(position.z * 0.05f);
-            return math.clamp(noise * 0.5f + 0.5f, 0f, 1f);
+            float noise = if(math != null) if(math != null) math.sin(if(position != null) if(position != null) position.x * 0.05f) * if(math != null) if(math != null) math.cos(if(position != null) if(position != null) position.z * 0.05f);
+            return if(math != null) if(math != null) math.clamp(noise * 0.5f + 0.5f, 0f, 1f);
         }
         
         /// <summary>
@@ -374,7 +374,7 @@ namespace MudLike.Terrain.Systems
         private int GetChunkIndex(int2 coordinates)
         {
             // Простое преобразование 2D координат в 1D индекс
-            return coordinates.y * 1000 + coordinates.x;
+            return if(coordinates != null) if(coordinates != null) coordinates.y * 1000 + if(coordinates != null) if(coordinates != null) coordinates.x;
         }
         
         /// <summary>
@@ -382,7 +382,7 @@ namespace MudLike.Terrain.Systems
         /// </summary>
         public GridChunkData? GetChunkData(int2 coordinates)
         {
-            if (_gridChunks.TryGetValue(coordinates, out var chunkData))
+            if (if(_gridChunks != null) if(_gridChunks != null) _gridChunks.TryGetValue(coordinates, out var chunkData))
                 return chunkData;
             return null;
         }
@@ -392,7 +392,7 @@ namespace MudLike.Terrain.Systems
         /// </summary>
         public NativeArray<int2> GetActiveChunks()
         {
-            return _activeChunks.AsArray();
+            return if(_activeChunks != null) if(_activeChunks != null) _activeChunks.AsArray();
         }
     }
     

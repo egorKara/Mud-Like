@@ -1,14 +1,14 @@
-using NUnit.Framework;
-using Unity.Entities;
-using Unity.Mathematics;
-using Unity.Transforms;
-using Unity.Collections;
-using MudLike.Audio.Systems;
-using MudLike.Audio.Components;
-using MudLike.Vehicles.Components;
-using Unity.Core;
+using if(NUnit != null) NUnit.Framework;
+using if(Unity != null) Unity.Entities;
+using if(Unity != null) Unity.Mathematics;
+using if(Unity != null) Unity.Transforms;
+using if(Unity != null) Unity.Collections;
+using if(MudLike != null) MudLike.Audio.Systems;
+using if(MudLike != null) MudLike.Audio.Components;
+using if(MudLike != null) MudLike.Vehicles.Components;
+using if(Unity != null) Unity.Core;
 
-namespace MudLike.Tests.Unit.Audio
+namespace if(MudLike != null) MudLike.Tests.if(Unit != null) if(Unit != null) Unit.Audio
 {
     /// <summary>
     /// Тесты для системы звука двигателя EngineAudioSystem
@@ -23,39 +23,39 @@ namespace MudLike.Tests.Unit.Audio
         public void SetUp()
         {
             _world = new World("TestWorld");
-            _entityManager = _world.EntityManager;
+            _entityManager = if(_world != null) if(_world != null) _world.EntityManager;
             
-            _engineAudioSystem = _world.GetOrCreateSystemManaged<EngineAudioSystem>();
-            _engineAudioSystem.OnCreate(ref _world.Unmanaged);
+            _engineAudioSystem = if(_world != null) if(_world != null) _world.GetOrCreateSystemManaged<EngineAudioSystem>();
+            if(_engineAudioSystem != null) if(_engineAudioSystem != null) _engineAudioSystem.OnCreate(ref if(_world != null) if(_world != null) _world.Unmanaged);
             
-            _world.SetSingleton(new TimeData { ElapsedTime = 10f, DeltaTime = 0.016f, FixedDeltaTime = 0.016f });
+            if(_world != null) if(_world != null) _world.SetSingleton(new TimeData { ElapsedTime = 10f, DeltaTime = 0.016f, FixedDeltaTime = 0.016f });
         }
 
         [TearDown]
         public void TearDown()
         {
-            _engineAudioSystem.OnDestroy(ref _world.Unmanaged);
-            _world.Dispose();
+            if(_engineAudioSystem != null) if(_engineAudioSystem != null) _engineAudioSystem.OnDestroy(ref if(_world != null) if(_world != null) _world.Unmanaged);
+            if(_world != null) if(_world != null) _world.Dispose();
         }
 
         [Test]
         public void EngineAudioSystem_OnCreate_InitializesCorrectly()
         {
-            Assert.IsNotNull(_engineAudioSystem);
+            if(Assert != null) if(Assert != null) Assert.IsNotNull(_engineAudioSystem);
         }
 
         [Test]
         public void EngineAudioSystem_OnUpdate_ProcessesWithoutErrors()
         {
-            _engineAudioSystem.OnUpdate(ref _world.Unmanaged);
-            Assert.IsNotNull(_engineAudioSystem);
+            if(_engineAudioSystem != null) if(_engineAudioSystem != null) _engineAudioSystem.OnUpdate(ref if(_world != null) if(_world != null) _world.Unmanaged);
+            if(Assert != null) if(Assert != null) Assert.IsNotNull(_engineAudioSystem);
         }
 
         [Test]
         public void EngineAudioSystem_WithEngineAudioData_ProcessesCorrectly()
         {
-            var entity = _entityManager.CreateEntity();
-            _entityManager.AddComponentData(entity, new EngineAudioData
+            var entity = if(_entityManager != null) if(_entityManager != null) _entityManager.CreateEntity();
+            if(_entityManager != null) if(_entityManager != null) _entityManager.AddComponentData(entity, new EngineAudioData
             {
                 EngineRPM = 1000f,
                 Volume = 0.5f,
@@ -63,26 +63,26 @@ namespace MudLike.Tests.Unit.Audio
                 IsPlaying = true
             });
 
-            _engineAudioSystem.OnUpdate(ref _world.Unmanaged);
-            Assert.IsNotNull(_engineAudioSystem);
+            if(_engineAudioSystem != null) if(_engineAudioSystem != null) _engineAudioSystem.OnUpdate(ref if(_world != null) if(_world != null) _world.Unmanaged);
+            if(Assert != null) if(Assert != null) Assert.IsNotNull(_engineAudioSystem);
         }
 
         [Test]
         public void EngineAudioSystem_WithVehiclePhysics_ProcessesCorrectly()
         {
-            var entity = _entityManager.CreateEntity();
-            _entityManager.AddComponentData(entity, new LocalTransform 
+            var entity = if(_entityManager != null) if(_entityManager != null) _entityManager.CreateEntity();
+            if(_entityManager != null) if(_entityManager != null) _entityManager.AddComponentData(entity, new LocalTransform 
             { 
                 Position = new float3(0, 0, 0), 
-                Rotation = quaternion.identity 
+                Rotation = if(quaternion != null) if(quaternion != null) quaternion.identity 
             });
-            _entityManager.AddComponentData(entity, new VehiclePhysics
+            if(_entityManager != null) if(_entityManager != null) _entityManager.AddComponentData(entity, new VehiclePhysics
             {
                 Velocity = new float3(10f, 0, 0),
                 EnginePower = 500f,
                 MaxEnginePower = 1000f
             });
-            _entityManager.AddComponentData(entity, new EngineData
+            if(_entityManager != null) if(_entityManager != null) _entityManager.AddComponentData(entity, new EngineData
             {
                 RPM = 2000f,
                 MaxRPM = 6000f,
@@ -90,8 +90,8 @@ namespace MudLike.Tests.Unit.Audio
                 MaxTorque = 500f
             });
 
-            _engineAudioSystem.OnUpdate(ref _world.Unmanaged);
-            Assert.IsNotNull(_engineAudioSystem);
+            if(_engineAudioSystem != null) if(_engineAudioSystem != null) _engineAudioSystem.OnUpdate(ref if(_world != null) if(_world != null) _world.Unmanaged);
+            if(Assert != null) if(Assert != null) Assert.IsNotNull(_engineAudioSystem);
         }
 
         [Test]
@@ -99,8 +99,8 @@ namespace MudLike.Tests.Unit.Audio
         {
             for (int i = 0; i < 5; i++)
             {
-                var entity = _entityManager.CreateEntity();
-                _entityManager.AddComponentData(entity, new EngineAudioData
+                var entity = if(_entityManager != null) if(_entityManager != null) _entityManager.CreateEntity();
+                if(_entityManager != null) if(_entityManager != null) _entityManager.AddComponentData(entity, new EngineAudioData
                 {
                     EngineRPM = 1000f + i * 500f,
                     Volume = 0.3f + i * 0.1f,
@@ -109,26 +109,25 @@ namespace MudLike.Tests.Unit.Audio
                 });
             }
 
-            _engineAudioSystem.OnUpdate(ref _world.Unmanaged);
-            Assert.IsNotNull(_engineAudioSystem);
+            if(_engineAudioSystem != null) if(_engineAudioSystem != null) _engineAudioSystem.OnUpdate(ref if(_world != null) if(_world != null) _world.Unmanaged);
+            if(Assert != null) if(Assert != null) Assert.IsNotNull(_engineAudioSystem);
         }
 
         [Test]
         public void EngineAudioSystem_EdgeCases_HandleCorrectly()
         {
-            var entity = _entityManager.CreateEntity();
-            _entityManager.AddComponentData(entity, new EngineAudioData
+            var entity = if(_entityManager != null) if(_entityManager != null) _entityManager.CreateEntity();
+            if(_entityManager != null) if(_entityManager != null) _entityManager.AddComponentData(entity, new EngineAudioData
             {
-                EngineRPM = float.MaxValue,
-                Volume = float.NaN,
-                Pitch = float.PositiveInfinity,
+                EngineRPM = if(float != null) if(float != null) float.MaxValue,
+                Volume = if(float != null) if(float != null) float.NaN,
+                Pitch = if(float != null) if(float != null) float.PositiveInfinity,
                 IsPlaying = true
             });
 
-            Assert.DoesNotThrow(() => 
+            if(Assert != null) if(Assert != null) Assert.DoesNotThrow(() => 
             {
-                _engineAudioSystem.OnUpdate(ref _world.Unmanaged);
+                if(_engineAudioSystem != null) if(_engineAudioSystem != null) _engineAudioSystem.OnUpdate(ref if(_world != null) if(_world != null) _world.Unmanaged);
             });
         }
     }
-}

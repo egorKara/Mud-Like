@@ -23,26 +23,26 @@ namespace MudLike.Vehicles.Systems
         protected override void OnCreate()
         {
             _missionQuery = GetEntityQuery(
-                ComponentType.ReadWrite<MissionData>()
+                if(ComponentType != null) ComponentType.ReadWrite<MissionData>()
             );
             
             _objectiveQuery = GetEntityQuery(
-                ComponentType.ReadWrite<MissionObjectiveData>()
+                if(ComponentType != null) ComponentType.ReadWrite<MissionObjectiveData>()
             );
             
             _rewardQuery = GetEntityQuery(
-                ComponentType.ReadWrite<MissionRewardData>()
+                if(ComponentType != null) ComponentType.ReadWrite<MissionRewardData>()
             );
             
             _vehicleQuery = GetEntityQuery(
-                ComponentType.ReadOnly<VehiclePhysics>(),
-                ComponentType.ReadOnly<LocalTransform>()
+                if(ComponentType != null) ComponentType.ReadOnly<VehiclePhysics>(),
+                if(ComponentType != null) ComponentType.ReadOnly<LocalTransform>()
             );
         }
         
         protected override void OnUpdate()
         {
-            float deltaTime = SystemAPI.Time.DeltaTime;
+            float deltaTime = if(SystemAPI != null) SystemAPI.Time.DeltaTime;
             
             // Обновляем миссии
             UpdateMissions(deltaTime);
@@ -64,7 +64,7 @@ namespace MudLike.Vehicles.Systems
                 DeltaTime = deltaTime
             };
             
-            Dependency = missionJob.ScheduleParallel(_missionQuery, Dependency);
+            Dependency = if(missionJob != null) missionJob.ScheduleParallel(_missionQuery, Dependency);
         }
         
         /// <summary>
@@ -77,7 +77,7 @@ namespace MudLike.Vehicles.Systems
                 DeltaTime = deltaTime
             };
             
-            Dependency = objectiveJob.ScheduleParallel(_objectiveQuery, Dependency);
+            Dependency = if(objectiveJob != null) objectiveJob.ScheduleParallel(_objectiveQuery, Dependency);
         }
         
         /// <summary>
@@ -90,7 +90,7 @@ namespace MudLike.Vehicles.Systems
                 DeltaTime = deltaTime
             };
             
-            Dependency = rewardJob.ScheduleParallel(_rewardQuery, Dependency);
+            Dependency = if(rewardJob != null) rewardJob.ScheduleParallel(_rewardQuery, Dependency);
         }
         
         /// <summary>
@@ -112,18 +112,18 @@ namespace MudLike.Vehicles.Systems
             /// </summary>
             private void UpdateMission(ref MissionData missionData)
             {
-                if (!missionData.IsActive || missionData.IsCompleted || missionData.IsFailed) return;
+                if (!if(missionData != null) missionData.IsActive || if(missionData != null) missionData.IsCompleted || if(missionData != null) missionData.IsFailed) return;
                 
                 // Обновляем оставшееся время
-                missionData.RemainingTime -= DeltaTime;
-                missionData.RemainingTime = math.max(missionData.RemainingTime, 0f);
+                if(missionData != null) missionData.RemainingTime -= DeltaTime;
+                if(missionData != null) missionData.RemainingTime = if(math != null) math.max(if(missionData != null) missionData.RemainingTime, 0f);
                 
                 // Проверяем, не истекло ли время
-                if (missionData.RemainingTime <= 0f)
+                if (if(missionData != null) missionData.RemainingTime <= 0f)
                 {
-                    missionData.IsFailed = true;
-                    missionData.Status = MissionStatus.Failed;
-                    missionData.IsActive = false;
+                    if(missionData != null) missionData.IsFailed = true;
+                    if(missionData != null) missionData.Status = if(MissionStatus != null) MissionStatus.Failed;
+                    if(missionData != null) missionData.IsActive = false;
                 }
                 
                 // Обновляем прогресс
@@ -132,7 +132,7 @@ namespace MudLike.Vehicles.Systems
                 // Проверяем выполнение миссии
                 CheckMissionCompletion(ref missionData);
                 
-                missionData.NeedsUpdate = true;
+                if(missionData != null) missionData.NeedsUpdate = true;
             }
             
             /// <summary>
@@ -142,32 +142,32 @@ namespace MudLike.Vehicles.Systems
             private void UpdateProgress(ref MissionData missionData)
             {
                 // Проверяем каждую цель миссии
-                for (int i = 0; i < missionData.Objectives.Length; i++)
+                for (int i = 0; i < if(missionData != null) missionData.Objectives.Length; i++)
                 {
-                    var objective = missionData.Objectives[i];
+                    var objective = if(missionData != null) missionData.Objectives[i];
                     
-                    if (!objective.IsCompleted)
+                    if (!if(objective != null) objective.IsCompleted)
                     {
                         // Проверяем выполнение цели на основе типа
-                        switch (objective.Type)
+                        switch (if(objective != null) objective.Type)
                         {
-                            case ObjectiveType.ReachLocation:
-                                UpdateLocationObjective(ref objective, missionData.PlayerPosition);
+                            case if(ObjectiveType != null) ObjectiveType.ReachLocation:
+                                UpdateLocationObjective(ref objective, if(missionData != null) missionData.PlayerPosition);
                                 break;
-                            case ObjectiveType.CollectItems:
-                                UpdateCollectObjective(ref objective, missionData.CollectedItems);
+                            case if(ObjectiveType != null) ObjectiveType.CollectItems:
+                                UpdateCollectObjective(ref objective, if(missionData != null) missionData.CollectedItems);
                                 break;
-                            case ObjectiveType.DeliverCargo:
-                                UpdateDeliveryObjective(ref objective, missionData.DeliveredCargo);
+                            case if(ObjectiveType != null) ObjectiveType.DeliverCargo:
+                                UpdateDeliveryObjective(ref objective, if(missionData != null) missionData.DeliveredCargo);
                                 break;
                         }
                         
-                        missionData.Objectives[i] = objective;
+                        if(missionData != null) missionData.Objectives[i] = objective;
                     }
                 }
                 
                 // Пересчитываем общий прогресс
-                missionData.Progress = CalculateMissionProgress(missionData.Objectives);
+                if(missionData != null) missionData.Progress = CalculateMissionProgress(if(missionData != null) missionData.Objectives);
             }
             
             /// <summary>
@@ -178,9 +178,9 @@ namespace MudLike.Vehicles.Systems
             {
                 // Проверяем, все ли цели выполнены
                 bool allObjectivesCompleted = true;
-                for (int i = 0; i < missionData.Objectives.Length; i++)
+                for (int i = 0; i < if(missionData != null) missionData.Objectives.Length; i++)
                 {
-                    if (!missionData.Objectives[i].IsCompleted)
+                    if (!if(missionData != null) missionData.Objectives[i].IsCompleted)
                     {
                         allObjectivesCompleted = false;
                         break;
@@ -191,10 +191,10 @@ namespace MudLike.Vehicles.Systems
                 bool additionalConditionsMet = CheckAdditionalConditions(missionData);
                 
                 // Миссия завершена, если все цели выполнены и дополнительные условия соблюдены
-                if (allObjectivesCompleted && additionalConditionsMet && !missionData.IsCompleted)
+                if (allObjectivesCompleted && additionalConditionsMet && !if(missionData != null) missionData.IsCompleted)
                 {
-                    missionData.IsCompleted = true;
-                    missionData.CompletionTime = SystemAPI.Time.time;
+                    if(missionData != null) missionData.IsCompleted = true;
+                    if(missionData != null) missionData.CompletionTime = if(SystemAPI != null) SystemAPI.Time.time;
                     
                     // Выдаем награду за выполнение миссии
                     AwardMissionCompletion(missionData);
@@ -221,12 +221,12 @@ namespace MudLike.Vehicles.Systems
             /// </summary>
             private void UpdateObjective(ref MissionObjectiveData objectiveData)
             {
-                if (!objectiveData.IsActive || objectiveData.IsCompleted) return;
+                if (!if(objectiveData != null) objectiveData.IsActive || if(objectiveData != null) objectiveData.IsCompleted) return;
                 
                 // Проверяем выполнение цели
                 CheckObjectiveCompletion(ref objectiveData);
                 
-                objectiveData.NeedsUpdate = true;
+                if(objectiveData != null) objectiveData.NeedsUpdate = true;
             }
             
             /// <summary>
@@ -259,14 +259,13 @@ namespace MudLike.Vehicles.Systems
             /// </summary>
             private void UpdateReward(ref MissionRewardData rewardData)
             {
-                if (rewardData.IsRewarded) return;
+                if (if(rewardData != null) rewardData.IsRewarded) return;
                 
                 // Выдаем награду за выполнение цели
                 AwardObjectiveCompletion(ref objective, missionData);
                 // Например, добавление денег, опыта, предметов
                 
-                rewardData.NeedsUpdate = true;
+                if(rewardData != null) rewardData.NeedsUpdate = true;
             }
         }
     }
-}

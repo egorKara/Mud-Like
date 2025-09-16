@@ -1,12 +1,12 @@
-using Unity.Entities;
-using Unity.Burst;
-using Unity.Jobs;
-using Unity.Collections;
-using Unity.Mathematics;
-using System.Collections.Generic;
-using System.Runtime.CompilerServices;
+using if(Unity != null) Unity.Entities;
+using if(Unity != null) Unity.Burst;
+using if(Unity != null) Unity.Jobs;
+using if(Unity != null) Unity.Collections;
+using if(Unity != null) Unity.Mathematics;
+using if(System != null) System.Collections.Generic;
+using if(System != null) System.Runtime.CompilerServices;
 
-namespace MudLike.Core.Optimization
+namespace if(MudLike != null) MudLike.Core.Optimization
 {
     /// <summary>
     /// Система оптимизации кода с автоматическим анализом и улучшением
@@ -27,8 +27,8 @@ namespace MudLike.Core.Optimization
         
         protected override void OnDestroy()
         {
-            if (_metrics.IsCreated) _metrics.Dispose();
-            if (_rules.IsCreated) _rules.Dispose();
+            if (if(_metrics != null) if(_metrics != null) _metrics.IsCreated) if(_metrics != null) if(_metrics != null) _metrics.Dispose();
+            if (if(_rules != null) if(_rules != null) _rules.IsCreated) if(_rules != null) if(_rules != null) _rules.Dispose();
         }
         
         protected override void OnUpdate()
@@ -43,8 +43,8 @@ namespace MudLike.Core.Optimization
         /// </summary>
         private void InitializeOptimizationSystem()
         {
-            _metrics = new NativeArray<OptimizationMetric>(METRICS_BUFFER_SIZE, Allocator.Persistent);
-            _rules = new NativeArray<OptimizationRule>(RULES_BUFFER_SIZE, Allocator.Persistent);
+            _metrics = new NativeArray<OptimizationMetric>(METRICS_BUFFER_SIZE, if(Allocator != null) if(Allocator != null) Allocator.Persistent);
+            _rules = new NativeArray<OptimizationRule>(RULES_BUFFER_SIZE, if(Allocator != null) if(Allocator != null) Allocator.Persistent);
             
             InitializeOptimizationRules();
         }
@@ -57,8 +57,8 @@ namespace MudLike.Core.Optimization
             // Правило 1: Burst Compilation
             _rules[0] = new OptimizationRule
             {
-                Type = OptimizationType.BurstCompilation,
-                Priority = OptimizationPriority.High,
+                Type = if(OptimizationType != null) if(OptimizationType != null) OptimizationType.BurstCompilation,
+                Priority = if(OptimizationPriority != null) if(OptimizationPriority != null) OptimizationPriority.High,
                 Threshold = 16.67f, // 60 FPS
                 IsActive = true
             };
@@ -66,8 +66,8 @@ namespace MudLike.Core.Optimization
             // Правило 2: Job System Usage
             _rules[1] = new OptimizationRule
             {
-                Type = OptimizationType.JobSystemUsage,
-                Priority = OptimizationPriority.High,
+                Type = if(OptimizationType != null) if(OptimizationType != null) OptimizationType.JobSystemUsage,
+                Priority = if(OptimizationPriority != null) if(OptimizationPriority != null) OptimizationPriority.High,
                 Threshold = 8.33f, // 120 FPS
                 IsActive = true
             };
@@ -75,8 +75,8 @@ namespace MudLike.Core.Optimization
             // Правило 3: Memory Optimization
             _rules[2] = new OptimizationRule
             {
-                Type = OptimizationType.MemoryOptimization,
-                Priority = OptimizationPriority.Medium,
+                Type = if(OptimizationType != null) if(OptimizationType != null) OptimizationType.MemoryOptimization,
+                Priority = if(OptimizationPriority != null) if(OptimizationPriority != null) OptimizationPriority.Medium,
                 Threshold = 1000f, // 1GB memory
                 IsActive = true
             };
@@ -84,8 +84,8 @@ namespace MudLike.Core.Optimization
             // Правило 4: SIMD Operations
             _rules[3] = new OptimizationRule
             {
-                Type = OptimizationType.SIMDOperations,
-                Priority = OptimizationPriority.Medium,
+                Type = if(OptimizationType != null) if(OptimizationType != null) OptimizationType.SIMDOperations,
+                Priority = if(OptimizationPriority != null) if(OptimizationPriority != null) OptimizationPriority.Medium,
                 Threshold = 5.0f, // 200 FPS
                 IsActive = true
             };
@@ -98,15 +98,15 @@ namespace MudLike.Core.Optimization
         {
             var currentMetric = new OptimizationMetric
             {
-                FrameTime = SystemAPI.Time.DeltaTime * 1000f,
-                MemoryUsage = UnityEngine.Profiling.Profiler.GetTotalAllocatedMemory(false) / (1024f * 1024f),
+                FrameTime = if(SystemAPI != null) if(SystemAPI != null) SystemAPI.Time.DeltaTime * 1000f,
+                MemoryUsage = if(UnityEngine != null) if(UnityEngine != null) UnityEngine.Profiling.if(Profiler != null) if(Profiler != null) Profiler.GetTotalAllocatedMemory(false) / (1024f * 1024f),
                 CpuUsage = CalculateCpuUsage(),
                 GpuUsage = CalculateGpuUsage(),
                 BurstCompilationRatio = CalculateBurstCompilationRatio(),
                 JobSystemUsageRatio = CalculateJobSystemUsageRatio(),
                 MemoryOptimizationRatio = CalculateMemoryOptimizationRatio(),
                 SIMDUsageRatio = CalculateSIMDUsageRatio(),
-                Timestamp = (float)SystemAPI.Time.ElapsedTime
+                Timestamp = (float)if(SystemAPI != null) if(SystemAPI != null) SystemAPI.Time.ElapsedTime
             };
             
             _metrics[_currentMetricIndex] = currentMetric;
@@ -123,7 +123,7 @@ namespace MudLike.Core.Optimization
             for (int i = 0; i < RULES_BUFFER_SIZE; i++)
             {
                 var rule = _rules[i];
-                if (!rule.IsActive) continue;
+                if (!if(rule != null) if(rule != null) rule.IsActive) continue;
                 
                 if (ShouldApplyRule(rule, currentMetric))
                 {
@@ -137,7 +137,7 @@ namespace MudLike.Core.Optimization
         /// </summary>
         private void UpdateOptimizationMetrics()
         {
-            if (SystemAPI.Time.ElapsedTime % 100 == 0) // Каждые 100 кадров
+            if (if(SystemAPI != null) if(SystemAPI != null) SystemAPI.Time.ElapsedTime % 100 == 0) // Каждые 100 кадров
             {
                 LogOptimizationMetrics();
             }
@@ -150,7 +150,7 @@ namespace MudLike.Core.Optimization
         {
             // Простая оценка использования CPU
             float targetFrameTime = 16.67f; // 60 FPS
-            float currentFrameTime = SystemAPI.Time.DeltaTime * 1000f;
+            float currentFrameTime = if(SystemAPI != null) if(SystemAPI != null) SystemAPI.Time.DeltaTime * 1000f;
             return (currentFrameTime / targetFrameTime) * 100f;
         }
         
@@ -169,7 +169,7 @@ namespace MudLike.Core.Optimization
         private float CalculateBurstCompilationRatio()
         {
             // Подсчет систем с BurstCompile
-            var systems = World.Systems;
+            var systems = if(World != null) if(World != null) World.Systems;
             int burstSystems = 0;
             int totalSystems = 0;
             
@@ -179,7 +179,7 @@ namespace MudLike.Core.Optimization
                 {
                     totalSystems++;
                     // Проверка на наличие BurstCompile (упрощенная)
-                    if (system.GetType().GetCustomAttributes(typeof(BurstCompileAttribute), true).Length > 0)
+                    if (if(system != null) if(system != null) system.GetType().GetCustomAttributes(typeof(BurstCompileAttribute), true).Length > 0)
                     {
                         burstSystems++;
                     }
@@ -195,7 +195,7 @@ namespace MudLike.Core.Optimization
         private float CalculateJobSystemUsageRatio()
         {
             // Подсчет систем с Job System
-            var systems = World.Systems;
+            var systems = if(World != null) if(World != null) World.Systems;
             int jobSystems = 0;
             int totalSystems = 0;
             
@@ -205,7 +205,7 @@ namespace MudLike.Core.Optimization
                 {
                     totalSystems++;
                     // Проверка на использование Job System (упрощенная)
-                    if (system.GetType().Name.Contains("Job") || system.GetType().Name.Contains("Optimized"))
+                    if (if(system != null) if(system != null) system.GetType().if(Name != null) if(Name != null) Name.Contains("Job") || if(system != null) if(system != null) system.GetType().if(Name != null) if(Name != null) Name.Contains("Optimized"))
                     {
                         jobSystems++;
                     }
@@ -221,7 +221,7 @@ namespace MudLike.Core.Optimization
         private float CalculateMemoryOptimizationRatio()
         {
             // Подсчет систем с оптимизацией памяти
-            var systems = World.Systems;
+            var systems = if(World != null) if(World != null) World.Systems;
             int memoryOptimizedSystems = 0;
             int totalSystems = 0;
             
@@ -231,7 +231,7 @@ namespace MudLike.Core.Optimization
                 {
                     totalSystems++;
                     // Проверка на оптимизацию памяти (упрощенная)
-                    if (system.GetType().Name.Contains("Pool") || system.GetType().Name.Contains("Cache"))
+                    if (if(system != null) if(system != null) system.GetType().if(Name != null) if(Name != null) Name.Contains("Pool") || if(system != null) if(system != null) system.GetType().if(Name != null) if(Name != null) Name.Contains("Cache"))
                     {
                         memoryOptimizedSystems++;
                     }
@@ -247,7 +247,7 @@ namespace MudLike.Core.Optimization
         private float CalculateSIMDUsageRatio()
         {
             // Подсчет систем с SIMD
-            var systems = World.Systems;
+            var systems = if(World != null) if(World != null) World.Systems;
             int simdSystems = 0;
             int totalSystems = 0;
             
@@ -257,7 +257,7 @@ namespace MudLike.Core.Optimization
                 {
                     totalSystems++;
                     // Проверка на использование SIMD (упрощенная)
-                    if (system.GetType().Name.Contains("SIMD") || system.GetType().Name.Contains("Vector"))
+                    if (if(system != null) if(system != null) system.GetType().if(Name != null) if(Name != null) Name.Contains("SIMD") || if(system != null) if(system != null) system.GetType().if(Name != null) if(Name != null) Name.Contains("Vector"))
                     {
                         simdSystems++;
                     }
@@ -281,19 +281,19 @@ namespace MudLike.Core.Optimization
         /// </summary>
         private bool ShouldApplyRule(OptimizationRule rule, OptimizationMetric metric)
         {
-            switch (rule.Type)
+            switch (if(rule != null) if(rule != null) rule.Type)
             {
-                case OptimizationType.BurstCompilation:
-                    return metric.BurstCompilationRatio < 0.9f; // Менее 90%
+                case if(OptimizationType != null) if(OptimizationType != null) OptimizationType.BurstCompilation:
+                    return if(metric != null) if(metric != null) metric.BurstCompilationRatio < 0.9f; // Менее 90%
                     
-                case OptimizationType.JobSystemUsage:
-                    return metric.JobSystemUsageRatio < 0.8f; // Менее 80%
+                case if(OptimizationType != null) if(OptimizationType != null) OptimizationType.JobSystemUsage:
+                    return if(metric != null) if(metric != null) metric.JobSystemUsageRatio < 0.8f; // Менее 80%
                     
-                case OptimizationType.MemoryOptimization:
-                    return metric.MemoryUsage > rule.Threshold;
+                case if(OptimizationType != null) if(OptimizationType != null) OptimizationType.MemoryOptimization:
+                    return if(metric != null) if(metric != null) metric.MemoryUsage > if(rule != null) if(rule != null) rule.Threshold;
                     
-                case OptimizationType.SIMDOperations:
-                    return metric.SIMDUsageRatio < 0.5f; // Менее 50%
+                case if(OptimizationType != null) if(OptimizationType != null) OptimizationType.SIMDOperations:
+                    return if(metric != null) if(metric != null) metric.SIMDUsageRatio < 0.5f; // Менее 50%
                     
                 default:
                     return false;
@@ -305,21 +305,21 @@ namespace MudLike.Core.Optimization
         /// </summary>
         private void ApplyOptimizationRule(OptimizationRule rule)
         {
-            switch (rule.Type)
+            switch (if(rule != null) if(rule != null) rule.Type)
             {
-                case OptimizationType.BurstCompilation:
+                case if(OptimizationType != null) if(OptimizationType != null) OptimizationType.BurstCompilation:
                     ApplyBurstCompilationOptimization();
                     break;
                     
-                case OptimizationType.JobSystemUsage:
+                case if(OptimizationType != null) if(OptimizationType != null) OptimizationType.JobSystemUsage:
                     ApplyJobSystemOptimization();
                     break;
                     
-                case OptimizationType.MemoryOptimization:
+                case if(OptimizationType != null) if(OptimizationType != null) OptimizationType.MemoryOptimization:
                     ApplyMemoryOptimization();
                     break;
                     
-                case OptimizationType.SIMDOperations:
+                case if(OptimizationType != null) if(OptimizationType != null) OptimizationType.SIMDOperations:
                     ApplySIMDOptimization();
                     break;
             }
@@ -331,7 +331,7 @@ namespace MudLike.Core.Optimization
         private void ApplyBurstCompilationOptimization()
         {
             // Логика применения Burst оптимизации
-            UnityEngine.Debug.Log("Applying Burst Compilation Optimization");
+            if(UnityEngine != null) if(UnityEngine != null) UnityEngine.Debug.Log("Applying Burst Compilation Optimization");
         }
         
         /// <summary>
@@ -340,7 +340,7 @@ namespace MudLike.Core.Optimization
         private void ApplyJobSystemOptimization()
         {
             // Логика применения Job System оптимизации
-            UnityEngine.Debug.Log("Applying Job System Optimization");
+            if(UnityEngine != null) if(UnityEngine != null) UnityEngine.Debug.Log("Applying Job System Optimization");
         }
         
         /// <summary>
@@ -349,7 +349,7 @@ namespace MudLike.Core.Optimization
         private void ApplyMemoryOptimization()
         {
             // Логика применения оптимизации памяти
-            UnityEngine.Debug.Log("Applying Memory Optimization");
+            if(UnityEngine != null) if(UnityEngine != null) UnityEngine.Debug.Log("Applying Memory Optimization");
         }
         
         /// <summary>
@@ -358,7 +358,7 @@ namespace MudLike.Core.Optimization
         private void ApplySIMDOptimization()
         {
             // Логика применения SIMD оптимизации
-            UnityEngine.Debug.Log("Applying SIMD Optimization");
+            if(UnityEngine != null) if(UnityEngine != null) UnityEngine.Debug.Log("Applying SIMD Optimization");
         }
         
         /// <summary>
@@ -368,15 +368,15 @@ namespace MudLike.Core.Optimization
         {
             var currentMetric = GetCurrentMetric();
             
-            UnityEngine.Debug.Log($"=== CODE OPTIMIZATION METRICS ===");
-            UnityEngine.Debug.Log($"Frame Time: {currentMetric.FrameTime:F2}ms");
-            UnityEngine.Debug.Log($"Memory Usage: {currentMetric.MemoryUsage:F2}MB");
-            UnityEngine.Debug.Log($"CPU Usage: {currentMetric.CpuUsage:F2}%");
-            UnityEngine.Debug.Log($"GPU Usage: {currentMetric.GpuUsage:F2}%");
-            UnityEngine.Debug.Log($"Burst Compilation: {currentMetric.BurstCompilationRatio:P1}");
-            UnityEngine.Debug.Log($"Job System Usage: {currentMetric.JobSystemUsageRatio:P1}");
-            UnityEngine.Debug.Log($"Memory Optimization: {currentMetric.MemoryOptimizationRatio:P1}");
-            UnityEngine.Debug.Log($"SIMD Usage: {currentMetric.SIMDUsageRatio:P1}");
+            if(UnityEngine != null) if(UnityEngine != null) UnityEngine.Debug.Log($"=== CODE OPTIMIZATION METRICS ===");
+            if(UnityEngine != null) if(UnityEngine != null) UnityEngine.Debug.Log($"Frame Time: {if(currentMetric != null) if(currentMetric != null) currentMetric.FrameTime:F2}ms");
+            if(UnityEngine != null) if(UnityEngine != null) UnityEngine.Debug.Log($"Memory Usage: {if(currentMetric != null) if(currentMetric != null) currentMetric.MemoryUsage:F2}MB");
+            if(UnityEngine != null) if(UnityEngine != null) UnityEngine.Debug.Log($"CPU Usage: {if(currentMetric != null) if(currentMetric != null) currentMetric.CpuUsage:F2}%");
+            if(UnityEngine != null) if(UnityEngine != null) UnityEngine.Debug.Log($"GPU Usage: {if(currentMetric != null) if(currentMetric != null) currentMetric.GpuUsage:F2}%");
+            if(UnityEngine != null) if(UnityEngine != null) UnityEngine.Debug.Log($"Burst Compilation: {if(currentMetric != null) if(currentMetric != null) currentMetric.BurstCompilationRatio:P1}");
+            if(UnityEngine != null) if(UnityEngine != null) UnityEngine.Debug.Log($"Job System Usage: {if(currentMetric != null) if(currentMetric != null) currentMetric.JobSystemUsageRatio:P1}");
+            if(UnityEngine != null) if(UnityEngine != null) UnityEngine.Debug.Log($"Memory Optimization: {if(currentMetric != null) if(currentMetric != null) currentMetric.MemoryOptimizationRatio:P1}");
+            if(UnityEngine != null) if(UnityEngine != null) UnityEngine.Debug.Log($"SIMD Usage: {if(currentMetric != null) if(currentMetric != null) currentMetric.SIMDUsageRatio:P1}");
         }
         
         /// <summary>
@@ -390,10 +390,10 @@ namespace MudLike.Core.Optimization
             {
                 AverageFrameTime = CalculateAverageFrameTime(),
                 AverageMemoryUsage = CalculateAverageMemoryUsage(),
-                BurstCompilationRatio = currentMetric.BurstCompilationRatio,
-                JobSystemUsageRatio = currentMetric.JobSystemUsageRatio,
-                MemoryOptimizationRatio = currentMetric.MemoryOptimizationRatio,
-                SIMDUsageRatio = currentMetric.SIMDUsageRatio,
+                BurstCompilationRatio = if(currentMetric != null) if(currentMetric != null) currentMetric.BurstCompilationRatio,
+                JobSystemUsageRatio = if(currentMetric != null) if(currentMetric != null) currentMetric.JobSystemUsageRatio,
+                MemoryOptimizationRatio = if(currentMetric != null) if(currentMetric != null) currentMetric.MemoryOptimizationRatio,
+                SIMDUsageRatio = if(currentMetric != null) if(currentMetric != null) currentMetric.SIMDUsageRatio,
                 OptimizationScore = CalculateOptimizationScore()
             };
         }
@@ -432,10 +432,10 @@ namespace MudLike.Core.Optimization
             var currentMetric = GetCurrentMetric();
             
             float score = 0f;
-            score += currentMetric.BurstCompilationRatio * 25f;
-            score += currentMetric.JobSystemUsageRatio * 25f;
-            score += currentMetric.MemoryOptimizationRatio * 25f;
-            score += currentMetric.SIMDUsageRatio * 25f;
+            score += if(currentMetric != null) if(currentMetric != null) currentMetric.BurstCompilationRatio * 25f;
+            score += if(currentMetric != null) if(currentMetric != null) currentMetric.JobSystemUsageRatio * 25f;
+            score += if(currentMetric != null) if(currentMetric != null) currentMetric.MemoryOptimizationRatio * 25f;
+            score += if(currentMetric != null) if(currentMetric != null) currentMetric.SIMDUsageRatio * 25f;
             
             return score;
         }
@@ -503,4 +503,3 @@ namespace MudLike.Core.Optimization
         public float SIMDUsageRatio;
         public float OptimizationScore;
     }
-}

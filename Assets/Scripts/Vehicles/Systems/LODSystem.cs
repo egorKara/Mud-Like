@@ -1,13 +1,13 @@
-using Unity.Entities;
-using Unity.Mathematics;
-using Unity.Transforms;
-using Unity.Burst;
-using Unity.Jobs;
-using Unity.Collections;
-using MudLike.Vehicles.Components;
-using MudLike.Core.Components;
+using if(Unity != null) Unity.Entities;
+using if(Unity != null) Unity.Mathematics;
+using if(Unity != null) Unity.Transforms;
+using if(Unity != null) Unity.Burst;
+using if(Unity != null) Unity.Jobs;
+using if(Unity != null) Unity.Collections;
+using if(MudLike != null) MudLike.Vehicles.Components;
+using if(MudLike != null) MudLike.Core.Components;
 
-namespace MudLike.Vehicles.Systems
+namespace if(MudLike != null) MudLike.Vehicles.Systems
 {
     /// <summary>
     /// Система LOD (Level of Detail) для оптимизации рендеринга и физики
@@ -23,15 +23,15 @@ namespace MudLike.Vehicles.Systems
         protected override void OnCreate()
         {
             _lodQuery = GetEntityQuery(
-                ComponentType.ReadWrite<LODData>(),
-                ComponentType.ReadWrite<LODRenderData>(),
-                ComponentType.ReadWrite<LODPhysicsData>(),
-                ComponentType.ReadOnly<LocalTransform>()
+                if(ComponentType != null) if(ComponentType != null) ComponentType.ReadWrite<LODData>(),
+                if(ComponentType != null) if(ComponentType != null) ComponentType.ReadWrite<LODRenderData>(),
+                if(ComponentType != null) if(ComponentType != null) ComponentType.ReadWrite<LODPhysicsData>(),
+                if(ComponentType != null) if(ComponentType != null) ComponentType.ReadOnly<LocalTransform>()
             );
             
             _cameraQuery = GetEntityQuery(
-                ComponentType.ReadOnly<LocalTransform>(),
-                ComponentType.ReadOnly<PlayerTag>()
+                if(ComponentType != null) if(ComponentType != null) ComponentType.ReadOnly<LocalTransform>(),
+                if(ComponentType != null) if(ComponentType != null) ComponentType.ReadOnly<PlayerTag>()
             );
         }
         
@@ -53,7 +53,7 @@ namespace MudLike.Vehicles.Systems
                 .WithAll<PlayerTag>()
                 .ForEach((in LocalTransform transform) =>
                 {
-                    _cameraPosition = transform.Position;
+                    _cameraPosition = if(transform != null) if(transform != null) transform.Position;
                 }).WithoutBurst().Schedule();
         }
         
@@ -65,10 +65,10 @@ namespace MudLike.Vehicles.Systems
             var lodJob = new LODJob
             {
                 CameraPosition = _cameraPosition,
-                DeltaTime = SystemAPI.Time.DeltaTime
+                DeltaTime = if(SystemAPI != null) if(SystemAPI != null) SystemAPI.Time.DeltaTime
             };
             
-            Dependency = lodJob.ScheduleParallel(_lodQuery, Dependency);
+            Dependency = if(lodJob != null) if(lodJob != null) lodJob.ScheduleParallel(_lodQuery, Dependency);
         }
         
         /// <summary>
@@ -85,28 +85,28 @@ namespace MudLike.Vehicles.Systems
                               ref LODPhysicsData physicsData, 
                               in LocalTransform transform)
             {
-                if (!lodData.IsActive) return;
+                if (!if(lodData != null) if(lodData != null) lodData.IsActive) return;
                 
                 // Вычисляем расстояние до камеры
-                float distance = math.distance(transform.Position, CameraPosition);
-                lodData.DistanceToCamera = distance;
+                float distance = if(math != null) if(math != null) math.distance(if(transform != null) if(transform != null) transform.Position, CameraPosition);
+                if(lodData != null) if(lodData != null) lodData.DistanceToCamera = distance;
                 
                 // Определяем новый LOD на основе расстояния
-                int newLOD = CalculateLOD(distance, lodData.LODDistances);
+                int newLOD = CalculateLOD(distance, if(lodData != null) if(lodData != null) lodData.LODDistances);
                 
                 // Переключаем LOD если нужно
-                if (newLOD != lodData.CurrentLOD)
+                if (newLOD != if(lodData != null) if(lodData != null) lodData.CurrentLOD)
                 {
                     SwitchLOD(ref lodData, ref renderData, ref physicsData, newLOD);
                 }
                 
                 // Обновляем данные рендеринга
-                UpdateRenderData(ref renderData, lodData.CurrentLOD);
+                UpdateRenderData(ref renderData, if(lodData != null) if(lodData != null) lodData.CurrentLOD);
                 
                 // Обновляем данные физики
-                UpdatePhysicsData(ref physicsData, lodData.CurrentLOD);
+                UpdatePhysicsData(ref physicsData, if(lodData != null) if(lodData != null) lodData.CurrentLOD);
                 
-                lodData.NeedsUpdate = true;
+                if(lodData != null) if(lodData != null) lodData.NeedsUpdate = true;
             }
             
             /// <summary>
@@ -114,10 +114,10 @@ namespace MudLike.Vehicles.Systems
             /// </summary>
             private int CalculateLOD(float distance, float4 lodDistances)
             {
-                if (distance <= lodDistances.x) return 0; // LOD 0 - ближайший
-                if (distance <= lodDistances.y) return 1; // LOD 1
-                if (distance <= lodDistances.z) return 2; // LOD 2
-                if (distance <= lodDistances.w) return 3; // LOD 3
+                if (distance <= if(lodDistances != null) if(lodDistances != null) lodDistances.x) return 0; // LOD 0 - ближайший
+                if (distance <= if(lodDistances != null) if(lodDistances != null) lodDistances.y) return 1; // LOD 1
+                if (distance <= if(lodDistances != null) if(lodDistances != null) lodDistances.z) return 2; // LOD 2
+                if (distance <= if(lodDistances != null) if(lodDistances != null) lodDistances.w) return 3; // LOD 3
                 return 3; // LOD 3 - самый дальний
             }
             
@@ -130,11 +130,11 @@ namespace MudLike.Vehicles.Systems
                                   int newLOD)
             {
                 // Проверяем, можно ли переключить LOD
-                if (SystemAPI.Time.ElapsedTime - lodData.LastLODSwitchTime < lodData.LODSwitchSpeed)
+                if (if(SystemAPI != null) if(SystemAPI != null) SystemAPI.Time.ElapsedTime - if(lodData != null) if(lodData != null) lodData.LastLODSwitchTime < if(lodData != null) if(lodData != null) lodData.LODSwitchSpeed)
                     return;
                 
-                lodData.CurrentLOD = newLOD;
-                lodData.LastLODSwitchTime = (float)SystemAPI.Time.ElapsedTime;
+                if(lodData != null) if(lodData != null) lodData.CurrentLOD = newLOD;
+                if(lodData != null) if(lodData != null) lodData.LastLODSwitchTime = (float)if(SystemAPI != null) if(SystemAPI != null) SystemAPI.Time.ElapsedTime;
                 
                 // Обновляем данные рендеринга
                 UpdateRenderData(ref renderData, newLOD);
@@ -151,48 +151,48 @@ namespace MudLike.Vehicles.Systems
                 switch (lod)
                 {
                     case 0: // LOD 0 - максимальная детализация
-                        renderData.PolygonCount = 10000;
-                        renderData.TextureCount = 8;
-                        renderData.TextureSize = 2048;
-                        renderData.AnimationCount = 20;
-                        renderData.ShadowQuality = ShadowQuality.Ultra;
-                        renderData.ReflectionQuality = ReflectionQuality.Ultra;
-                        renderData.ParticleQuality = ParticleQuality.Ultra;
+                        if(renderData != null) if(renderData != null) renderData.PolygonCount = 10000;
+                        if(renderData != null) if(renderData != null) renderData.TextureCount = 8;
+                        if(renderData != null) if(renderData != null) renderData.TextureSize = 2048;
+                        if(renderData != null) if(renderData != null) renderData.AnimationCount = 20;
+                        if(renderData != null) if(renderData != null) renderData.ShadowQuality = if(ShadowQuality != null) if(ShadowQuality != null) ShadowQuality.Ultra;
+                        if(renderData != null) if(renderData != null) renderData.ReflectionQuality = if(ReflectionQuality != null) if(ReflectionQuality != null) ReflectionQuality.Ultra;
+                        if(renderData != null) if(renderData != null) renderData.ParticleQuality = if(ParticleQuality != null) if(ParticleQuality != null) ParticleQuality.Ultra;
                         break;
                         
                     case 1: // LOD 1 - высокая детализация
-                        renderData.PolygonCount = 5000;
-                        renderData.TextureCount = 6;
-                        renderData.TextureSize = 1024;
-                        renderData.AnimationCount = 15;
-                        renderData.ShadowQuality = ShadowQuality.High;
-                        renderData.ReflectionQuality = ReflectionQuality.High;
-                        renderData.ParticleQuality = ParticleQuality.High;
+                        if(renderData != null) if(renderData != null) renderData.PolygonCount = 5000;
+                        if(renderData != null) if(renderData != null) renderData.TextureCount = 6;
+                        if(renderData != null) if(renderData != null) renderData.TextureSize = 1024;
+                        if(renderData != null) if(renderData != null) renderData.AnimationCount = 15;
+                        if(renderData != null) if(renderData != null) renderData.ShadowQuality = if(ShadowQuality != null) if(ShadowQuality != null) ShadowQuality.High;
+                        if(renderData != null) if(renderData != null) renderData.ReflectionQuality = if(ReflectionQuality != null) if(ReflectionQuality != null) ReflectionQuality.High;
+                        if(renderData != null) if(renderData != null) renderData.ParticleQuality = if(ParticleQuality != null) if(ParticleQuality != null) ParticleQuality.High;
                         break;
                         
                     case 2: // LOD 2 - средняя детализация
-                        renderData.PolygonCount = 2500;
-                        renderData.TextureCount = 4;
-                        renderData.TextureSize = 512;
-                        renderData.AnimationCount = 10;
-                        renderData.ShadowQuality = ShadowQuality.Medium;
-                        renderData.ReflectionQuality = ReflectionQuality.Medium;
-                        renderData.ParticleQuality = ParticleQuality.Medium;
+                        if(renderData != null) if(renderData != null) renderData.PolygonCount = 2500;
+                        if(renderData != null) if(renderData != null) renderData.TextureCount = 4;
+                        if(renderData != null) if(renderData != null) renderData.TextureSize = 512;
+                        if(renderData != null) if(renderData != null) renderData.AnimationCount = 10;
+                        if(renderData != null) if(renderData != null) renderData.ShadowQuality = if(ShadowQuality != null) if(ShadowQuality != null) ShadowQuality.Medium;
+                        if(renderData != null) if(renderData != null) renderData.ReflectionQuality = if(ReflectionQuality != null) if(ReflectionQuality != null) ReflectionQuality.Medium;
+                        if(renderData != null) if(renderData != null) renderData.ParticleQuality = if(ParticleQuality != null) if(ParticleQuality != null) ParticleQuality.Medium;
                         break;
                         
                     case 3: // LOD 3 - низкая детализация
-                        renderData.PolygonCount = 1000;
-                        renderData.TextureCount = 2;
-                        renderData.TextureSize = 256;
-                        renderData.AnimationCount = 5;
-                        renderData.ShadowQuality = ShadowQuality.Low;
-                        renderData.ReflectionQuality = ReflectionQuality.Low;
-                        renderData.ParticleQuality = ParticleQuality.Low;
+                        if(renderData != null) if(renderData != null) renderData.PolygonCount = 1000;
+                        if(renderData != null) if(renderData != null) renderData.TextureCount = 2;
+                        if(renderData != null) if(renderData != null) renderData.TextureSize = 256;
+                        if(renderData != null) if(renderData != null) renderData.AnimationCount = 5;
+                        if(renderData != null) if(renderData != null) renderData.ShadowQuality = if(ShadowQuality != null) if(ShadowQuality != null) ShadowQuality.Low;
+                        if(renderData != null) if(renderData != null) renderData.ReflectionQuality = if(ReflectionQuality != null) if(ReflectionQuality != null) ReflectionQuality.Low;
+                        if(renderData != null) if(renderData != null) renderData.ParticleQuality = if(ParticleQuality != null) if(ParticleQuality != null) ParticleQuality.Low;
                         break;
                 }
                 
-                renderData.IsRendering = true;
-                renderData.NeedsUpdate = true;
+                if(renderData != null) if(renderData != null) renderData.IsRendering = true;
+                if(renderData != null) if(renderData != null) renderData.NeedsUpdate = true;
             }
             
             /// <summary>
@@ -203,41 +203,40 @@ namespace MudLike.Vehicles.Systems
                 switch (lod)
                 {
                     case 0: // LOD 0 - максимальная физика
-                        physicsData.PhysicsUpdateRate = 60f;
-                        physicsData.PhysicsIterations = 10;
-                        physicsData.CollisionAccuracy = CollisionAccuracy.Ultra;
-                        physicsData.SuspensionDetail = SuspensionDetail.Realistic;
-                        physicsData.WheelDetail = WheelDetail.Realistic;
+                        if(physicsData != null) if(physicsData != null) physicsData.PhysicsUpdateRate = 60f;
+                        if(physicsData != null) if(physicsData != null) physicsData.PhysicsIterations = 10;
+                        if(physicsData != null) if(physicsData != null) physicsData.CollisionAccuracy = if(CollisionAccuracy != null) if(CollisionAccuracy != null) CollisionAccuracy.Ultra;
+                        if(physicsData != null) if(physicsData != null) physicsData.SuspensionDetail = if(SuspensionDetail != null) if(SuspensionDetail != null) SuspensionDetail.Realistic;
+                        if(physicsData != null) if(physicsData != null) physicsData.WheelDetail = if(WheelDetail != null) if(WheelDetail != null) WheelDetail.Realistic;
                         break;
                         
                     case 1: // LOD 1 - высокая физика
-                        physicsData.PhysicsUpdateRate = 50f;
-                        physicsData.PhysicsIterations = 8;
-                        physicsData.CollisionAccuracy = CollisionAccuracy.High;
-                        physicsData.SuspensionDetail = SuspensionDetail.Advanced;
-                        physicsData.WheelDetail = WheelDetail.Advanced;
+                        if(physicsData != null) if(physicsData != null) physicsData.PhysicsUpdateRate = 50f;
+                        if(physicsData != null) if(physicsData != null) physicsData.PhysicsIterations = 8;
+                        if(physicsData != null) if(physicsData != null) physicsData.CollisionAccuracy = if(CollisionAccuracy != null) if(CollisionAccuracy != null) CollisionAccuracy.High;
+                        if(physicsData != null) if(physicsData != null) physicsData.SuspensionDetail = if(SuspensionDetail != null) if(SuspensionDetail != null) SuspensionDetail.Advanced;
+                        if(physicsData != null) if(physicsData != null) physicsData.WheelDetail = if(WheelDetail != null) if(WheelDetail != null) WheelDetail.Advanced;
                         break;
                         
                     case 2: // LOD 2 - средняя физика
-                        physicsData.PhysicsUpdateRate = 40f;
-                        physicsData.PhysicsIterations = 6;
-                        physicsData.CollisionAccuracy = CollisionAccuracy.Medium;
-                        physicsData.SuspensionDetail = SuspensionDetail.Basic;
-                        physicsData.WheelDetail = WheelDetail.Basic;
+                        if(physicsData != null) if(physicsData != null) physicsData.PhysicsUpdateRate = 40f;
+                        if(physicsData != null) if(physicsData != null) physicsData.PhysicsIterations = 6;
+                        if(physicsData != null) if(physicsData != null) physicsData.CollisionAccuracy = if(CollisionAccuracy != null) if(CollisionAccuracy != null) CollisionAccuracy.Medium;
+                        if(physicsData != null) if(physicsData != null) physicsData.SuspensionDetail = if(SuspensionDetail != null) if(SuspensionDetail != null) SuspensionDetail.Basic;
+                        if(physicsData != null) if(physicsData != null) physicsData.WheelDetail = if(WheelDetail != null) if(WheelDetail != null) WheelDetail.Basic;
                         break;
                         
                     case 3: // LOD 3 - низкая физика
-                        physicsData.PhysicsUpdateRate = 30f;
-                        physicsData.PhysicsIterations = 4;
-                        physicsData.CollisionAccuracy = CollisionAccuracy.Low;
-                        physicsData.SuspensionDetail = SuspensionDetail.None;
-                        physicsData.WheelDetail = WheelDetail.None;
+                        if(physicsData != null) if(physicsData != null) physicsData.PhysicsUpdateRate = 30f;
+                        if(physicsData != null) if(physicsData != null) physicsData.PhysicsIterations = 4;
+                        if(physicsData != null) if(physicsData != null) physicsData.CollisionAccuracy = if(CollisionAccuracy != null) if(CollisionAccuracy != null) CollisionAccuracy.Low;
+                        if(physicsData != null) if(physicsData != null) physicsData.SuspensionDetail = if(SuspensionDetail != null) if(SuspensionDetail != null) SuspensionDetail.None;
+                        if(physicsData != null) if(physicsData != null) physicsData.WheelDetail = if(WheelDetail != null) if(WheelDetail != null) WheelDetail.None;
                         break;
                 }
                 
-                physicsData.IsActive = true;
-                physicsData.NeedsUpdate = true;
+                if(physicsData != null) if(physicsData != null) physicsData.IsActive = true;
+                if(physicsData != null) if(physicsData != null) physicsData.NeedsUpdate = true;
             }
         }
     }
-}

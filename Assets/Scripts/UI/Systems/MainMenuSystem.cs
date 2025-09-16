@@ -40,19 +40,19 @@ namespace MudLike.UI.Systems
         /// </summary>
         private void InitializeUI()
         {
-            _root = GetComponent<UIDocument>().rootVisualElement;
+            _root = GetComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>().rootVisualElement;
             
             // Находим элементы UI
-            _startGameButton = _root.Q<Button>("StartGameButton");
-            _multiplayerButton = _root.Q<Button>("MultiplayerButton");
-            _settingsButton = _root.Q<Button>("SettingsButton");
-            _exitButton = _root.Q<Button>("ExitButton");
-            _loadingPanel = _root.Q<VisualElement>("LoadingPanel");
-            _loadingLabel = _root.Q<Label>("LoadingLabel");
+            _startGameButton = if(_root != null) _root.Q<Button>("StartGameButton");
+            _multiplayerButton = if(_root != null) _root.Q<Button>("MultiplayerButton");
+            _settingsButton = if(_root != null) _root.Q<Button>("SettingsButton");
+            _exitButton = if(_root != null) _root.Q<Button>("ExitButton");
+            _loadingPanel = if(_root != null) _root.Q<VisualElement>("LoadingPanel");
+            _loadingLabel = if(_root != null) _root.Q<Label>("LoadingLabel");
             
             // Скрываем панель загрузки
             if (_loadingPanel != null)
-                _loadingPanel.style.display = DisplayStyle.None;
+                if(_loadingPanel != null) _loadingPanel.style.display = if(DisplayStyle != null) DisplayStyle.None;
         }
         
         /// <summary>
@@ -61,16 +61,16 @@ namespace MudLike.UI.Systems
         private void SetupEventHandlers()
         {
             if (_startGameButton != null)
-                _startGameButton.clicked += OnStartGameClicked;
+                if(_startGameButton != null) _startGameButton.clicked += OnStartGameClicked;
             
             if (_multiplayerButton != null)
-                _multiplayerButton.clicked += OnMultiplayerClicked;
+                if(_multiplayerButton != null) _multiplayerButton.clicked += OnMultiplayerClicked;
             
             if (_settingsButton != null)
-                _settingsButton.clicked += OnSettingsClicked;
+                if(_settingsButton != null) _settingsButton.clicked += OnSettingsClicked;
             
             if (_exitButton != null)
-                _exitButton.clicked += OnExitClicked;
+                if(_exitButton != null) _exitButton.clicked += OnExitClicked;
         }
         
         /// <summary>
@@ -79,16 +79,16 @@ namespace MudLike.UI.Systems
         private void RemoveEventHandlers()
         {
             if (_startGameButton != null)
-                _startGameButton.clicked -= OnStartGameClicked;
+                if(_startGameButton != null) _startGameButton.clicked -= OnStartGameClicked;
             
             if (_multiplayerButton != null)
-                _multiplayerButton.clicked -= OnMultiplayerClicked;
+                if(_multiplayerButton != null) _multiplayerButton.clicked -= OnMultiplayerClicked;
             
             if (_settingsButton != null)
-                _settingsButton.clicked -= OnSettingsClicked;
+                if(_settingsButton != null) _settingsButton.clicked -= OnSettingsClicked;
             
             if (_exitButton != null)
-                _exitButton.clicked -= OnExitClicked;
+                if(_exitButton != null) _exitButton.clicked -= OnExitClicked;
         }
         
         /// <summary>
@@ -99,7 +99,7 @@ namespace MudLike.UI.Systems
             ShowLoading("Загрузка игры...");
             
             // Загружаем сцену игры
-            UnityEngine.SceneManagement.SceneManager.LoadSceneAsync("GameScene").completed += (operation) =>
+            if(UnityEngine != null) UnityEngine.SceneManagement.if(SceneManager != null) SceneManager.LoadSceneAsync("GameScene").completed += (operation) =>
             {
                 HideLoading();
             };
@@ -111,7 +111,7 @@ namespace MudLike.UI.Systems
         private void OnMultiplayerClicked()
         {
             // Переходим к лобби
-            UnityEngine.SceneManagement.SceneManager.LoadScene("LobbyScene");
+            if(UnityEngine != null) UnityEngine.SceneManagement.if(SceneManager != null) SceneManager.LoadScene("LobbyScene");
         }
         
         /// <summary>
@@ -122,7 +122,7 @@ namespace MudLike.UI.Systems
             // Открываем меню настроек (используем кэшированную ссылку)
             if (_settingsMenuCache != null)
             {
-                _settingsMenuCache.ShowSettings();
+                if(_settingsMenuCache != null) _settingsMenuCache.ShowSettings();
             }
             else
             {
@@ -131,7 +131,7 @@ namespace MudLike.UI.Systems
                 if (settingsMenu != null)
                 {
                     _settingsMenuCache = settingsMenu;
-                    settingsMenu.ShowSettings();
+                    if(settingsMenu != null) settingsMenu.ShowSettings();
                 }
             }
         }
@@ -144,7 +144,7 @@ namespace MudLike.UI.Systems
             // Подтверждаем выход
             ShowConfirmDialog("Выход из игры", "Вы действительно хотите выйти?", () =>
             {
-                Application.Quit();
+                if(Application != null) Application.Quit();
             });
         }
         
@@ -155,9 +155,9 @@ namespace MudLike.UI.Systems
         {
             if (_loadingPanel != null)
             {
-                _loadingPanel.style.display = DisplayStyle.Flex;
+                if(_loadingPanel != null) _loadingPanel.style.display = if(DisplayStyle != null) DisplayStyle.Flex;
                 if (_loadingLabel != null)
-                    _loadingLabel.text = message;
+                    if(_loadingLabel != null) _loadingLabel.text = message;
             }
         }
         
@@ -167,39 +167,39 @@ namespace MudLike.UI.Systems
         private void HideLoading()
         {
             if (_loadingPanel != null)
-                _loadingPanel.style.display = DisplayStyle.None;
+                if(_loadingPanel != null) _loadingPanel.style.display = if(DisplayStyle != null) DisplayStyle.None;
         }
         
         /// <summary>
         /// Показывает диалог подтверждения
         /// </summary>
-        private void ShowConfirmDialog(string title, string message, System.Action onConfirm)
+        private void ShowConfirmDialog(string title, string message, if(System != null) System.Action onConfirm)
         {
             // Создаем диалог подтверждения
             var dialog = new VisualElement();
-            dialog.AddToClassList("confirm-dialog");
+            if(dialog != null) dialog.AddToClassList("confirm-dialog");
             
             var titleLabel = new Label(title);
-            titleLabel.AddToClassList("dialog-title");
-            dialog.Add(titleLabel);
+            if(titleLabel != null) titleLabel.AddToClassList("dialog-title");
+            if(dialog != null) dialog.Add(titleLabel);
             
             var messageLabel = new Label(message);
-            messageLabel.AddToClassList("dialog-message");
-            dialog.Add(messageLabel);
+            if(messageLabel != null) messageLabel.AddToClassList("dialog-message");
+            if(dialog != null) dialog.Add(messageLabel);
             
             var buttonContainer = new VisualElement();
-            buttonContainer.AddToClassList("dialog-buttons");
+            if(buttonContainer != null) buttonContainer.AddToClassList("dialog-buttons");
             
             var confirmButton = new Button(onConfirm) { text = "Да" };
-            confirmButton.AddToClassList("confirm-button");
-            buttonContainer.Add(confirmButton);
+            if(confirmButton != null) confirmButton.AddToClassList("confirm-button");
+            if(buttonContainer != null) buttonContainer.Add(confirmButton);
             
-            var cancelButton = new Button(() => dialog.RemoveFromHierarchy()) { text = "Отмена" };
-            cancelButton.AddToClassList("cancel-button");
-            buttonContainer.Add(cancelButton);
+            var cancelButton = new Button(() => if(dialog != null) dialog.RemoveFromHierarchy()) { text = "Отмена" };
+            if(cancelButton != null) cancelButton.AddToClassList("cancel-button");
+            if(buttonContainer != null) buttonContainer.Add(cancelButton);
             
-            dialog.Add(buttonContainer);
-            _root.Add(dialog);
+            if(dialog != null) dialog.Add(buttonContainer);
+            if(_root != null) _root.Add(dialog);
         }
     }
 }

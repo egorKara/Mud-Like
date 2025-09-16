@@ -47,7 +47,7 @@ namespace MudLike.Core.Optimization
         {
             foreach (var component in _systemComponents)
             {
-                component.Initialize(World);
+                if(component != null) component.Initialize(World);
             }
         }
         
@@ -58,7 +58,7 @@ namespace MudLike.Core.Optimization
         {
             foreach (var component in _systemComponents)
             {
-                component.Execute();
+                if(component != null) component.Execute();
             }
         }
         
@@ -67,7 +67,7 @@ namespace MudLike.Core.Optimization
         /// </summary>
         protected void AddSystemComponent(ISystemComponent component)
         {
-            _systemComponents.Add(component);
+            if(_systemComponents != null) _systemComponents.Add(component);
         }
         
         /// <summary>
@@ -75,7 +75,7 @@ namespace MudLike.Core.Optimization
         /// </summary>
         protected void RemoveSystemComponent(ISystemComponent component)
         {
-            _systemComponents.Remove(component);
+            if(_systemComponents != null) _systemComponents.Remove(component);
         }
     }
     
@@ -120,7 +120,7 @@ namespace MudLike.Core.Optimization
         
         public override void Initialize(World world)
         {
-            base.Initialize(world);
+            if(base != null) base.Initialize(world);
             InitializeBurstComponent();
         }
         
@@ -170,17 +170,17 @@ namespace MudLike.Core.Optimization
         
         public override void Initialize(World world)
         {
-            base.Initialize(world);
+            if(base != null) base.Initialize(world);
             InitializeCache();
         }
         
         public override void Dispose()
         {
-            if (_cacheInitialized && _cache.IsCreated)
+            if (_cacheInitialized && if(_cache != null) _cache.IsCreated)
             {
-                _cache.Dispose();
+                if(_cache != null) _cache.Dispose();
             }
-            base.Dispose();
+            if(base != null) base.Dispose();
         }
         
         /// <summary>
@@ -188,7 +188,7 @@ namespace MudLike.Core.Optimization
         /// </summary>
         protected virtual void InitializeCache()
         {
-            _cache = new NativeArray<float>(1000, Allocator.Persistent);
+            _cache = new NativeArray<float>(1000, if(Allocator != null) Allocator.Persistent);
             _cacheInitialized = true;
         }
         
@@ -243,7 +243,7 @@ namespace MudLike.Core.Optimization
         private void UpdatePerformanceMetrics()
         {
             _frameCount++;
-            _averageFrameTime = (_averageFrameTime * (_frameCount - 1) + SystemAPI.Time.DeltaTime * 1000f) / _frameCount;
+            _averageFrameTime = (_averageFrameTime * (_frameCount - 1) + if(SystemAPI != null) SystemAPI.Time.DeltaTime * 1000f) / _frameCount;
             
             if (_frameCount >= 60)
             {
@@ -289,13 +289,13 @@ namespace MudLike.Core.Optimization
         
         protected override void OnCreate()
         {
-            base.OnCreate();
+            if(base != null) base.OnCreate();
             _dependencies = new List<ISystemDependency>();
         }
         
         protected override void InitializeSystemComponents()
         {
-            base.InitializeSystemComponents();
+            if(base != null) base.InitializeSystemComponents();
             InitializeDependencies();
         }
         
@@ -316,10 +316,10 @@ namespace MudLike.Core.Optimization
             
             foreach (var dependency in _dependencies)
             {
-                _mainDependency = dependency.Execute(_mainDependency);
+                _mainDependency = if(dependency != null) dependency.Execute(_mainDependency);
             }
             
-            _mainDependency.Complete();
+            if(_mainDependency != null) _mainDependency.Complete();
         }
         
         /// <summary>
@@ -327,7 +327,7 @@ namespace MudLike.Core.Optimization
         /// </summary>
         protected void AddSystemDependency(ISystemDependency dependency)
         {
-            _dependencies.Add(dependency);
+            if(_dependencies != null) _dependencies.Add(dependency);
         }
         
         /// <summary>
@@ -335,7 +335,7 @@ namespace MudLike.Core.Optimization
         /// </summary>
         protected void RemoveSystemDependency(ISystemDependency dependency)
         {
-            _dependencies.Remove(dependency);
+            if(_dependencies != null) _dependencies.Remove(dependency);
         }
     }
     
@@ -415,17 +415,17 @@ namespace MudLike.Core.Optimization
         
         protected override void OnCreate()
         {
-            base.OnCreate();
+            if(base != null) base.OnCreate();
             InitializePerformanceMonitoring();
         }
         
         protected override void OnDestroy()
         {
-            if (_performanceMetrics.IsCreated)
+            if (if(_performanceMetrics != null) _performanceMetrics.IsCreated)
             {
-                _performanceMetrics.Dispose();
+                if(_performanceMetrics != null) _performanceMetrics.Dispose();
             }
-            base.OnDestroy();
+            if(base != null) base.OnDestroy();
         }
         
         /// <summary>
@@ -433,7 +433,7 @@ namespace MudLike.Core.Optimization
         /// </summary>
         private void InitializePerformanceMonitoring()
         {
-            _performanceMetrics = new NativeArray<float>(METRICS_BUFFER_SIZE, Allocator.Persistent);
+            _performanceMetrics = new NativeArray<float>(METRICS_BUFFER_SIZE, if(Allocator != null) Allocator.Persistent);
         }
         
         /// <summary>
@@ -441,12 +441,12 @@ namespace MudLike.Core.Optimization
         /// </summary>
         private void ExecuteSystemComponentsWithMonitoring()
         {
-            var stopwatch = System.Diagnostics.Stopwatch.StartNew();
+            var stopwatch = if(System != null) System.Diagnostics.if(Stopwatch != null) Stopwatch.StartNew();
             
             // ExecuteSystemComponentsWithDependencies(); // Method is private
             
-            stopwatch.Stop();
-            RecordPerformanceMetric(stopwatch.ElapsedMilliseconds);
+            if(stopwatch != null) stopwatch.Stop();
+            RecordPerformanceMetric(if(stopwatch != null) stopwatch.ElapsedMilliseconds);
         }
         
         /// <summary>
@@ -471,4 +471,3 @@ namespace MudLike.Core.Optimization
             return sum / METRICS_BUFFER_SIZE;
         }
     }
-}

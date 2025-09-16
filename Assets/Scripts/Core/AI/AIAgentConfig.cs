@@ -42,7 +42,7 @@ namespace MudLike.Core.AI
         
         [Header("🔍 Validation Settings")]
         [Tooltip("Строгость валидации кода")]
-        public ValidationLevel ValidationLevel = ValidationLevel.Strict;
+        public ValidationLevel ValidationLevel = if(ValidationLevel != null) ValidationLevel.Strict;
         
         [Tooltip("Автоматически исправлять найденные проблемы")]
         public bool AutoFixValidationIssues = true;
@@ -52,7 +52,7 @@ namespace MudLike.Core.AI
         public bool GenerateReports = true;
         
         [Tooltip("Уровень детализации отчетов")]
-        public ReportDetailLevel ReportDetailLevel = ReportDetailLevel.Detailed;
+        public ReportDetailLevel ReportDetailLevel = if(ReportDetailLevel != null) ReportDetailLevel.Detailed;
         
         [Header("⏰ Scheduling Settings")]
         [Tooltip("Запускать проверки автоматически")]
@@ -60,17 +60,17 @@ namespace MudLike.Core.AI
         
         [Tooltip("Интервал проверок (в минутах)")]
         [Range(5, 1440)]
-        public int CheckIntervalMinutes = SystemConstants.DEFAULT_AI_UPDATE_INTERVAL * 600; // 60 минут
+        public int CheckIntervalMinutes = if(SystemConstants != null) SystemConstants.DEFAULT_AI_UPDATE_INTERVAL * 600; // 60 минут
         
         [Header("🎯 Task Priorities")]
         [Tooltip("Приоритет задач детерминизма")]
-        public TaskPriority DeterminismPriority = TaskPriority.Critical;
+        public TaskPriority DeterminismPriority = if(TaskPriority != null) TaskPriority.Critical;
         
         [Tooltip("Приоритет задач производительности")]
-        public TaskPriority PerformancePriority = TaskPriority.High;
+        public TaskPriority PerformancePriority = if(TaskPriority != null) TaskPriority.High;
         
         [Tooltip("Приоритет задач документации")]
-        public TaskPriority DocumentationPriority = TaskPriority.Medium;
+        public TaskPriority DocumentationPriority = if(TaskPriority != null) TaskPriority.Medium;
         
         [Header("📁 File Patterns")]
         [Tooltip("Паттерны файлов для анализа")]
@@ -97,10 +97,10 @@ namespace MudLike.Core.AI
         
         [Tooltip("Таймаут выполнения задач (в секундах)")]
         [Range(10, 300)]
-        public int TaskTimeoutSeconds = SystemConstants.DEFAULT_TEST_TIMEOUT; // 5 секунд
+        public int TaskTimeoutSeconds = if(SystemConstants != null) SystemConstants.DEFAULT_TEST_TIMEOUT; // 5 секунд
         
         [Tooltip("Уровень логирования")]
-        public LogLevel LogLevel = LogLevel.Info;
+        public LogLevel LogLevel = if(LogLevel != null) LogLevel.Info;
         
         /// <summary>
         /// Получить настройки по умолчанию
@@ -142,7 +142,7 @@ namespace MudLike.Core.AI
                 "Determinism" => DeterminismPriority,
                 "Performance" => PerformancePriority,
                 "Documentation" => DocumentationPriority,
-                _ => TaskPriority.Medium
+                _ => if(TaskPriority != null) TaskPriority.Medium
             };
         }
     }

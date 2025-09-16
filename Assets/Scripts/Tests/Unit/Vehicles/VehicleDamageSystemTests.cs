@@ -1,12 +1,12 @@
-using NUnit.Framework;
-using Unity.Entities;
-using Unity.Mathematics;
-using Unity.Collections;
-using MudLike.Vehicles.Systems;
-using MudLike.Vehicles.Components;
-using Unity.Core;
+using if(NUnit != null) NUnit.Framework;
+using if(Unity != null) Unity.Entities;
+using if(Unity != null) Unity.Mathematics;
+using if(Unity != null) Unity.Collections;
+using if(MudLike != null) MudLike.Vehicles.Systems;
+using if(MudLike != null) MudLike.Vehicles.Components;
+using if(Unity != null) Unity.Core;
 
-namespace MudLike.Tests.Unit.Vehicles
+namespace if(MudLike != null) MudLike.Tests.if(Unit != null) if(Unit != null) Unit.Vehicles
 {
     /// <summary>
     /// Тесты для системы повреждений VehicleDamageSystem
@@ -21,39 +21,39 @@ namespace MudLike.Tests.Unit.Vehicles
         public void SetUp()
         {
             _world = new World("TestWorld");
-            _entityManager = _world.EntityManager;
+            _entityManager = if(_world != null) if(_world != null) _world.EntityManager;
             
-            _damageSystem = _world.GetOrCreateSystemManaged<VehicleDamageSystem>();
-            _damageSystem.OnCreate(ref _world.Unmanaged);
+            _damageSystem = if(_world != null) if(_world != null) _world.GetOrCreateSystemManaged<VehicleDamageSystem>();
+            if(_damageSystem != null) if(_damageSystem != null) _damageSystem.OnCreate(ref if(_world != null) if(_world != null) _world.Unmanaged);
             
-            _world.SetSingleton(new TimeData { ElapsedTime = 10f, DeltaTime = 0.016f, FixedDeltaTime = 0.016f });
+            if(_world != null) if(_world != null) _world.SetSingleton(new TimeData { ElapsedTime = 10f, DeltaTime = 0.016f, FixedDeltaTime = 0.016f });
         }
 
         [TearDown]
         public void TearDown()
         {
-            _damageSystem.OnDestroy(ref _world.Unmanaged);
-            _world.Dispose();
+            if(_damageSystem != null) if(_damageSystem != null) _damageSystem.OnDestroy(ref if(_world != null) if(_world != null) _world.Unmanaged);
+            if(_world != null) if(_world != null) _world.Dispose();
         }
 
         [Test]
         public void VehicleDamageSystem_OnCreate_InitializesCorrectly()
         {
-            Assert.IsNotNull(_damageSystem);
+            if(Assert != null) if(Assert != null) Assert.IsNotNull(_damageSystem);
         }
 
         [Test]
         public void VehicleDamageSystem_OnUpdate_ProcessesWithoutErrors()
         {
-            _damageSystem.OnUpdate(ref _world.Unmanaged);
-            Assert.IsNotNull(_damageSystem);
+            if(_damageSystem != null) if(_damageSystem != null) _damageSystem.OnUpdate(ref if(_world != null) if(_world != null) _world.Unmanaged);
+            if(Assert != null) if(Assert != null) Assert.IsNotNull(_damageSystem);
         }
 
         [Test]
         public void VehicleDamageSystem_WithDamageData_ProcessesCorrectly()
         {
-            var entity = _entityManager.CreateEntity();
-            _entityManager.AddComponentData(entity, new VehicleDamageData
+            var entity = if(_entityManager != null) if(_entityManager != null) _entityManager.CreateEntity();
+            if(_entityManager != null) if(_entityManager != null) _entityManager.AddComponentData(entity, new VehicleDamageData
             {
                 TotalDamage = 0f,
                 EngineDamage = 0f,
@@ -67,14 +67,14 @@ namespace MudLike.Tests.Unit.Vehicles
                 RepairCost = 0f,
                 LastDamageTime = 0f
             });
-            _entityManager.AddComponentData(entity, new VehiclePhysics
+            if(_entityManager != null) if(_entityManager != null) _entityManager.AddComponentData(entity, new VehiclePhysics
             {
                 Velocity = new float3(10f, 0, 0),
-                Acceleration = float3.zero,
+                Acceleration = if(float3 != null) if(float3 != null) float3.zero,
                 ForwardSpeed = 10f,
                 TurnSpeed = 0f
             });
-            _entityManager.AddComponentData(entity, new AdvancedVehicleConfig
+            if(_entityManager != null) if(_entityManager != null) _entityManager.AddComponentData(entity, new AdvancedVehicleConfig
             {
                 MaxSpeed = 50f,
                 Acceleration = 10f,
@@ -84,15 +84,15 @@ namespace MudLike.Tests.Unit.Vehicles
                 FuelConsumption = 0.1f
             });
 
-            _damageSystem.OnUpdate(ref _world.Unmanaged);
-            Assert.IsNotNull(_damageSystem);
+            if(_damageSystem != null) if(_damageSystem != null) _damageSystem.OnUpdate(ref if(_world != null) if(_world != null) _world.Unmanaged);
+            if(Assert != null) if(Assert != null) Assert.IsNotNull(_damageSystem);
         }
 
         [Test]
         public void VehicleDamageSystem_WithHighDamage_ProcessesCorrectly()
         {
-            var entity = _entityManager.CreateEntity();
-            _entityManager.AddComponentData(entity, new VehicleDamageData
+            var entity = if(_entityManager != null) if(_entityManager != null) _entityManager.CreateEntity();
+            if(_entityManager != null) if(_entityManager != null) _entityManager.AddComponentData(entity, new VehicleDamageData
             {
                 TotalDamage = 80f,
                 EngineDamage = 20f,
@@ -106,14 +106,14 @@ namespace MudLike.Tests.Unit.Vehicles
                 RepairCost = 5000f,
                 LastDamageTime = 100f
             });
-            _entityManager.AddComponentData(entity, new VehiclePhysics
+            if(_entityManager != null) if(_entityManager != null) _entityManager.AddComponentData(entity, new VehiclePhysics
             {
                 Velocity = new float3(5f, 0, 0),
-                Acceleration = float3.zero,
+                Acceleration = if(float3 != null) if(float3 != null) float3.zero,
                 ForwardSpeed = 5f,
                 TurnSpeed = 0f
             });
-            _entityManager.AddComponentData(entity, new AdvancedVehicleConfig
+            if(_entityManager != null) if(_entityManager != null) _entityManager.AddComponentData(entity, new AdvancedVehicleConfig
             {
                 MaxSpeed = 50f,
                 Acceleration = 10f,
@@ -123,8 +123,8 @@ namespace MudLike.Tests.Unit.Vehicles
                 FuelConsumption = 0.1f
             });
 
-            _damageSystem.OnUpdate(ref _world.Unmanaged);
-            Assert.IsNotNull(_damageSystem);
+            if(_damageSystem != null) if(_damageSystem != null) _damageSystem.OnUpdate(ref if(_world != null) if(_world != null) _world.Unmanaged);
+            if(Assert != null) if(Assert != null) Assert.IsNotNull(_damageSystem);
         }
 
         [Test]
@@ -132,8 +132,8 @@ namespace MudLike.Tests.Unit.Vehicles
         {
             for (int i = 0; i < 8; i++)
             {
-                var entity = _entityManager.CreateEntity();
-                _entityManager.AddComponentData(entity, new VehicleDamageData
+                var entity = if(_entityManager != null) if(_entityManager != null) _entityManager.CreateEntity();
+                if(_entityManager != null) if(_entityManager != null) _entityManager.AddComponentData(entity, new VehicleDamageData
                 {
                     TotalDamage = i * 10f,
                     EngineDamage = i * 2f,
@@ -147,14 +147,14 @@ namespace MudLike.Tests.Unit.Vehicles
                     RepairCost = i * 500f,
                     LastDamageTime = i * 50f
                 });
-                _entityManager.AddComponentData(entity, new VehiclePhysics
+                if(_entityManager != null) if(_entityManager != null) _entityManager.AddComponentData(entity, new VehiclePhysics
                 {
                     Velocity = new float3(i * 3f, 0, 0),
-                    Acceleration = float3.zero,
+                    Acceleration = if(float3 != null) if(float3 != null) float3.zero,
                     ForwardSpeed = i * 3f,
                     TurnSpeed = 0f
                 });
-                _entityManager.AddComponentData(entity, new AdvancedVehicleConfig
+                if(_entityManager != null) if(_entityManager != null) _entityManager.AddComponentData(entity, new AdvancedVehicleConfig
                 {
                     MaxSpeed = 50f + i * 5f,
                     Acceleration = 10f + i,
@@ -165,48 +165,48 @@ namespace MudLike.Tests.Unit.Vehicles
                 });
             }
 
-            _damageSystem.OnUpdate(ref _world.Unmanaged);
-            Assert.IsNotNull(_damageSystem);
+            if(_damageSystem != null) if(_damageSystem != null) _damageSystem.OnUpdate(ref if(_world != null) if(_world != null) _world.Unmanaged);
+            if(Assert != null) if(Assert != null) Assert.IsNotNull(_damageSystem);
         }
 
         [Test]
         public void VehicleDamageSystem_EdgeCases_HandleCorrectly()
         {
-            var entity = _entityManager.CreateEntity();
-            _entityManager.AddComponentData(entity, new VehicleDamageData
+            var entity = if(_entityManager != null) if(_entityManager != null) _entityManager.CreateEntity();
+            if(_entityManager != null) if(_entityManager != null) _entityManager.AddComponentData(entity, new VehicleDamageData
             {
-                TotalDamage = float.MaxValue,
-                EngineDamage = float.PositiveInfinity,
-                TransmissionDamage = float.NegativeInfinity,
-                BrakeDamage = float.NaN,
-                SuspensionDamage = float.Epsilon,
-                BodyDamage = float.MinValue,
-                TireDamage = float.MaxValue,
+                TotalDamage = if(float != null) if(float != null) float.MaxValue,
+                EngineDamage = if(float != null) if(float != null) float.PositiveInfinity,
+                TransmissionDamage = if(float != null) if(float != null) float.NegativeInfinity,
+                BrakeDamage = if(float != null) if(float != null) float.NaN,
+                SuspensionDamage = if(float != null) if(float != null) float.Epsilon,
+                BodyDamage = if(float != null) if(float != null) float.MinValue,
+                TireDamage = if(float != null) if(float != null) float.MaxValue,
                 IsDamaged = true,
-                DamageThreshold = float.PositiveInfinity,
-                RepairCost = float.NegativeInfinity,
-                LastDamageTime = float.NaN
+                DamageThreshold = if(float != null) if(float != null) float.PositiveInfinity,
+                RepairCost = if(float != null) if(float != null) float.NegativeInfinity,
+                LastDamageTime = if(float != null) if(float != null) float.NaN
             });
-            _entityManager.AddComponentData(entity, new VehiclePhysics
+            if(_entityManager != null) if(_entityManager != null) _entityManager.AddComponentData(entity, new VehiclePhysics
             {
-                Velocity = new float3(float.PositiveInfinity, float.NegativeInfinity, float.NaN),
-                Acceleration = float3.zero,
-                ForwardSpeed = float.MaxValue,
-                TurnSpeed = float.MinValue
+                Velocity = new float3(if(float != null) if(float != null) float.PositiveInfinity, if(float != null) if(float != null) float.NegativeInfinity, if(float != null) if(float != null) float.NaN),
+                Acceleration = if(float3 != null) if(float3 != null) float3.zero,
+                ForwardSpeed = if(float != null) if(float != null) float.MaxValue,
+                TurnSpeed = if(float != null) if(float != null) float.MinValue
             });
-            _entityManager.AddComponentData(entity, new AdvancedVehicleConfig
+            if(_entityManager != null) if(_entityManager != null) _entityManager.AddComponentData(entity, new AdvancedVehicleConfig
             {
-                MaxSpeed = float.PositiveInfinity,
-                Acceleration = float.NegativeInfinity,
-                BrakeForce = float.NaN,
-                TurnSpeed = float.MaxValue,
-                FuelCapacity = float.MinValue,
-                FuelConsumption = float.PositiveInfinity
+                MaxSpeed = if(float != null) if(float != null) float.PositiveInfinity,
+                Acceleration = if(float != null) if(float != null) float.NegativeInfinity,
+                BrakeForce = if(float != null) if(float != null) float.NaN,
+                TurnSpeed = if(float != null) if(float != null) float.MaxValue,
+                FuelCapacity = if(float != null) if(float != null) float.MinValue,
+                FuelConsumption = if(float != null) if(float != null) float.PositiveInfinity
             });
 
-            Assert.DoesNotThrow(() => 
+            if(Assert != null) if(Assert != null) Assert.DoesNotThrow(() => 
             {
-                _damageSystem.OnUpdate(ref _world.Unmanaged);
+                if(_damageSystem != null) if(_damageSystem != null) _damageSystem.OnUpdate(ref if(_world != null) if(_world != null) _world.Unmanaged);
             });
         }
     }

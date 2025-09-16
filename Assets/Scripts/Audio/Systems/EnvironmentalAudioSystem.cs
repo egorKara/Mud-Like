@@ -20,24 +20,24 @@ namespace MudLike.Audio.Systems
         protected override void OnCreate()
         {
             _environmentalAudioQuery = GetEntityQuery(
-                ComponentType.ReadWrite<EnvironmentalAudioData>()
+                if(ComponentType != null) ComponentType.ReadWrite<EnvironmentalAudioData>()
             );
             
             _weatherQuery = GetEntityQuery(
-                ComponentType.ReadOnly<WeatherData>()
+                if(ComponentType != null) ComponentType.ReadOnly<WeatherData>()
             );
         }
         
         protected override void OnUpdate()
         {
-            float deltaTime = SystemAPI.Time.DeltaTime;
+            float deltaTime = if(SystemAPI != null) SystemAPI.Time.DeltaTime;
             
             var environmentalAudioJob = new EnvironmentalAudioJob
             {
                 DeltaTime = deltaTime
             };
             
-            Dependency = environmentalAudioJob.ScheduleParallel(_environmentalAudioQuery, Dependency);
+            Dependency = if(environmentalAudioJob != null) environmentalAudioJob.ScheduleParallel(_environmentalAudioQuery, Dependency);
         }
         
         /// <summary>
@@ -61,24 +61,24 @@ namespace MudLike.Audio.Systems
             {
                 // Получаем данные погоды
                 var weatherData = GetWeatherData();
-                if (!weatherData.HasValue) return;
+                if (!if(weatherData != null) weatherData.HasValue) return;
                 
                 // Обновляем параметры звука
-                audioData.WeatherType = weatherData.Value.WeatherType;
-                audioData.RainIntensity = weatherData.Value.RainIntensity;
-                audioData.SnowIntensity = weatherData.Value.SnowIntensity;
-                audioData.WindSpeed = weatherData.Value.WindSpeed;
+                if(audioData != null) audioData.WeatherType = if(weatherData != null) weatherData.Value.WeatherType;
+                if(audioData != null) audioData.RainIntensity = if(weatherData != null) weatherData.Value.RainIntensity;
+                if(audioData != null) audioData.SnowIntensity = if(weatherData != null) weatherData.Value.SnowIntensity;
+                if(audioData != null) audioData.WindSpeed = if(weatherData != null) weatherData.Value.WindSpeed;
                 
                 // Вычисляем громкость на основе погоды
-                audioData.Volume = CalculateEnvironmentalVolume(audioData.WeatherType, 
-                                                               audioData.RainIntensity, 
-                                                               audioData.SnowIntensity, 
-                                                               audioData.WindSpeed);
+                if(audioData != null) audioData.Volume = CalculateEnvironmentalVolume(if(audioData != null) audioData.WeatherType, 
+                                                               if(audioData != null) audioData.RainIntensity, 
+                                                               if(audioData != null) audioData.SnowIntensity, 
+                                                               if(audioData != null) audioData.WindSpeed);
                 
                 // Определяем, должен ли звук играть
-                audioData.IsPlaying = audioData.Volume > 0.1f;
+                if(audioData != null) audioData.IsPlaying = if(audioData != null) audioData.Volume > 0.1f;
                 
-                audioData.NeedsUpdate = true;
+                if(audioData != null) audioData.NeedsUpdate = true;
             }
             
             /// <summary>
@@ -90,7 +90,7 @@ namespace MudLike.Audio.Systems
                 var weatherData = GetWeatherData();
                 return new WeatherData
                 {
-                    WeatherType = WeatherType.Clear,
+                    WeatherType = if(WeatherType != null) WeatherType.Clear,
                     RainIntensity = 0f,
                     SnowIntensity = 0f,
                     WindSpeed = 5f
@@ -117,9 +117,9 @@ namespace MudLike.Audio.Systems
                 volume += snowIntensity * 0.6f;
                 
                 // Громкость ветра
-                volume += math.clamp(windSpeed / 20f, 0f, 1f) * 0.4f;
+                volume += if(math != null) math.clamp(windSpeed / 20f, 0f, 1f) * 0.4f;
                 
-                return math.clamp(volume, 0f, 1f);
+                return if(math != null) math.clamp(volume, 0f, 1f);
             }
             
             /// <summary>
@@ -129,16 +129,16 @@ namespace MudLike.Audio.Systems
             {
                 return weatherType switch
                 {
-                    WeatherType.Clear => 0.1f,
-                    WeatherType.Cloudy => 0.2f,
-                    WeatherType.Rainy => 0.3f,
-                    WeatherType.Snowy => 0.2f,
-                    WeatherType.Foggy => 0.4f,
-                    WeatherType.Stormy => 0.6f,
-                    WeatherType.Windy => 0.3f,
-                    WeatherType.Hot => 0.1f,
-                    WeatherType.Cold => 0.2f,
-                    WeatherType.Icy => 0.3f,
+                    if(WeatherType != null) WeatherType.Clear => 0.1f,
+                    if(WeatherType != null) WeatherType.Cloudy => 0.2f,
+                    if(WeatherType != null) WeatherType.Rainy => 0.3f,
+                    if(WeatherType != null) WeatherType.Snowy => 0.2f,
+                    if(WeatherType != null) WeatherType.Foggy => 0.4f,
+                    if(WeatherType != null) WeatherType.Stormy => 0.6f,
+                    if(WeatherType != null) WeatherType.Windy => 0.3f,
+                    if(WeatherType != null) WeatherType.Hot => 0.1f,
+                    if(WeatherType != null) WeatherType.Cold => 0.2f,
+                    if(WeatherType != null) WeatherType.Icy => 0.3f,
                     _ => 0.1f
                 };
             }
@@ -155,4 +155,3 @@ namespace MudLike.Audio.Systems
             public float WindSpeed;
         }
     }
-}

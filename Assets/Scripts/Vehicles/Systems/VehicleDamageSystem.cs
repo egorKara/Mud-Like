@@ -15,14 +15,14 @@ namespace MudLike.Vehicles.Systems
     {
         protected override void OnUpdate()
         {
-            float deltaTime = SystemAPI.Time.fixedDeltaTime;
+            float deltaTime = if(SystemAPI != null) SystemAPI.Time.fixedDeltaTime;
             
             var damageJob = new VehicleDamageJob
             {
                 DeltaTime = deltaTime
             };
             
-            Dependency = damageJob.ScheduleParallel(this, Dependency);
+            Dependency = if(damageJob != null) damageJob.ScheduleParallel(this, Dependency);
         }
         
         /// <summary>
@@ -48,7 +48,7 @@ namespace MudLike.Vehicles.Systems
                                             in AdvancedVehicleConfig config)
             {
                 // Обновляем время
-                damage.LastUpdateTime += DeltaTime;
+                if(damage != null) damage.LastUpdateTime += DeltaTime;
                 
                 // Обрабатываем повреждения от столкновений
                 ProcessCollisionDamage(ref damage, physics);
@@ -69,7 +69,7 @@ namespace MudLike.Vehicles.Systems
                 UpdateOverallCondition(ref damage);
                 
                 // Устанавливаем флаг обновления
-                damage.NeedsUpdate = true;
+                if(damage != null) damage.NeedsUpdate = true;
             }
             
             /// <summary>
@@ -78,21 +78,21 @@ namespace MudLike.Vehicles.Systems
             private void ProcessCollisionDamage(ref VehicleDamageData damage, in VehiclePhysics physics)
             {
                 // Повреждения от ударов
-                float impactForce = math.length(physics.AppliedForce);
+                float impactForce = if(math != null) math.length(if(physics != null) physics.AppliedForce);
                 if (impactForce > 1000f)
                 {
                     float damageAmount = impactForce * 0.001f;
-                    damage.BodyCondition -= damageAmount;
-                    damage.CabinCondition -= damageAmount * 0.5f;
+                    if(damage != null) damage.BodyCondition -= damageAmount;
+                    if(damage != null) damage.CabinCondition -= damageAmount * 0.5f;
                 }
                 
                 // Повреждения от перегрузок
-                float acceleration = math.length(physics.Acceleration);
+                float acceleration = if(math != null) math.length(if(physics != null) physics.Acceleration);
                 if (acceleration > 50f)
                 {
                     float damageAmount = acceleration * 0.01f;
-                    damage.SuspensionCondition -= damageAmount;
-                    damage.WheelCondition -= damageAmount * 0.5f;
+                    if(damage != null) damage.SuspensionCondition -= damageAmount;
+                    if(damage != null) damage.WheelCondition -= damageAmount * 0.5f;
                 }
             }
             
@@ -102,24 +102,24 @@ namespace MudLike.Vehicles.Systems
             private void ProcessWearDamage(ref VehicleDamageData damage, in VehiclePhysics physics, in AdvancedVehicleConfig config)
             {
                 // Износ двигателя
-                float engineWear = physics.EngineRPM * 0.0001f * DeltaTime;
-                damage.EngineCondition -= engineWear;
+                float engineWear = if(physics != null) physics.EngineRPM * 0.0001f * DeltaTime;
+                if(damage != null) damage.EngineCondition -= engineWear;
                 
                 // Износ трансмиссии
-                float transmissionWear = math.abs(physics.ForwardSpeed) * 0.0001f * DeltaTime;
-                damage.TransmissionCondition -= transmissionWear;
+                float transmissionWear = if(math != null) math.abs(if(physics != null) physics.ForwardSpeed) * 0.0001f * DeltaTime;
+                if(damage != null) damage.TransmissionCondition -= transmissionWear;
                 
                 // Износ подвески
-                float suspensionWear = math.length(physics.Velocity) * 0.0001f * DeltaTime;
-                damage.SuspensionCondition -= suspensionWear;
+                float suspensionWear = if(math != null) math.length(if(physics != null) physics.Velocity) * 0.0001f * DeltaTime;
+                if(damage != null) damage.SuspensionCondition -= suspensionWear;
                 
                 // Износ тормозов
-                float brakeWear = math.abs(physics.BrakeTorque) * 0.0001f * DeltaTime;
-                damage.BrakeCondition -= brakeWear;
+                float brakeWear = if(math != null) math.abs(if(physics != null) physics.BrakeTorque) * 0.0001f * DeltaTime;
+                if(damage != null) damage.BrakeCondition -= brakeWear;
                 
                 // Износ колес
-                float wheelWear = math.length(physics.Velocity) * 0.0001f * DeltaTime;
-                damage.WheelCondition -= wheelWear;
+                float wheelWear = if(math != null) math.length(if(physics != null) physics.Velocity) * 0.0001f * DeltaTime;
+                if(damage != null) damage.WheelCondition -= wheelWear;
             }
             
             /// <summary>
@@ -128,19 +128,19 @@ namespace MudLike.Vehicles.Systems
             private void ProcessTemperatureDamage(ref VehicleDamageData damage, in VehiclePhysics physics)
             {
                 // Повреждения от перегрева двигателя
-                if (physics.EngineTemperature > 100f)
+                if (if(physics != null) physics.EngineTemperature > 100f)
                 {
-                    float heatDamage = (physics.EngineTemperature - 100f) * 0.01f * DeltaTime;
-                    damage.EngineCondition -= heatDamage;
-                    damage.CoolingSystemCondition -= heatDamage * 0.5f;
+                    float heatDamage = (if(physics != null) physics.EngineTemperature - 100f) * 0.01f * DeltaTime;
+                    if(damage != null) damage.EngineCondition -= heatDamage;
+                    if(damage != null) damage.CoolingSystemCondition -= heatDamage * 0.5f;
                 }
                 
                 // Повреждения от переохлаждения
-                if (physics.EngineTemperature < 0f)
+                if (if(physics != null) physics.EngineTemperature < 0f)
                 {
-                    float coldDamage = math.abs(physics.EngineTemperature) * 0.01f * DeltaTime;
-                    damage.EngineCondition -= coldDamage;
-                    damage.CoolingSystemCondition -= coldDamage * 0.5f;
+                    float coldDamage = if(math != null) math.abs(if(physics != null) physics.EngineTemperature) * 0.01f * DeltaTime;
+                    if(damage != null) damage.EngineCondition -= coldDamage;
+                    if(damage != null) damage.CoolingSystemCondition -= coldDamage * 0.5f;
                 }
             }
             
@@ -150,14 +150,14 @@ namespace MudLike.Vehicles.Systems
             private void ProcessVibrationDamage(ref VehicleDamageData damage, in VehiclePhysics physics)
             {
                 // Вибрация от двигателя
-                float engineVibration = physics.EngineRPM * 0.0001f * DeltaTime;
-                damage.EngineCondition -= engineVibration;
-                damage.TransmissionCondition -= engineVibration * 0.5f;
+                float engineVibration = if(physics != null) physics.EngineRPM * 0.0001f * DeltaTime;
+                if(damage != null) damage.EngineCondition -= engineVibration;
+                if(damage != null) damage.TransmissionCondition -= engineVibration * 0.5f;
                 
                 // Вибрация от подвески
-                float suspensionVibration = math.length(physics.Velocity) * 0.0001f * DeltaTime;
-                damage.SuspensionCondition -= suspensionVibration;
-                damage.WheelCondition -= suspensionVibration * 0.5f;
+                float suspensionVibration = if(math != null) math.length(if(physics != null) physics.Velocity) * 0.0001f * DeltaTime;
+                if(damage != null) damage.SuspensionCondition -= suspensionVibration;
+                if(damage != null) damage.WheelCondition -= suspensionVibration * 0.5f;
             }
             
             /// <summary>
@@ -167,9 +167,9 @@ namespace MudLike.Vehicles.Systems
             {
                 // Коррозия от влажности
                 float corrosionRate = 0.0001f * DeltaTime;
-                damage.BodyCondition -= corrosionRate;
-                damage.CabinCondition -= corrosionRate * 0.5f;
-                damage.CargoAreaCondition -= corrosionRate * 0.3f;
+                if(damage != null) damage.BodyCondition -= corrosionRate;
+                if(damage != null) damage.CabinCondition -= corrosionRate * 0.5f;
+                if(damage != null) damage.CargoAreaCondition -= corrosionRate * 0.3f;
             }
             
             /// <summary>
@@ -181,225 +181,224 @@ namespace MudLike.Vehicles.Systems
                 float totalCondition = 0f;
                 int systemCount = 0;
                 
-                totalCondition += damage.EngineCondition;
+                totalCondition += if(damage != null) damage.EngineCondition;
                 systemCount++;
                 
-                totalCondition += damage.TransmissionCondition;
+                totalCondition += if(damage != null) damage.TransmissionCondition;
                 systemCount++;
                 
-                totalCondition += damage.SuspensionCondition;
+                totalCondition += if(damage != null) damage.SuspensionCondition;
                 systemCount++;
                 
-                totalCondition += damage.BrakeCondition;
+                totalCondition += if(damage != null) damage.BrakeCondition;
                 systemCount++;
                 
-                totalCondition += damage.SteeringCondition;
+                totalCondition += if(damage != null) damage.SteeringCondition;
                 systemCount++;
                 
-                totalCondition += damage.WheelCondition;
+                totalCondition += if(damage != null) damage.WheelCondition;
                 systemCount++;
                 
-                totalCondition += damage.BodyCondition;
+                totalCondition += if(damage != null) damage.BodyCondition;
                 systemCount++;
                 
-                totalCondition += damage.CabinCondition;
+                totalCondition += if(damage != null) damage.CabinCondition;
                 systemCount++;
                 
-                totalCondition += damage.CargoAreaCondition;
+                totalCondition += if(damage != null) damage.CargoAreaCondition;
                 systemCount++;
                 
-                totalCondition += damage.FuelSystemCondition;
+                totalCondition += if(damage != null) damage.FuelSystemCondition;
                 systemCount++;
                 
-                totalCondition += damage.ElectricalSystemCondition;
+                totalCondition += if(damage != null) damage.ElectricalSystemCondition;
                 systemCount++;
                 
-                totalCondition += damage.CoolingSystemCondition;
+                totalCondition += if(damage != null) damage.CoolingSystemCondition;
                 systemCount++;
                 
-                totalCondition += damage.LubricationSystemCondition;
+                totalCondition += if(damage != null) damage.LubricationSystemCondition;
                 systemCount++;
                 
-                totalCondition += damage.IgnitionSystemCondition;
+                totalCondition += if(damage != null) damage.IgnitionSystemCondition;
                 systemCount++;
                 
-                totalCondition += damage.IntakeSystemCondition;
+                totalCondition += if(damage != null) damage.IntakeSystemCondition;
                 systemCount++;
                 
-                totalCondition += damage.ExhaustSystemCondition;
+                totalCondition += if(damage != null) damage.ExhaustSystemCondition;
                 systemCount++;
                 
-                totalCondition += damage.AirConditioningCondition;
+                totalCondition += if(damage != null) damage.AirConditioningCondition;
                 systemCount++;
                 
-                totalCondition += damage.HeatingSystemCondition;
+                totalCondition += if(damage != null) damage.HeatingSystemCondition;
                 systemCount++;
                 
-                totalCondition += damage.LightingSystemCondition;
+                totalCondition += if(damage != null) damage.LightingSystemCondition;
                 systemCount++;
                 
-                totalCondition += damage.SignalingSystemCondition;
+                totalCondition += if(damage != null) damage.SignalingSystemCondition;
                 systemCount++;
                 
-                totalCondition += damage.SafetySystemCondition;
+                totalCondition += if(damage != null) damage.SafetySystemCondition;
                 systemCount++;
                 
-                totalCondition += damage.NavigationSystemCondition;
+                totalCondition += if(damage != null) damage.NavigationSystemCondition;
                 systemCount++;
                 
-                totalCondition += damage.CommunicationSystemCondition;
+                totalCondition += if(damage != null) damage.CommunicationSystemCondition;
                 systemCount++;
                 
-                totalCondition += damage.MonitoringSystemCondition;
+                totalCondition += if(damage != null) damage.MonitoringSystemCondition;
                 systemCount++;
                 
-                totalCondition += damage.DiagnosticSystemCondition;
+                totalCondition += if(damage != null) damage.DiagnosticSystemCondition;
                 systemCount++;
                 
-                totalCondition += damage.ControlSystemCondition;
+                totalCondition += if(damage != null) damage.ControlSystemCondition;
                 systemCount++;
                 
-                totalCondition += damage.StabilizationSystemCondition;
+                totalCondition += if(damage != null) damage.StabilizationSystemCondition;
                 systemCount++;
                 
-                totalCondition += damage.TractionControlSystemCondition;
+                totalCondition += if(damage != null) damage.TractionControlSystemCondition;
                 systemCount++;
                 
-                totalCondition += damage.BrakeAssistSystemCondition;
+                totalCondition += if(damage != null) damage.BrakeAssistSystemCondition;
                 systemCount++;
                 
-                totalCondition += damage.ABSSystemCondition;
+                totalCondition += if(damage != null) damage.ABSSystemCondition;
                 systemCount++;
                 
-                totalCondition += damage.HillStartAssistSystemCondition;
+                totalCondition += if(damage != null) damage.HillStartAssistSystemCondition;
                 systemCount++;
                 
-                totalCondition += damage.HillDescentControlSystemCondition;
+                totalCondition += if(damage != null) damage.HillDescentControlSystemCondition;
                 systemCount++;
                 
-                totalCondition += damage.TirePressureMonitoringSystemCondition;
+                totalCondition += if(damage != null) damage.TirePressureMonitoringSystemCondition;
                 systemCount++;
                 
-                totalCondition += damage.EngineTemperatureMonitoringSystemCondition;
+                totalCondition += if(damage != null) damage.EngineTemperatureMonitoringSystemCondition;
                 systemCount++;
                 
-                totalCondition += damage.OilLevelMonitoringSystemCondition;
+                totalCondition += if(damage != null) damage.OilLevelMonitoringSystemCondition;
                 systemCount++;
                 
-                totalCondition += damage.CoolantLevelMonitoringSystemCondition;
+                totalCondition += if(damage != null) damage.CoolantLevelMonitoringSystemCondition;
                 systemCount++;
                 
-                totalCondition += damage.BrakeFluidLevelMonitoringSystemCondition;
+                totalCondition += if(damage != null) damage.BrakeFluidLevelMonitoringSystemCondition;
                 systemCount++;
                 
-                totalCondition += damage.FuelLevelMonitoringSystemCondition;
+                totalCondition += if(damage != null) damage.FuelLevelMonitoringSystemCondition;
                 systemCount++;
                 
-                totalCondition += damage.BatteryChargeMonitoringSystemCondition;
+                totalCondition += if(damage != null) damage.BatteryChargeMonitoringSystemCondition;
                 systemCount++;
                 
-                totalCondition += damage.VoltageMonitoringSystemCondition;
+                totalCondition += if(damage != null) damage.VoltageMonitoringSystemCondition;
                 systemCount++;
                 
-                totalCondition += damage.BatteryTemperatureMonitoringSystemCondition;
+                totalCondition += if(damage != null) damage.BatteryTemperatureMonitoringSystemCondition;
                 systemCount++;
                 
-                totalCondition += damage.TransmissionTemperatureMonitoringSystemCondition;
+                totalCondition += if(damage != null) damage.TransmissionTemperatureMonitoringSystemCondition;
                 systemCount++;
                 
-                totalCondition += damage.DifferentialTemperatureMonitoringSystemCondition;
+                totalCondition += if(damage != null) damage.DifferentialTemperatureMonitoringSystemCondition;
                 systemCount++;
                 
-                totalCondition += damage.SuspensionTemperatureMonitoringSystemCondition;
+                totalCondition += if(damage != null) damage.SuspensionTemperatureMonitoringSystemCondition;
                 systemCount++;
                 
-                totalCondition += damage.BrakeTemperatureMonitoringSystemCondition;
+                totalCondition += if(damage != null) damage.BrakeTemperatureMonitoringSystemCondition;
                 systemCount++;
                 
-                totalCondition += damage.TireTemperatureMonitoringSystemCondition;
+                totalCondition += if(damage != null) damage.TireTemperatureMonitoringSystemCondition;
                 systemCount++;
                 
-                totalCondition += damage.TireWearMonitoringSystemCondition;
+                totalCondition += if(damage != null) damage.TireWearMonitoringSystemCondition;
                 systemCount++;
                 
-                totalCondition += damage.WheelBalanceMonitoringSystemCondition;
+                totalCondition += if(damage != null) damage.WheelBalanceMonitoringSystemCondition;
                 systemCount++;
                 
-                totalCondition += damage.WheelAlignmentMonitoringSystemCondition;
+                totalCondition += if(damage != null) damage.WheelAlignmentMonitoringSystemCondition;
                 systemCount++;
                 
-                totalCondition += damage.SuspensionMonitoringSystemCondition;
+                totalCondition += if(damage != null) damage.SuspensionMonitoringSystemCondition;
                 systemCount++;
                 
-                totalCondition += damage.ShockAbsorberMonitoringSystemCondition;
+                totalCondition += if(damage != null) damage.ShockAbsorberMonitoringSystemCondition;
                 systemCount++;
                 
-                totalCondition += damage.SpringMonitoringSystemCondition;
+                totalCondition += if(damage != null) damage.SpringMonitoringSystemCondition;
                 systemCount++;
                 
-                totalCondition += damage.StabilizerMonitoringSystemCondition;
+                totalCondition += if(damage != null) damage.StabilizerMonitoringSystemCondition;
                 systemCount++;
                 
-                totalCondition += damage.SteeringMonitoringSystemCondition;
+                totalCondition += if(damage != null) damage.SteeringMonitoringSystemCondition;
                 systemCount++;
                 
-                totalCondition += damage.SteeringRackMonitoringSystemCondition;
+                totalCondition += if(damage != null) damage.SteeringRackMonitoringSystemCondition;
                 systemCount++;
                 
-                totalCondition += damage.SteeringTieRodMonitoringSystemCondition;
+                totalCondition += if(damage != null) damage.SteeringTieRodMonitoringSystemCondition;
                 systemCount++;
                 
-                totalCondition += damage.SteeringEndMonitoringSystemCondition;
+                totalCondition += if(damage != null) damage.SteeringEndMonitoringSystemCondition;
                 systemCount++;
                 
-                totalCondition += damage.SteeringBearingMonitoringSystemCondition;
+                totalCondition += if(damage != null) damage.SteeringBearingMonitoringSystemCondition;
                 systemCount++;
                 
-                totalCondition += damage.SteeringSealMonitoringSystemCondition;
+                totalCondition += if(damage != null) damage.SteeringSealMonitoringSystemCondition;
                 systemCount++;
                 
-                totalCondition += damage.SteeringGasketMonitoringSystemCondition;
+                totalCondition += if(damage != null) damage.SteeringGasketMonitoringSystemCondition;
                 systemCount++;
                 
-                totalCondition += damage.SteeringGasketMonitoringSystemCondition2;
+                totalCondition += if(damage != null) damage.SteeringGasketMonitoringSystemCondition2;
                 systemCount++;
                 
-                totalCondition += damage.SteeringBushingMonitoringSystemCondition;
+                totalCondition += if(damage != null) damage.SteeringBushingMonitoringSystemCondition;
                 systemCount++;
                 
-                totalCondition += damage.SteeringBushingMonitoringSystemCondition2;
+                totalCondition += if(damage != null) damage.SteeringBushingMonitoringSystemCondition2;
                 systemCount++;
                 
-                totalCondition += damage.SteeringBushingMonitoringSystemCondition3;
+                totalCondition += if(damage != null) damage.SteeringBushingMonitoringSystemCondition3;
                 systemCount++;
                 
-                totalCondition += damage.SteeringBushingMonitoringSystemCondition4;
+                totalCondition += if(damage != null) damage.SteeringBushingMonitoringSystemCondition4;
                 systemCount++;
                 
-                totalCondition += damage.SteeringBushingMonitoringSystemCondition5;
+                totalCondition += if(damage != null) damage.SteeringBushingMonitoringSystemCondition5;
                 systemCount++;
                 
-                totalCondition += damage.SteeringBushingMonitoringSystemCondition6;
+                totalCondition += if(damage != null) damage.SteeringBushingMonitoringSystemCondition6;
                 systemCount++;
                 
-                totalCondition += damage.SteeringBushingMonitoringSystemCondition7;
+                totalCondition += if(damage != null) damage.SteeringBushingMonitoringSystemCondition7;
                 systemCount++;
                 
-                totalCondition += damage.SteeringBushingMonitoringSystemCondition8;
+                totalCondition += if(damage != null) damage.SteeringBushingMonitoringSystemCondition8;
                 systemCount++;
                 
-                totalCondition += damage.SteeringBushingMonitoringSystemCondition9;
+                totalCondition += if(damage != null) damage.SteeringBushingMonitoringSystemCondition9;
                 systemCount++;
                 
-                totalCondition += damage.SteeringBushingMonitoringSystemCondition10;
+                totalCondition += if(damage != null) damage.SteeringBushingMonitoringSystemCondition10;
                 systemCount++;
                 
                 // Вычисляем среднее состояние
-                damage.OverallCondition = totalCondition / systemCount;
+                if(damage != null) damage.OverallCondition = totalCondition / systemCount;
                 
                 // Ограничиваем значения
-                damage.OverallCondition = math.clamp(damage.OverallCondition, 0f, 1f);
+                if(damage != null) damage.OverallCondition = if(math != null) math.clamp(if(damage != null) damage.OverallCondition, 0f, 1f);
             }
         }
     }
-}

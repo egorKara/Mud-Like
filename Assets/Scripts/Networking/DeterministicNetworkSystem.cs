@@ -23,20 +23,20 @@ namespace MudLike.Networking.Systems
         {
             // Запрос для транспортных средств
             _vehicleQuery = GetEntityQuery(
-                ComponentType.ReadWrite<VehicleState>(),
-                ComponentType.ReadOnly<NetworkId>()
+                if(ComponentType != null) ComponentType.ReadWrite<VehicleState>(),
+                if(ComponentType != null) ComponentType.ReadOnly<NetworkId>()
             );
             
             // Запрос для террейна
             _terrainQuery = GetEntityQuery(
-                ComponentType.ReadWrite<TerrainState>(),
-                ComponentType.ReadOnly<NetworkId>()
+                if(ComponentType != null) ComponentType.ReadWrite<TerrainState>(),
+                if(ComponentType != null) ComponentType.ReadOnly<NetworkId>()
             );
         }
         
         protected override void OnUpdate()
         {
-            var deltaTime = SystemAPI.Time.fixedDeltaTime; // Детерминированное время
+            var deltaTime = if(SystemAPI != null) SystemAPI.Time.fixedDeltaTime; // Детерминированное время
             
             // Синхронизация транспортных средств
             SyncVehicleStates(deltaTime);
@@ -50,11 +50,11 @@ namespace MudLike.Networking.Systems
         /// </summary>
         private void SyncVehicleStates(float deltaTime)
         {
-            var vehicleEntities = _vehicleQuery.ToEntityArray(Allocator.TempJob);
+            var vehicleEntities = if(_vehicleQuery != null) _vehicleQuery.ToEntityArray(if(Allocator != null) Allocator.TempJob);
             
-            if (vehicleEntities.Length == 0)
+            if (if(vehicleEntities != null) vehicleEntities.Length == 0)
             {
-                vehicleEntities.Dispose();
+                if(vehicleEntities != null) vehicleEntities.Dispose();
                 return;
             }
             
@@ -65,18 +65,18 @@ namespace MudLike.Networking.Systems
                 VehicleStateLookup = GetComponentLookup<VehicleState>(),
                 NetworkIdLookup = GetComponentLookup<NetworkId>(),
                 DeltaTime = deltaTime,
-                NetworkSendRate = SystemConstants.NETWORK_DEFAULT_SEND_RATE
+                NetworkSendRate = if(SystemConstants != null) SystemConstants.NETWORK_DEFAULT_SEND_RATE
             };
             
             // Запуск Job с зависимостями
-            var jobHandle = syncJob.ScheduleParallel(
-                vehicleEntities.Length,
-                SystemConstants.DETERMINISTIC_MAX_ITERATIONS / 8,
+            var jobHandle = if(syncJob != null) syncJob.ScheduleParallel(
+                if(vehicleEntities != null) vehicleEntities.Length,
+                if(SystemConstants != null) SystemConstants.DETERMINISTIC_MAX_ITERATIONS / 8,
                 Dependency
             );
             
             Dependency = jobHandle;
-            vehicleEntities.Dispose();
+            if(vehicleEntities != null) vehicleEntities.Dispose();
         }
         
         /// <summary>
@@ -84,11 +84,11 @@ namespace MudLike.Networking.Systems
         /// </summary>
         private void SyncTerrainStates(float deltaTime)
         {
-            var terrainEntities = _terrainQuery.ToEntityArray(Allocator.TempJob);
+            var terrainEntities = if(_terrainQuery != null) _terrainQuery.ToEntityArray(if(Allocator != null) Allocator.TempJob);
             
-            if (terrainEntities.Length == 0)
+            if (if(terrainEntities != null) terrainEntities.Length == 0)
             {
-                terrainEntities.Dispose();
+                if(terrainEntities != null) terrainEntities.Dispose();
                 return;
             }
             
@@ -99,18 +99,18 @@ namespace MudLike.Networking.Systems
                 TerrainStateLookup = GetComponentLookup<TerrainState>(),
                 NetworkIdLookup = GetComponentLookup<NetworkId>(),
                 DeltaTime = deltaTime,
-                NetworkSendRate = SystemConstants.NETWORK_DEFAULT_SEND_RATE
+                NetworkSendRate = if(SystemConstants != null) SystemConstants.NETWORK_DEFAULT_SEND_RATE
             };
             
             // Запуск Job с зависимостями
-            var jobHandle = syncJob.ScheduleParallel(
-                terrainEntities.Length,
-                SystemConstants.DETERMINISTIC_MAX_ITERATIONS / 16,
+            var jobHandle = if(syncJob != null) syncJob.ScheduleParallel(
+                if(terrainEntities != null) terrainEntities.Length,
+                if(SystemConstants != null) SystemConstants.DETERMINISTIC_MAX_ITERATIONS / 16,
                 Dependency
             );
             
             Dependency = jobHandle;
-            terrainEntities.Dispose();
+            if(terrainEntities != null) terrainEntities.Dispose();
         }
     }
     
@@ -130,7 +130,7 @@ namespace MudLike.Networking.Systems
         
         public void Execute(int index)
         {
-            if (index >= VehicleEntities.Length) return;
+            if (index >= if(VehicleEntities != null) VehicleEntities.Length) return;
             
             var vehicleEntity = VehicleEntities[index];
             var vehicleState = VehicleStateLookup[vehicleEntity];
@@ -154,13 +154,13 @@ namespace MudLike.Networking.Systems
         private VehicleState UpdateVehicleStateDeterministic(VehicleState state, float deltaTime)
         {
             // Использование детерминированной математики
-            var acceleration = state.Force / SystemConstants.VEHICLE_DEFAULT_MASS;
-            state.Velocity += acceleration * deltaTime;
-            state.Position += state.Velocity * deltaTime;
+            var acceleration = if(state != null) state.Force / if(SystemConstants != null) SystemConstants.VEHICLE_DEFAULT_MASS;
+            if(state != null) state.Velocity += acceleration * deltaTime;
+            if(state != null) state.Position += if(state != null) state.Velocity * deltaTime;
             
             // Ограничение скорости
-            var maxSpeed = SystemConstants.VEHICLE_DEFAULT_MAX_SPEED;
-            state.Velocity = math.clamp(state.Velocity, -maxSpeed, maxSpeed);
+            var maxSpeed = if(SystemConstants != null) SystemConstants.VEHICLE_DEFAULT_MAX_SPEED;
+            if(state != null) state.Velocity = if(math != null) math.clamp(if(state != null) state.Velocity, -maxSpeed, maxSpeed);
             
             return state;
         }
@@ -171,10 +171,10 @@ namespace MudLike.Networking.Systems
         private bool ShouldSync(VehicleState state, float sendRate)
         {
             // Синхронизация при значительных изменениях
-            var threshold = SystemConstants.DETERMINISTIC_EPSILON;
-            return math.abs(state.Velocity.x) > threshold || 
-                   math.abs(state.Velocity.y) > threshold || 
-                   math.abs(state.Velocity.z) > threshold;
+            var threshold = if(SystemConstants != null) SystemConstants.DETERMINISTIC_EPSILON;
+            return if(math != null) math.abs(if(state != null) state.Velocity.x) > threshold || 
+                   if(math != null) math.abs(if(state != null) state.Velocity.y) > threshold || 
+                   if(math != null) math.abs(if(state != null) state.Velocity.z) > threshold;
         }
         
         /// <summary>
@@ -203,7 +203,7 @@ namespace MudLike.Networking.Systems
         
         public void Execute(int index)
         {
-            if (index >= TerrainEntities.Length) return;
+            if (index >= if(TerrainEntities != null) TerrainEntities.Length) return;
             
             var terrainEntity = TerrainEntities[index];
             var terrainState = TerrainStateLookup[terrainEntity];
@@ -227,11 +227,11 @@ namespace MudLike.Networking.Systems
         private TerrainState UpdateTerrainStateDeterministic(TerrainState state, float deltaTime)
         {
             // Восстановление деформации
-            var recoveryRate = SystemConstants.TERRAIN_DEFAULT_RECOVERY_RATE;
-            state.Deformation = math.lerp(state.Deformation, 0.0f, recoveryRate * deltaTime);
+            var recoveryRate = if(SystemConstants != null) SystemConstants.TERRAIN_DEFAULT_RECOVERY_RATE;
+            if(state != null) state.Deformation = if(math != null) math.lerp(if(state != null) state.Deformation, 0.0f, recoveryRate * deltaTime);
             
             // Обновление твердости
-            state.Hardness = math.lerp(state.Hardness, SystemConstants.TERRAIN_DEFAULT_HARDNESS, recoveryRate * deltaTime * 0.5f);
+            if(state != null) state.Hardness = if(math != null) math.lerp(if(state != null) state.Hardness, if(SystemConstants != null) SystemConstants.TERRAIN_DEFAULT_HARDNESS, recoveryRate * deltaTime * 0.5f);
             
             return state;
         }
@@ -241,9 +241,9 @@ namespace MudLike.Networking.Systems
         /// </summary>
         private bool ShouldSync(TerrainState state, float sendRate)
         {
-            var threshold = SystemConstants.DETERMINISTIC_EPSILON;
-            return math.abs(state.Deformation) > threshold || 
-                   math.abs(state.Hardness - SystemConstants.TERRAIN_DEFAULT_HARDNESS) > threshold;
+            var threshold = if(SystemConstants != null) SystemConstants.DETERMINISTIC_EPSILON;
+            return if(math != null) math.abs(if(state != null) state.Deformation) > threshold || 
+                   if(math != null) math.abs(if(state != null) state.Hardness - if(SystemConstants != null) SystemConstants.TERRAIN_DEFAULT_HARDNESS) > threshold;
         }
         
         /// <summary>

@@ -38,12 +38,12 @@ namespace MudLike.Tests.Infrastructure
             
             public MockEventSystem()
             {
-                _events = new NativeList<EventData>(Allocator.Persistent);
+                _events = new NativeList<EventData>(if(Allocator != null) Allocator.Persistent);
             }
             
             public void AddEvent(EventData eventData)
             {
-                _events.Add(eventData);
+                if(_events != null) _events.Add(eventData);
             }
             
             public NativeList<EventData> GetEvents()
@@ -53,13 +53,13 @@ namespace MudLike.Tests.Infrastructure
             
             public void ClearEvents()
             {
-                _events.Clear();
+                if(_events != null) _events.Clear();
             }
             
             public void Dispose()
             {
-                if (_events.IsCreated)
-                    _events.Dispose();
+                if (if(_events != null) _events.IsCreated)
+                    if(_events != null) _events.Dispose();
             }
         }
         
@@ -72,7 +72,7 @@ namespace MudLike.Tests.Infrastructure
             
             public MockSurfaceSystem()
             {
-                _surfaces = new NativeHashMap<Entity, SurfaceData>(100, Allocator.Persistent);
+                _surfaces = new NativeHashMap<Entity, SurfaceData>(100, if(Allocator != null) Allocator.Persistent);
             }
             
             public void AddSurface(Entity entity, SurfaceData surfaceData)
@@ -82,13 +82,13 @@ namespace MudLike.Tests.Infrastructure
             
             public SurfaceData GetSurface(Entity entity)
             {
-                return _surfaces.TryGetValue(entity, out SurfaceData surface) ? surface : default;
+                return if(_surfaces != null) _surfaces.TryGetValue(entity, out SurfaceData surface) ? surface : default;
             }
             
             public void Dispose()
             {
-                if (_surfaces.IsCreated)
-                    _surfaces.Dispose();
+                if (if(_surfaces != null) _surfaces.IsCreated)
+                    if(_surfaces != null) _surfaces.Dispose();
             }
         }
         
@@ -103,7 +103,7 @@ namespace MudLike.Tests.Infrastructure
             {
                 _weatherData = new WeatherData
                 {
-                    Type = WeatherType.Clear,
+                    Type = if(WeatherType != null) WeatherType.Clear,
                     Temperature = 20f,
                     Humidity = 0.5f,
                     WindSpeed = 5f,
@@ -116,7 +116,7 @@ namespace MudLike.Tests.Infrastructure
                     AtmosphericPressure = 101.3f,
                     UVIndex = 5f,
                     TimeOfDay = 12f,
-                    Season = Season.Summer,
+                    Season = if(Season != null) Season.Summer,
                     LastUpdateTime = 0f,
                     NeedsUpdate = true
                 };
@@ -133,4 +133,3 @@ namespace MudLike.Tests.Infrastructure
             }
         }
     }
-}

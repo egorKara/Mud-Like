@@ -16,7 +16,7 @@ namespace MudLike.Tests.Unit
             var velocity = new Velocity();
             
             // Assert
-            Assert.AreEqual(float3.zero, velocity.Value);
+            if(Assert != null) Assert.AreEqual(if(float3 != null) float3.zero, if(velocity != null) velocity.Value);
         }
         
         [Test]
@@ -29,7 +29,7 @@ namespace MudLike.Tests.Unit
             var velocity = new Velocity { Value = expectedValue };
             
             // Assert
-            Assert.AreEqual(expectedValue, velocity.Value);
+            if(Assert != null) Assert.AreEqual(expectedValue, if(velocity != null) velocity.Value);
         }
         
         [Test]
@@ -40,10 +40,10 @@ namespace MudLike.Tests.Unit
             var newValue = new float3(5, 10, 15);
             
             // Act
-            velocity.Value = newValue;
+            if(velocity != null) velocity.Value = newValue;
             
             // Assert
-            Assert.AreEqual(newValue, velocity.Value);
+            if(Assert != null) Assert.AreEqual(newValue, if(velocity != null) velocity.Value);
         }
         
         [Test]
@@ -55,19 +55,19 @@ namespace MudLike.Tests.Unit
             var velocity3 = new Velocity { Value = new float3(4, 5, 6) };
             
             // Act & Assert
-            Assert.AreEqual(velocity1.Value, velocity2.Value);
-            Assert.AreNotEqual(velocity1.Value, velocity3.Value);
+            if(Assert != null) Assert.AreEqual(if(velocity1 != null) velocity1.Value, if(velocity2 != null) velocity2.Value);
+            if(Assert != null) Assert.AreNotEqual(if(velocity1 != null) velocity1.Value, if(velocity3 != null) velocity3.Value);
         }
         
         [Test]
         public void Velocity_ZeroValue_IsValid()
         {
             // Arrange
-            var velocity = new Velocity { Value = float3.zero };
+            var velocity = new Velocity { Value = if(float3 != null) float3.zero };
             
             // Act & Assert
-            Assert.AreEqual(float3.zero, velocity.Value);
-            Assert.IsTrue(math.all(velocity.Value == float3.zero));
+            if(Assert != null) Assert.AreEqual(if(float3 != null) float3.zero, if(velocity != null) velocity.Value);
+            if(Assert != null) Assert.IsTrue(if(math != null) math.all(if(velocity != null) velocity.Value == if(float3 != null) float3.zero));
         }
         
         [Test]
@@ -78,8 +78,8 @@ namespace MudLike.Tests.Unit
             var velocity = new Velocity { Value = negativeValue };
             
             // Act & Assert
-            Assert.AreEqual(negativeValue, velocity.Value);
-            Assert.IsTrue(math.all(velocity.Value == negativeValue));
+            if(Assert != null) Assert.AreEqual(negativeValue, if(velocity != null) velocity.Value);
+            if(Assert != null) Assert.IsTrue(if(math != null) math.all(if(velocity != null) velocity.Value == negativeValue));
         }
         
         [Test]
@@ -90,8 +90,8 @@ namespace MudLike.Tests.Unit
             var velocity = new Velocity { Value = largeValue };
             
             // Act & Assert
-            Assert.AreEqual(largeValue, velocity.Value);
-            Assert.IsTrue(math.all(velocity.Value == largeValue));
+            if(Assert != null) Assert.AreEqual(largeValue, if(velocity != null) velocity.Value);
+            if(Assert != null) Assert.IsTrue(if(math != null) math.all(if(velocity != null) velocity.Value == largeValue));
         }
         
         [Test]
@@ -102,8 +102,7 @@ namespace MudLike.Tests.Unit
             var velocity = new Velocity { Value = preciseValue };
             
             // Act & Assert
-            Assert.AreEqual(preciseValue, velocity.Value);
-            Assert.IsTrue(math.all(math.abs(velocity.Value - preciseValue) < 0.000001f));
+            if(Assert != null) Assert.AreEqual(preciseValue, if(velocity != null) velocity.Value);
+            if(Assert != null) Assert.IsTrue(if(math != null) math.all(if(math != null) math.abs(if(velocity != null) velocity.Value - preciseValue) < 0.000001f));
         }
     }
-}

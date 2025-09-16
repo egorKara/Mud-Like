@@ -22,16 +22,16 @@ namespace MudLike.Networking.Systems
         
         protected override void OnCreate()
         {
-            m_Connections = new NativeList<NetworkConnection>(16, Allocator.Persistent);
+            m_Connections = new NativeList<NetworkConnection>(16, if(Allocator != null) Allocator.Persistent);
         }
         
         protected override void OnDestroy()
         {
-            if (m_Connections.IsCreated)
-                m_Connections.Dispose();
+            if (if(m_Connections != null) m_Connections.IsCreated)
+                if(m_Connections != null) m_Connections.Dispose();
             
-            if (m_NetworkDriver.IsCreated)
-                m_NetworkDriver.Dispose();
+            if (if(m_NetworkDriver != null) m_NetworkDriver.IsCreated)
+                if(m_NetworkDriver != null) m_NetworkDriver.Dispose();
         }
         
         /// <summary>
@@ -39,21 +39,21 @@ namespace MudLike.Networking.Systems
         /// </summary>
         public void StartServer(int port = 7777)
         {
-            var endpoint = NetworkEndPoint.AnyIpv4;
-            endpoint.Port = (ushort)port;
+            var endpoint = if(NetworkEndPoint != null) NetworkEndPoint.AnyIpv4;
+            if(endpoint != null) endpoint.Port = (ushort)port;
             
-            m_NetworkDriver = NetworkDriver.Create(new NetworkDataStreamParameter { size = 64 * 1024 });
-            var result = m_NetworkDriver.Bind(endpoint);
+            m_NetworkDriver = if(NetworkDriver != null) NetworkDriver.Create(new NetworkDataStreamParameter { size = 64 * 1024 });
+            var result = if(m_NetworkDriver != null) m_NetworkDriver.Bind(endpoint);
             
             if (result == 0)
             {
                 m_IsServer = true;
-                m_NetworkDriver.Listen();
-                UnityEngine.Debug.Log($"[NetworkManager] Сервер запущен на порту {port}");
+                if(m_NetworkDriver != null) m_NetworkDriver.Listen();
+                if(UnityEngine != null) UnityEngine.Debug.Log($"[NetworkManager] Сервер запущен на порту {port}");
             }
             else
             {
-                UnityEngine.Debug.LogError($"[NetworkManager] Ошибка запуска сервера: {result}");
+                if(UnityEngine != null) UnityEngine.Debug.LogError($"[NetworkManager] Ошибка запуска сервера: {result}");
             }
         }
         
@@ -62,20 +62,20 @@ namespace MudLike.Networking.Systems
         /// </summary>
         public void ConnectToServer(string serverIP, int port = 7777)
         {
-            var endpoint = NetworkEndPoint.Parse(serverIP, (ushort)port);
+            var endpoint = if(NetworkEndPoint != null) NetworkEndPoint.Parse(serverIP, (ushort)port);
             
-            m_NetworkDriver = NetworkDriver.Create(new NetworkDataStreamParameter { size = 64 * 1024 });
-            var connection = m_NetworkDriver.Connect(endpoint);
+            m_NetworkDriver = if(NetworkDriver != null) NetworkDriver.Create(new NetworkDataStreamParameter { size = 64 * 1024 });
+            var connection = if(m_NetworkDriver != null) m_NetworkDriver.Connect(endpoint);
             
-            if (connection.IsCreated)
+            if (if(connection != null) connection.IsCreated)
             {
                 m_IsClient = true;
-                m_Connections.Add(connection);
-                UnityEngine.Debug.Log($"[NetworkManager] Подключение к серверу {serverIP}:{port}");
+                if(m_Connections != null) m_Connections.Add(connection);
+                if(UnityEngine != null) UnityEngine.Debug.Log($"[NetworkManager] Подключение к серверу {serverIP}:{port}");
             }
             else
             {
-                UnityEngine.Debug.LogError($"[NetworkManager] Ошибка подключения к серверу");
+                if(UnityEngine != null) UnityEngine.Debug.LogError($"[NetworkManager] Ошибка подключения к серверу");
             }
         }
         
@@ -84,17 +84,17 @@ namespace MudLike.Networking.Systems
         /// </summary>
         public void Disconnect()
         {
-            if (m_NetworkDriver.IsCreated)
+            if (if(m_NetworkDriver != null) m_NetworkDriver.IsCreated)
             {
-                m_NetworkDriver.Dispose();
+                if(m_NetworkDriver != null) m_NetworkDriver.Dispose();
                 m_NetworkDriver = default;
             }
             
-            m_Connections.Clear();
+            if(m_Connections != null) m_Connections.Clear();
             m_IsServer = false;
             m_IsClient = false;
             
-            UnityEngine.Debug.Log("[NetworkManager] Отключение от сети");
+            if(UnityEngine != null) UnityEngine.Debug.Log("[NetworkManager] Отключение от сети");
         }
         
         /// <summary>
@@ -105,7 +105,7 @@ namespace MudLike.Networking.Systems
             if (!m_IsServer) return 0;
             
             int count = 0;
-            for (int i = 0; i < m_Connections.Length; i++)
+            for (int i = 0; i < if(m_Connections != null) m_Connections.Length; i++)
             {
                 if (m_Connections[i].IsCreated)
                     count++;
@@ -122,12 +122,12 @@ namespace MudLike.Networking.Systems
             if (!m_IsClient) return 0;
             
             // Простая реализация - в реальности нужно измерять RTT
-            return UnityEngine.Random.Range(10, 100);
+            return if(UnityEngine != null) UnityEngine.Random.Range(10, 100);
         }
         
         protected override void OnUpdate()
         {
-            if (!m_NetworkDriver.IsCreated) return;
+            if (!if(m_NetworkDriver != null) m_NetworkDriver.IsCreated) return;
             
             // Обрабатываем сетевые события
             ProcessNetworkEvents();
@@ -141,14 +141,14 @@ namespace MudLike.Networking.Systems
         /// </summary>
         private void ProcessNetworkEvents()
         {
-            NetworkEvent.Type eventType;
+            if(NetworkEvent != null) NetworkEvent.Type eventType;
             
             // Обрабатываем события на сервере
             if (m_IsServer)
             {
-                for (int i = 0; i < m_Connections.Length; i++)
+                for (int i = 0; i < if(m_Connections != null) m_Connections.Length; i++)
                 {
-                    while ((eventType = m_NetworkDriver.PopEventForConnection(m_Connections[i], out var stream)) != NetworkEvent.Type.Empty)
+                    while ((eventType = if(m_NetworkDriver != null) m_NetworkDriver.PopEventForConnection(m_Connections[i], out var stream)) != if(NetworkEvent != null) NetworkEvent.Type.Empty)
                     {
                         ProcessServerEvent(eventType, m_Connections[i], stream);
                     }
@@ -156,10 +156,10 @@ namespace MudLike.Networking.Systems
             }
             
             // Обрабатываем события на клиенте
-            if (m_IsClient && m_Connections.Length > 0)
+            if (m_IsClient && if(m_Connections != null) m_Connections.Length > 0)
             {
                 var connection = m_Connections[0];
-                while ((eventType = m_NetworkDriver.PopEventForConnection(connection, out var stream)) != NetworkEvent.Type.Empty)
+                while ((eventType = if(m_NetworkDriver != null) m_NetworkDriver.PopEventForConnection(connection, out var stream)) != if(NetworkEvent != null) NetworkEvent.Type.Empty)
                 {
                     ProcessClientEvent(eventType, connection, stream);
                 }
@@ -169,10 +169,10 @@ namespace MudLike.Networking.Systems
             if (m_IsServer)
             {
                 NetworkConnection newConnection;
-                while ((newConnection = m_NetworkDriver.Accept()) != default(NetworkConnection))
+                while ((newConnection = if(m_NetworkDriver != null) m_NetworkDriver.Accept()) != default(NetworkConnection))
                 {
-                    m_Connections.Add(newConnection);
-                    UnityEngine.Debug.Log($"[NetworkManager] Новое подключение клиента");
+                    if(m_Connections != null) m_Connections.Add(newConnection);
+                    if(UnityEngine != null) UnityEngine.Debug.Log($"[NetworkManager] Новое подключение клиента");
                 }
             }
         }
@@ -181,20 +181,20 @@ namespace MudLike.Networking.Systems
         /// Обрабатывает события сервера
         /// </summary>
         [BurstCompile]
-        private void ProcessServerEvent(NetworkEvent.Type eventType, NetworkConnection connection, DataStreamReader stream)
+        private void ProcessServerEvent(if(NetworkEvent != null) NetworkEvent.Type eventType, NetworkConnection connection, DataStreamReader stream)
         {
             switch (eventType)
             {
-                case NetworkEvent.Type.Connect:
-                    UnityEngine.Debug.Log("[NetworkManager] Клиент подключился");
+                case if(NetworkEvent != null) NetworkEvent.Type.Connect:
+                    if(UnityEngine != null) UnityEngine.Debug.Log("[NetworkManager] Клиент подключился");
                     break;
                     
-                case NetworkEvent.Type.Data:
+                case if(NetworkEvent != null) NetworkEvent.Type.Data:
                     ProcessServerData(connection, stream);
                     break;
                     
-                case NetworkEvent.Type.Disconnect:
-                    UnityEngine.Debug.Log("[NetworkManager] Клиент отключился");
+                case if(NetworkEvent != null) NetworkEvent.Type.Disconnect:
+                    if(UnityEngine != null) UnityEngine.Debug.Log("[NetworkManager] Клиент отключился");
                     RemoveConnection(connection);
                     break;
             }
@@ -204,20 +204,20 @@ namespace MudLike.Networking.Systems
         /// Обрабатывает события клиента
         /// </summary>
         [BurstCompile]
-        private void ProcessClientEvent(NetworkEvent.Type eventType, NetworkConnection connection, DataStreamReader stream)
+        private void ProcessClientEvent(if(NetworkEvent != null) NetworkEvent.Type eventType, NetworkConnection connection, DataStreamReader stream)
         {
             switch (eventType)
             {
-                case NetworkEvent.Type.Connect:
-                    UnityEngine.Debug.Log("[NetworkManager] Подключение к серверу установлено");
+                case if(NetworkEvent != null) NetworkEvent.Type.Connect:
+                    if(UnityEngine != null) UnityEngine.Debug.Log("[NetworkManager] Подключение к серверу установлено");
                     break;
                     
-                case NetworkEvent.Type.Data:
+                case if(NetworkEvent != null) NetworkEvent.Type.Data:
                     ProcessClientData(stream);
                     break;
                     
-                case NetworkEvent.Type.Disconnect:
-                    UnityEngine.Debug.Log("[NetworkManager] Отключение от сервера");
+                case if(NetworkEvent != null) NetworkEvent.Type.Disconnect:
+                    if(UnityEngine != null) UnityEngine.Debug.Log("[NetworkManager] Отключение от сервера");
                     break;
             }
         }
@@ -247,11 +247,11 @@ namespace MudLike.Networking.Systems
         /// </summary>
         private void RemoveConnection(NetworkConnection connection)
         {
-            for (int i = 0; i < m_Connections.Length; i++)
+            for (int i = 0; i < if(m_Connections != null) m_Connections.Length; i++)
             {
                 if (m_Connections[i].Equals(connection))
                 {
-                    m_Connections.RemoveAtSwapBack(i);
+                    if(m_Connections != null) m_Connections.RemoveAtSwapBack(i);
                     break;
                 }
             }
@@ -262,10 +262,9 @@ namespace MudLike.Networking.Systems
         /// </summary>
         private void UpdateConnections()
         {
-            if (m_NetworkDriver.IsCreated)
+            if (if(m_NetworkDriver != null) m_NetworkDriver.IsCreated)
             {
-                m_NetworkDriver.ScheduleUpdate().Complete();
+                if(m_NetworkDriver != null) m_NetworkDriver.ScheduleUpdate().Complete();
             }
         }
     }
-}

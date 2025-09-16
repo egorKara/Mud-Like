@@ -20,19 +20,19 @@ namespace MudLike.Core.Systems
         
         protected override void OnCreate()
         {
-            _eventQueue = new NativeQueue<EventData>(Allocator.Persistent);
-            _eventCounters = new NativeHashMap<EventTypeKey, int>(SystemConstants.EVENT_BUFFER_SIZE, Allocator.Persistent);
-            _eventTimers = new NativeHashMap<EventTypeKey, float>(SystemConstants.EVENT_BUFFER_SIZE, Allocator.Persistent);
+            _eventQueue = new NativeQueue<EventData>(if(Allocator != null) Allocator.Persistent);
+            _eventCounters = new NativeHashMap<EventTypeKey, int>(if(SystemConstants != null) SystemConstants.EVENT_BUFFER_SIZE, if(Allocator != null) Allocator.Persistent);
+            _eventTimers = new NativeHashMap<EventTypeKey, float>(if(SystemConstants != null) SystemConstants.EVENT_BUFFER_SIZE, if(Allocator != null) Allocator.Persistent);
         }
         
         protected override void OnDestroy()
         {
-            if (_eventQueue.IsCreated)
-                _eventQueue.Dispose();
-            if (_eventCounters.IsCreated)
-                _eventCounters.Dispose();
-            if (_eventTimers.IsCreated)
-                _eventTimers.Dispose();
+            if (if(_eventQueue != null) _eventQueue.IsCreated)
+                if(_eventQueue != null) _eventQueue.Dispose();
+            if (if(_eventCounters != null) _eventCounters.IsCreated)
+                if(_eventCounters != null) _eventCounters.Dispose();
+            if (if(_eventTimers != null) _eventTimers.IsCreated)
+                if(_eventTimers != null) _eventTimers.Dispose();
         }
         
         protected override void OnUpdate()
@@ -46,7 +46,7 @@ namespace MudLike.Core.Systems
         /// </summary>
         private void ProcessEvents()
         {
-            while (_eventQueue.TryDequeue(out EventData eventData))
+            while (if(_eventQueue != null) _eventQueue.TryDequeue(out EventData eventData))
             {
                 ProcessEvent(eventData);
             }
@@ -58,8 +58,8 @@ namespace MudLike.Core.Systems
         private void ProcessEvent(EventData eventData)
         {
             // Увеличиваем счетчик событий
-            var eventKey = new EventTypeKey(eventData.Type);
-            if (_eventCounters.TryGetValue(eventKey, out int count))
+            var eventKey = new EventTypeKey(if(eventData != null) eventData.Type);
+            if (if(_eventCounters != null) _eventCounters.TryGetValue(eventKey, out int count))
             {
                 _eventCounters[eventKey] = count + 1;
             }
@@ -69,471 +69,471 @@ namespace MudLike.Core.Systems
             }
             
             // Обновляем таймер события
-            _eventTimers[eventKey] = eventData.Time;
+            _eventTimers[eventKey] = if(eventData != null) eventData.Time;
             
             // Обрабатываем событие в зависимости от типа
-            switch (eventData.Type)
+            switch (if(eventData != null) eventData.Type)
             {
-                case EventType.VehicleSpawned:
+                case if(EventType != null) EventType.VehicleSpawned:
                     ProcessVehicleSpawned(eventData);
                     break;
-                case EventType.VehicleDestroyed:
+                case if(EventType != null) EventType.VehicleDestroyed:
                     ProcessVehicleDestroyed(eventData);
                     break;
-                case EventType.VehicleDamaged:
+                case if(EventType != null) EventType.VehicleDamaged:
                     ProcessVehicleDamaged(eventData);
                     break;
-                case EventType.VehicleRepaired:
+                case if(EventType != null) EventType.VehicleRepaired:
                     ProcessVehicleRepaired(eventData);
                     break;
-                case EventType.VehicleFuelEmpty:
+                case if(EventType != null) EventType.VehicleFuelEmpty:
                     ProcessVehicleFuelEmpty(eventData);
                     break;
-                case EventType.VehicleEngineStarted:
+                case if(EventType != null) EventType.VehicleEngineStarted:
                     ProcessVehicleEngineStarted(eventData);
                     break;
-                case EventType.VehicleEngineStopped:
+                case if(EventType != null) EventType.VehicleEngineStopped:
                     ProcessVehicleEngineStopped(eventData);
                     break;
-                case EventType.VehicleGearChanged:
+                case if(EventType != null) EventType.VehicleGearChanged:
                     ProcessVehicleGearChanged(eventData);
                     break;
-                case EventType.VehicleSpeedChanged:
+                case if(EventType != null) EventType.VehicleSpeedChanged:
                     ProcessVehicleSpeedChanged(eventData);
                     break;
-                case EventType.VehicleCollision:
+                case if(EventType != null) EventType.VehicleCollision:
                     ProcessVehicleCollision(eventData);
                     break;
-                case EventType.VehicleExplosion:
+                case if(EventType != null) EventType.VehicleExplosion:
                     ProcessVehicleExplosion(eventData);
                     break;
-                case EventType.VehicleFire:
+                case if(EventType != null) EventType.VehicleFire:
                     ProcessVehicleFire(eventData);
                     break;
-                case EventType.VehicleSmoke:
+                case if(EventType != null) EventType.VehicleSmoke:
                     ProcessVehicleSmoke(eventData);
                     break;
-                case EventType.VehicleSteam:
+                case if(EventType != null) EventType.VehicleSteam:
                     ProcessVehicleSteam(eventData);
                     break;
-                case EventType.VehicleSparks:
+                case if(EventType != null) EventType.VehicleSparks:
                     ProcessVehicleSparks(eventData);
                     break;
-                case EventType.VehicleDebris:
+                case if(EventType != null) EventType.VehicleDebris:
                     ProcessVehicleDebris(eventData);
                     break;
-                case EventType.VehicleWreckage:
+                case if(EventType != null) EventType.VehicleWreckage:
                     ProcessVehicleWreckage(eventData);
                     break;
-                case EventType.VehicleSalvage:
+                case if(EventType != null) EventType.VehicleSalvage:
                     ProcessVehicleSalvage(eventData);
                     break;
-                case EventType.VehicleScrap:
+                case if(EventType != null) EventType.VehicleScrap:
                     ProcessVehicleScrap(eventData);
                     break;
-                case EventType.VehicleParts:
+                case if(EventType != null) EventType.VehicleParts:
                     ProcessVehicleParts(eventData);
                     break;
-                case EventType.WheelTireBurst:
+                case if(EventType != null) EventType.WheelTireBurst:
                     ProcessWheelTireBurst(eventData);
                     break;
-                case EventType.WheelTireFlat:
+                case if(EventType != null) EventType.WheelTireFlat:
                     ProcessWheelTireFlat(eventData);
                     break;
-                case EventType.WheelTireWorn:
+                case if(EventType != null) EventType.WheelTireWorn:
                     ProcessWheelTireWorn(eventData);
                     break;
-                case EventType.WheelTireReplaced:
+                case if(EventType != null) EventType.WheelTireReplaced:
                     ProcessWheelTireReplaced(eventData);
                     break;
-                case EventType.WheelSuspensionBroken:
+                case if(EventType != null) EventType.WheelSuspensionBroken:
                     ProcessWheelSuspensionBroken(eventData);
                     break;
-                case EventType.WheelSuspensionRepaired:
+                case if(EventType != null) EventType.WheelSuspensionRepaired:
                     ProcessWheelSuspensionRepaired(eventData);
                     break;
-                case EventType.WheelBrakeWorn:
+                case if(EventType != null) EventType.WheelBrakeWorn:
                     ProcessWheelBrakeWorn(eventData);
                     break;
-                case EventType.WheelBrakeReplaced:
+                case if(EventType != null) EventType.WheelBrakeReplaced:
                     ProcessWheelBrakeReplaced(eventData);
                     break;
-                case EventType.WheelSteeringBroken:
+                case if(EventType != null) EventType.WheelSteeringBroken:
                     ProcessWheelSteeringBroken(eventData);
                     break;
-                case EventType.WheelSteeringRepaired:
+                case if(EventType != null) EventType.WheelSteeringRepaired:
                     ProcessWheelSteeringRepaired(eventData);
                     break;
-                case EventType.SurfaceChanged:
+                case if(EventType != null) EventType.SurfaceChanged:
                     ProcessSurfaceChanged(eventData);
                     break;
-                case EventType.SurfaceWet:
+                case if(EventType != null) EventType.SurfaceWet:
                     ProcessSurfaceWet(eventData);
                     break;
-                case EventType.SurfaceDry:
+                case if(EventType != null) EventType.SurfaceDry:
                     ProcessSurfaceDry(eventData);
                     break;
-                case EventType.SurfaceFrozen:
+                case if(EventType != null) EventType.SurfaceFrozen:
                     ProcessSurfaceFrozen(eventData);
                     break;
-                case EventType.SurfaceMelted:
+                case if(EventType != null) EventType.SurfaceMelted:
                     ProcessSurfaceMelted(eventData);
                     break;
-                case EventType.SurfaceMuddy:
+                case if(EventType != null) EventType.SurfaceMuddy:
                     ProcessSurfaceMuddy(eventData);
                     break;
-                case EventType.SurfaceClean:
+                case if(EventType != null) EventType.SurfaceClean:
                     ProcessSurfaceClean(eventData);
                     break;
-                case EventType.SurfaceRough:
+                case if(EventType != null) EventType.SurfaceRough:
                     ProcessSurfaceRough(eventData);
                     break;
-                case EventType.SurfaceSmooth:
+                case if(EventType != null) EventType.SurfaceSmooth:
                     ProcessSurfaceSmooth(eventData);
                     break;
-                case EventType.SurfaceSlippery:
+                case if(EventType != null) EventType.SurfaceSlippery:
                     ProcessSurfaceSlippery(eventData);
                     break;
-                case EventType.SurfaceSticky:
+                case if(EventType != null) EventType.SurfaceSticky:
                     ProcessSurfaceSticky(eventData);
                     break;
-                case EventType.SurfaceSoft:
+                case if(EventType != null) EventType.SurfaceSoft:
                     ProcessSurfaceSoft(eventData);
                     break;
-                case EventType.SurfaceHard:
+                case if(EventType != null) EventType.SurfaceHard:
                     ProcessSurfaceHard(eventData);
                     break;
-                case EventType.SurfaceElastic:
+                case if(EventType != null) EventType.SurfaceElastic:
                     ProcessSurfaceElastic(eventData);
                     break;
-                case EventType.SurfaceRigid:
+                case if(EventType != null) EventType.SurfaceRigid:
                     ProcessSurfaceRigid(eventData);
                     break;
-                case EventType.SurfaceFlexible:
+                case if(EventType != null) EventType.SurfaceFlexible:
                     ProcessSurfaceFlexible(eventData);
                     break;
-                case EventType.SurfaceStiff:
+                case if(EventType != null) EventType.SurfaceStiff:
                     ProcessSurfaceStiff(eventData);
                     break;
-                case EventType.SurfaceDense:
+                case if(EventType != null) EventType.SurfaceDense:
                     ProcessSurfaceDense(eventData);
                     break;
-                case EventType.SurfaceLoose:
+                case if(EventType != null) EventType.SurfaceLoose:
                     ProcessSurfaceLoose(eventData);
                     break;
-                case EventType.SurfaceCompact:
+                case if(EventType != null) EventType.SurfaceCompact:
                     ProcessSurfaceCompact(eventData);
                     break;
-                case EventType.WeatherChanged:
+                case if(EventType != null) EventType.WeatherChanged:
                     ProcessWeatherChanged(eventData);
                     break;
-                case EventType.RainStarted:
+                case if(EventType != null) EventType.RainStarted:
                     ProcessRainStarted(eventData);
                     break;
-                case EventType.RainStopped:
+                case if(EventType != null) EventType.RainStopped:
                     ProcessRainStopped(eventData);
                     break;
-                case EventType.SnowStarted:
+                case if(EventType != null) EventType.SnowStarted:
                     ProcessSnowStarted(eventData);
                     break;
-                case EventType.SnowStopped:
+                case if(EventType != null) EventType.SnowStopped:
                     ProcessSnowStopped(eventData);
                     break;
-                case EventType.FogStarted:
+                case if(EventType != null) EventType.FogStarted:
                     ProcessFogStarted(eventData);
                     break;
-                case EventType.FogCleared:
+                case if(EventType != null) EventType.FogCleared:
                     ProcessFogCleared(eventData);
                     break;
-                case EventType.WindStarted:
+                case if(EventType != null) EventType.WindStarted:
                     ProcessWindStarted(eventData);
                     break;
-                case EventType.WindStopped:
+                case if(EventType != null) EventType.WindStopped:
                     ProcessWindStopped(eventData);
                     break;
-                case EventType.StormStarted:
+                case if(EventType != null) EventType.StormStarted:
                     ProcessStormStarted(eventData);
                     break;
-                case EventType.StormEnded:
+                case if(EventType != null) EventType.StormEnded:
                     ProcessStormEnded(eventData);
                     break;
-                case EventType.TemperatureChanged:
+                case if(EventType != null) EventType.TemperatureChanged:
                     ProcessTemperatureChanged(eventData);
                     break;
-                case EventType.HumidityChanged:
+                case if(EventType != null) EventType.HumidityChanged:
                     ProcessHumidityChanged(eventData);
                     break;
-                case EventType.PressureChanged:
+                case if(EventType != null) EventType.PressureChanged:
                     ProcessPressureChanged(eventData);
                     break;
-                case EventType.VisibilityChanged:
+                case if(EventType != null) EventType.VisibilityChanged:
                     ProcessVisibilityChanged(eventData);
                     break;
-                case EventType.PlayerJoined:
+                case if(EventType != null) EventType.PlayerJoined:
                     ProcessPlayerJoined(eventData);
                     break;
-                case EventType.PlayerLeft:
+                case if(EventType != null) EventType.PlayerLeft:
                     ProcessPlayerLeft(eventData);
                     break;
-                case EventType.PlayerDied:
+                case if(EventType != null) EventType.PlayerDied:
                     ProcessPlayerDied(eventData);
                     break;
-                case EventType.PlayerRespawned:
+                case if(EventType != null) EventType.PlayerRespawned:
                     ProcessPlayerRespawned(eventData);
                     break;
-                case EventType.PlayerLevelUp:
+                case if(EventType != null) EventType.PlayerLevelUp:
                     ProcessPlayerLevelUp(eventData);
                     break;
-                case EventType.PlayerExperienceGained:
+                case if(EventType != null) EventType.PlayerExperienceGained:
                     ProcessPlayerExperienceGained(eventData);
                     break;
-                case EventType.PlayerMoneyEarned:
+                case if(EventType != null) EventType.PlayerMoneyEarned:
                     ProcessPlayerMoneyEarned(eventData);
                     break;
-                case EventType.PlayerMoneySpent:
+                case if(EventType != null) EventType.PlayerMoneySpent:
                     ProcessPlayerMoneySpent(eventData);
                     break;
-                case EventType.PlayerItemPickedUp:
+                case if(EventType != null) EventType.PlayerItemPickedUp:
                     ProcessPlayerItemPickedUp(eventData);
                     break;
-                case EventType.PlayerItemDropped:
+                case if(EventType != null) EventType.PlayerItemDropped:
                     ProcessPlayerItemDropped(eventData);
                     break;
-                case EventType.PlayerItemUsed:
+                case if(EventType != null) EventType.PlayerItemUsed:
                     ProcessPlayerItemUsed(eventData);
                     break;
-                case EventType.PlayerItemCrafted:
+                case if(EventType != null) EventType.PlayerItemCrafted:
                     ProcessPlayerItemCrafted(eventData);
                     break;
-                case EventType.PlayerItemRepaired:
+                case if(EventType != null) EventType.PlayerItemRepaired:
                     ProcessPlayerItemRepaired(eventData);
                     break;
-                case EventType.PlayerItemUpgraded:
+                case if(EventType != null) EventType.PlayerItemUpgraded:
                     ProcessPlayerItemUpgraded(eventData);
                     break;
-                case EventType.PlayerItemSold:
+                case if(EventType != null) EventType.PlayerItemSold:
                     ProcessPlayerItemSold(eventData);
                     break;
-                case EventType.PlayerItemBought:
+                case if(EventType != null) EventType.PlayerItemBought:
                     ProcessPlayerItemBought(eventData);
                     break;
-                case EventType.MissionStarted:
+                case if(EventType != null) EventType.MissionStarted:
                     ProcessMissionStarted(eventData);
                     break;
-                case EventType.MissionCompleted:
+                case if(EventType != null) EventType.MissionCompleted:
                     ProcessMissionCompleted(eventData);
                     break;
-                case EventType.MissionFailed:
+                case if(EventType != null) EventType.MissionFailed:
                     ProcessMissionFailed(eventData);
                     break;
-                case EventType.MissionAbandoned:
+                case if(EventType != null) EventType.MissionAbandoned:
                     ProcessMissionAbandoned(eventData);
                     break;
-                case EventType.MissionPaused:
+                case if(EventType != null) EventType.MissionPaused:
                     ProcessMissionPaused(eventData);
                     break;
-                case EventType.MissionResumed:
+                case if(EventType != null) EventType.MissionResumed:
                     ProcessMissionResumed(eventData);
                     break;
-                case EventType.MissionRestarted:
+                case if(EventType != null) EventType.MissionRestarted:
                     ProcessMissionRestarted(eventData);
                     break;
-                case EventType.MissionUpdated:
+                case if(EventType != null) EventType.MissionUpdated:
                     ProcessMissionUpdated(eventData);
                     break;
-                case EventType.MissionObjectiveCompleted:
+                case if(EventType != null) EventType.MissionObjectiveCompleted:
                     ProcessMissionObjectiveCompleted(eventData);
                     break;
-                case EventType.MissionObjectiveFailed:
+                case if(EventType != null) EventType.MissionObjectiveFailed:
                     ProcessMissionObjectiveFailed(eventData);
                     break;
-                case EventType.MissionRewardEarned:
+                case if(EventType != null) EventType.MissionRewardEarned:
                     ProcessMissionRewardEarned(eventData);
                     break;
-                case EventType.MissionBonusEarned:
+                case if(EventType != null) EventType.MissionBonusEarned:
                     ProcessMissionBonusEarned(eventData);
                     break;
-                case EventType.MissionPenaltyApplied:
+                case if(EventType != null) EventType.MissionPenaltyApplied:
                     ProcessMissionPenaltyApplied(eventData);
                     break;
-                case EventType.CargoLoaded:
+                case if(EventType != null) EventType.CargoLoaded:
                     ProcessCargoLoaded(eventData);
                     break;
-                case EventType.CargoUnloaded:
+                case if(EventType != null) EventType.CargoUnloaded:
                     ProcessCargoUnloaded(eventData);
                     break;
-                case EventType.CargoDamaged:
+                case if(EventType != null) EventType.CargoDamaged:
                     ProcessCargoDamaged(eventData);
                     break;
-                case EventType.CargoLost:
+                case if(EventType != null) EventType.CargoLost:
                     ProcessCargoLost(eventData);
                     break;
-                case EventType.CargoDelivered:
+                case if(EventType != null) EventType.CargoDelivered:
                     ProcessCargoDelivered(eventData);
                     break;
-                case EventType.CargoStolen:
+                case if(EventType != null) EventType.CargoStolen:
                     ProcessCargoStolen(eventData);
                     break;
-                case EventType.CargoFound:
+                case if(EventType != null) EventType.CargoFound:
                     ProcessCargoFound(eventData);
                     break;
-                case EventType.CargoHidden:
+                case if(EventType != null) EventType.CargoHidden:
                     ProcessCargoHidden(eventData);
                     break;
-                case EventType.CargoDiscovered:
+                case if(EventType != null) EventType.CargoDiscovered:
                     ProcessCargoDiscovered(eventData);
                     break;
-                case EventType.CargoRevealed:
+                case if(EventType != null) EventType.CargoRevealed:
                     ProcessCargoRevealed(eventData);
                     break;
-                case EventType.CargoConcealed:
+                case if(EventType != null) EventType.CargoConcealed:
                     ProcessCargoConcealed(eventData);
                     break;
-                case EventType.CargoExposed:
+                case if(EventType != null) EventType.CargoExposed:
                     ProcessCargoExposed(eventData);
                     break;
-                case EventType.CargoProtected:
+                case if(EventType != null) EventType.CargoProtected:
                     ProcessCargoProtected(eventData);
                     break;
-                case EventType.CargoSecured:
+                case if(EventType != null) EventType.CargoSecured:
                     ProcessCargoSecured(eventData);
                     break;
-                case EventType.CargoReleased:
+                case if(EventType != null) EventType.CargoReleased:
                     ProcessCargoReleased(eventData);
                     break;
-                case EventType.CargoFreed:
+                case if(EventType != null) EventType.CargoFreed:
                     ProcessCargoFreed(eventData);
                     break;
-                case EventType.CargoCaptured:
+                case if(EventType != null) EventType.CargoCaptured:
                     ProcessCargoCaptured(eventData);
                     break;
-                case EventType.CargoEscaped:
+                case if(EventType != null) EventType.CargoEscaped:
                     ProcessCargoEscaped(eventData);
                     break;
-                case EventType.CargoRescued:
+                case if(EventType != null) EventType.CargoRescued:
                     ProcessCargoRescued(eventData);
                     break;
-                case EventType.CargoAbandoned:
+                case if(EventType != null) EventType.CargoAbandoned:
                     ProcessCargoAbandoned(eventData);
                     break;
-                case EventType.WinchAttached:
+                case if(EventType != null) EventType.WinchAttached:
                     ProcessWinchAttached(eventData);
                     break;
-                case EventType.WinchDetached:
+                case if(EventType != null) EventType.WinchDetached:
                     ProcessWinchDetached(eventData);
                     break;
-                case EventType.WinchPulling:
+                case if(EventType != null) EventType.WinchPulling:
                     ProcessWinchPulling(eventData);
                     break;
-                case EventType.WinchReleasing:
+                case if(EventType != null) EventType.WinchReleasing:
                     ProcessWinchReleasing(eventData);
                     break;
-                case EventType.WinchBroken:
+                case if(EventType != null) EventType.WinchBroken:
                     ProcessWinchBroken(eventData);
                     break;
-                case EventType.WinchRepaired:
+                case if(EventType != null) EventType.WinchRepaired:
                     ProcessWinchRepaired(eventData);
                     break;
-                case EventType.WinchOverloaded:
+                case if(EventType != null) EventType.WinchOverloaded:
                     ProcessWinchOverloaded(eventData);
                     break;
-                case EventType.WinchStuck:
+                case if(EventType != null) EventType.WinchStuck:
                     ProcessWinchStuck(eventData);
                     break;
-                case EventType.WinchFreed:
+                case if(EventType != null) EventType.WinchFreed:
                     ProcessWinchFreed(eventData);
                     break;
-                case EventType.WinchTensionChanged:
+                case if(EventType != null) EventType.WinchTensionChanged:
                     ProcessWinchTensionChanged(eventData);
                     break;
-                case EventType.WinchLengthChanged:
+                case if(EventType != null) EventType.WinchLengthChanged:
                     ProcessWinchLengthChanged(eventData);
                     break;
-                case EventType.WinchAngleChanged:
+                case if(EventType != null) EventType.WinchAngleChanged:
                     ProcessWinchAngleChanged(eventData);
                     break;
-                case EventType.WinchSpeedChanged:
+                case if(EventType != null) EventType.WinchSpeedChanged:
                     ProcessWinchSpeedChanged(eventData);
                     break;
-                case EventType.WinchForceChanged:
+                case if(EventType != null) EventType.WinchForceChanged:
                     ProcessWinchForceChanged(eventData);
                     break;
-                case EventType.WinchPowerChanged:
+                case if(EventType != null) EventType.WinchPowerChanged:
                     ProcessWinchPowerChanged(eventData);
                     break;
-                case EventType.WinchEfficiencyChanged:
+                case if(EventType != null) EventType.WinchEfficiencyChanged:
                     ProcessWinchEfficiencyChanged(eventData);
                     break;
-                case EventType.WinchWearChanged:
+                case if(EventType != null) EventType.WinchWearChanged:
                     ProcessWinchWearChanged(eventData);
                     break;
-                case EventType.WinchTemperatureChanged:
+                case if(EventType != null) EventType.WinchTemperatureChanged:
                     ProcessWinchTemperatureChanged(eventData);
                     break;
-                case EventType.WinchLubricationChanged:
+                case if(EventType != null) EventType.WinchLubricationChanged:
                     ProcessWinchLubricationChanged(eventData);
                     break;
-                case EventType.WinchMaintenanceRequired:
+                case if(EventType != null) EventType.WinchMaintenanceRequired:
                     ProcessWinchMaintenanceRequired(eventData);
                     break;
-                case EventType.SystemStarted:
+                case if(EventType != null) EventType.SystemStarted:
                     ProcessSystemStarted(eventData);
                     break;
-                case EventType.SystemStopped:
+                case if(EventType != null) EventType.SystemStopped:
                     ProcessSystemStopped(eventData);
                     break;
-                case EventType.SystemPaused:
+                case if(EventType != null) EventType.SystemPaused:
                     ProcessSystemPaused(eventData);
                     break;
-                case EventType.SystemResumed:
+                case if(EventType != null) EventType.SystemResumed:
                     ProcessSystemResumed(eventData);
                     break;
-                case EventType.SystemRestarted:
+                case if(EventType != null) EventType.SystemRestarted:
                     ProcessSystemRestarted(eventData);
                     break;
-                case EventType.SystemUpdated:
+                case if(EventType != null) EventType.SystemUpdated:
                     ProcessSystemUpdated(eventData);
                     break;
-                case EventType.SystemError:
+                case if(EventType != null) EventType.SystemError:
                     ProcessSystemError(eventData);
                     break;
-                case EventType.SystemWarning:
+                case if(EventType != null) EventType.SystemWarning:
                     ProcessSystemWarning(eventData);
                     break;
-                case EventType.SystemInfo:
+                case if(EventType != null) EventType.SystemInfo:
                     ProcessSystemInfo(eventData);
                     break;
-                case EventType.SystemDebug:
+                case if(EventType != null) EventType.SystemDebug:
                     ProcessSystemDebug(eventData);
                     break;
-                case EventType.SystemTrace:
+                case if(EventType != null) EventType.SystemTrace:
                     ProcessSystemTrace(eventData);
                     break;
-                case EventType.SystemLog:
+                case if(EventType != null) EventType.SystemLog:
                     ProcessSystemLog(eventData);
                     break;
-                case EventType.SystemException:
+                case if(EventType != null) EventType.SystemException:
                     ProcessSystemException(eventData);
                     break;
-                case EventType.SystemCrash:
+                case if(EventType != null) EventType.SystemCrash:
                     ProcessSystemCrash(eventData);
                     break;
-                case EventType.SystemRecovery:
+                case if(EventType != null) EventType.SystemRecovery:
                     ProcessSystemRecovery(eventData);
                     break;
-                case EventType.SystemBackup:
+                case if(EventType != null) EventType.SystemBackup:
                     ProcessSystemBackup(eventData);
                     break;
-                case EventType.SystemRestore:
+                case if(EventType != null) EventType.SystemRestore:
                     ProcessSystemRestore(eventData);
                     break;
-                case EventType.SystemReset:
+                case if(EventType != null) EventType.SystemReset:
                     ProcessSystemReset(eventData);
                     break;
-                case EventType.SystemShutdown:
+                case if(EventType != null) EventType.SystemShutdown:
                     ProcessSystemShutdown(eventData);
                     break;
-                case EventType.SystemStartup:
+                case if(EventType != null) EventType.SystemStartup:
                     ProcessSystemStartup(eventData);
                     break;
             }
@@ -544,16 +544,16 @@ namespace MudLike.Core.Systems
         /// </summary>
         private void UpdateEventTimers()
         {
-            var keys = _eventTimers.GetKeyArray(Allocator.Temp);
-            for (int i = 0; i < keys.Length; i++)
+            var keys = if(_eventTimers != null) _eventTimers.GetKeyArray(if(Allocator != null) Allocator.Temp);
+            for (int i = 0; i < if(keys != null) keys.Length; i++)
             {
                 var key = keys[i];
-                if (_eventTimers.TryGetValue(key, out float time))
+                if (if(_eventTimers != null) _eventTimers.TryGetValue(key, out float time))
                 {
-                    _eventTimers[key] = time + SystemAPI.Time.DeltaTime;
+                    _eventTimers[key] = time + if(SystemAPI != null) SystemAPI.Time.DeltaTime;
                 }
             }
-            keys.Dispose();
+            if(keys != null) keys.Dispose();
         }
         
         /// <summary>
@@ -561,7 +561,7 @@ namespace MudLike.Core.Systems
         /// </summary>
         public void AddEvent(EventData eventData)
         {
-            _eventQueue.Enqueue(eventData);
+            if(_eventQueue != null) _eventQueue.Enqueue(eventData);
         }
         
         /// <summary>
@@ -569,7 +569,7 @@ namespace MudLike.Core.Systems
         /// </summary>
         public int GetEventCount(EventType eventType)
         {
-            return _eventCounters.TryGetValue(eventType, out int count) ? count : 0;
+            return if(_eventCounters != null) _eventCounters.TryGetValue(eventType, out int count) ? count : 0;
         }
         
         /// <summary>
@@ -577,7 +577,7 @@ namespace MudLike.Core.Systems
         /// </summary>
         public float GetEventTime(EventType eventType)
         {
-            return _eventTimers.TryGetValue(eventType, out float time) ? time : 0f;
+            return if(_eventTimers != null) _eventTimers.TryGetValue(eventType, out float time) ? time : 0f;
         }
         
         // Реализации обработчиков событий
@@ -736,4 +736,3 @@ namespace MudLike.Core.Systems
         private void ProcessSystemShutdown(EventData eventData) { }
         private void ProcessSystemStartup(EventData eventData) { }
     }
-}

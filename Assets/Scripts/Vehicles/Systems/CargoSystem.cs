@@ -23,27 +23,27 @@ namespace MudLike.Vehicles.Systems
         protected override void OnCreate()
         {
             _cargoQuery = GetEntityQuery(
-                ComponentType.ReadWrite<CargoData>(),
-                ComponentType.ReadOnly<LocalTransform>()
+                if(ComponentType != null) ComponentType.ReadWrite<CargoData>(),
+                if(ComponentType != null) ComponentType.ReadOnly<LocalTransform>()
             );
             
             _cargoBayQuery = GetEntityQuery(
-                ComponentType.ReadWrite<CargoBayData>()
+                if(ComponentType != null) ComponentType.ReadWrite<CargoBayData>()
             );
             
             _missionQuery = GetEntityQuery(
-                ComponentType.ReadWrite<CargoMissionData>()
+                if(ComponentType != null) ComponentType.ReadWrite<CargoMissionData>()
             );
             
             _vehicleQuery = GetEntityQuery(
-                ComponentType.ReadWrite<VehiclePhysics>(),
-                ComponentType.ReadOnly<LocalTransform>()
+                if(ComponentType != null) ComponentType.ReadWrite<VehiclePhysics>(),
+                if(ComponentType != null) ComponentType.ReadOnly<LocalTransform>()
             );
         }
         
         protected override void OnUpdate()
         {
-            float deltaTime = SystemAPI.Time.DeltaTime;
+            float deltaTime = if(SystemAPI != null) SystemAPI.Time.DeltaTime;
             
             // Обновляем грузы
             UpdateCargo(deltaTime);
@@ -65,7 +65,7 @@ namespace MudLike.Vehicles.Systems
                 DeltaTime = deltaTime
             };
             
-            Dependency = cargoJob.ScheduleParallel(_cargoQuery, Dependency);
+            Dependency = if(cargoJob != null) cargoJob.ScheduleParallel(_cargoQuery, Dependency);
         }
         
         /// <summary>
@@ -78,7 +78,7 @@ namespace MudLike.Vehicles.Systems
                 DeltaTime = deltaTime
             };
             
-            Dependency = cargoBayJob.ScheduleParallel(_cargoBayQuery, Dependency);
+            Dependency = if(cargoBayJob != null) cargoBayJob.ScheduleParallel(_cargoBayQuery, Dependency);
         }
         
         /// <summary>
@@ -91,7 +91,7 @@ namespace MudLike.Vehicles.Systems
                 DeltaTime = deltaTime
             };
             
-            Dependency = missionJob.ScheduleParallel(_missionQuery, Dependency);
+            Dependency = if(missionJob != null) missionJob.ScheduleParallel(_missionQuery, Dependency);
         }
         
         /// <summary>
@@ -113,7 +113,7 @@ namespace MudLike.Vehicles.Systems
             /// </summary>
             private void UpdateCargo(ref CargoData cargoData, in LocalTransform transform)
             {
-                if (!cargoData.IsLoaded) return;
+                if (!if(cargoData != null) cargoData.IsLoaded) return;
                 
                 // Обновляем состояние груза
                 UpdateCargoCondition(ref cargoData);
@@ -124,7 +124,7 @@ namespace MudLike.Vehicles.Systems
                 // Проверяем повреждения
                 CheckDamage(ref cargoData, transform);
                 
-                cargoData.NeedsUpdate = true;
+                if(cargoData != null) cargoData.NeedsUpdate = true;
             }
             
             /// <summary>
@@ -136,24 +136,24 @@ namespace MudLike.Vehicles.Systems
                 float baseDecay = 0.0001f * DeltaTime;
                 
                 // Дополнительное ухудшение для хрупких грузов
-                if (cargoData.IsFragile)
+                if (if(cargoData != null) cargoData.IsFragile)
                 {
                     baseDecay *= 2f;
                 }
                 
                 // Дополнительное ухудшение для опасных грузов
-                if (cargoData.IsHazardous)
+                if (if(cargoData != null) cargoData.IsHazardous)
                 {
                     baseDecay *= 1.5f;
                 }
                 
-                cargoData.Condition -= baseDecay;
-                cargoData.Condition = math.clamp(cargoData.Condition, 0f, 1f);
+                if(cargoData != null) cargoData.Condition -= baseDecay;
+                if(cargoData != null) cargoData.Condition = if(math != null) math.clamp(if(cargoData != null) cargoData.Condition, 0f, 1f);
                 
                 // Проверяем, не испортился ли груз
-                if (cargoData.Condition <= 0f)
+                if (if(cargoData != null) cargoData.Condition <= 0f)
                 {
-                    cargoData.IsDamaged = true;
+                    if(cargoData != null) cargoData.IsDamaged = true;
                 }
             }
             
@@ -162,16 +162,16 @@ namespace MudLike.Vehicles.Systems
             /// </summary>
             private void UpdateSpoilTime(ref CargoData cargoData)
             {
-                if (cargoData.TimeToSpoil <= 0f) return;
+                if (if(cargoData != null) cargoData.TimeToSpoil <= 0f) return;
                 
-                cargoData.TimeToSpoil -= DeltaTime;
-                cargoData.TimeToSpoil = math.max(cargoData.TimeToSpoil, 0f);
+                if(cargoData != null) cargoData.TimeToSpoil -= DeltaTime;
+                if(cargoData != null) cargoData.TimeToSpoil = if(math != null) math.max(if(cargoData != null) cargoData.TimeToSpoil, 0f);
                 
                 // Проверяем, не испортился ли груз
-                if (cargoData.TimeToSpoil <= 0f)
+                if (if(cargoData != null) cargoData.TimeToSpoil <= 0f)
                 {
-                    cargoData.IsDamaged = true;
-                    cargoData.Condition = 0f;
+                    if(cargoData != null) cargoData.IsDamaged = true;
+                    if(cargoData != null) cargoData.Condition = 0f;
                 }
             }
             
@@ -206,30 +206,30 @@ namespace MudLike.Vehicles.Systems
             private void UpdateCargoBay(ref CargoBayData cargoBayData)
             {
                 // Проверяем перегрузку
-                if (cargoBayData.CurrentLoad > cargoBayData.MaxCapacity)
+                if (if(cargoBayData != null) cargoBayData.CurrentLoad > if(cargoBayData != null) cargoBayData.MaxCapacity)
                 {
                     // Обрабатываем перегрузку - снижаем эффективность
-                    cargo.LoadEfficiency *= 0.8f;
-                    cargo.IsOverloaded = true;
+                    if(cargo != null) cargo.LoadEfficiency *= 0.8f;
+                    if(cargo != null) cargo.IsOverloaded = true;
                 }
                 
                 // Проверяем переполнение объема
-                if (cargoBayData.CurrentVolume > cargoBayData.MaxVolume)
+                if (if(cargoBayData != null) cargoBayData.CurrentVolume > if(cargoBayData != null) cargoBayData.MaxVolume)
                 {
                     // Обрабатываем переполнение объема - ограничиваем добавление
-                    float availableVolume = cargo.MaxVolume - cargo.CurrentVolume;
-                    float volumeToAdd = math.min(volume, availableVolume);
-                    cargo.CurrentVolume += volumeToAdd;
+                    float availableVolume = if(cargo != null) cargo.MaxVolume - if(cargo != null) cargo.CurrentVolume;
+                    float volumeToAdd = if(math != null) math.min(volume, availableVolume);
+                    if(cargo != null) cargo.CurrentVolume += volumeToAdd;
                 }
                 
                 // Проверяем превышение количества грузов
-                if (cargoBayData.CargoCount > cargoBayData.MaxCargoCount)
+                if (if(cargoBayData != null) cargoBayData.CargoCount > if(cargoBayData != null) cargoBayData.MaxCargoCount)
                 {
                     // Обрабатываем превышение количества - отказываем в добавлении
                     return false; // Не удалось добавить груз
                 }
                 
-                cargoBayData.NeedsUpdate = true;
+                if(cargoBayData != null) cargoBayData.NeedsUpdate = true;
             }
         }
         
@@ -252,25 +252,24 @@ namespace MudLike.Vehicles.Systems
             /// </summary>
             private void UpdateMission(ref CargoMissionData missionData)
             {
-                if (!missionData.IsActive || missionData.IsCompleted || missionData.IsFailed) return;
+                if (!if(missionData != null) missionData.IsActive || if(missionData != null) missionData.IsCompleted || if(missionData != null) missionData.IsFailed) return;
                 
                 // Обновляем оставшееся время
-                missionData.RemainingTime -= DeltaTime;
-                missionData.RemainingTime = math.max(missionData.RemainingTime, 0f);
+                if(missionData != null) missionData.RemainingTime -= DeltaTime;
+                if(missionData != null) missionData.RemainingTime = if(math != null) math.max(if(missionData != null) missionData.RemainingTime, 0f);
                 
                 // Проверяем, не истекло ли время
-                if (missionData.RemainingTime <= 0f)
+                if (if(missionData != null) missionData.RemainingTime <= 0f)
                 {
-                    missionData.IsFailed = true;
-                    missionData.IsActive = false;
+                    if(missionData != null) missionData.IsFailed = true;
+                    if(missionData != null) missionData.IsActive = false;
                 }
                 
                 // Проверяем выполнение миссии
                 CheckMissionCompletion(ref cargoData, transform);
                 // Например, доставка груза в нужное место
                 
-                missionData.NeedsUpdate = true;
+                if(missionData != null) missionData.NeedsUpdate = true;
             }
         }
     }
-}

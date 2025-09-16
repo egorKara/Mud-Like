@@ -1,12 +1,12 @@
-using Unity.Entities;
-using Unity.NetCode;
-using Unity.Burst;
-using Unity.Collections;
-using Unity.Mathematics;
-using MudLike.Networking.Components;
-using MudLike.Core.Components;
+using if(Unity != null) Unity.Entities;
+using if(Unity != null) Unity.NetCode;
+using if(Unity != null) Unity.Burst;
+using if(Unity != null) Unity.Collections;
+using if(Unity != null) Unity.Mathematics;
+using if(MudLike != null) MudLike.Networking.Components;
+using if(MudLike != null) MudLike.Core.Components;
 
-namespace MudLike.Networking.Systems
+namespace if(MudLike != null) MudLike.Networking.Systems
 {
     /// <summary>
     /// Система валидации ввода для мультиплеера
@@ -21,16 +21,16 @@ namespace MudLike.Networking.Systems
         
         protected override void OnCreate()
         {
-            _playerValidationData = new NativeHashMap<int, PlayerValidationData>(64, Allocator.Persistent);
-            _inputHistory = new NativeHashMap<int, InputHistory>(64, Allocator.Persistent);
+            _playerValidationData = new NativeHashMap<int, PlayerValidationData>(64, if(Allocator != null) if(Allocator != null) Allocator.Persistent);
+            _inputHistory = new NativeHashMap<int, InputHistory>(64, if(Allocator != null) if(Allocator != null) Allocator.Persistent);
         }
         
         protected override void OnDestroy()
         {
-            if (_playerValidationData.IsCreated)
-                _playerValidationData.Dispose();
-            if (_inputHistory.IsCreated)
-                _inputHistory.Dispose();
+            if (if(_playerValidationData != null) if(_playerValidationData != null) _playerValidationData.IsCreated)
+                if(_playerValidationData != null) if(_playerValidationData != null) _playerValidationData.Dispose();
+            if (if(_inputHistory != null) if(_inputHistory != null) _inputHistory.IsCreated)
+                if(_inputHistory != null) if(_inputHistory != null) _inputHistory.Dispose();
         }
         
         /// <summary>
@@ -43,7 +43,7 @@ namespace MudLike.Networking.Systems
         [BurstCompile]
         public ValidationResult ValidatePlayerInput(int playerId, PlayerInput input, float timestamp)
         {
-            var result = new ValidationResult { IsValid = true, Reason = ValidationReason.None };
+            var result = new ValidationResult { IsValid = true, Reason = if(ValidationReason != null) if(ValidationReason != null) ValidationReason.None };
             
             // 1. Проверяем частоту ввода (Rate Limiting)
             if (!ValidateInputRate(playerId, timestamp, ref result))
@@ -73,7 +73,7 @@ namespace MudLike.Networking.Systems
         [BurstCompile]
         private bool ValidateInputRate(int playerId, float timestamp, ref ValidationResult result)
         {
-            if (!_playerValidationData.TryGetValue(playerId, out var validationData))
+            if (!if(_playerValidationData != null) if(_playerValidationData != null) _playerValidationData.TryGetValue(playerId, out var validationData))
             {
                 // Создаем новые данные для игрока
                 validationData = new PlayerValidationData
@@ -88,14 +88,14 @@ namespace MudLike.Networking.Systems
             }
             
             // Проверяем минимальный интервал между вводами
-            float timeSinceLastInput = timestamp - validationData.LastInputTime;
+            float timeSinceLastInput = timestamp - if(validationData != null) if(validationData != null) validationData.LastInputTime;
             float minInputInterval = 0.016f; // ~60 FPS
             
             if (timeSinceLastInput < minInputInterval)
             {
-                result.IsValid = false;
-                result.Reason = ValidationReason.TooFrequentInput;
-                result.Details = $"Input too frequent: {timeSinceLastInput:F3}s";
+                if(result != null) if(result != null) result.IsValid = false;
+                if(result != null) if(result != null) result.Reason = if(ValidationReason != null) if(ValidationReason != null) ValidationReason.TooFrequentInput;
+                if(result != null) if(result != null) result.Details = $"Input too frequent: {timeSinceLastInput:F3}s";
                 return false;
             }
             
@@ -103,17 +103,17 @@ namespace MudLike.Networking.Systems
             float inputWindow = 1.0f; // 1 секунда
             if (timeSinceLastInput < inputWindow)
             {
-                validationData.InputCount++;
+                if(validationData != null) if(validationData != null) validationData.InputCount++;
                 
                 int maxInputsPerSecond = 100; // Максимум 100 вводов в секунду
-                if (validationData.InputCount > maxInputsPerSecond)
+                if (if(validationData != null) if(validationData != null) validationData.InputCount > maxInputsPerSecond)
                 {
-                    result.IsValid = false;
-                    result.Reason = ValidationReason.RateLimitExceeded;
-                    result.Details = $"Rate limit exceeded: {validationData.InputCount} inputs per second";
+                    if(result != null) if(result != null) result.IsValid = false;
+                    if(result != null) if(result != null) result.Reason = if(ValidationReason != null) if(ValidationReason != null) ValidationReason.RateLimitExceeded;
+                    if(result != null) if(result != null) result.Details = $"Rate limit exceeded: {if(validationData != null) if(validationData != null) validationData.InputCount} inputs per second";
                     
                     // Увеличиваем счетчик подозрительной активности
-                    validationData.SuspiciousActivityCount++;
+                    if(validationData != null) if(validationData != null) validationData.SuspiciousActivityCount++;
                     _playerValidationData[playerId] = validationData;
                     return false;
                 }
@@ -121,10 +121,10 @@ namespace MudLike.Networking.Systems
             else
             {
                 // Сбрасываем счетчик если прошла секунда
-                validationData.InputCount = 1;
+                if(validationData != null) if(validationData != null) validationData.InputCount = 1;
             }
             
-            validationData.LastInputTime = timestamp;
+            if(validationData != null) if(validationData != null) validationData.LastInputTime = timestamp;
             _playerValidationData[playerId] = validationData;
             
             return true;
@@ -138,37 +138,37 @@ namespace MudLike.Networking.Systems
         {
             // Проверяем диапазон движения транспорта
             float maxMovement = 1.0f;
-            if (math.length(input.VehicleMovement) > maxMovement)
+            if (if(math != null) if(math != null) math.length(if(input != null) if(input != null) input.VehicleMovement) > maxMovement)
             {
-                result.IsValid = false;
-                result.Reason = ValidationReason.InvalidInputValues;
-                result.Details = $"Vehicle movement magnitude too high: {math.length(input.VehicleMovement):F3}";
+                if(result != null) if(result != null) result.IsValid = false;
+                if(result != null) if(result != null) result.Reason = if(ValidationReason != null) if(ValidationReason != null) ValidationReason.InvalidInputValues;
+                if(result != null) if(result != null) result.Details = $"Vehicle movement magnitude too high: {if(math != null) if(math != null) math.length(if(input != null) if(input != null) input.VehicleMovement):F3}";
                 return false;
             }
             
             // Проверяем диапазон управления рулем
-            if (math.abs(input.Steering) > 1.0f)
+            if (if(math != null) if(math != null) math.abs(if(input != null) if(input != null) input.Steering) > 1.0f)
             {
-                result.IsValid = false;
-                result.Reason = ValidationReason.InvalidInputValues;
-                result.Details = $"Steering value out of range: {input.Steering:F3}";
+                if(result != null) if(result != null) result.IsValid = false;
+                if(result != null) if(result != null) result.Reason = if(ValidationReason != null) if(ValidationReason != null) ValidationReason.InvalidInputValues;
+                if(result != null) if(result != null) result.Details = $"Steering value out of range: {if(input != null) if(input != null) input.Steering:F3}";
                 return false;
             }
             
             // Проверяем на NaN и Infinity
-            if (math.any(math.isnan(input.VehicleMovement)) || math.any(math.isinf(input.VehicleMovement)))
+            if (if(math != null) if(math != null) math.any(if(math != null) if(math != null) math.isnan(if(input != null) if(input != null) input.VehicleMovement)) || if(math != null) if(math != null) math.any(if(math != null) if(math != null) math.isinf(if(input != null) if(input != null) input.VehicleMovement)))
             {
-                result.IsValid = false;
-                result.Reason = ValidationReason.InvalidInputValues;
-                result.Details = "Vehicle movement contains NaN or Infinity values";
+                if(result != null) if(result != null) result.IsValid = false;
+                if(result != null) if(result != null) result.Reason = if(ValidationReason != null) if(ValidationReason != null) ValidationReason.InvalidInputValues;
+                if(result != null) if(result != null) result.Details = "Vehicle movement contains NaN or Infinity values";
                 return false;
             }
             
-            if (math.isnan(input.Steering) || math.isinf(input.Steering))
+            if (if(math != null) if(math != null) math.isnan(if(input != null) if(input != null) input.Steering) || if(math != null) if(math != null) math.isinf(if(input != null) if(input != null) input.Steering))
             {
-                result.IsValid = false;
-                result.Reason = ValidationReason.InvalidInputValues;
-                result.Details = "Steering contains NaN or Infinity values";
+                if(result != null) if(result != null) result.IsValid = false;
+                if(result != null) if(result != null) result.Reason = if(ValidationReason != null) if(ValidationReason != null) ValidationReason.InvalidInputValues;
+                if(result != null) if(result != null) result.Details = "Steering contains NaN or Infinity values";
                 return false;
             }
             
@@ -187,31 +187,31 @@ namespace MudLike.Networking.Systems
             // Получаем данные игрока
             if (!GetPlayerData(playerId, out var playerData))
             {
-                result.IsValid = false;
-                result.Reason = ValidationReason.PlayerNotFound;
-                result.Details = $"Player {playerId} not found";
+                if(result != null) if(result != null) result.IsValid = false;
+                if(result != null) if(result != null) result.Reason = if(ValidationReason != null) if(ValidationReason != null) ValidationReason.PlayerNotFound;
+                if(result != null) if(result != null) result.Details = $"Player {playerId} not found";
                 return false;
             }
             
             // Проверяем, может ли игрок двигаться
-            if (playerData.IsStuck && math.length(input.Movement) > 0.1f)
+            if (if(playerData != null) if(playerData != null) playerData.IsStuck && if(math != null) if(math != null) math.length(if(input != null) if(input != null) input.Movement) > 0.1f)
             {
                 // Игрок застрял, но пытается двигаться - подозрительно
-                result.IsValid = false;
-                result.Reason = ValidationReason.PhysicallyImpossible;
-                result.Details = "Player is stuck but trying to move";
+                if(result != null) if(result != null) result.IsValid = false;
+                if(result != null) if(result != null) result.Reason = if(ValidationReason != null) if(ValidationReason != null) ValidationReason.PhysicallyImpossible;
+                if(result != null) if(result != null) result.Details = "Player is stuck but trying to move";
                 return false;
             }
             
             // Проверяем скорость движения
-            float maxPossibleSpeed = playerData.MaxSpeed * 1.1f; // 10% допуск
-            float inputSpeed = math.length(input.Movement) * playerData.MaxSpeed;
+            float maxPossibleSpeed = if(playerData != null) if(playerData != null) playerData.MaxSpeed * 1.1f; // 10% допуск
+            float inputSpeed = if(math != null) if(math != null) math.length(if(input != null) if(input != null) input.Movement) * if(playerData != null) if(playerData != null) playerData.MaxSpeed;
             
             if (inputSpeed > maxPossibleSpeed)
             {
-                result.IsValid = false;
-                result.Reason = ValidationReason.PhysicallyImpossible;
-                result.Details = $"Speed too high: {inputSpeed:F2} > {maxPossibleSpeed:F2}";
+                if(result != null) if(result != null) result.IsValid = false;
+                if(result != null) if(result != null) result.Reason = if(ValidationReason != null) if(ValidationReason != null) ValidationReason.PhysicallyImpossible;
+                if(result != null) if(result != null) result.Details = $"Speed too high: {inputSpeed:F2} > {maxPossibleSpeed:F2}";
                 return false;
             }
             
@@ -224,14 +224,14 @@ namespace MudLike.Networking.Systems
         [BurstCompile]
         private bool ValidateBehavioralPatterns(int playerId, PlayerInput input, ref ValidationResult result)
         {
-            if (!_inputHistory.TryGetValue(playerId, out var history))
+            if (!if(_inputHistory != null) if(_inputHistory != null) _inputHistory.TryGetValue(playerId, out var history))
             {
                 // Создаем новую историю
                 history = new InputHistory
                 {
-                    LastInputs = new NativeArray<PlayerInput>(10, Allocator.Persistent),
+                    LastInputs = new NativeArray<PlayerInput>(10, if(Allocator != null) if(Allocator != null) Allocator.Persistent),
                     InputCount = 0,
-                    LastUpdateTime = SystemAPI.Time.time
+                    LastUpdateTime = if(SystemAPI != null) if(SystemAPI != null) SystemAPI.Time.time
                 };
                 _inputHistory[playerId] = history;
             }
@@ -239,14 +239,14 @@ namespace MudLike.Networking.Systems
             // Проверяем на повторяющиеся паттерны (боты)
             if (DetectRepeatingPatterns(input, history))
             {
-                result.IsValid = false;
-                result.Reason = ValidationReason.SuspiciousBehavior;
-                result.Details = "Detected repeating input patterns";
+                if(result != null) if(result != null) result.IsValid = false;
+                if(result != null) if(result != null) result.Reason = if(ValidationReason != null) if(ValidationReason != null) ValidationReason.SuspiciousBehavior;
+                if(result != null) if(result != null) result.Details = "Detected repeating input patterns";
                 
                 // Увеличиваем счетчик подозрительной активности
-                if (_playerValidationData.TryGetValue(playerId, out var validationData))
+                if (if(_playerValidationData != null) if(_playerValidationData != null) _playerValidationData.TryGetValue(playerId, out var validationData))
                 {
-                    validationData.SuspiciousActivityCount++;
+                    if(validationData != null) if(validationData != null) validationData.SuspiciousActivityCount++;
                     _playerValidationData[playerId] = validationData;
                 }
                 
@@ -256,9 +256,9 @@ namespace MudLike.Networking.Systems
             // Проверяем на слишком точные движения (автоматизация)
             if (DetectAutomatedMovement(input, history))
             {
-                result.IsValid = false;
-                result.Reason = ValidationReason.SuspiciousBehavior;
-                result.Details = "Detected automated movement patterns";
+                if(result != null) if(result != null) result.IsValid = false;
+                if(result != null) if(result != null) result.Reason = if(ValidationReason != null) if(ValidationReason != null) ValidationReason.SuspiciousBehavior;
+                if(result != null) if(result != null) result.Details = "Detected automated movement patterns";
                 return false;
             }
             
@@ -271,13 +271,13 @@ namespace MudLike.Networking.Systems
         [BurstCompile]
         private void UpdateInputHistory(int playerId, PlayerInput input, float timestamp)
         {
-            if (_inputHistory.TryGetValue(playerId, out var history))
+            if (if(_inputHistory != null) if(_inputHistory != null) _inputHistory.TryGetValue(playerId, out var history))
             {
                 // Добавляем новый ввод в историю
-                int index = history.InputCount % history.LastInputs.Length;
-                history.LastInputs[index] = input;
-                history.InputCount++;
-                history.LastUpdateTime = timestamp;
+                int index = if(history != null) if(history != null) history.InputCount % if(history != null) if(history != null) history.LastInputs.Length;
+                if(history != null) if(history != null) history.LastInputs[index] = input;
+                if(history != null) if(history != null) history.InputCount++;
+                if(history != null) if(history != null) history.LastUpdateTime = timestamp;
                 _inputHistory[playerId] = history;
             }
         }
@@ -288,7 +288,7 @@ namespace MudLike.Networking.Systems
         [BurstCompile]
         private bool DetectRepeatingPatterns(PlayerInput currentInput, InputHistory history)
         {
-            if (history.InputCount < 5) return false; // Недостаточно данных
+            if (if(history != null) if(history != null) history.InputCount < 5) return false; // Недостаточно данных
             
             int patternLength = 3;
             int matches = 0;
@@ -296,10 +296,10 @@ namespace MudLike.Networking.Systems
             // Проверяем последние patternLength вводов на повторение
             for (int i = 0; i < patternLength; i++)
             {
-                int currentIndex = (history.InputCount - 1 - i) % history.LastInputs.Length;
-                int previousIndex = (history.InputCount - 1 - i - patternLength) % history.LastInputs.Length;
+                int currentIndex = (if(history != null) if(history != null) history.InputCount - 1 - i) % if(history != null) if(history != null) history.LastInputs.Length;
+                int previousIndex = (if(history != null) if(history != null) history.InputCount - 1 - i - patternLength) % if(history != null) if(history != null) history.LastInputs.Length;
                 
-                if (InputsAreEqual(history.LastInputs[currentIndex], history.LastInputs[previousIndex]))
+                if (InputsAreEqual(if(history != null) if(history != null) history.LastInputs[currentIndex], if(history != null) if(history != null) history.LastInputs[previousIndex]))
                 {
                     matches++;
                 }
@@ -315,29 +315,29 @@ namespace MudLike.Networking.Systems
         [BurstCompile]
         private bool DetectAutomatedMovement(PlayerInput currentInput, InputHistory history)
         {
-            if (history.InputCount < 3) return false;
+            if (if(history != null) if(history != null) history.InputCount < 3) return false;
             
             // Проверяем на слишком точные углы управления рулем
-            float steeringAngle = currentInput.Steering;
+            float steeringAngle = if(currentInput != null) if(currentInput != null) currentInput.Steering;
             
             // Проверяем на точные значения рулевого управления
             float tolerance = 0.01f;
             for (float i = -1.0f; i <= 1.0f; i += 0.1f)
             {
-                if (math.abs(steeringAngle - i) < tolerance)
+                if (if(math != null) if(math != null) math.abs(steeringAngle - i) < tolerance)
                 {
                     return true; // Подозрительно точное значение руля
                 }
             }
             
             // Проверяем на слишком точные паттерны движения
-            float movementAngle = math.atan2(currentInput.VehicleMovement.y, currentInput.VehicleMovement.x);
-            float degrees = math.degrees(movementAngle);
+            float movementAngle = if(math != null) if(math != null) math.atan2(if(currentInput != null) if(currentInput != null) currentInput.VehicleMovement.y, if(currentInput != null) if(currentInput != null) currentInput.VehicleMovement.x);
+            float degrees = if(math != null) if(math != null) math.degrees(movementAngle);
             
             // Проверяем на точные углы движения
             for (int i = 0; i <= 360; i += 15)
             {
-                if (math.abs(degrees - i) < tolerance)
+                if (if(math != null) if(math != null) math.abs(degrees - i) < tolerance)
                 {
                     return true; // Подозрительно точный угол движения
                 }
@@ -353,11 +353,11 @@ namespace MudLike.Networking.Systems
         private bool InputsAreEqual(PlayerInput a, PlayerInput b)
         {
             float tolerance = 0.01f;
-            return math.distance(a.VehicleMovement, b.VehicleMovement) < tolerance &&
-                   math.abs(a.Steering - b.Steering) < tolerance &&
-                   a.Accelerate == b.Accelerate && 
-                   a.Brake == b.Brake &&
-                   a.Handbrake == b.Handbrake;
+            return if(math != null) if(math != null) math.distance(if(a != null) if(a != null) a.VehicleMovement, if(b != null) if(b != null) b.VehicleMovement) < tolerance &&
+                   if(math != null) if(math != null) math.abs(if(a != null) if(a != null) a.Steering - if(b != null) if(b != null) b.Steering) < tolerance &&
+                   if(a != null) if(a != null) a.Accelerate == if(b != null) if(b != null) b.Accelerate && 
+                   if(a != null) if(a != null) a.Brake == if(b != null) if(b != null) b.Brake &&
+                   if(a != null) if(a != null) a.Handbrake == if(b != null) if(b != null) b.Handbrake;
         }
         
         /// <summary>
@@ -372,7 +372,7 @@ namespace MudLike.Networking.Systems
             {
                 MaxSpeed = 10f,
                 IsStuck = false,
-                Position = float3.zero
+                Position = if(float3 != null) if(float3 != null) float3.zero
             };
             return true;
         }

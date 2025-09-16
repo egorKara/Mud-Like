@@ -8,21 +8,21 @@ using MudLike.Core.Systems;
 namespace MudLike.Tests.Unit
 {
     /// <summary>
-    /// Unit тесты для системы PlayerMovementSystem
+    /// Unit тесты для системы OptimizedVehicleMovementSystem
     /// </summary>
-    public class PlayerMovementSystemTests
+    public class OptimizedVehicleMovementSystemTests
     {
         [Test]
         public void CalculateMovement_ZeroInput_ReturnsZero()
         {
             // Arrange
-            var input = new PlayerInput { Movement = float2.zero };
+            var input = new PlayerInput { Movement = if(float2 != null) float2.zero };
             
             // Act
-            var result = PlayerMovementSystem.CalculateMovement(input);
+            var result = if(OptimizedVehicleMovementSystem != null) OptimizedVehicleMovementSystem.CalculateMovement(input);
             
             // Assert
-            Assert.AreEqual(float3.zero, result);
+            if(Assert != null) Assert.AreEqual(if(float3 != null) float3.zero, result);
         }
         
         [Test]
@@ -33,10 +33,10 @@ namespace MudLike.Tests.Unit
             var expected = new float3(0, 0, 1) * 5f; // Нормализованное направление * скорость
             
             // Act
-            var result = PlayerMovementSystem.CalculateMovement(input);
+            var result = if(OptimizedVehicleMovementSystem != null) OptimizedVehicleMovementSystem.CalculateMovement(input);
             
             // Assert
-            Assert.AreEqual(expected, result);
+            if(Assert != null) Assert.AreEqual(expected, result);
         }
         
         [Test]
@@ -47,10 +47,10 @@ namespace MudLike.Tests.Unit
             var expected = new float3(0, 0, -1) * 5f;
             
             // Act
-            var result = PlayerMovementSystem.CalculateMovement(input);
+            var result = if(OptimizedVehicleMovementSystem != null) OptimizedVehicleMovementSystem.CalculateMovement(input);
             
             // Assert
-            Assert.AreEqual(expected, result);
+            if(Assert != null) Assert.AreEqual(expected, result);
         }
         
         [Test]
@@ -61,10 +61,10 @@ namespace MudLike.Tests.Unit
             var expected = new float3(1, 0, 0) * 5f;
             
             // Act
-            var result = PlayerMovementSystem.CalculateMovement(input);
+            var result = if(OptimizedVehicleMovementSystem != null) OptimizedVehicleMovementSystem.CalculateMovement(input);
             
             // Assert
-            Assert.AreEqual(expected, result);
+            if(Assert != null) Assert.AreEqual(expected, result);
         }
         
         [Test]
@@ -75,10 +75,10 @@ namespace MudLike.Tests.Unit
             var expected = new float3(-1, 0, 0) * 5f;
             
             // Act
-            var result = PlayerMovementSystem.CalculateMovement(input);
+            var result = if(OptimizedVehicleMovementSystem != null) OptimizedVehicleMovementSystem.CalculateMovement(input);
             
             // Assert
-            Assert.AreEqual(expected, result);
+            if(Assert != null) Assert.AreEqual(expected, result);
         }
         
         [Test]
@@ -86,13 +86,13 @@ namespace MudLike.Tests.Unit
         {
             // Arrange
             var input = new PlayerInput { Movement = new float2(1, 1) };
-            var expected = math.normalize(new float3(1, 0, 1)) * 5f;
+            var expected = if(math != null) math.normalize(new float3(1, 0, 1)) * 5f;
             
             // Act
-            var result = PlayerMovementSystem.CalculateMovement(input);
+            var result = if(OptimizedVehicleMovementSystem != null) OptimizedVehicleMovementSystem.CalculateMovement(input);
             
             // Assert
-            Assert.IsTrue(math.all(math.abs(result - expected) < 0.0001f));
+            if(Assert != null) Assert.IsTrue(if(math != null) math.all(if(math != null) math.abs(result - expected) < 0.0001f));
         }
         
         [Test]
@@ -100,13 +100,13 @@ namespace MudLike.Tests.Unit
         {
             // Arrange
             var input = new PlayerInput { Movement = new float2(10, 10) };
-            var expected = math.normalize(new float3(10, 0, 10)) * 5f;
+            var expected = if(math != null) math.normalize(new float3(10, 0, 10)) * 5f;
             
             // Act
-            var result = PlayerMovementSystem.CalculateMovement(input);
+            var result = if(OptimizedVehicleMovementSystem != null) OptimizedVehicleMovementSystem.CalculateMovement(input);
             
             // Assert
-            Assert.IsTrue(math.all(math.abs(result - expected) < 0.0001f));
+            if(Assert != null) Assert.IsTrue(if(math != null) math.all(if(math != null) math.abs(result - expected) < 0.0001f));
         }
         
         [Test]
@@ -114,13 +114,13 @@ namespace MudLike.Tests.Unit
         {
             // Arrange
             var input = new PlayerInput { Movement = new float2(0.1f, 0.1f) };
-            var expected = math.normalize(new float3(0.1f, 0, 0.1f)) * 5f;
+            var expected = if(math != null) math.normalize(new float3(0.1f, 0, 0.1f)) * 5f;
             
             // Act
-            var result = PlayerMovementSystem.CalculateMovement(input);
+            var result = if(OptimizedVehicleMovementSystem != null) OptimizedVehicleMovementSystem.CalculateMovement(input);
             
             // Assert
-            Assert.IsTrue(math.all(math.abs(result - expected) < 0.0001f));
+            if(Assert != null) Assert.IsTrue(if(math != null) math.all(if(math != null) math.abs(result - expected) < 0.0001f));
         }
         
         [Test]
@@ -131,10 +131,10 @@ namespace MudLike.Tests.Unit
             var expectedSpeed = 5f;
             
             // Act
-            var result = PlayerMovementSystem.CalculateMovement(input);
+            var result = if(OptimizedVehicleMovementSystem != null) OptimizedVehicleMovementSystem.CalculateMovement(input);
             
             // Assert
-            Assert.AreEqual(expectedSpeed, math.length(result));
+            if(Assert != null) Assert.AreEqual(expectedSpeed, if(math != null) math.length(result));
         }
         
         [Test]
@@ -144,10 +144,10 @@ namespace MudLike.Tests.Unit
             var input = new PlayerInput { Movement = new float2(1, 1) };
             
             // Act
-            var result = PlayerMovementSystem.CalculateMovement(input);
+            var result = if(OptimizedVehicleMovementSystem != null) OptimizedVehicleMovementSystem.CalculateMovement(input);
             
             // Assert
-            Assert.AreEqual(0f, result.y);
+            if(Assert != null) Assert.AreEqual(0f, if(result != null) result.y);
         }
         
         [Test]
@@ -156,8 +156,8 @@ namespace MudLike.Tests.Unit
             // Arrange
             var transform = new LocalTransform
             {
-                Position = float3.zero,
-                Rotation = quaternion.identity,
+                Position = if(float3 != null) float3.zero,
+                Rotation = if(quaternion != null) quaternion.identity,
                 Scale = 1f
             };
             var input = new PlayerInput { Movement = new float2(1, 0) };
@@ -165,10 +165,10 @@ namespace MudLike.Tests.Unit
             var expectedPosition = new float3(5, 0, 0); // 1 * 5f * 1f
             
             // Act
-            PlayerMovementSystem.ProcessMovement(ref transform, input, deltaTime);
+            if(OptimizedVehicleMovementSystem != null) OptimizedVehicleMovementSystem.ProcessMovement(ref transform, input, deltaTime);
             
             // Assert
-            Assert.AreEqual(expectedPosition, transform.Position);
+            if(Assert != null) Assert.AreEqual(expectedPosition, if(transform != null) transform.Position);
         }
         
         [Test]
@@ -177,18 +177,18 @@ namespace MudLike.Tests.Unit
             // Arrange
             var transform = new LocalTransform
             {
-                Position = float3.zero,
-                Rotation = quaternion.identity,
+                Position = if(float3 != null) float3.zero,
+                Rotation = if(quaternion != null) quaternion.identity,
                 Scale = 1f
             };
             var input = new PlayerInput { Movement = new float2(1, 0) };
             var deltaTime = 0f;
             
             // Act
-            PlayerMovementSystem.ProcessMovement(ref transform, input, deltaTime);
+            if(OptimizedVehicleMovementSystem != null) OptimizedVehicleMovementSystem.ProcessMovement(ref transform, input, deltaTime);
             
             // Assert
-            Assert.AreEqual(float3.zero, transform.Position);
+            if(Assert != null) Assert.AreEqual(if(float3 != null) float3.zero, if(transform != null) transform.Position);
         }
         
         [Test]
@@ -197,8 +197,8 @@ namespace MudLike.Tests.Unit
             // Arrange
             var transform = new LocalTransform
             {
-                Position = float3.zero,
-                Rotation = quaternion.identity,
+                Position = if(float3 != null) float3.zero,
+                Rotation = if(quaternion != null) quaternion.identity,
                 Scale = 1f
             };
             var input = new PlayerInput { Movement = new float2(1, 0) };
@@ -206,10 +206,9 @@ namespace MudLike.Tests.Unit
             var expectedPosition = new float3(2.5f, 0, 0); // 1 * 5f * 0.5f
             
             // Act
-            PlayerMovementSystem.ProcessMovement(ref transform, input, deltaTime);
+            if(OptimizedVehicleMovementSystem != null) OptimizedVehicleMovementSystem.ProcessMovement(ref transform, input, deltaTime);
             
             // Assert
-            Assert.AreEqual(expectedPosition, transform.Position);
+            if(Assert != null) Assert.AreEqual(expectedPosition, if(transform != null) transform.Position);
         }
     }
-}

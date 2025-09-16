@@ -1,11 +1,11 @@
-using Unity.Entities;
-using Unity.Burst;
-using Unity.Jobs;
-using Unity.Collections;
-using Unity.Mathematics;
-using MudLike.Core.Constants;
+using if(Unity != null) Unity.Entities;
+using if(Unity != null) Unity.Burst;
+using if(Unity != null) Unity.Jobs;
+using if(Unity != null) Unity.Collections;
+using if(Unity != null) Unity.Mathematics;
+using if(MudLike != null) MudLike.Core.Constants;
 
-namespace MudLike.Core.Systems
+namespace if(MudLike != null) MudLike.Core.Systems
 {
     /// <summary>
     /// Система мониторинга в реальном времени для MudRunner-like
@@ -22,29 +22,29 @@ namespace MudLike.Core.Systems
         protected override void OnCreate()
         {
             _monitoringQuery = GetEntityQuery(
-                ComponentType.ReadWrite<SystemMonitoringData>()
+                if(ComponentType != null) if(ComponentType != null) ComponentType.ReadWrite<SystemMonitoringData>()
             );
             
-            _systemMetrics = new NativeArray<float>(20, Allocator.Persistent);
-            _alertFlags = new NativeArray<bool>(20, Allocator.Persistent);
+            _systemMetrics = new NativeArray<float>(20, if(Allocator != null) if(Allocator != null) Allocator.Persistent);
+            _alertFlags = new NativeArray<bool>(20, if(Allocator != null) if(Allocator != null) Allocator.Persistent);
         }
         
         protected override void OnDestroy()
         {
-            if (_systemMetrics.IsCreated)
+            if (if(_systemMetrics != null) if(_systemMetrics != null) _systemMetrics.IsCreated)
             {
-                _systemMetrics.Dispose();
+                if(_systemMetrics != null) if(_systemMetrics != null) _systemMetrics.Dispose();
             }
             
-            if (_alertFlags.IsCreated)
+            if (if(_alertFlags != null) if(_alertFlags != null) _alertFlags.IsCreated)
             {
-                _alertFlags.Dispose();
+                if(_alertFlags != null) if(_alertFlags != null) _alertFlags.Dispose();
             }
         }
         
         protected override void OnUpdate()
         {
-            var deltaTime = SystemAPI.Time.fixedDeltaTime;
+            var deltaTime = if(SystemAPI != null) if(SystemAPI != null) SystemAPI.Time.fixedDeltaTime;
             
             // Мониторинг систем
             MonitorSystems(deltaTime);
@@ -61,11 +61,11 @@ namespace MudLike.Core.Systems
         /// </summary>
         private void MonitorSystems(float deltaTime)
         {
-            var monitoringEntities = _monitoringQuery.ToEntityArray(Allocator.TempJob);
+            var monitoringEntities = if(_monitoringQuery != null) if(_monitoringQuery != null) _monitoringQuery.ToEntityArray(if(Allocator != null) if(Allocator != null) Allocator.TempJob);
             
-            if (monitoringEntities.Length == 0)
+            if (if(monitoringEntities != null) if(monitoringEntities != null) monitoringEntities.Length == 0)
             {
-                monitoringEntities.Dispose();
+                if(monitoringEntities != null) if(monitoringEntities != null) monitoringEntities.Dispose();
                 return;
             }
             
@@ -77,18 +77,18 @@ namespace MudLike.Core.Systems
                 SystemMetrics = _systemMetrics,
                 AlertFlags = _alertFlags,
                 DeltaTime = deltaTime,
-                CurrentTime = SystemAPI.Time.ElapsedTime
+                CurrentTime = if(SystemAPI != null) if(SystemAPI != null) SystemAPI.Time.ElapsedTime
             };
             
             // Запуск Job с зависимостями
-            var jobHandle = monitoringJob.ScheduleParallel(
-                monitoringEntities.Length,
-                SystemConstants.DETERMINISTIC_MAX_ITERATIONS / 4,
+            var jobHandle = if(monitoringJob != null) if(monitoringJob != null) monitoringJob.ScheduleParallel(
+                if(monitoringEntities != null) if(monitoringEntities != null) monitoringEntities.Length,
+                if(SystemConstants != null) if(SystemConstants != null) SystemConstants.DETERMINISTIC_MAX_ITERATIONS / 4,
                 Dependency
             );
             
             Dependency = jobHandle;
-            monitoringEntities.Dispose();
+            if(monitoringEntities != null) if(monitoringEntities != null) monitoringEntities.Dispose();
         }
         
         /// <summary>
@@ -102,11 +102,11 @@ namespace MudLike.Core.Systems
                 SystemMetrics = _systemMetrics,
                 AlertFlags = _alertFlags,
                 DeltaTime = deltaTime,
-                CurrentTime = SystemAPI.Time.ElapsedTime
+                CurrentTime = if(SystemAPI != null) if(SystemAPI != null) SystemAPI.Time.ElapsedTime
             };
             
             // Запуск Job с зависимостями
-            var jobHandle = analysisJob.Schedule(Dependency);
+            var jobHandle = if(analysisJob != null) if(analysisJob != null) analysisJob.Schedule(Dependency);
             Dependency = jobHandle;
         }
         
@@ -121,11 +121,11 @@ namespace MudLike.Core.Systems
                 SystemMetrics = _systemMetrics,
                 AlertFlags = _alertFlags,
                 DeltaTime = deltaTime,
-                CurrentTime = SystemAPI.Time.ElapsedTime
+                CurrentTime = if(SystemAPI != null) if(SystemAPI != null) SystemAPI.Time.ElapsedTime
             };
             
             // Запуск Job с зависимостями
-            var jobHandle = alertJob.Schedule(Dependency);
+            var jobHandle = if(alertJob != null) if(alertJob != null) alertJob.Schedule(Dependency);
             Dependency = jobHandle;
         }
     }
@@ -148,7 +148,7 @@ namespace MudLike.Core.Systems
         
         public void Execute(int index)
         {
-            if (index >= MonitoringEntities.Length) return;
+            if (index >= if(MonitoringEntities != null) if(MonitoringEntities != null) MonitoringEntities.Length) return;
             
             var monitoringEntity = MonitoringEntities[index];
             var monitoringData = SystemMonitoringLookup[monitoringEntity];
@@ -171,21 +171,21 @@ namespace MudLike.Core.Systems
         private void MonitorPerformance(ref SystemMonitoringData data)
         {
             // Мониторинг FPS
-            data.FPS = 1.0f / DeltaTime;
-            SystemMetrics[0] = data.FPS;
+            if(data != null) if(data != null) data.FPS = 1.0f / DeltaTime;
+            SystemMetrics[0] = if(data != null) if(data != null) data.FPS;
             
             // Проверка целевого FPS
-            if (data.FPS < SystemConstants.TARGET_FPS)
+            if (if(data != null) if(data != null) data.FPS < if(SystemConstants != null) if(SystemConstants != null) SystemConstants.TARGET_FPS)
             {
                 AlertFlags[0] = true;
             }
             
             // Мониторинг времени обновления
-            data.UpdateTime = DeltaTime;
-            SystemMetrics[1] = data.UpdateTime;
+            if(data != null) if(data != null) data.UpdateTime = DeltaTime;
+            SystemMetrics[1] = if(data != null) if(data != null) data.UpdateTime;
             
             // Проверка времени обновления
-            if (data.UpdateTime > SystemConstants.MAX_UPDATE_TIME)
+            if (if(data != null) if(data != null) data.UpdateTime > if(SystemConstants != null) if(SystemConstants != null) SystemConstants.MAX_UPDATE_TIME)
             {
                 AlertFlags[1] = true;
             }
@@ -197,21 +197,21 @@ namespace MudLike.Core.Systems
         private void MonitorMemory(ref SystemMonitoringData data)
         {
             // Мониторинг использования памяти
-            data.MemoryUsage = GetMemoryUsage();
-            SystemMetrics[2] = data.MemoryUsage;
+            if(data != null) if(data != null) data.MemoryUsage = GetMemoryUsage();
+            SystemMetrics[2] = if(data != null) if(data != null) data.MemoryUsage;
             
             // Проверка использования памяти
-            if (data.MemoryUsage > SystemConstants.MAX_MEMORY_USAGE)
+            if (if(data != null) if(data != null) data.MemoryUsage > if(SystemConstants != null) if(SystemConstants != null) SystemConstants.MAX_MEMORY_USAGE)
             {
                 AlertFlags[2] = true;
             }
             
             // Мониторинг утечек памяти
-            data.MemoryLeaks = GetMemoryLeaks();
-            SystemMetrics[3] = data.MemoryLeaks;
+            if(data != null) if(data != null) data.MemoryLeaks = GetMemoryLeaks();
+            SystemMetrics[3] = if(data != null) if(data != null) data.MemoryLeaks;
             
             // Проверка утечек памяти
-            if (data.MemoryLeaks > SystemConstants.MAX_MEMORY_LEAKS)
+            if (if(data != null) if(data != null) data.MemoryLeaks > if(SystemConstants != null) if(SystemConstants != null) SystemConstants.MAX_MEMORY_LEAKS)
             {
                 AlertFlags[3] = true;
             }
@@ -223,21 +223,21 @@ namespace MudLike.Core.Systems
         private void MonitorNetwork(ref SystemMonitoringData data)
         {
             // Мониторинг задержки сети
-            data.NetworkLatency = GetNetworkLatency();
-            SystemMetrics[4] = data.NetworkLatency;
+            if(data != null) if(data != null) data.NetworkLatency = GetNetworkLatency();
+            SystemMetrics[4] = if(data != null) if(data != null) data.NetworkLatency;
             
             // Проверка задержки сети
-            if (data.NetworkLatency > SystemConstants.MAX_NETWORK_LATENCY)
+            if (if(data != null) if(data != null) data.NetworkLatency > if(SystemConstants != null) if(SystemConstants != null) SystemConstants.MAX_NETWORK_LATENCY)
             {
                 AlertFlags[4] = true;
             }
             
             // Мониторинг потери пакетов
-            data.PacketLoss = GetPacketLoss();
-            SystemMetrics[5] = data.PacketLoss;
+            if(data != null) if(data != null) data.PacketLoss = GetPacketLoss();
+            SystemMetrics[5] = if(data != null) if(data != null) data.PacketLoss;
             
             // Проверка потери пакетов
-            if (data.PacketLoss > SystemConstants.MAX_PACKET_LOSS)
+            if (if(data != null) if(data != null) data.PacketLoss > if(SystemConstants != null) if(SystemConstants != null) SystemConstants.MAX_PACKET_LOSS)
             {
                 AlertFlags[5] = true;
             }
@@ -315,14 +315,14 @@ namespace MudLike.Core.Systems
         {
             // Анализ FPS
             var fps = SystemMetrics[0];
-            if (fps < SystemConstants.TARGET_FPS)
+            if (fps < if(SystemConstants != null) if(SystemConstants != null) SystemConstants.TARGET_FPS)
             {
                 // Логика обработки низкого FPS
             }
             
             // Анализ времени обновления
             var updateTime = SystemMetrics[1];
-            if (updateTime > SystemConstants.MAX_UPDATE_TIME)
+            if (updateTime > if(SystemConstants != null) if(SystemConstants != null) SystemConstants.MAX_UPDATE_TIME)
             {
                 // Логика обработки медленного обновления
             }
@@ -335,14 +335,14 @@ namespace MudLike.Core.Systems
         {
             // Анализ использования памяти
             var memoryUsage = SystemMetrics[2];
-            if (memoryUsage > SystemConstants.MAX_MEMORY_USAGE)
+            if (memoryUsage > if(SystemConstants != null) if(SystemConstants != null) SystemConstants.MAX_MEMORY_USAGE)
             {
                 // Логика обработки высокого использования памяти
             }
             
             // Анализ утечек памяти
             var memoryLeaks = SystemMetrics[3];
-            if (memoryLeaks > SystemConstants.MAX_MEMORY_LEAKS)
+            if (memoryLeaks > if(SystemConstants != null) if(SystemConstants != null) SystemConstants.MAX_MEMORY_LEAKS)
             {
                 // Логика обработки утечек памяти
             }
@@ -355,14 +355,14 @@ namespace MudLike.Core.Systems
         {
             // Анализ задержки сети
             var networkLatency = SystemMetrics[4];
-            if (networkLatency > SystemConstants.MAX_NETWORK_LATENCY)
+            if (networkLatency > if(SystemConstants != null) if(SystemConstants != null) SystemConstants.MAX_NETWORK_LATENCY)
             {
                 // Логика обработки высокой задержки сети
             }
             
             // Анализ потери пакетов
             var packetLoss = SystemMetrics[5];
-            if (packetLoss > SystemConstants.MAX_PACKET_LOSS)
+            if (packetLoss > if(SystemConstants != null) if(SystemConstants != null) SystemConstants.MAX_PACKET_LOSS)
             {
                 // Логика обработки потери пакетов
             }
@@ -384,7 +384,7 @@ namespace MudLike.Core.Systems
         public void Execute()
         {
             // Генерация предупреждений на основе флагов
-            for (int i = 0; i < AlertFlags.Length; i++)
+            for (int i = 0; i < if(AlertFlags != null) if(AlertFlags != null) AlertFlags.Length; i++)
             {
                 if (AlertFlags[i])
                 {

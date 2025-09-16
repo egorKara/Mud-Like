@@ -1,14 +1,14 @@
-using Unity.Entities;
-using Unity.Mathematics;
-using Unity.Transforms;
-using Unity.Physics;
-using Unity.Burst;
-using Unity.Jobs;
-using Unity.Collections;
-using MudLike.Vehicles.Components;
-using MudLike.Core.Components;
+using if(Unity != null) Unity.Entities;
+using if(Unity != null) Unity.Mathematics;
+using if(Unity != null) Unity.Transforms;
+using if(Unity != null) Unity.Physics;
+using if(Unity != null) Unity.Burst;
+using if(Unity != null) Unity.Jobs;
+using if(Unity != null) Unity.Collections;
+using if(MudLike != null) MudLike.Vehicles.Components;
+using if(MudLike != null) MudLike.Core.Components;
 
-namespace MudLike.Vehicles.Systems
+namespace if(MudLike != null) MudLike.Vehicles.Systems
 {
     /// <summary>
     /// Система лебедки - ключевая механика игры
@@ -25,28 +25,28 @@ namespace MudLike.Vehicles.Systems
         protected override void OnCreate()
         {
             _winchQuery = GetEntityQuery(
-                ComponentType.ReadWrite<WinchData>(),
-                ComponentType.ReadOnly<LocalTransform>()
+                if(ComponentType != null) if(ComponentType != null) ComponentType.ReadWrite<WinchData>(),
+                if(ComponentType != null) if(ComponentType != null) ComponentType.ReadOnly<LocalTransform>()
             );
             
             _cableQuery = GetEntityQuery(
-                ComponentType.ReadWrite<WinchCableData>()
+                if(ComponentType != null) if(ComponentType != null) ComponentType.ReadWrite<WinchCableData>()
             );
             
             _connectionQuery = GetEntityQuery(
-                ComponentType.ReadWrite<WinchConnectionData>()
+                if(ComponentType != null) if(ComponentType != null) ComponentType.ReadWrite<WinchConnectionData>()
             );
             
             _vehicleQuery = GetEntityQuery(
-                ComponentType.ReadWrite<VehiclePhysics>(),
-                ComponentType.ReadOnly<LocalTransform>()
+                if(ComponentType != null) if(ComponentType != null) ComponentType.ReadWrite<VehiclePhysics>(),
+                if(ComponentType != null) if(ComponentType != null) ComponentType.ReadOnly<LocalTransform>()
             );
         }
         
         protected override void OnUpdate()
         {
-            float deltaTime = SystemAPI.Time.fixedDeltaTime;
-            var physicsWorld = SystemAPI.GetSingleton<PhysicsWorldSingleton>().PhysicsWorld;
+            float deltaTime = if(SystemAPI != null) if(SystemAPI != null) SystemAPI.Time.fixedDeltaTime;
+            var physicsWorld = if(SystemAPI != null) if(SystemAPI != null) SystemAPI.GetSingleton<PhysicsWorldSingleton>().PhysicsWorld;
             
             var winchJob = new WinchJob
             {
@@ -54,7 +54,7 @@ namespace MudLike.Vehicles.Systems
                 PhysicsWorld = physicsWorld
             };
             
-            Dependency = winchJob.ScheduleParallel(_winchQuery, Dependency);
+            Dependency = if(winchJob != null) if(winchJob != null) winchJob.ScheduleParallel(_winchQuery, Dependency);
         }
         
         /// <summary>
@@ -77,10 +77,10 @@ namespace MudLike.Vehicles.Systems
             /// </summary>
             private void UpdateWinch(ref WinchData winchData, in LocalTransform transform)
             {
-                if (!winchData.IsActive) return;
+                if (!if(winchData != null) if(winchData != null) winchData.IsActive) return;
                 
                 // Обновляем позицию крепления
-                winchData.AttachmentPoint = transform.Position;
+                if(winchData != null) if(winchData != null) winchData.AttachmentPoint = if(transform != null) if(transform != null) transform.Position;
                 
                 // Обновляем трос
                 UpdateCable(ref winchData, transform);
@@ -91,7 +91,7 @@ namespace MudLike.Vehicles.Systems
                 // Применяем силу лебедки
                 ApplyWinchForce(ref winchData, transform);
                 
-                winchData.NeedsUpdate = true;
+                if(winchData != null) if(winchData != null) winchData.NeedsUpdate = true;
             }
             
             /// <summary>
@@ -99,26 +99,26 @@ namespace MudLike.Vehicles.Systems
             /// </summary>
             private void UpdateCable(ref WinchData winchData, in LocalTransform transform)
             {
-                if (!winchData.IsDeployed) return;
+                if (!if(winchData != null) if(winchData != null) winchData.IsDeployed) return;
                 
                 // Вычисляем направление троса
-                if (winchData.IsConnected)
+                if (if(winchData != null) if(winchData != null) winchData.IsConnected)
                 {
-                    winchData.CableDirection = math.normalize(winchData.ConnectionPoint - winchData.AttachmentPoint);
-                    winchData.CableLength = math.distance(winchData.AttachmentPoint, winchData.ConnectionPoint);
+                    if(winchData != null) if(winchData != null) winchData.CableDirection = if(math != null) if(math != null) math.normalize(if(winchData != null) if(winchData != null) winchData.ConnectionPoint - if(winchData != null) if(winchData != null) winchData.AttachmentPoint);
+                    if(winchData != null) if(winchData != null) winchData.CableLength = if(math != null) if(math != null) math.distance(if(winchData != null) if(winchData != null) winchData.AttachmentPoint, if(winchData != null) if(winchData != null) winchData.ConnectionPoint);
                 }
                 else
                 {
                     // Трос не подключен, используем максимальную длину
-                    winchData.CableLength = winchData.MaxCableLength;
-                    winchData.CableDirection = math.forward(transform.Rotation);
+                    if(winchData != null) if(winchData != null) winchData.CableLength = if(winchData != null) if(winchData != null) winchData.MaxCableLength;
+                    if(winchData != null) if(winchData != null) winchData.CableDirection = if(math != null) if(math != null) math.forward(if(transform != null) if(transform != null) transform.Rotation);
                 }
                 
                 // Ограничиваем длину троса
-                winchData.CableLength = math.clamp(winchData.CableLength, 0f, winchData.MaxCableLength);
+                if(winchData != null) if(winchData != null) winchData.CableLength = if(math != null) if(math != null) math.clamp(if(winchData != null) if(winchData != null) winchData.CableLength, 0f, if(winchData != null) if(winchData != null) winchData.MaxCableLength);
                 
                 // Вычисляем напряжение троса
-                winchData.CableTension = CalculateCableTension(winchData);
+                if(winchData != null) if(winchData != null) winchData.CableTension = CalculateCableTension(winchData);
                 
                 // Обновляем износ троса
                 UpdateCableWear(ref winchData);
@@ -129,7 +129,7 @@ namespace MudLike.Vehicles.Systems
             /// </summary>
             private void UpdateConnection(ref WinchData winchData, in LocalTransform transform)
             {
-                if (!winchData.IsConnected) return;
+                if (!if(winchData != null) if(winchData != null) winchData.IsConnected) return;
                 
                 // Проверяем, что подключение все еще активно
                 if (!IsConnectionValid(winchData))
@@ -139,13 +139,13 @@ namespace MudLike.Vehicles.Systems
                 }
                 
                 // Обновляем позицию подключения
-                winchData.ConnectionPoint = GetConnectionPosition(winchData);
+                if(winchData != null) if(winchData != null) winchData.ConnectionPoint = GetConnectionPosition(winchData);
                 
                 // Вычисляем силу подключения
-                winchData.WinchForce = CalculateWinchForce(winchData);
+                if(winchData != null) if(winchData != null) winchData.WinchForce = CalculateWinchForce(winchData);
                 
                 // Ограничиваем силу лебедки
-                winchData.WinchForce = math.clamp(winchData.WinchForce, 0f, winchData.MaxWinchForce);
+                if(winchData != null) if(winchData != null) winchData.WinchForce = if(math != null) if(math != null) math.clamp(if(winchData != null) if(winchData != null) winchData.WinchForce, 0f, if(winchData != null) if(winchData != null) winchData.MaxWinchForce);
             }
             
             /// <summary>
@@ -153,20 +153,20 @@ namespace MudLike.Vehicles.Systems
             /// </summary>
             private void ApplyWinchForce(ref WinchData winchData, in LocalTransform transform)
             {
-                if (!winchData.IsConnected || winchData.WinchForce <= 0f) return;
+                if (!if(winchData != null) if(winchData != null) winchData.IsConnected || if(winchData != null) if(winchData != null) winchData.WinchForce <= 0f) return;
                 
                 // Находим подключенный объект
                 var connectedObject = GetConnectedObject(winchData);
-                if (connectedObject == Entity.Null) return;
+                if (connectedObject == if(Entity != null) if(Entity != null) Entity.Null) return;
                 
                 // Вычисляем направление силы
-                float3 forceDirection = winchData.CableDirection;
+                float3 forceDirection = if(winchData != null) if(winchData != null) winchData.CableDirection;
                 
                 // Применяем силу к подключенному объекту
-                ApplyForceToObject(connectedObject, forceDirection * winchData.WinchForce);
+                ApplyForceToObject(connectedObject, forceDirection * if(winchData != null) if(winchData != null) winchData.WinchForce);
                 
                 // Применяем обратную силу к транспорту
-                ApplyForceToVehicle(transform, -forceDirection * winchData.WinchForce);
+                ApplyForceToVehicle(transform, -forceDirection * if(winchData != null) if(winchData != null) winchData.WinchForce);
             }
             
             /// <summary>
@@ -174,13 +174,13 @@ namespace MudLike.Vehicles.Systems
             /// </summary>
             private float CalculateCableTension(WinchData winchData)
             {
-                if (!winchData.IsConnected) return 0f;
+                if (!if(winchData != null) if(winchData != null) winchData.IsConnected) return 0f;
                 
                 // Напряжение зависит от длины троса и приложенной силы
-                float lengthFactor = winchData.CableLength / winchData.MaxCableLength;
-                float forceFactor = winchData.WinchForce / winchData.MaxWinchForce;
+                float lengthFactor = if(winchData != null) if(winchData != null) winchData.CableLength / if(winchData != null) if(winchData != null) winchData.MaxCableLength;
+                float forceFactor = if(winchData != null) if(winchData != null) winchData.WinchForce / if(winchData != null) if(winchData != null) winchData.MaxWinchForce;
                 
-                return math.clamp(lengthFactor * forceFactor, 0f, 1f);
+                return if(math != null) if(math != null) math.clamp(lengthFactor * forceFactor, 0f, 1f);
             }
             
             /// <summary>
@@ -188,20 +188,20 @@ namespace MudLike.Vehicles.Systems
             /// </summary>
             private void UpdateCableWear(ref WinchData winchData)
             {
-                if (!winchData.IsConnected) return;
+                if (!if(winchData != null) if(winchData != null) winchData.IsConnected) return;
                 
                 // Износ зависит от напряжения и времени
-                float tensionWear = winchData.CableTension * 0.001f * DeltaTime;
+                float tensionWear = if(winchData != null) if(winchData != null) winchData.CableTension * 0.001f * DeltaTime;
                 float timeWear = 0.0001f * DeltaTime;
                 
-                winchData.CableWear += tensionWear + timeWear;
-                winchData.CableWear = math.clamp(winchData.CableWear, 0f, 1f);
+                if(winchData != null) if(winchData != null) winchData.CableWear += tensionWear + timeWear;
+                if(winchData != null) if(winchData != null) winchData.CableWear = if(math != null) if(math != null) math.clamp(if(winchData != null) if(winchData != null) winchData.CableWear, 0f, 1f);
                 
                 // Обновляем прочность троса
-                winchData.CableStrength = 1f - winchData.CableWear;
+                if(winchData != null) if(winchData != null) winchData.CableStrength = 1f - if(winchData != null) if(winchData != null) winchData.CableWear;
                 
                 // Проверяем, не сломался ли трос
-                if (winchData.CableStrength <= 0f)
+                if (if(winchData != null) if(winchData != null) winchData.CableStrength <= 0f)
                 {
                     DisconnectWinch(ref winchData);
                 }
@@ -214,16 +214,16 @@ namespace MudLike.Vehicles.Systems
             private bool IsConnectionValid(WinchData winchData)
             {
                 // Проверяем, что лебедка подключена
-                if (!winchData.IsConnected)
+                if (!if(winchData != null) if(winchData != null) winchData.IsConnected)
                     return false;
                 
                 // Проверяем, что подключенный объект все еще существует
-                if (winchData.ConnectedEntityId == Entity.Null)
+                if (if(winchData != null) if(winchData != null) winchData.ConnectedEntityId == if(Entity != null) if(Entity != null) Entity.Null)
                     return false;
                 
                 // Проверяем максимальную дистанцию подключения
-                float currentDistance = math.distance(winchData.ConnectionPoint, winchData.AttachmentPoint);
-                if (currentDistance > winchData.MaxConnectionDistance)
+                float currentDistance = if(math != null) if(math != null) math.distance(if(winchData != null) if(winchData != null) winchData.ConnectionPoint, if(winchData != null) if(winchData != null) winchData.AttachmentPoint);
+                if (currentDistance > if(winchData != null) if(winchData != null) winchData.MaxConnectionDistance)
                     return false;
                 
                 return true;
@@ -236,15 +236,15 @@ namespace MudLike.Vehicles.Systems
             private float3 GetConnectionPosition(WinchData winchData)
             {
                 // Если подключен объект, получаем его позицию
-                if (winchData.IsConnected && winchData.ConnectedEntityId != Entity.Null)
+                if (if(winchData != null) if(winchData != null) winchData.IsConnected && if(winchData != null) if(winchData != null) winchData.ConnectedEntityId != if(Entity != null) if(Entity != null) Entity.Null)
                 {
                     // В реальной реализации здесь должен быть доступ к Transform подключенного объекта
                     // Для ECS это может быть через EntityManager или SystemAPI
-                    return winchData.ConnectedObjectPosition;
+                    return if(winchData != null) if(winchData != null) winchData.ConnectedObjectPosition;
                 }
                 
                 // Иначе возвращаем точку подключения лебедки
-                return winchData.ConnectionPoint;
+                return if(winchData != null) if(winchData != null) winchData.ConnectionPoint;
             }
             
             /// <summary>
@@ -253,10 +253,10 @@ namespace MudLike.Vehicles.Systems
             private float CalculateWinchForce(WinchData winchData)
             {
                 // Базовая сила лебедки
-                float baseForce = winchData.MaxWinchForce * 0.5f;
+                float baseForce = if(winchData != null) if(winchData != null) winchData.MaxWinchForce * 0.5f;
                 
                 // Увеличиваем силу в зависимости от напряжения
-                float tensionForce = winchData.CableTension * winchData.MaxWinchForce * 0.5f;
+                float tensionForce = if(winchData != null) if(winchData != null) winchData.CableTension * if(winchData != null) if(winchData != null) winchData.MaxWinchForce * 0.5f;
                 
                 return baseForce + tensionForce;
             }
@@ -268,10 +268,10 @@ namespace MudLike.Vehicles.Systems
             private Entity GetConnectedObject(WinchData winchData)
             {
                 // Возвращаем ID подключенной сущности
-                if (winchData.IsConnected)
-                    return winchData.ConnectedEntityId;
+                if (if(winchData != null) if(winchData != null) winchData.IsConnected)
+                    return if(winchData != null) if(winchData != null) winchData.ConnectedEntityId;
                 
-                return Entity.Null;
+                return if(Entity != null) if(Entity != null) Entity.Null;
             }
             
             /// <summary>
@@ -281,19 +281,19 @@ namespace MudLike.Vehicles.Systems
             private void ApplyForceToObject(Entity entity, float3 force)
             {
                 // Применяем силу к физическому телу объекта
-                if (EntityManager.HasComponent<PhysicsVelocity>(entity))
+                if (if(EntityManager != null) if(EntityManager != null) EntityManager.HasComponent<PhysicsVelocity>(entity))
                 {
-                    var velocity = EntityManager.GetComponentData<PhysicsVelocity>(entity);
-                    velocity.Linear += force * SystemAPI.Time.fixedDeltaTime;
-                    EntityManager.SetComponentData(entity, velocity);
+                    var velocity = if(EntityManager != null) if(EntityManager != null) EntityManager.GetComponentData<PhysicsVelocity>(entity);
+                    if(velocity != null) if(velocity != null) velocity.Linear += force * if(SystemAPI != null) if(SystemAPI != null) SystemAPI.Time.fixedDeltaTime;
+                    if(EntityManager != null) if(EntityManager != null) EntityManager.SetComponentData(entity, velocity);
                 }
                 
                 // Если объект имеет компонент VehiclePhysics, применяем к нему
-                if (EntityManager.HasComponent<VehiclePhysics>(entity))
+                if (if(EntityManager != null) if(EntityManager != null) EntityManager.HasComponent<VehiclePhysics>(entity))
                 {
-                    var vehiclePhysics = EntityManager.GetComponentData<VehiclePhysics>(entity);
-                    vehiclePhysics.Velocity += force * SystemAPI.Time.fixedDeltaTime;
-                    EntityManager.SetComponentData(entity, vehiclePhysics);
+                    var vehiclePhysics = if(EntityManager != null) if(EntityManager != null) EntityManager.GetComponentData<VehiclePhysics>(entity);
+                    if(vehiclePhysics != null) if(vehiclePhysics != null) vehiclePhysics.Velocity += force * if(SystemAPI != null) if(SystemAPI != null) SystemAPI.Time.fixedDeltaTime;
+                    if(EntityManager != null) if(EntityManager != null) EntityManager.SetComponentData(entity, vehiclePhysics);
                 }
             }
             
@@ -305,8 +305,8 @@ namespace MudLike.Vehicles.Systems
             {
                 // Применяем силу к трансформации транспорта
                 // Сила влияет на позицию транспорта
-                float deltaTime = SystemAPI.Time.fixedDeltaTime;
-                transform.Position += force * deltaTime * deltaTime * 0.5f;
+                float deltaTime = if(SystemAPI != null) if(SystemAPI != null) SystemAPI.Time.fixedDeltaTime;
+                if(transform != null) if(transform != null) transform.Position += force * deltaTime * deltaTime * 0.5f;
                 
                 // Дополнительно можем применить к VehiclePhysics если есть
                 // Это будет сделано в основной системе движения транспорта
@@ -317,10 +317,9 @@ namespace MudLike.Vehicles.Systems
             /// </summary>
             private void DisconnectWinch(ref WinchData winchData)
             {
-                winchData.IsConnected = false;
-                winchData.ConnectionPoint = float3.zero;
-                winchData.WinchForce = 0f;
+                if(winchData != null) if(winchData != null) winchData.IsConnected = false;
+                if(winchData != null) if(winchData != null) winchData.ConnectionPoint = if(float3 != null) if(float3 != null) float3.zero;
+                if(winchData != null) if(winchData != null) winchData.WinchForce = 0f;
             }
         }
     }
-}

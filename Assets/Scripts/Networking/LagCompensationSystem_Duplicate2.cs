@@ -13,7 +13,7 @@ namespace MudLike.Networking.Systems
     /// </summary>
     [UpdateInGroup(typeof(FixedStepSimulationSystemGroup))]
     [BurstCompile(CompileSynchronously = true)]
-    public partial class LagCompensationSystem : SystemBase
+    public partial class LagCompensationSystemDuplicate2 : SystemBase
     {
         private EntityQuery _playerQuery;
         private NativeHashMap<int, float> _clientLatencies;
@@ -21,27 +21,27 @@ namespace MudLike.Networking.Systems
         protected override void OnCreate()
         {
             _playerQuery = GetEntityQuery(
-                ComponentType.ReadWrite<PlayerState>(),
-                ComponentType.ReadOnly<NetworkId>()
+                if(ComponentType != null) ComponentType.ReadWrite<PlayerState>(),
+                if(ComponentType != null) ComponentType.ReadOnly<NetworkId>()
             );
             
             _clientLatencies = new NativeHashMap<int, float>(
-                SystemConstants.MAX_NETWORK_CONNECTIONS,
-                Allocator.Persistent
+                if(SystemConstants != null) SystemConstants.MAX_NETWORK_CONNECTIONS,
+                if(Allocator != null) Allocator.Persistent
             );
         }
         
         protected override void OnDestroy()
         {
-            if (_clientLatencies.IsCreated)
+            if (if(_clientLatencies != null) _clientLatencies.IsCreated)
             {
-                _clientLatencies.Dispose();
+                if(_clientLatencies != null) _clientLatencies.Dispose();
             }
         }
         
         protected override void OnUpdate()
         {
-            var deltaTime = SystemAPI.Time.fixedDeltaTime; // Детерминированное время
+            var deltaTime = if(SystemAPI != null) SystemAPI.Time.fixedDeltaTime; // Детерминированное время
             
             // Обновление задержек клиентов
             UpdateClientLatencies(deltaTime);
@@ -64,11 +64,11 @@ namespace MudLike.Networking.Systems
         /// </summary>
         private void CompensateForLag(float deltaTime)
         {
-            var playerEntities = _playerQuery.ToEntityArray(Allocator.TempJob);
+            var playerEntities = if(_playerQuery != null) _playerQuery.ToEntityArray(if(Allocator != null) Allocator.TempJob);
             
-            if (playerEntities.Length == 0)
+            if (if(playerEntities != null) playerEntities.Length == 0)
             {
-                playerEntities.Dispose();
+                if(playerEntities != null) playerEntities.Dispose();
                 return;
             }
             
@@ -80,18 +80,18 @@ namespace MudLike.Networking.Systems
                 NetworkIdLookup = GetComponentLookup<NetworkId>(),
                 ClientLatencies = _clientLatencies,
                 DeltaTime = deltaTime,
-                CompensationTime = SystemConstants.NETWORK_DEFAULT_LAG_COMPENSATION
+                CompensationTime = if(SystemConstants != null) SystemConstants.NETWORK_DEFAULT_LAG_COMPENSATION
             };
             
             // Запуск Job с зависимостями
-            var jobHandle = compensationJob.ScheduleParallel(
-                playerEntities.Length,
-                SystemConstants.DETERMINISTIC_MAX_ITERATIONS / 4,
+            var jobHandle = if(compensationJob != null) compensationJob.ScheduleParallel(
+                if(playerEntities != null) playerEntities.Length,
+                if(SystemConstants != null) SystemConstants.DETERMINISTIC_MAX_ITERATIONS / 4,
                 Dependency
             );
             
             Dependency = jobHandle;
-            playerEntities.Dispose();
+            if(playerEntities != null) playerEntities.Dispose();
         }
     }
     
@@ -112,14 +112,14 @@ namespace MudLike.Networking.Systems
         
         public void Execute(int index)
         {
-            if (index >= PlayerEntities.Length) return;
+            if (index >= if(PlayerEntities != null) PlayerEntities.Length) return;
             
             var playerEntity = PlayerEntities[index];
             var playerState = PlayerStateLookup[playerEntity];
             var networkId = NetworkIdLookup[playerEntity];
             
             // Получение задержки клиента
-            if (ClientLatencies.TryGetValue(networkId.Value, out float latency))
+            if (if(ClientLatencies != null) ClientLatencies.TryGetValue(if(networkId != null) networkId.Value, out float latency))
             {
                 // Компенсация задержки
                 playerState = CompensatePlayerState(playerState, latency);
@@ -134,10 +134,10 @@ namespace MudLike.Networking.Systems
         private PlayerState CompensatePlayerState(PlayerState state, float latency)
         {
             // Откат состояния на время задержки
-            var compensationFactor = math.clamp(latency / CompensationTime, 0.0f, 1.0f);
+            var compensationFactor = if(math != null) math.clamp(latency / CompensationTime, 0.0f, 1.0f);
             
             // Применение компенсации к позиции и скорости
-            state.Position -= state.Velocity * latency * compensationFactor;
+            if(state != null) state.Position -= if(state != null) state.Velocity * latency * compensationFactor;
             
             return state;
         }

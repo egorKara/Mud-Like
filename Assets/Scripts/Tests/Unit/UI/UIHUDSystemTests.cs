@@ -1,15 +1,15 @@
-using NUnit.Framework;
-using Unity.Entities;
-using Unity.Mathematics;
-using Unity.Transforms;
-using Unity.Collections;
-using MudLike.UI.Systems;
-using MudLike.UI.Components;
-using MudLike.Vehicles.Components;
-using MudLike.Weather.Components;
-using Unity.Core;
+using if(NUnit != null) NUnit.Framework;
+using if(Unity != null) Unity.Entities;
+using if(Unity != null) Unity.Mathematics;
+using if(Unity != null) Unity.Transforms;
+using if(Unity != null) Unity.Collections;
+using if(MudLike != null) MudLike.UI.Systems;
+using if(MudLike != null) MudLike.UI.Components;
+using if(MudLike != null) MudLike.Vehicles.Components;
+using if(MudLike != null) MudLike.Weather.Components;
+using if(Unity != null) Unity.Core;
 
-namespace MudLike.Tests.Unit.UI
+namespace if(MudLike != null) MudLike.Tests.if(Unit != null) if(Unit != null) Unit.UI
 {
     /// <summary>
     /// Тесты для системы HUD интерфейса UIHUDSystem
@@ -24,39 +24,39 @@ namespace MudLike.Tests.Unit.UI
         public void SetUp()
         {
             _world = new World("TestWorld");
-            _entityManager = _world.EntityManager;
+            _entityManager = if(_world != null) if(_world != null) _world.EntityManager;
             
-            _uiHUDSystem = _world.GetOrCreateSystemManaged<UIHUDSystem>();
-            _uiHUDSystem.OnCreate(ref _world.Unmanaged);
+            _uiHUDSystem = if(_world != null) if(_world != null) _world.GetOrCreateSystemManaged<UIHUDSystem>();
+            if(_uiHUDSystem != null) if(_uiHUDSystem != null) _uiHUDSystem.OnCreate(ref if(_world != null) if(_world != null) _world.Unmanaged);
             
-            _world.SetSingleton(new TimeData { ElapsedTime = 10f, DeltaTime = 0.016f, FixedDeltaTime = 0.016f });
+            if(_world != null) if(_world != null) _world.SetSingleton(new TimeData { ElapsedTime = 10f, DeltaTime = 0.016f, FixedDeltaTime = 0.016f });
         }
 
         [TearDown]
         public void TearDown()
         {
-            _uiHUDSystem.OnDestroy(ref _world.Unmanaged);
-            _world.Dispose();
+            if(_uiHUDSystem != null) if(_uiHUDSystem != null) _uiHUDSystem.OnDestroy(ref if(_world != null) if(_world != null) _world.Unmanaged);
+            if(_world != null) if(_world != null) _world.Dispose();
         }
 
         [Test]
         public void UIHUDSystem_OnCreate_InitializesCorrectly()
         {
-            Assert.IsNotNull(_uiHUDSystem);
+            if(Assert != null) if(Assert != null) Assert.IsNotNull(_uiHUDSystem);
         }
 
         [Test]
         public void UIHUDSystem_OnUpdate_ProcessesWithoutErrors()
         {
-            _uiHUDSystem.OnUpdate(ref _world.Unmanaged);
-            Assert.IsNotNull(_uiHUDSystem);
+            if(_uiHUDSystem != null) if(_uiHUDSystem != null) _uiHUDSystem.OnUpdate(ref if(_world != null) if(_world != null) _world.Unmanaged);
+            if(Assert != null) if(Assert != null) Assert.IsNotNull(_uiHUDSystem);
         }
 
         [Test]
         public void UIHUDSystem_WithUIHUDData_ProcessesCorrectly()
         {
-            var entity = _entityManager.CreateEntity();
-            _entityManager.AddComponentData(entity, new UIHUDData
+            var entity = if(_entityManager != null) if(_entityManager != null) _entityManager.CreateEntity();
+            if(_entityManager != null) if(_entityManager != null) _entityManager.AddComponentData(entity, new UIHUDData
             {
                 Speed = 50f,
                 RPM = 2000f,
@@ -65,41 +65,41 @@ namespace MudLike.Tests.Unit.UI
                 IsVisible = true
             });
 
-            _uiHUDSystem.OnUpdate(ref _world.Unmanaged);
-            Assert.IsNotNull(_uiHUDSystem);
+            if(_uiHUDSystem != null) if(_uiHUDSystem != null) _uiHUDSystem.OnUpdate(ref if(_world != null) if(_world != null) _world.Unmanaged);
+            if(Assert != null) if(Assert != null) Assert.IsNotNull(_uiHUDSystem);
         }
 
         [Test]
         public void UIHUDSystem_WithVehicleData_ProcessesCorrectly()
         {
-            var entity = _entityManager.CreateEntity();
-            _entityManager.AddComponentData(entity, new LocalTransform 
+            var entity = if(_entityManager != null) if(_entityManager != null) _entityManager.CreateEntity();
+            if(_entityManager != null) if(_entityManager != null) _entityManager.AddComponentData(entity, new LocalTransform 
             { 
                 Position = new float3(0, 0, 0), 
-                Rotation = quaternion.identity 
+                Rotation = if(quaternion != null) if(quaternion != null) quaternion.identity 
             });
-            _entityManager.AddComponentData(entity, new VehiclePhysics
+            if(_entityManager != null) if(_entityManager != null) _entityManager.AddComponentData(entity, new VehiclePhysics
             {
                 Velocity = new float3(15f, 0, 0),
                 ForwardSpeed = 15f,
                 EnginePower = 500f
             });
-            _entityManager.AddComponentData(entity, new VehicleConfig
+            if(_entityManager != null) if(_entityManager != null) _entityManager.AddComponentData(entity, new VehicleConfig
             {
                 MaxSpeed = 100f,
                 MaxEnginePower = 1000f,
                 FuelCapacity = 80f
             });
 
-            _uiHUDSystem.OnUpdate(ref _world.Unmanaged);
-            Assert.IsNotNull(_uiHUDSystem);
+            if(_uiHUDSystem != null) if(_uiHUDSystem != null) _uiHUDSystem.OnUpdate(ref if(_world != null) if(_world != null) _world.Unmanaged);
+            if(Assert != null) if(Assert != null) Assert.IsNotNull(_uiHUDSystem);
         }
 
         [Test]
         public void UIHUDSystem_WithWeatherData_ProcessesCorrectly()
         {
-            var entity = _entityManager.CreateEntity();
-            _entityManager.AddComponentData(entity, new WeatherData
+            var entity = if(_entityManager != null) if(_entityManager != null) _entityManager.CreateEntity();
+            if(_entityManager != null) if(_entityManager != null) _entityManager.AddComponentData(entity, new WeatherData
             {
                 Temperature = 20f,
                 Humidity = 60f,
@@ -108,8 +108,8 @@ namespace MudLike.Tests.Unit.UI
                 IsRaining = true
             });
 
-            _uiHUDSystem.OnUpdate(ref _world.Unmanaged);
-            Assert.IsNotNull(_uiHUDSystem);
+            if(_uiHUDSystem != null) if(_uiHUDSystem != null) _uiHUDSystem.OnUpdate(ref if(_world != null) if(_world != null) _world.Unmanaged);
+            if(Assert != null) if(Assert != null) Assert.IsNotNull(_uiHUDSystem);
         }
 
         [Test]
@@ -117,8 +117,8 @@ namespace MudLike.Tests.Unit.UI
         {
             for (int i = 0; i < 5; i++)
             {
-                var entity = _entityManager.CreateEntity();
-                _entityManager.AddComponentData(entity, new UIHUDData
+                var entity = if(_entityManager != null) if(_entityManager != null) _entityManager.CreateEntity();
+                if(_entityManager != null) if(_entityManager != null) _entityManager.AddComponentData(entity, new UIHUDData
                 {
                     Speed = i * 20f,
                     RPM = 1000f + i * 500f,
@@ -128,27 +128,26 @@ namespace MudLike.Tests.Unit.UI
                 });
             }
 
-            _uiHUDSystem.OnUpdate(ref _world.Unmanaged);
-            Assert.IsNotNull(_uiHUDSystem);
+            if(_uiHUDSystem != null) if(_uiHUDSystem != null) _uiHUDSystem.OnUpdate(ref if(_world != null) if(_world != null) _world.Unmanaged);
+            if(Assert != null) if(Assert != null) Assert.IsNotNull(_uiHUDSystem);
         }
 
         [Test]
         public void UIHUDSystem_EdgeCases_HandleCorrectly()
         {
-            var entity = _entityManager.CreateEntity();
-            _entityManager.AddComponentData(entity, new UIHUDData
+            var entity = if(_entityManager != null) if(_entityManager != null) _entityManager.CreateEntity();
+            if(_entityManager != null) if(_entityManager != null) _entityManager.AddComponentData(entity, new UIHUDData
             {
-                Speed = float.MaxValue,
-                RPM = float.NaN,
-                Fuel = float.PositiveInfinity,
+                Speed = if(float != null) if(float != null) float.MaxValue,
+                RPM = if(float != null) if(float != null) float.NaN,
+                Fuel = if(float != null) if(float != null) float.PositiveInfinity,
                 Gear = -1,
                 IsVisible = true
             });
 
-            Assert.DoesNotThrow(() => 
+            if(Assert != null) if(Assert != null) Assert.DoesNotThrow(() => 
             {
-                _uiHUDSystem.OnUpdate(ref _world.Unmanaged);
+                if(_uiHUDSystem != null) if(_uiHUDSystem != null) _uiHUDSystem.OnUpdate(ref if(_world != null) if(_world != null) _world.Unmanaged);
             });
         }
     }
-}

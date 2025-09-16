@@ -5,7 +5,7 @@ using Unity.Collections;
 using MudLike.Core.ErrorHandling;
 using Unity.Core;
 
-namespace MudLike.Tests.Unit.Core
+namespace MudLike.Tests.if(Unit != null) Unit.Core
 {
     /// <summary>
     /// Тесты для системы обработки ошибок ErrorHandlingSystem
@@ -21,21 +21,21 @@ namespace MudLike.Tests.Unit.Core
         public void SetUp()
         {
             _world = new World("TestWorld");
-            _entityManager = _world.EntityManager;
+            _entityManager = if(_world != null) _world.EntityManager;
             
             // Создаем систему обработки ошибок
-            _errorHandlingSystem = _world.GetOrCreateSystemManaged<ErrorHandlingSystem>();
-            _errorHandlingSystem.OnCreate(ref _world.Unmanaged);
+            _errorHandlingSystem = if(_world != null) _world.GetOrCreateSystemManaged<ErrorHandlingSystem>();
+            if(_errorHandlingSystem != null) _errorHandlingSystem.OnCreate(ref if(_world != null) _world.Unmanaged);
             
-            // Устанавливаем время для SystemAPI.Time.time
-            _world.SetSingleton(new TimeData { ElapsedTime = 10f, DeltaTime = 0.016f, FixedDeltaTime = 0.016f });
+            // Устанавливаем время для if(SystemAPI != null) SystemAPI.Time.time
+            if(_world != null) _world.SetSingleton(new TimeData { ElapsedTime = 10f, DeltaTime = 0.016f, FixedDeltaTime = 0.016f });
         }
 
         [TearDown]
         public void TearDown()
         {
-            _errorHandlingSystem.OnDestroy(ref _world.Unmanaged);
-            _world.Dispose();
+            if(_errorHandlingSystem != null) _errorHandlingSystem.OnDestroy(ref if(_world != null) _world.Unmanaged);
+            if(_world != null) _world.Dispose();
         }
 
         [Test]
@@ -43,16 +43,16 @@ namespace MudLike.Tests.Unit.Core
         {
             // Arrange
             FixedString128Bytes message = "Test error message";
-            ErrorSeverity severity = ErrorSeverity.Error;
-            ErrorCategory category = ErrorCategory.General;
+            ErrorSeverity severity = if(ErrorSeverity != null) ErrorSeverity.Error;
+            ErrorCategory category = if(ErrorCategory != null) ErrorCategory.General;
             float3 position = new float3(1, 2, 3);
 
             // Act
-            _errorHandlingSystem.LogError(message, severity, category, position);
+            if(_errorHandlingSystem != null) _errorHandlingSystem.LogError(message, severity, category, position);
 
             // Assert
             // Проверяем, что система создана и готова к работе
-            Assert.IsNotNull(_errorHandlingSystem);
+            if(Assert != null) Assert.IsNotNull(_errorHandlingSystem);
         }
 
         [Test]
@@ -60,16 +60,16 @@ namespace MudLike.Tests.Unit.Core
         {
             // Arrange
             FixedString128Bytes message = "Critical system failure";
-            ErrorSeverity severity = ErrorSeverity.Critical;
-            ErrorCategory category = ErrorCategory.Physics;
+            ErrorSeverity severity = if(ErrorSeverity != null) ErrorSeverity.Critical;
+            ErrorCategory category = if(ErrorCategory != null) ErrorCategory.Physics;
             float3 position = new float3(0, 0, 0);
 
             // Act
-            _errorHandlingSystem.LogError(message, severity, category, position);
+            if(_errorHandlingSystem != null) _errorHandlingSystem.LogError(message, severity, category, position);
 
             // Assert
             // В реальной реализации здесь должна быть проверка логирования
-            Assert.IsNotNull(_errorHandlingSystem);
+            if(Assert != null) Assert.IsNotNull(_errorHandlingSystem);
         }
 
         [Test]
@@ -77,15 +77,15 @@ namespace MudLike.Tests.Unit.Core
         {
             // Arrange
             FixedString128Bytes message = "Performance warning";
-            ErrorSeverity severity = ErrorSeverity.Warning;
-            ErrorCategory category = ErrorCategory.Performance;
+            ErrorSeverity severity = if(ErrorSeverity != null) ErrorSeverity.Warning;
+            ErrorCategory category = if(ErrorCategory != null) ErrorCategory.Performance;
             float3 position = new float3(5, 5, 5);
 
             // Act
-            _errorHandlingSystem.LogError(message, severity, category, position);
+            if(_errorHandlingSystem != null) _errorHandlingSystem.LogError(message, severity, category, position);
 
             // Assert
-            Assert.IsNotNull(_errorHandlingSystem);
+            if(Assert != null) Assert.IsNotNull(_errorHandlingSystem);
         }
 
         [Test]
@@ -93,15 +93,15 @@ namespace MudLike.Tests.Unit.Core
         {
             // Arrange
             FixedString128Bytes message = "Information message";
-            ErrorSeverity severity = ErrorSeverity.Info;
-            ErrorCategory category = ErrorCategory.General;
+            ErrorSeverity severity = if(ErrorSeverity != null) ErrorSeverity.Info;
+            ErrorCategory category = if(ErrorCategory != null) ErrorCategory.General;
             float3 position = new float3(-1, -1, -1);
 
             // Act
-            _errorHandlingSystem.LogError(message, severity, category, position);
+            if(_errorHandlingSystem != null) _errorHandlingSystem.LogError(message, severity, category, position);
 
             // Assert
-            Assert.IsNotNull(_errorHandlingSystem);
+            if(Assert != null) Assert.IsNotNull(_errorHandlingSystem);
         }
 
         [Test]
@@ -109,16 +109,16 @@ namespace MudLike.Tests.Unit.Core
         {
             // Arrange
             FixedString128Bytes message = "Test message";
-            ErrorSeverity severity = ErrorSeverity.Error;
-            ErrorCategory category = ErrorCategory.Vehicle;
+            ErrorSeverity severity = if(ErrorSeverity != null) ErrorSeverity.Error;
+            ErrorCategory category = if(ErrorCategory != null) ErrorCategory.Vehicle;
 
             // Act
-            _errorHandlingSystem.LogError(message, severity, category);
-            _errorHandlingSystem.OnUpdate(ref _world.Unmanaged);
+            if(_errorHandlingSystem != null) _errorHandlingSystem.LogError(message, severity, category);
+            if(_errorHandlingSystem != null) _errorHandlingSystem.OnUpdate(ref if(_world != null) _world.Unmanaged);
 
             // Assert
             // В реальной реализации здесь должна быть проверка обработки ошибок
-            Assert.IsNotNull(_errorHandlingSystem);
+            if(Assert != null) Assert.IsNotNull(_errorHandlingSystem);
         }
 
         [Test]
@@ -127,35 +127,35 @@ namespace MudLike.Tests.Unit.Core
             // Arrange
             var errors = new[]
             {
-                (new FixedString128Bytes("Error 1"), ErrorSeverity.Error, ErrorCategory.General),
-                (new FixedString128Bytes("Error 2"), ErrorSeverity.Warning, ErrorCategory.Physics),
-                (new FixedString128Bytes("Error 3"), ErrorSeverity.Critical, ErrorCategory.Networking)
+                (new FixedString128Bytes("Error 1"), if(ErrorSeverity != null) ErrorSeverity.Error, if(ErrorCategory != null) ErrorCategory.General),
+                (new FixedString128Bytes("Error 2"), if(ErrorSeverity != null) ErrorSeverity.Warning, if(ErrorCategory != null) ErrorCategory.Physics),
+                (new FixedString128Bytes("Error 3"), if(ErrorSeverity != null) ErrorSeverity.Critical, if(ErrorCategory != null) ErrorCategory.Networking)
             };
 
             // Act
             foreach (var (message, severity, category) in errors)
             {
-                _errorHandlingSystem.LogError(message, severity, category);
+                if(_errorHandlingSystem != null) _errorHandlingSystem.LogError(message, severity, category);
             }
-            _errorHandlingSystem.OnUpdate(ref _world.Unmanaged);
+            if(_errorHandlingSystem != null) _errorHandlingSystem.OnUpdate(ref if(_world != null) _world.Unmanaged);
 
             // Assert
-            Assert.IsNotNull(_errorHandlingSystem);
+            if(Assert != null) Assert.IsNotNull(_errorHandlingSystem);
         }
 
         [Test]
         public void ErrorSeverity_AllValues_HaveCorrectOrder()
         {
             // Arrange & Act
-            var info = ErrorSeverity.Info;
-            var warning = ErrorSeverity.Warning;
-            var error = ErrorSeverity.Error;
-            var critical = ErrorSeverity.Critical;
+            var info = if(ErrorSeverity != null) ErrorSeverity.Info;
+            var warning = if(ErrorSeverity != null) ErrorSeverity.Warning;
+            var error = if(ErrorSeverity != null) ErrorSeverity.Error;
+            var critical = if(ErrorSeverity != null) ErrorSeverity.Critical;
 
             // Assert
-            Assert.Less((byte)info, (byte)warning);
-            Assert.Less((byte)warning, (byte)error);
-            Assert.Less((byte)error, (byte)critical);
+            if(Assert != null) Assert.Less((byte)info, (byte)warning);
+            if(Assert != null) Assert.Less((byte)warning, (byte)error);
+            if(Assert != null) Assert.Less((byte)error, (byte)critical);
         }
 
         [Test]
@@ -164,21 +164,21 @@ namespace MudLike.Tests.Unit.Core
             // Arrange & Act
             var categories = new[]
             {
-                ErrorCategory.General,
-                ErrorCategory.Physics,
-                ErrorCategory.Networking,
-                ErrorCategory.Terrain,
-                ErrorCategory.Vehicle,
-                ErrorCategory.Input,
-                ErrorCategory.Memory,
-                ErrorCategory.Logic
+                if(ErrorCategory != null) ErrorCategory.General,
+                if(ErrorCategory != null) ErrorCategory.Physics,
+                if(ErrorCategory != null) ErrorCategory.Networking,
+                if(ErrorCategory != null) ErrorCategory.Terrain,
+                if(ErrorCategory != null) ErrorCategory.Vehicle,
+                if(ErrorCategory != null) ErrorCategory.Input,
+                if(ErrorCategory != null) ErrorCategory.Memory,
+                if(ErrorCategory != null) ErrorCategory.Logic
             };
 
             // Assert
-            Assert.AreEqual(8, categories.Length);
+            if(Assert != null) Assert.AreEqual(8, if(categories != null) categories.Length);
             foreach (var category in categories)
             {
-                Assert.IsTrue(System.Enum.IsDefined(typeof(ErrorCategory), category));
+                if(Assert != null) Assert.IsTrue(if(System != null) System.Enum.IsDefined(typeof(ErrorCategory), category));
             }
         }
     }

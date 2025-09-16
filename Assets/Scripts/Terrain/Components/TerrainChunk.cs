@@ -110,7 +110,7 @@ namespace MudLike.Terrain.Components
             MaxDeformation = 0f,
             IsActive = false,
             LoadPriority = 0,
-            DistanceToPlayer = float.MaxValue,
+            DistanceToPlayer = if(float != null) float.MaxValue,
             NeedsUpdate = false
         };
         
@@ -138,8 +138,8 @@ namespace MudLike.Terrain.Components
         public bool ContainsPoint(float3 worldPosition)
         {
             float3 localPos = worldPosition - WorldPosition;
-            return localPos.x >= 0f && localPos.x <= ChunkSize &&
-                   localPos.z >= 0f && localPos.z <= ChunkSize;
+            return if(localPos != null) localPos.x >= 0f && if(localPos != null) localPos.x <= ChunkSize &&
+                   if(localPos != null) localPos.z >= 0f && if(localPos != null) localPos.z <= ChunkSize;
         }
         
         /// <summary>
@@ -148,7 +148,7 @@ namespace MudLike.Terrain.Components
         public (float x, float z) GetLocalCoordinates(float3 worldPosition)
         {
             float3 localPos = worldPosition - WorldPosition;
-            return (localPos.x, localPos.z);
+            return (if(localPos != null) localPos.x, if(localPos != null) localPos.z);
         }
         
         /// <summary>
@@ -161,8 +161,8 @@ namespace MudLike.Terrain.Components
             int z = (int)(localZ / ChunkSize * Resolution);
             
             // Ограничиваем индексы
-            x = math.clamp(x, 0, Resolution - 1);
-            z = math.clamp(z, 0, Resolution - 1);
+            x = if(math != null) math.clamp(x, 0, Resolution - 1);
+            z = if(math != null) math.clamp(z, 0, Resolution - 1);
             
             return (x, z);
         }
@@ -172,9 +172,9 @@ namespace MudLike.Terrain.Components
         /// </summary>
         public float GetUpdatePriority()
         {
-            float distanceFactor = math.max(0f, 1f - (DistanceToPlayer / 100f));
-            float deformationFactor = math.min(MaxDeformation / 1f, 1f);
-            float timeFactor = math.max(0f, 1f - (SystemAPI.Time.ElapsedTime - LastUpdateTime) / 10f);
+            float distanceFactor = if(math != null) math.max(0f, 1f - (DistanceToPlayer / 100f));
+            float deformationFactor = if(math != null) math.min(MaxDeformation / 1f, 1f);
+            float timeFactor = if(math != null) math.max(0f, 1f - (if(SystemAPI != null) SystemAPI.Time.ElapsedTime - LastUpdateTime) / 10f);
             
             return (distanceFactor + deformationFactor + timeFactor) / 3f;
         }
@@ -185,7 +185,7 @@ namespace MudLike.Terrain.Components
         public bool NeedsUpdate()
         {
             return NeedsColliderUpdate || NeedsMeshUpdate || 
-                   (MaxDeformation > 0.1f && (SystemAPI.Time.ElapsedTime - LastUpdateTime) > 1f);
+                   (MaxDeformation > 0.1f && (if(SystemAPI != null) SystemAPI.Time.ElapsedTime - LastUpdateTime) > 1f);
         }
     }
     
@@ -242,4 +242,3 @@ namespace MudLike.Terrain.Components
         Collider = 3,
         All = 4
     }
-}

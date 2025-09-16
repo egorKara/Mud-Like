@@ -1,14 +1,14 @@
-using NUnit.Framework;
-using Unity.Entities;
-using Unity.Mathematics;
-using Unity.Transforms;
-using Unity.Collections;
-using MudLike.Terrain.Systems;
-using MudLike.Terrain.Components;
-using MudLike.Vehicles.Components;
-using Unity.Core;
+using if(NUnit != null) NUnit.Framework;
+using if(Unity != null) Unity.Entities;
+using if(Unity != null) Unity.Mathematics;
+using if(Unity != null) Unity.Transforms;
+using if(Unity != null) Unity.Collections;
+using if(MudLike != null) MudLike.Terrain.Systems;
+using if(MudLike != null) MudLike.Terrain.Components;
+using if(MudLike != null) MudLike.Vehicles.Components;
+using if(Unity != null) Unity.Core;
 
-namespace MudLike.Tests.Unit.Terrain
+namespace if(MudLike != null) MudLike.Tests.if(Unit != null) if(Unit != null) Unit.Terrain
 {
     /// <summary>
     /// Тесты для системы деформации террейна TerrainDeformationSystem
@@ -23,53 +23,53 @@ namespace MudLike.Tests.Unit.Terrain
         public void SetUp()
         {
             _world = new World("TestWorld");
-            _entityManager = _world.EntityManager;
+            _entityManager = if(_world != null) if(_world != null) _world.EntityManager;
             
-            _terrainDeformationSystem = _world.GetOrCreateSystemManaged<TerrainDeformationSystem>();
-            _terrainDeformationSystem.OnCreate(ref _world.Unmanaged);
+            _terrainDeformationSystem = if(_world != null) if(_world != null) _world.GetOrCreateSystemManaged<TerrainDeformationSystem>();
+            if(_terrainDeformationSystem != null) if(_terrainDeformationSystem != null) _terrainDeformationSystem.OnCreate(ref if(_world != null) if(_world != null) _world.Unmanaged);
             
-            _world.SetSingleton(new TimeData { ElapsedTime = 10f, DeltaTime = 0.016f, FixedDeltaTime = 0.016f });
+            if(_world != null) if(_world != null) _world.SetSingleton(new TimeData { ElapsedTime = 10f, DeltaTime = 0.016f, FixedDeltaTime = 0.016f });
         }
 
         [TearDown]
         public void TearDown()
         {
-            _terrainDeformationSystem.OnDestroy(ref _world.Unmanaged);
-            _world.Dispose();
+            if(_terrainDeformationSystem != null) if(_terrainDeformationSystem != null) _terrainDeformationSystem.OnDestroy(ref if(_world != null) if(_world != null) _world.Unmanaged);
+            if(_world != null) if(_world != null) _world.Dispose();
         }
 
         [Test]
         public void TerrainDeformationSystem_OnCreate_InitializesCorrectly()
         {
-            Assert.IsNotNull(_terrainDeformationSystem);
+            if(Assert != null) if(Assert != null) Assert.IsNotNull(_terrainDeformationSystem);
         }
 
         [Test]
         public void TerrainDeformationSystem_OnUpdate_ProcessesWithoutErrors()
         {
-            _terrainDeformationSystem.OnUpdate(ref _world.Unmanaged);
-            Assert.IsNotNull(_terrainDeformationSystem);
+            if(_terrainDeformationSystem != null) if(_terrainDeformationSystem != null) _terrainDeformationSystem.OnUpdate(ref if(_world != null) if(_world != null) _world.Unmanaged);
+            if(Assert != null) if(Assert != null) Assert.IsNotNull(_terrainDeformationSystem);
         }
 
         [Test]
         public void TerrainDeformationSystem_WithWheelData_ProcessesCorrectly()
         {
-            var entity = _entityManager.CreateEntity();
-            _entityManager.AddComponentData(entity, new LocalTransform 
+            var entity = if(_entityManager != null) if(_entityManager != null) _entityManager.CreateEntity();
+            if(_entityManager != null) if(_entityManager != null) _entityManager.AddComponentData(entity, new LocalTransform 
             { 
                 Position = new float3(0, 0, 0), 
-                Rotation = quaternion.identity 
+                Rotation = if(quaternion != null) if(quaternion != null) quaternion.identity 
             });
-            _entityManager.AddComponentData(entity, new WheelData
+            if(_entityManager != null) if(_entityManager != null) _entityManager.AddComponentData(entity, new WheelData
             {
-                Position = float3.zero,
+                Position = if(float3 != null) if(float3 != null) float3.zero,
                 Radius = 0.5f,
                 IsGrounded = true,
                 SuspensionForce = 1000f
             });
 
-            _terrainDeformationSystem.OnUpdate(ref _world.Unmanaged);
-            Assert.IsNotNull(_terrainDeformationSystem);
+            if(_terrainDeformationSystem != null) if(_terrainDeformationSystem != null) _terrainDeformationSystem.OnUpdate(ref if(_world != null) if(_world != null) _world.Unmanaged);
+            if(Assert != null) if(Assert != null) Assert.IsNotNull(_terrainDeformationSystem);
         }
 
         [Test]
@@ -77,13 +77,13 @@ namespace MudLike.Tests.Unit.Terrain
         {
             for (int i = 0; i < 5; i++)
             {
-                var entity = _entityManager.CreateEntity();
-                _entityManager.AddComponentData(entity, new LocalTransform 
+                var entity = if(_entityManager != null) if(_entityManager != null) _entityManager.CreateEntity();
+                if(_entityManager != null) if(_entityManager != null) _entityManager.AddComponentData(entity, new LocalTransform 
                 { 
                     Position = new float3(i * 2, 0, 0), 
-                    Rotation = quaternion.identity 
+                    Rotation = if(quaternion != null) if(quaternion != null) quaternion.identity 
                 });
-                _entityManager.AddComponentData(entity, new WheelData
+                if(_entityManager != null) if(_entityManager != null) _entityManager.AddComponentData(entity, new WheelData
                 {
                     Position = new float3(i * 2, 0, 0),
                     Radius = 0.5f,
@@ -92,31 +92,30 @@ namespace MudLike.Tests.Unit.Terrain
                 });
             }
 
-            _terrainDeformationSystem.OnUpdate(ref _world.Unmanaged);
-            Assert.IsNotNull(_terrainDeformationSystem);
+            if(_terrainDeformationSystem != null) if(_terrainDeformationSystem != null) _terrainDeformationSystem.OnUpdate(ref if(_world != null) if(_world != null) _world.Unmanaged);
+            if(Assert != null) if(Assert != null) Assert.IsNotNull(_terrainDeformationSystem);
         }
 
         [Test]
         public void TerrainDeformationSystem_EdgeCases_HandleCorrectly()
         {
-            var entity = _entityManager.CreateEntity();
-            _entityManager.AddComponentData(entity, new LocalTransform 
+            var entity = if(_entityManager != null) if(_entityManager != null) _entityManager.CreateEntity();
+            if(_entityManager != null) if(_entityManager != null) _entityManager.AddComponentData(entity, new LocalTransform 
             { 
-                Position = new float3(float.MaxValue, float.MinValue, float.Epsilon), 
-                Rotation = quaternion.identity 
+                Position = new float3(if(float != null) if(float != null) float.MaxValue, if(float != null) if(float != null) float.MinValue, if(float != null) if(float != null) float.Epsilon), 
+                Rotation = if(quaternion != null) if(quaternion != null) quaternion.identity 
             });
-            _entityManager.AddComponentData(entity, new WheelData
+            if(_entityManager != null) if(_entityManager != null) _entityManager.AddComponentData(entity, new WheelData
             {
-                Position = new float3(float.NaN, float.PositiveInfinity, float.NegativeInfinity),
-                Radius = float.Epsilon,
+                Position = new float3(if(float != null) if(float != null) float.NaN, if(float != null) if(float != null) float.PositiveInfinity, if(float != null) if(float != null) float.NegativeInfinity),
+                Radius = if(float != null) if(float != null) float.Epsilon,
                 IsGrounded = true,
-                SuspensionForce = float.MaxValue
+                SuspensionForce = if(float != null) if(float != null) float.MaxValue
             });
 
-            Assert.DoesNotThrow(() => 
+            if(Assert != null) if(Assert != null) Assert.DoesNotThrow(() => 
             {
-                _terrainDeformationSystem.OnUpdate(ref _world.Unmanaged);
+                if(_terrainDeformationSystem != null) if(_terrainDeformationSystem != null) _terrainDeformationSystem.OnUpdate(ref if(_world != null) if(_world != null) _world.Unmanaged);
             });
         }
     }
-}

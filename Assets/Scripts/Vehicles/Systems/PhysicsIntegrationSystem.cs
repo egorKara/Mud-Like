@@ -1,12 +1,12 @@
-using Unity.Entities;
-using Unity.Mathematics;
-using Unity.Transforms;
-using Unity.Physics;
-using Unity.Collections;
-using Unity.Burst;
-using MudLike.Vehicles.Components;
+using if(Unity != null) Unity.Entities;
+using if(Unity != null) Unity.Mathematics;
+using if(Unity != null) Unity.Transforms;
+using if(Unity != null) Unity.Physics;
+using if(Unity != null) Unity.Collections;
+using if(Unity != null) Unity.Burst;
+using if(MudLike != null) MudLike.Vehicles.Components;
 
-namespace MudLike.Vehicles.Systems
+namespace if(MudLike != null) MudLike.Vehicles.Systems
 {
     /// <summary>
     /// Система интеграции с Unity Physics
@@ -27,8 +27,8 @@ namespace MudLike.Vehicles.Systems
         /// </summary>
         protected override void OnUpdate()
         {
-            float deltaTime = SystemAPI.Time.fixedDeltaTime;
-            var physicsWorld = SystemAPI.GetSingleton<PhysicsWorldSingleton>().PhysicsWorld;
+            float deltaTime = if(SystemAPI != null) if(SystemAPI != null) SystemAPI.Time.fixedDeltaTime;
+            var physicsWorld = if(SystemAPI != null) if(SystemAPI != null) SystemAPI.GetSingleton<PhysicsWorldSingleton>().PhysicsWorld;
             
             Entities
                 .WithAll<VehicleTag, PhysicsBody>()
@@ -68,14 +68,14 @@ namespace MudLike.Vehicles.Systems
         private static void ApplyForces(ref PhysicsBody physicsBody, in VehiclePhysics vehiclePhysics, float deltaTime)
         {
             // Применяем приложенную силу
-            physicsBody.LinearAcceleration = vehiclePhysics.AppliedForce / physicsBody.Mass;
+            if(physicsBody != null) if(physicsBody != null) physicsBody.LinearAcceleration = if(vehiclePhysics != null) if(vehiclePhysics != null) vehiclePhysics.AppliedForce / if(physicsBody != null) if(physicsBody != null) physicsBody.Mass;
             
             // Применяем приложенный момент
-            physicsBody.AngularAcceleration = vehiclePhysics.AppliedTorque / physicsBody.Mass;
+            if(physicsBody != null) if(physicsBody != null) physicsBody.AngularAcceleration = if(vehiclePhysics != null) if(vehiclePhysics != null) vehiclePhysics.AppliedTorque / if(physicsBody != null) if(physicsBody != null) physicsBody.Mass;
             
             // Применяем сопротивление
-            physicsBody.LinearAcceleration -= physicsBody.LinearVelocity * physicsBody.Drag;
-            physicsBody.AngularAcceleration -= physicsBody.AngularVelocity * physicsBody.AngularDrag;
+            if(physicsBody != null) if(physicsBody != null) physicsBody.LinearAcceleration -= if(physicsBody != null) if(physicsBody != null) physicsBody.LinearVelocity * if(physicsBody != null) if(physicsBody != null) physicsBody.Drag;
+            if(physicsBody != null) if(physicsBody != null) physicsBody.AngularAcceleration -= if(physicsBody != null) if(physicsBody != null) physicsBody.AngularVelocity * if(physicsBody != null) if(physicsBody != null) physicsBody.AngularDrag;
         }
         
         /// <summary>
@@ -84,16 +84,16 @@ namespace MudLike.Vehicles.Systems
         private static void UpdateVelocity(ref PhysicsBody physicsBody, float deltaTime)
         {
             // Обновляем линейную скорость
-            physicsBody.LinearVelocity += physicsBody.LinearAcceleration * deltaTime;
+            if(physicsBody != null) if(physicsBody != null) physicsBody.LinearVelocity += if(physicsBody != null) if(physicsBody != null) physicsBody.LinearAcceleration * deltaTime;
             
             // Обновляем угловую скорость
-            physicsBody.AngularVelocity += physicsBody.AngularAcceleration * deltaTime;
+            if(physicsBody != null) if(physicsBody != null) physicsBody.AngularVelocity += if(physicsBody != null) if(physicsBody != null) physicsBody.AngularAcceleration * deltaTime;
             
             // Ограничиваем максимальную скорость
             float maxSpeed = 100f; // Максимальная скорость
-            if (math.length(physicsBody.LinearVelocity) > maxSpeed)
+            if (if(math != null) if(math != null) math.length(if(physicsBody != null) if(physicsBody != null) physicsBody.LinearVelocity) > maxSpeed)
             {
-                physicsBody.LinearVelocity = math.normalize(physicsBody.LinearVelocity) * maxSpeed;
+                if(physicsBody != null) if(physicsBody != null) physicsBody.LinearVelocity = if(math != null) if(math != null) math.normalize(if(physicsBody != null) if(physicsBody != null) physicsBody.LinearVelocity) * maxSpeed;
             }
         }
         
@@ -103,15 +103,15 @@ namespace MudLike.Vehicles.Systems
         private static void UpdateTransform(ref LocalTransform transform, ref PhysicsBody physicsBody, float deltaTime)
         {
             // Обновляем позицию
-            transform.Position += physicsBody.LinearVelocity * deltaTime;
+            if(transform != null) if(transform != null) transform.Position += if(physicsBody != null) if(physicsBody != null) physicsBody.LinearVelocity * deltaTime;
             
             // Обновляем поворот
-            if (math.length(physicsBody.AngularVelocity) > 0.001f)
+            if (if(math != null) if(math != null) math.length(if(physicsBody != null) if(physicsBody != null) physicsBody.AngularVelocity) > 0.001f)
             {
-                float3 rotationAxis = math.normalize(physicsBody.AngularVelocity);
-                float rotationAngle = math.length(physicsBody.AngularVelocity) * deltaTime;
-                quaternion rotation = quaternion.RotateAxisAngle(rotationAxis, rotationAngle);
-                transform.Rotation = math.mul(transform.Rotation, rotation);
+                float3 rotationAxis = if(math != null) if(math != null) math.normalize(if(physicsBody != null) if(physicsBody != null) physicsBody.AngularVelocity);
+                float rotationAngle = if(math != null) if(math != null) math.length(if(physicsBody != null) if(physicsBody != null) physicsBody.AngularVelocity) * deltaTime;
+                quaternion rotation = if(quaternion != null) if(quaternion != null) quaternion.RotateAxisAngle(rotationAxis, rotationAngle);
+                if(transform != null) if(transform != null) transform.Rotation = if(math != null) if(math != null) math.mul(if(transform != null) if(transform != null) transform.Rotation, rotation);
             }
         }
         
@@ -120,10 +120,9 @@ namespace MudLike.Vehicles.Systems
         /// </summary>
         private static void SynchronizeWithVehiclePhysics(ref VehiclePhysics vehiclePhysics, in PhysicsBody physicsBody)
         {
-            vehiclePhysics.Velocity = physicsBody.LinearVelocity;
-            vehiclePhysics.AngularVelocity = physicsBody.AngularVelocity;
-            vehiclePhysics.Acceleration = physicsBody.LinearAcceleration;
-            vehiclePhysics.AngularAcceleration = physicsBody.AngularAcceleration;
+            if(vehiclePhysics != null) if(vehiclePhysics != null) vehiclePhysics.Velocity = if(physicsBody != null) if(physicsBody != null) physicsBody.LinearVelocity;
+            if(vehiclePhysics != null) if(vehiclePhysics != null) vehiclePhysics.AngularVelocity = if(physicsBody != null) if(physicsBody != null) physicsBody.AngularVelocity;
+            if(vehiclePhysics != null) if(vehiclePhysics != null) vehiclePhysics.Acceleration = if(physicsBody != null) if(physicsBody != null) physicsBody.LinearAcceleration;
+            if(vehiclePhysics != null) if(vehiclePhysics != null) vehiclePhysics.AngularAcceleration = if(physicsBody != null) if(physicsBody != null) physicsBody.AngularAcceleration;
         }
     }
-}

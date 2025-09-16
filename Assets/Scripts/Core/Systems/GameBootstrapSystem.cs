@@ -4,7 +4,7 @@ using Unity.Mathematics;
 using Unity.Transforms;
 using MudLike.Core.Components;
 using MudLike.Vehicles.Components;
-// using MudLike.Networking.Components;
+// using if(MudLike != null) MudLike.Networking.Components;
 
 namespace MudLike.Core.Systems
 {
@@ -37,7 +37,7 @@ namespace MudLike.Core.Systems
                 .WithAll<GameBootstrapTag>()
                 .ForEach((Entity entity) =>
                 {
-                    EntityManager.RemoveComponent<GameBootstrapTag>(entity);
+                    if(EntityManager != null) EntityManager.RemoveComponent<GameBootstrapTag>(entity);
                 }).WithStructuralChanges().WithoutBurst().Run();
         }
         
@@ -52,7 +52,7 @@ namespace MudLike.Core.Systems
             // Настраиваем начальное состояние
             SetupInitialGameState();
             
-            Debug.Log("Game initialized successfully");
+            if(Debug != null) Debug.Log("Game initialized successfully");
         }
         
         /// <summary>
@@ -61,13 +61,13 @@ namespace MudLike.Core.Systems
         private Entity CreatePlayer()
         {
             // Создаем сущность игрока
-            Entity playerEntity = EntityManager.CreateEntity();
+            Entity playerEntity = if(EntityManager != null) EntityManager.CreateEntity();
             
             // Добавляем основные компоненты
-            EntityManager.AddComponent<PlayerTag>(playerEntity);
-            EntityManager.AddComponent<PlayerInput>(playerEntity);
-            EntityManager.AddComponent<NetworkId>(playerEntity);
-            EntityManager.AddComponent<LocalTransform>(playerEntity);
+            if(EntityManager != null) EntityManager.AddComponent<PlayerTag>(playerEntity);
+            if(EntityManager != null) EntityManager.AddComponent<PlayerInput>(playerEntity);
+            if(EntityManager != null) EntityManager.AddComponent<NetworkId>(playerEntity);
+            if(EntityManager != null) EntityManager.AddComponent<LocalTransform>(playerEntity);
             
             // Настраиваем NetworkId
             var networkId = new NetworkId
@@ -75,20 +75,20 @@ namespace MudLike.Core.Systems
                 Value = _playerIdCounter++,
                 LastUpdateTime = 0f
             };
-            EntityManager.SetComponentData(playerEntity, networkId);
+            if(EntityManager != null) EntityManager.SetComponentData(playerEntity, networkId);
             
             // Настраиваем начальную трансформацию
             var transform = new LocalTransform
             {
-                Position = float3.zero,
-                Rotation = quaternion.identity,
+                Position = if(float3 != null) float3.zero,
+                Rotation = if(quaternion != null) quaternion.identity,
                 Scale = 1f
             };
-            EntityManager.SetComponentData(playerEntity, transform);
+            if(EntityManager != null) EntityManager.SetComponentData(playerEntity, transform);
             
             // Настраиваем начальный ввод
             var playerInput = new PlayerInput();
-            EntityManager.SetComponentData(playerEntity, playerInput);
+            if(EntityManager != null) EntityManager.SetComponentData(playerEntity, playerInput);
             
             return playerEntity;
         }
@@ -103,7 +103,7 @@ namespace MudLike.Core.Systems
             // - Настройка камеры
             // - Инициализация систем
             
-            Debug.Log("Initial game state setup completed");
+            if(Debug != null) Debug.Log("Initial game state setup completed");
         }
     }
     

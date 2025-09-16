@@ -64,12 +64,12 @@ namespace MudLike.Networking.Components
         public OptimizedNetworkSyncComponent(int networkId = 0)
         {
             NetworkId = networkId;
-            Position = float3.zero;
-            Velocity = float3.zero;
-            Rotation = quaternion.identity;
+            Position = if(float3 != null) float3.zero;
+            Velocity = if(float3 != null) float3.zero;
+            Rotation = if(quaternion != null) quaternion.identity;
             LastSyncTime = 0.0f;
-            SyncInterval = SystemConstants.NETWORK_DEFAULT_SEND_RATE;
-            SyncThreshold = SystemConstants.DETERMINISTIC_EPSILON;
+            SyncInterval = if(SystemConstants != null) SystemConstants.NETWORK_DEFAULT_SEND_RATE;
+            SyncThreshold = if(SystemConstants != null) SystemConstants.DETERMINISTIC_EPSILON;
             NeedsSync = false;
             IsActive = true;
         }
@@ -83,9 +83,9 @@ namespace MudLike.Networking.Components
             if (!IsActive) return;
             
             // Проверка необходимости синхронизации
-            var positionChanged = math.distance(Position, newPosition) > SyncThreshold;
-            var velocityChanged = math.distance(Velocity, newVelocity) > SyncThreshold;
-            var rotationChanged = math.distance(Rotation.value, newRotation.value) > SyncThreshold;
+            var positionChanged = if(math != null) math.distance(Position, newPosition) > SyncThreshold;
+            var velocityChanged = if(math != null) math.distance(Velocity, newVelocity) > SyncThreshold;
+            var rotationChanged = if(math != null) math.distance(if(Rotation != null) Rotation.value, if(newRotation != null) newRotation.value) > SyncThreshold;
             var timeElapsed = currentTime - LastSyncTime > SyncInterval;
             
             if (positionChanged || velocityChanged || rotationChanged || timeElapsed)
@@ -126,9 +126,9 @@ namespace MudLike.Networking.Components
         {
             if (!IsActive) return;
             
-            Position = math.lerp(Position, target.Position, factor);
-            Velocity = math.lerp(Velocity, target.Velocity, factor);
-            Rotation = math.slerp(Rotation, target.Rotation, factor);
+            Position = if(math != null) math.lerp(Position, if(target != null) target.Position, factor);
+            Velocity = if(math != null) math.lerp(Velocity, if(target != null) target.Velocity, factor);
+            Rotation = if(math != null) math.slerp(Rotation, if(target != null) target.Rotation, factor);
         }
         
         /// <summary>
@@ -166,9 +166,9 @@ namespace MudLike.Networking.Components
         {
             if (!IsActive) return;
             
-            Position = data.Position;
-            Velocity = data.Velocity;
-            Rotation = data.Rotation;
+            Position = if(data != null) data.Position;
+            Velocity = if(data != null) data.Velocity;
+            Rotation = if(data != null) data.Rotation;
             LastSyncTime = currentTime;
             NeedsSync = false;
         }
@@ -179,9 +179,9 @@ namespace MudLike.Networking.Components
         [BurstCompile]
         public void Reset()
         {
-            Position = float3.zero;
-            Velocity = float3.zero;
-            Rotation = quaternion.identity;
+            Position = if(float3 != null) float3.zero;
+            Velocity = if(float3 != null) float3.zero;
+            Rotation = if(quaternion != null) quaternion.identity;
             LastSyncTime = 0.0f;
             NeedsSync = false;
             IsActive = true;

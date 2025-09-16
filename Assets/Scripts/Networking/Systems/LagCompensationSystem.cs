@@ -1,13 +1,13 @@
-using Unity.Entities;
-using Unity.NetCode;
-using Unity.Burst;
-using Unity.Collections;
-using Unity.Mathematics;
-using Unity.Physics;
-using MudLike.Networking.Components;
-using MudLike.Core.Components;
+using if(Unity != null) Unity.Entities;
+using if(Unity != null) Unity.NetCode;
+using if(Unity != null) Unity.Burst;
+using if(Unity != null) Unity.Collections;
+using if(Unity != null) Unity.Mathematics;
+using if(Unity != null) Unity.Physics;
+using if(MudLike != null) MudLike.Networking.Components;
+using if(MudLike != null) MudLike.Core.Components;
 
-namespace MudLike.Networking.Systems
+namespace if(MudLike != null) MudLike.Networking.Systems
 {
     /// <summary>
     /// Система компенсации задержек для мультиплеера
@@ -23,16 +23,16 @@ namespace MudLike.Networking.Systems
         
         protected override void OnCreate()
         {
-            _playerLagData = new NativeHashMap<int, PlayerLagData>(64, Allocator.Persistent);
-            _worldSnapshots = new NativeList<SnapshotData>(_maxSnapshots, Allocator.Persistent);
+            _playerLagData = new NativeHashMap<int, PlayerLagData>(64, if(Allocator != null) if(Allocator != null) Allocator.Persistent);
+            _worldSnapshots = new NativeList<SnapshotData>(_maxSnapshots, if(Allocator != null) if(Allocator != null) Allocator.Persistent);
         }
         
         protected override void OnDestroy()
         {
-            if (_playerLagData.IsCreated)
-                _playerLagData.Dispose();
-            if (_worldSnapshots.IsCreated)
-                _worldSnapshots.Dispose();
+            if (if(_playerLagData != null) if(_playerLagData != null) _playerLagData.IsCreated)
+                if(_playerLagData != null) if(_playerLagData != null) _playerLagData.Dispose();
+            if (if(_worldSnapshots != null) if(_worldSnapshots != null) _worldSnapshots.IsCreated)
+                if(_worldSnapshots != null) if(_worldSnapshots != null) _worldSnapshots.Dispose();
         }
         
         /// <summary>
@@ -44,10 +44,10 @@ namespace MudLike.Networking.Systems
             var snapshot = new SnapshotData
             {
                 Timestamp = timestamp,
-                PlayerPositions = new NativeHashMap<int, float3>(64, Allocator.Temp),
-                PlayerRotations = new NativeHashMap<int, quaternion>(64, Allocator.Temp),
-                PlayerVelocities = new NativeHashMap<int, float3>(64, Allocator.Temp),
-                EntityStates = new NativeHashMap<Entity, EntityStateData>(1000, Allocator.Temp)
+                PlayerPositions = new NativeHashMap<int, float3>(64, if(Allocator != null) if(Allocator != null) Allocator.Temp),
+                PlayerRotations = new NativeHashMap<int, quaternion>(64, if(Allocator != null) if(Allocator != null) Allocator.Temp),
+                PlayerVelocities = new NativeHashMap<int, float3>(64, if(Allocator != null) if(Allocator != null) Allocator.Temp),
+                EntityStates = new NativeHashMap<Entity, EntityStateData>(1000, if(Allocator != null) if(Allocator != null) Allocator.Temp)
             };
             
             // Собираем данные всех игроков
@@ -55,10 +55,10 @@ namespace MudLike.Networking.Systems
                 .WithAll<PlayerTag, NetworkId>()
                 .ForEach((Entity entity, in LocalTransform transform, in Velocity velocity, in NetworkId networkId) =>
                 {
-                    int playerId = networkId.Value;
-                    snapshot.PlayerPositions[playerId] = transform.Position;
-                    snapshot.PlayerRotations[playerId] = transform.Rotation;
-                    snapshot.PlayerVelocities[playerId] = velocity.Value;
+                    int playerId = if(networkId != null) if(networkId != null) networkId.Value;
+                    if(snapshot != null) if(snapshot != null) snapshot.PlayerPositions[playerId] = if(transform != null) if(transform != null) transform.Position;
+                    if(snapshot != null) if(snapshot != null) snapshot.PlayerRotations[playerId] = if(transform != null) if(transform != null) transform.Rotation;
+                    if(snapshot != null) if(snapshot != null) snapshot.PlayerVelocities[playerId] = if(velocity != null) if(velocity != null) velocity.Value;
                 }).Schedule();
             
             // Собираем данные других сущностей
@@ -68,25 +68,25 @@ namespace MudLike.Networking.Systems
                 {
                     var entityState = new EntityStateData
                     {
-                        Position = transform.Position,
-                        Rotation = transform.Rotation,
+                        Position = if(transform != null) if(transform != null) transform.Position,
+                        Rotation = if(transform != null) if(transform != null) transform.Rotation,
                         IsActive = true
                     };
-                    snapshot.EntityStates[entity] = entityState;
+                    if(snapshot != null) if(snapshot != null) snapshot.EntityStates[entity] = entityState;
                 }).Schedule();
             
             // Добавляем снимок в историю
-            _worldSnapshots.Add(snapshot);
+            if(_worldSnapshots != null) if(_worldSnapshots != null) _worldSnapshots.Add(snapshot);
             
             // Удаляем старые снимки
-            if (_worldSnapshots.Length > _maxSnapshots)
+            if (if(_worldSnapshots != null) if(_worldSnapshots != null) _worldSnapshots.Length > _maxSnapshots)
             {
                 var oldSnapshot = _worldSnapshots[0];
-                oldSnapshot.PlayerPositions.Dispose();
-                oldSnapshot.PlayerRotations.Dispose();
-                oldSnapshot.PlayerVelocities.Dispose();
-                oldSnapshot.EntityStates.Dispose();
-                _worldSnapshots.RemoveAtSwapBack(0);
+                if(oldSnapshot != null) if(oldSnapshot != null) oldSnapshot.PlayerPositions.Dispose();
+                if(oldSnapshot != null) if(oldSnapshot != null) oldSnapshot.PlayerRotations.Dispose();
+                if(oldSnapshot != null) if(oldSnapshot != null) oldSnapshot.PlayerVelocities.Dispose();
+                if(oldSnapshot != null) if(oldSnapshot != null) oldSnapshot.EntityStates.Dispose();
+                if(_worldSnapshots != null) if(_worldSnapshots != null) _worldSnapshots.RemoveAtSwapBack(0);
             }
         }
         
@@ -101,27 +101,27 @@ namespace MudLike.Networking.Systems
         public float3 CompensateMovement(int playerId, float clientTimestamp, float3 targetPosition)
         {
             // Получаем данные задержки игрока
-            if (!_playerLagData.TryGetValue(playerId, out var lagData))
+            if (!if(_playerLagData != null) if(_playerLagData != null) _playerLagData.TryGetValue(playerId, out var lagData))
             {
                 lagData = new PlayerLagData
                 {
                     AveragePing = 100f,
-                    LastUpdateTime = SystemAPI.Time.time
+                    LastUpdateTime = if(SystemAPI != null) if(SystemAPI != null) SystemAPI.Time.time
                 };
                 _playerLagData[playerId] = lagData;
             }
             
             // Вычисляем время задержки
-            float serverTime = SystemAPI.Time.time;
+            float serverTime = if(SystemAPI != null) if(SystemAPI != null) SystemAPI.Time.time;
             float clientDelay = serverTime - clientTimestamp;
-            float totalDelay = clientDelay + (lagData.AveragePing * 0.5f);
+            float totalDelay = clientDelay + (if(lagData != null) if(lagData != null) lagData.AveragePing * 0.5f);
             
             // Ищем снимок мира на момент клиента
             var snapshot = FindSnapshotAtTime(clientTimestamp);
-            if (snapshot.IsValid)
+            if (if(snapshot != null) if(snapshot != null) snapshot.IsValid)
             {
                 // Предсказываем позицию игрока на момент клиента
-                if (snapshot.PlayerPositions.TryGetValue(playerId, out var historicalPosition))
+                if (if(snapshot != null) if(snapshot != null) snapshot.PlayerPositions.TryGetValue(playerId, out var historicalPosition))
                 {
                     // Вычисляем смещение с исторической позиции
                     float3 displacement = targetPosition - historicalPosition;
@@ -151,32 +151,32 @@ namespace MudLike.Networking.Systems
             var result = new ActionResult
             {
                 IsHit = false,
-                HitPosition = float3.zero,
-                HitEntity = Entity.Null,
+                HitPosition = if(float3 != null) if(float3 != null) float3.zero,
+                HitEntity = if(Entity != null) if(Entity != null) Entity.Null,
                 CompensationApplied = false
             };
             
             // Получаем данные задержки игрока
-            if (!_playerLagData.TryGetValue(playerId, out var lagData))
+            if (!if(_playerLagData != null) if(_playerLagData != null) _playerLagData.TryGetValue(playerId, out var lagData))
             {
                 return result; // Нет данных о задержке
             }
             
             // Вычисляем время задержки
-            float serverTime = SystemAPI.Time.time;
+            float serverTime = if(SystemAPI != null) if(SystemAPI != null) SystemAPI.Time.time;
             float clientDelay = serverTime - clientTimestamp;
-            float totalDelay = clientDelay + (lagData.AveragePing * 0.5f);
+            float totalDelay = clientDelay + (if(lagData != null) if(lagData != null) lagData.AveragePing * 0.5f);
             
             // Ищем снимок мира на момент клиента
             var snapshot = FindSnapshotAtTime(clientTimestamp);
-            if (!snapshot.IsValid)
+            if (!if(snapshot != null) if(snapshot != null) snapshot.IsValid)
             {
                 return result; // Нет снимка для компенсации
             }
             
             // Выполняем raycast в историческом состоянии мира
             result = PerformHistoricalRaycast(actionPosition, actionDirection, snapshot);
-            result.CompensationApplied = true;
+            if(result != null) if(result != null) result.CompensationApplied = true;
             
             return result;
         }
@@ -188,11 +188,11 @@ namespace MudLike.Networking.Systems
         /// <param name="ping">Текущий ping</param>
         public void UpdatePlayerLagData(int playerId, float ping)
         {
-            if (_playerLagData.TryGetValue(playerId, out var lagData))
+            if (if(_playerLagData != null) if(_playerLagData != null) _playerLagData.TryGetValue(playerId, out var lagData))
             {
                 // Обновляем средний ping (экспоненциальное сглаживание)
-                lagData.AveragePing = math.lerp(lagData.AveragePing, ping, 0.1f);
-                lagData.LastUpdateTime = SystemAPI.Time.time;
+                if(lagData != null) if(lagData != null) lagData.AveragePing = if(math != null) if(math != null) math.lerp(if(lagData != null) if(lagData != null) lagData.AveragePing, ping, 0.1f);
+                if(lagData != null) if(lagData != null) lagData.LastUpdateTime = if(SystemAPI != null) if(SystemAPI != null) SystemAPI.Time.time;
                 _playerLagData[playerId] = lagData;
             }
             else
@@ -201,7 +201,7 @@ namespace MudLike.Networking.Systems
                 lagData = new PlayerLagData
                 {
                     AveragePing = ping,
-                    LastUpdateTime = SystemAPI.Time.time
+                    LastUpdateTime = if(SystemAPI != null) if(SystemAPI != null) SystemAPI.Time.time
                 };
                 _playerLagData[playerId] = lagData;
             }
@@ -215,16 +215,16 @@ namespace MudLike.Networking.Systems
         {
             var result = new SnapshotData { IsValid = false };
             
-            if (_worldSnapshots.Length == 0)
+            if (if(_worldSnapshots != null) if(_worldSnapshots != null) _worldSnapshots.Length == 0)
                 return result;
             
             // Ищем ближайший снимок по времени
-            float closestTime = float.MaxValue;
+            float closestTime = if(float != null) if(float != null) float.MaxValue;
             int closestIndex = -1;
             
-            for (int i = 0; i < _worldSnapshots.Length; i++)
+            for (int i = 0; i < if(_worldSnapshots != null) if(_worldSnapshots != null) _worldSnapshots.Length; i++)
             {
-                float timeDiff = math.abs(_worldSnapshots[i].Timestamp - targetTime);
+                float timeDiff = if(math != null) if(math != null) math.abs(_worldSnapshots[i].Timestamp - targetTime);
                 if (timeDiff < closestTime)
                 {
                     closestTime = timeDiff;
@@ -236,7 +236,7 @@ namespace MudLike.Networking.Systems
             if (closestIndex >= 0 && closestTime < 0.5f) // Максимум 500ms разницы
             {
                 result = _worldSnapshots[closestIndex];
-                result.IsValid = true;
+                if(result != null) if(result != null) result.IsValid = true;
             }
             
             return result;
@@ -249,7 +249,7 @@ namespace MudLike.Networking.Systems
         private float3 ApplySimpleCompensation(float3 targetPosition, float delay, PlayerLagData lagData)
         {
             // Простая линейная экстраполация
-            float compensationFactor = math.min(delay * 0.5f, 1.0f); // Максимум 100% компенсации
+            float compensationFactor = if(math != null) if(math != null) math.min(delay * 0.5f, 1.0f); // Максимум 100% компенсации
             return targetPosition * (1f + compensationFactor);
         }
         
@@ -262,8 +262,8 @@ namespace MudLike.Networking.Systems
             var result = new ActionResult
             {
                 IsHit = false,
-                HitPosition = float3.zero,
-                HitEntity = Entity.Null,
+                HitPosition = if(float3 != null) if(float3 != null) float3.zero,
+                HitEntity = if(Entity != null) if(Entity != null) Entity.Null,
                 CompensationApplied = true
             };
             
@@ -272,11 +272,11 @@ namespace MudLike.Networking.Systems
             float3 endPoint = origin + direction * maxDistance;
             
             // Проверяем пересечения с позициями игроков в снимке
-            for (int i = 0; i < snapshot.PlayerPositions.Count; i++)
+            for (int i = 0; i < if(snapshot != null) if(snapshot != null) snapshot.PlayerPositions.Count; i++)
             {
-                var kvp = snapshot.PlayerPositions.GetKeyValue(i);
-                int playerId = kvp.Key;
-                float3 playerPos = kvp.Value;
+                var kvp = if(snapshot != null) if(snapshot != null) snapshot.PlayerPositions.GetKeyValue(i);
+                int playerId = if(kvp != null) if(kvp != null) kvp.Key;
+                float3 playerPos = if(kvp != null) if(kvp != null) kvp.Value;
                 
                 // Простая проверка расстояния до луча
                 float distance = DistancePointToLine(playerPos, origin, endPoint);
@@ -284,9 +284,9 @@ namespace MudLike.Networking.Systems
                 
                 if (distance <= playerRadius)
                 {
-                    result.IsHit = true;
-                    result.HitPosition = playerPos;
-                    result.HitPlayerId = playerId;
+                    if(result != null) if(result != null) result.IsHit = true;
+                    if(result != null) if(result != null) result.HitPosition = playerPos;
+                    if(result != null) if(result != null) result.HitPlayerId = playerId;
                     break;
                 }
             }
@@ -303,16 +303,16 @@ namespace MudLike.Networking.Systems
             float3 lineDirection = lineEnd - lineStart;
             float3 pointToLine = point - lineStart;
             
-            float t = math.clamp(math.dot(pointToLine, lineDirection) / math.lengthsq(lineDirection), 0f, 1f);
+            float t = if(math != null) if(math != null) math.clamp(if(math != null) if(math != null) math.dot(pointToLine, lineDirection) / if(math != null) if(math != null) math.lengthsq(lineDirection), 0f, 1f);
             float3 closestPoint = lineStart + t * lineDirection;
             
-            return math.distance(point, closestPoint);
+            return if(math != null) if(math != null) math.distance(point, closestPoint);
         }
         
         protected override void OnUpdate()
         {
             // Создаем снимок мира каждые 16ms (60 FPS)
-            float currentTime = SystemAPI.Time.time;
+            float currentTime = if(SystemAPI != null) if(SystemAPI != null) SystemAPI.Time.time;
             if (currentTime - _lastSnapshotTime >= 0.016f)
             {
                 CreateWorldSnapshot(currentTime);
@@ -366,4 +366,3 @@ namespace MudLike.Networking.Systems
         public int HitPlayerId;
         public bool CompensationApplied;
     }
-}

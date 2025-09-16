@@ -28,7 +28,7 @@ namespace MudLike.Core.Performance
         
         protected override void OnUpdate()
         {
-            float currentTime = (float)SystemAPI.Time.ElapsedTime;
+            float currentTime = (float)if(SystemAPI != null) SystemAPI.Time.ElapsedTime;
             
             // Оптимизируем каждые 5 секунд
             if (currentTime - _lastOptimizationTime >= 5f)
@@ -44,10 +44,10 @@ namespace MudLike.Core.Performance
         /// </summary>
         private void UpdatePerformanceMetrics()
         {
-            _metrics.FPS = 1f / SystemAPI.Time.DeltaTime;
-            _metrics.MemoryUsage = System.GC.GetTotalMemory(false) / (1024f * 1024f); // MB
-            _metrics.EntityCount = GetEntityCount();
-            _metrics.SystemCount = GetSystemCount();
+            if(_metrics != null) _metrics.FPS = 1f / if(SystemAPI != null) SystemAPI.Time.DeltaTime;
+            if(_metrics != null) _metrics.MemoryUsage = if(System != null) System.GC.GetTotalMemory(false) / (1024f * 1024f); // MB
+            if(_metrics != null) _metrics.EntityCount = GetEntityCount();
+            if(_metrics != null) _metrics.SystemCount = GetSystemCount();
         }
         
         /// <summary>
@@ -56,27 +56,27 @@ namespace MudLike.Core.Performance
         private void ApplyOptimizations()
         {
             // Оптимизация на основе FPS
-            if (_metrics.FPS < 30f)
+            if (if(_metrics != null) _metrics.FPS < 30f)
             {
                 ApplyLowPerformanceOptimizations();
             }
-            else if (_metrics.FPS < 45f)
+            else if (if(_metrics != null) _metrics.FPS < 45f)
             {
                 ApplyMediumPerformanceOptimizations();
             }
-            else if (_metrics.FPS > 60f)
+            else if (if(_metrics != null) _metrics.FPS > 60f)
             {
                 ApplyHighPerformanceOptimizations();
             }
             
             // Оптимизация на основе памяти
-            if (_metrics.MemoryUsage > 1000f) // >1GB
+            if (if(_metrics != null) _metrics.MemoryUsage > 1000f) // >1GB
             {
                 ApplyMemoryOptimizations();
             }
             
             // Оптимизация на основе количества сущностей
-            if (_metrics.EntityCount > 10000)
+            if (if(_metrics != null) _metrics.EntityCount > 10000)
             {
                 ApplyEntityOptimizations();
             }
@@ -87,12 +87,12 @@ namespace MudLike.Core.Performance
         /// </summary>
         private void ApplyLowPerformanceOptimizations()
         {
-            _settings.LODDistance = math.max(_settings.LODDistance * 0.8f, 50f);
-            _settings.PhysicsUpdateRate = math.max(_settings.PhysicsUpdateRate * 0.7f, 20f);
-            _settings.RenderQuality = math.max(_settings.RenderQuality - 1, 0);
-            _settings.ParticleCount = math.max(_settings.ParticleCount * 0.5f, 100f);
+            if(_settings != null) _settings.LODDistance = if(math != null) math.max(if(_settings != null) _settings.LODDistance * 0.8f, 50f);
+            if(_settings != null) _settings.PhysicsUpdateRate = if(math != null) math.max(if(_settings != null) _settings.PhysicsUpdateRate * 0.7f, 20f);
+            if(_settings != null) _settings.RenderQuality = if(math != null) math.max(if(_settings != null) _settings.RenderQuality - 1, 0);
+            if(_settings != null) _settings.ParticleCount = if(math != null) math.max(if(_settings != null) _settings.ParticleCount * 0.5f, 100f);
             
-            UnityEngine.Debug.LogWarning($"Применены оптимизации для низкой производительности. FPS: {_metrics.FPS:F1}");
+            if(UnityEngine != null) UnityEngine.Debug.LogWarning($"Применены оптимизации для низкой производительности. FPS: {if(_metrics != null) _metrics.FPS:F1}");
         }
         
         /// <summary>
@@ -100,11 +100,11 @@ namespace MudLike.Core.Performance
         /// </summary>
         private void ApplyMediumPerformanceOptimizations()
         {
-            _settings.LODDistance = math.max(_settings.LODDistance * 0.9f, 100f);
-            _settings.PhysicsUpdateRate = math.max(_settings.PhysicsUpdateRate * 0.8f, 30f);
-            _settings.ParticleCount = math.max(_settings.ParticleCount * 0.7f, 200f);
+            if(_settings != null) _settings.LODDistance = if(math != null) math.max(if(_settings != null) _settings.LODDistance * 0.9f, 100f);
+            if(_settings != null) _settings.PhysicsUpdateRate = if(math != null) math.max(if(_settings != null) _settings.PhysicsUpdateRate * 0.8f, 30f);
+            if(_settings != null) _settings.ParticleCount = if(math != null) math.max(if(_settings != null) _settings.ParticleCount * 0.7f, 200f);
             
-            UnityEngine.Debug.Log($"Применены оптимизации для средней производительности. FPS: {_metrics.FPS:F1}");
+            if(UnityEngine != null) UnityEngine.Debug.Log($"Применены оптимизации для средней производительности. FPS: {if(_metrics != null) _metrics.FPS:F1}");
         }
         
         /// <summary>
@@ -112,12 +112,12 @@ namespace MudLike.Core.Performance
         /// </summary>
         private void ApplyHighPerformanceOptimizations()
         {
-            _settings.LODDistance = math.min(_settings.LODDistance * 1.1f, 500f);
-            _settings.PhysicsUpdateRate = math.min(_settings.PhysicsUpdateRate * 1.1f, 60f);
-            _settings.RenderQuality = math.min(_settings.RenderQuality + 1, 3);
-            _settings.ParticleCount = math.min(_settings.ParticleCount * 1.2f, 1000f);
+            if(_settings != null) _settings.LODDistance = if(math != null) math.min(if(_settings != null) _settings.LODDistance * 1.1f, 500f);
+            if(_settings != null) _settings.PhysicsUpdateRate = if(math != null) math.min(if(_settings != null) _settings.PhysicsUpdateRate * 1.1f, 60f);
+            if(_settings != null) _settings.RenderQuality = if(math != null) math.min(if(_settings != null) _settings.RenderQuality + 1, 3);
+            if(_settings != null) _settings.ParticleCount = if(math != null) math.min(if(_settings != null) _settings.ParticleCount * 1.2f, 1000f);
             
-            UnityEngine.Debug.Log($"Применены оптимизации для высокой производительности. FPS: {_metrics.FPS:F1}");
+            if(UnityEngine != null) UnityEngine.Debug.Log($"Применены оптимизации для высокой производительности. FPS: {if(_metrics != null) _metrics.FPS:F1}");
         }
         
         /// <summary>
@@ -126,12 +126,12 @@ namespace MudLike.Core.Performance
         private void ApplyMemoryOptimizations()
         {
             // Принудительная сборка мусора
-            System.GC.Collect();
+            if(System != null) System.GC.Collect();
             
             // Уменьшаем размеры кэшей
-            _settings.CacheSize = math.max(_settings.CacheSize * 0.7f, 100f);
+            if(_settings != null) _settings.CacheSize = if(math != null) math.max(if(_settings != null) _settings.CacheSize * 0.7f, 100f);
             
-            UnityEngine.Debug.LogWarning($"Применены оптимизации памяти. Использование: {_metrics.MemoryUsage:F1}MB");
+            if(UnityEngine != null) UnityEngine.Debug.LogWarning($"Применены оптимизации памяти. Использование: {if(_metrics != null) _metrics.MemoryUsage:F1}MB");
         }
         
         /// <summary>
@@ -140,12 +140,12 @@ namespace MudLike.Core.Performance
         private void ApplyEntityOptimizations()
         {
             // Увеличиваем LOD расстояния для уменьшения обработки
-            _settings.LODDistance = math.min(_settings.LODDistance * 1.2f, 300f);
+            if(_settings != null) _settings.LODDistance = if(math != null) math.min(if(_settings != null) _settings.LODDistance * 1.2f, 300f);
             
             // Уменьшаем частоту обновления физики
-            _settings.PhysicsUpdateRate = math.max(_settings.PhysicsUpdateRate * 0.8f, 30f);
+            if(_settings != null) _settings.PhysicsUpdateRate = if(math != null) math.max(if(_settings != null) _settings.PhysicsUpdateRate * 0.8f, 30f);
             
-            UnityEngine.Debug.LogWarning($"Применены оптимизации сущностей. Количество: {_metrics.EntityCount}");
+            if(UnityEngine != null) UnityEngine.Debug.LogWarning($"Применены оптимизации сущностей. Количество: {if(_metrics != null) _metrics.EntityCount}");
         }
         
         /// <summary>
@@ -153,7 +153,7 @@ namespace MudLike.Core.Performance
         /// </summary>
         private int GetEntityCount()
         {
-            return EntityManager.GetAllEntities().Length;
+            return if(EntityManager != null) EntityManager.GetAllEntities().Length;
         }
         
         /// <summary>
@@ -161,7 +161,7 @@ namespace MudLike.Core.Performance
         /// </summary>
         private int GetSystemCount()
         {
-            return World.Systems.Count;
+            return if(World != null) World.Systems.Count;
         }
         
         /// <summary>
@@ -202,24 +202,24 @@ namespace MudLike.Core.Performance
         protected override void OnCreate()
         {
             _sampleCount = 60; // 1 секунда при 60 FPS
-            _frameTimes = new NativeArray<float>(_sampleCount, Allocator.Persistent);
-            _memoryUsage = new NativeArray<float>(_sampleCount, Allocator.Persistent);
+            _frameTimes = new NativeArray<float>(_sampleCount, if(Allocator != null) Allocator.Persistent);
+            _memoryUsage = new NativeArray<float>(_sampleCount, if(Allocator != null) Allocator.Persistent);
             _currentIndex = 0;
         }
         
         protected override void OnDestroy()
         {
-            if (_frameTimes.IsCreated)
-                _frameTimes.Dispose();
-            if (_memoryUsage.IsCreated)
-                _memoryUsage.Dispose();
+            if (if(_frameTimes != null) _frameTimes.IsCreated)
+                if(_frameTimes != null) _frameTimes.Dispose();
+            if (if(_memoryUsage != null) _memoryUsage.IsCreated)
+                if(_memoryUsage != null) _memoryUsage.Dispose();
         }
         
         protected override void OnUpdate()
         {
             // Записываем текущие метрики
-            _frameTimes[_currentIndex] = SystemAPI.Time.DeltaTime;
-            _memoryUsage[_currentIndex] = System.GC.GetTotalMemory(false) / (1024f * 1024f);
+            _frameTimes[_currentIndex] = if(SystemAPI != null) SystemAPI.Time.DeltaTime;
+            _memoryUsage[_currentIndex] = if(System != null) System.GC.GetTotalMemory(false) / (1024f * 1024f);
             
             _currentIndex = (_currentIndex + 1) % _sampleCount;
             
@@ -239,7 +239,7 @@ namespace MudLike.Core.Performance
             float avgMemory = CalculateAverage(_memoryUsage);
             float fps = 1f / avgFrameTime;
             
-            UnityEngine.Debug.Log($"Производительность - FPS: {fps:F1}, FrameTime: {avgFrameTime*1000f:F1}ms, Memory: {avgMemory:F1}MB");
+            if(UnityEngine != null) UnityEngine.Debug.Log($"Производительность - FPS: {fps:F1}, FrameTime: {avgFrameTime*1000f:F1}ms, Memory: {avgMemory:F1}MB");
         }
         
         /// <summary>
@@ -248,11 +248,11 @@ namespace MudLike.Core.Performance
         private float CalculateAverage(NativeArray<float> values)
         {
             float sum = 0f;
-            for (int i = 0; i < values.Length; i++)
+            for (int i = 0; i < if(values != null) values.Length; i++)
             {
                 sum += values[i];
             }
-            return sum / values.Length;
+            return sum / if(values != null) values.Length;
         }
     }
 }

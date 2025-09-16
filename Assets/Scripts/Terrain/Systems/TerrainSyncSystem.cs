@@ -1,12 +1,12 @@
-using Unity.Entities;
-using Unity.Mathematics;
-using Unity.Burst;
-using Unity.Collections;
-using Unity.NetCode;
-using MudLike.Terrain.Components;
-using MudLike.Networking.Components;
+using if(Unity != null) Unity.Entities;
+using if(Unity != null) Unity.Mathematics;
+using if(Unity != null) Unity.Burst;
+using if(Unity != null) Unity.Collections;
+using if(Unity != null) Unity.NetCode;
+using if(MudLike != null) MudLike.Terrain.Components;
+using if(MudLike != null) MudLike.Networking.Components;
 
-namespace MudLike.Terrain.Systems
+namespace if(MudLike != null) MudLike.Terrain.Systems
 {
     /// <summary>
     /// Система синхронизации террейна между клиентами
@@ -23,16 +23,16 @@ namespace MudLike.Terrain.Systems
         
         protected override void OnCreate()
         {
-            _terrainSyncData = new NativeHashMap<int, TerrainSyncData>(1000, Allocator.Persistent);
-            _pendingUpdates = new NativeList<TerrainUpdate>(100, Allocator.Persistent);
+            _terrainSyncData = new NativeHashMap<int, TerrainSyncData>(1000, if(Allocator != null) if(Allocator != null) Allocator.Persistent);
+            _pendingUpdates = new NativeList<TerrainUpdate>(100, if(Allocator != null) if(Allocator != null) Allocator.Persistent);
         }
         
         protected override void OnDestroy()
         {
-            if (_terrainSyncData.IsCreated)
-                _terrainSyncData.Dispose();
-            if (_pendingUpdates.IsCreated)
-                _pendingUpdates.Dispose();
+            if (if(_terrainSyncData != null) if(_terrainSyncData != null) _terrainSyncData.IsCreated)
+                if(_terrainSyncData != null) if(_terrainSyncData != null) _terrainSyncData.Dispose();
+            if (if(_pendingUpdates != null) if(_pendingUpdates != null) _pendingUpdates.IsCreated)
+                if(_pendingUpdates != null) if(_pendingUpdates != null) _pendingUpdates.Dispose();
         }
         
         /// <summary>
@@ -46,12 +46,12 @@ namespace MudLike.Terrain.Systems
             // Создаем данные синхронизации
             var syncData = new TerrainSyncData
             {
-                Position = deformation.Position,
-                Radius = deformation.Radius,
-                Depth = deformation.Depth,
-                Force = deformation.Force,
-                Type = deformation.Type,
-                Timestamp = SystemAPI.Time.time,
+                Position = if(deformation != null) if(deformation != null) deformation.Position,
+                Radius = if(deformation != null) if(deformation != null) deformation.Radius,
+                Depth = if(deformation != null) if(deformation != null) deformation.Depth,
+                Force = if(deformation != null) if(deformation != null) deformation.Force,
+                Type = if(deformation != null) if(deformation != null) deformation.Type,
+                Timestamp = if(SystemAPI != null) if(SystemAPI != null) SystemAPI.Time.time,
                 IsAuthoritative = authoritative,
                 NeedsSync = true
             };
@@ -63,7 +63,7 @@ namespace MudLike.Terrain.Systems
                 Priority = CalculateSyncPriority(deformation)
             };
             
-            _pendingUpdates.Add(update);
+            if(_pendingUpdates != null) if(_pendingUpdates != null) _pendingUpdates.Add(update);
         }
         
         /// <summary>
@@ -80,12 +80,12 @@ namespace MudLike.Terrain.Systems
             // Создаем деформацию из данных синхронизации
             var deformation = new DeformationData
             {
-                Position = syncData.Position,
-                Radius = syncData.Radius,
-                Depth = syncData.Depth,
-                Force = syncData.Force,
-                Type = syncData.Type,
-                Time = syncData.Timestamp,
+                Position = if(syncData != null) if(syncData != null) syncData.Position,
+                Radius = if(syncData != null) if(syncData != null) syncData.Radius,
+                Depth = if(syncData != null) if(syncData != null) syncData.Depth,
+                Force = if(syncData != null) if(syncData != null) syncData.Force,
+                Type = if(syncData != null) if(syncData != null) syncData.Type,
+                Time = if(syncData != null) if(syncData != null) syncData.Timestamp,
                 IsActive = true,
                 IsApplied = false
             };
@@ -94,8 +94,8 @@ namespace MudLike.Terrain.Systems
             ApplyDeformationToTerrain(deformation);
             
             // Обновляем данные синхронизации
-            syncData.NeedsSync = false;
-            syncData.LastAppliedTime = SystemAPI.Time.time;
+            if(syncData != null) if(syncData != null) syncData.NeedsSync = false;
+            if(syncData != null) if(syncData != null) syncData.LastAppliedTime = if(SystemAPI != null) if(SystemAPI != null) SystemAPI.Time.time;
         }
         
         /// <summary>
@@ -105,15 +105,15 @@ namespace MudLike.Terrain.Systems
         [BurstCompile]
         public NativeList<TerrainSyncData> GetTerrainChangesForSync()
         {
-            var changes = new NativeList<TerrainSyncData>(100, Allocator.Temp);
+            var changes = new NativeList<TerrainSyncData>(100, if(Allocator != null) if(Allocator != null) Allocator.Temp);
             
             // Собираем все изменения, требующие синхронизации
-            for (int i = 0; i < _pendingUpdates.Length; i++)
+            for (int i = 0; i < if(_pendingUpdates != null) if(_pendingUpdates != null) _pendingUpdates.Length; i++)
             {
                 var update = _pendingUpdates[i];
-                if (update.SyncData.NeedsSync)
+                if (if(update != null) if(update != null) update.SyncData.NeedsSync)
                 {
-                    changes.Add(update.SyncData);
+                    if(changes != null) if(changes != null) changes.Add(if(update != null) if(update != null) update.SyncData);
                 }
             }
             
@@ -127,22 +127,22 @@ namespace MudLike.Terrain.Systems
         [BurstCompile]
         public void ClearSentChanges(NativeList<TerrainSyncData> sentChanges)
         {
-            for (int i = 0; i < sentChanges.Length; i++)
+            for (int i = 0; i < if(sentChanges != null) if(sentChanges != null) sentChanges.Length; i++)
             {
                 var sentData = sentChanges[i];
                 
                 // Удаляем из списка ожидающих
-                for (int j = _pendingUpdates.Length - 1; j >= 0; j--)
+                for (int j = if(_pendingUpdates != null) if(_pendingUpdates != null) _pendingUpdates.Length - 1; j >= 0; j--)
                 {
                     if (IsSameDeformation(sentData, _pendingUpdates[j].SyncData))
                     {
-                        _pendingUpdates.RemoveAtSwapBack(j);
+                        if(_pendingUpdates != null) if(_pendingUpdates != null) _pendingUpdates.RemoveAtSwapBack(j);
                         break;
                     }
                 }
             }
             
-            sentChanges.Dispose();
+            if(sentChanges != null) if(sentChanges != null) sentChanges.Dispose();
         }
         
         /// <summary>
@@ -154,22 +154,22 @@ namespace MudLike.Terrain.Systems
             int priority = 0;
             
             // Приоритет на основе силы деформации
-            if (deformation.Force > 1000f) priority += 3;
-            else if (deformation.Force > 500f) priority += 2;
-            else if (deformation.Force > 100f) priority += 1;
+            if (if(deformation != null) if(deformation != null) deformation.Force > 1000f) priority += 3;
+            else if (if(deformation != null) if(deformation != null) deformation.Force > 500f) priority += 2;
+            else if (if(deformation != null) if(deformation != null) deformation.Force > 100f) priority += 1;
             
             // Приоритет на основе типа деформации
-            switch (deformation.Type)
+            switch (if(deformation != null) if(deformation != null) deformation.Type)
             {
-                case DeformationType.Indentation: priority += 2; break;
-                case DeformationType.Elevation: priority += 3; break;
-                case DeformationType.Smoothing: priority += 1; break;
-                case DeformationType.Erosion: priority += 1; break;
+                case if(DeformationType != null) if(DeformationType != null) DeformationType.Indentation: priority += 2; break;
+                case if(DeformationType != null) if(DeformationType != null) DeformationType.Elevation: priority += 3; break;
+                case if(DeformationType != null) if(DeformationType != null) DeformationType.Smoothing: priority += 1; break;
+                case if(DeformationType != null) if(DeformationType != null) DeformationType.Erosion: priority += 1; break;
             }
             
             // Приоритет на основе размера области
-            if (deformation.Radius > 5f) priority += 2;
-            else if (deformation.Radius > 2f) priority += 1;
+            if (if(deformation != null) if(deformation != null) deformation.Radius > 5f) priority += 2;
+            else if (if(deformation != null) if(deformation != null) deformation.Radius > 2f) priority += 1;
             
             return priority;
         }
@@ -181,16 +181,16 @@ namespace MudLike.Terrain.Systems
         private bool ShouldApplyDeformation(TerrainSyncData syncData)
         {
             // Проверяем авторитетность
-            if (!syncData.IsAuthoritative && HasAuthoritativeVersion(syncData))
+            if (!if(syncData != null) if(syncData != null) syncData.IsAuthoritative && HasAuthoritativeVersion(syncData))
                 return false;
             
             // Проверяем время (избегаем старых обновлений)
-            float currentTime = SystemAPI.Time.time;
-            if (currentTime - syncData.Timestamp > 1.0f) // Максимум 1 секунда задержки
+            float currentTime = if(SystemAPI != null) if(SystemAPI != null) SystemAPI.Time.time;
+            if (currentTime - if(syncData != null) if(syncData != null) syncData.Timestamp > 1.0f) // Максимум 1 секунда задержки
                 return false;
             
             // Проверяем, не применяли ли уже эту деформацию
-            if (currentTime - syncData.LastAppliedTime < 0.1f) // Минимум 100ms между применениями
+            if (currentTime - if(syncData != null) if(syncData != null) syncData.LastAppliedTime < 0.1f) // Минимум 100ms между применениями
                 return false;
             
             return true;
@@ -203,10 +203,10 @@ namespace MudLike.Terrain.Systems
         private bool HasAuthoritativeVersion(TerrainSyncData syncData)
         {
             // Проверяем, есть ли в списке ожидающих авторитетная версия
-            for (int i = 0; i < _pendingUpdates.Length; i++)
+            for (int i = 0; i < if(_pendingUpdates != null) if(_pendingUpdates != null) _pendingUpdates.Length; i++)
             {
                 var update = _pendingUpdates[i];
-                if (IsSameDeformation(update.SyncData, syncData) && update.SyncData.IsAuthoritative)
+                if (IsSameDeformation(if(update != null) if(update != null) update.SyncData, syncData) && if(update != null) if(update != null) update.SyncData.IsAuthoritative)
                     return true;
             }
             
@@ -221,8 +221,8 @@ namespace MudLike.Terrain.Systems
         {
             // Здесь должна быть интеграция с TerrainDeformationSystem
             // Для простоты создаем Entity с деформацией
-            var entity = EntityManager.CreateEntity();
-            EntityManager.AddComponentData(entity, deformation);
+            var entity = if(EntityManager != null) if(EntityManager != null) EntityManager.CreateEntity();
+            if(EntityManager != null) if(EntityManager != null) EntityManager.AddComponentData(entity, deformation);
         }
         
         /// <summary>
@@ -235,9 +235,9 @@ namespace MudLike.Terrain.Systems
             float radiusTolerance = 0.1f;
             float timeTolerance = 0.1f;
             
-            return math.distance(a.Position, b.Position) < positionTolerance &&
-                   math.abs(a.Radius - b.Radius) < radiusTolerance &&
-                   math.abs(a.Timestamp - b.Timestamp) < timeTolerance;
+            return if(math != null) if(math != null) math.distance(if(a != null) if(a != null) a.Position, if(b != null) if(b != null) b.Position) < positionTolerance &&
+                   if(math != null) if(math != null) math.abs(if(a != null) if(a != null) a.Radius - if(b != null) if(b != null) b.Radius) < radiusTolerance &&
+                   if(math != null) if(math != null) math.abs(if(a != null) if(a != null) a.Timestamp - if(b != null) if(b != null) b.Timestamp) < timeTolerance;
         }
         
         /// <summary>
@@ -249,7 +249,7 @@ namespace MudLike.Terrain.Systems
             // Получаем изменения для отправки
             var changes = GetTerrainChangesForSync();
             
-            if (changes.Length > 0)
+            if (if(changes != null) if(changes != null) changes.Length > 0)
             {
                 // Отправляем изменения на сервер
                 SendTerrainChangesToServer(changes);
@@ -267,7 +267,7 @@ namespace MudLike.Terrain.Systems
         {
             // Здесь должна быть интеграция с Netcode for Entities
             // Отправляем RPC с изменениями террейна
-            for (int i = 0; i < changes.Length; i++)
+            for (int i = 0; i < if(changes != null) if(changes != null) changes.Length; i++)
             {
                 var change = changes[i];
                 // SendRPC(new TerrainUpdateRPC { Data = change });
@@ -276,7 +276,7 @@ namespace MudLike.Terrain.Systems
         
         protected override void OnUpdate()
         {
-            float currentTime = SystemAPI.Time.time;
+            float currentTime = if(SystemAPI != null) if(SystemAPI != null) SystemAPI.Time.time;
             
             // Синхронизируем изменения террейна
             if (currentTime - _lastSyncTime >= _syncInterval)
@@ -286,12 +286,12 @@ namespace MudLike.Terrain.Systems
             }
             
             // Применяем ожидающие деформации
-            for (int i = _pendingUpdates.Length - 1; i >= 0; i--)
+            for (int i = if(_pendingUpdates != null) if(_pendingUpdates != null) _pendingUpdates.Length - 1; i >= 0; i--)
             {
                 var update = _pendingUpdates[i];
-                if (update.SyncData.NeedsSync)
+                if (if(update != null) if(update != null) update.SyncData.NeedsSync)
                 {
-                    ApplySynchronizedDeformation(update.SyncData);
+                    ApplySynchronizedDeformation(if(update != null) if(update != null) update.SyncData);
                 }
             }
         }

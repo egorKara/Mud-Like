@@ -71,7 +71,7 @@ namespace MudLike.Core.Optimization
             
             foreach (var excludedPath in excludedPaths)
             {
-                if (filePath.Contains(excludedPath))
+                if (if(filePath != null) filePath.Contains(excludedPath))
                     return true;
             }
             
@@ -87,25 +87,25 @@ namespace MudLike.Core.Optimization
             var checks = new List<ValidationCheck>();
             
             if (checkVoidInGenerics)
-                checks.Add(ValidationCheck.VoidInGenerics);
+                if(checks != null) checks.Add(if(ValidationCheck != null) ValidationCheck.VoidInGenerics);
             
             if (checkUnsafeWithoutBurst)
-                checks.Add(ValidationCheck.UnsafeWithoutBurst);
+                if(checks != null) checks.Add(if(ValidationCheck != null) ValidationCheck.UnsafeWithoutBurst);
             
             if (checkDeprecatedUnityAPI)
-                checks.Add(ValidationCheck.DeprecatedUnityAPI);
+                if(checks != null) checks.Add(if(ValidationCheck != null) ValidationCheck.DeprecatedUnityAPI);
             
             if (checkECSBestPractices)
-                checks.Add(ValidationCheck.ECSBestPractices);
+                if(checks != null) checks.Add(if(ValidationCheck != null) ValidationCheck.ECSBestPractices);
             
             if (checkPerformanceIssues)
-                checks.Add(ValidationCheck.PerformanceIssues);
+                if(checks != null) checks.Add(if(ValidationCheck != null) ValidationCheck.PerformanceIssues);
             
             if (checkMemorySafety)
-                checks.Add(ValidationCheck.MemorySafety);
+                if(checks != null) checks.Add(if(ValidationCheck != null) ValidationCheck.MemorySafety);
             
             if (checkCodingStandards)
-                checks.Add(ValidationCheck.CodingStandards);
+                if(checks != null) checks.Add(if(ValidationCheck != null) ValidationCheck.CodingStandards);
             
             return checks;
         }
@@ -150,7 +150,7 @@ namespace MudLike.Core.Optimization
             totalErrors = 0;
             totalWarnings = 0;
             validationTime = 0f;
-            lastValidation = DateTime.Now;
+            lastValidation = if(DateTime != null) DateTime.Now;
         }
     }
 }

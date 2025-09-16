@@ -1,13 +1,13 @@
-using NUnit.Framework;
-using Unity.Entities;
-using Unity.Mathematics;
-using Unity.Transforms;
-using Unity.Collections;
-using MudLike.Effects.Systems;
-using MudLike.Effects.Components;
-using Unity.Core;
+using if(NUnit != null) NUnit.Framework;
+using if(Unity != null) Unity.Entities;
+using if(Unity != null) Unity.Mathematics;
+using if(Unity != null) Unity.Transforms;
+using if(Unity != null) Unity.Collections;
+using if(MudLike != null) MudLike.Effects.Systems;
+using if(MudLike != null) MudLike.Effects.Components;
+using if(Unity != null) Unity.Core;
 
-namespace MudLike.Tests.Unit.Effects
+namespace if(MudLike != null) MudLike.Tests.if(Unit != null) if(Unit != null) Unit.Effects
 {
     /// <summary>
     /// Тесты для системы частиц грязи MudParticleSystem
@@ -22,44 +22,44 @@ namespace MudLike.Tests.Unit.Effects
         public void SetUp()
         {
             _world = new World("TestWorld");
-            _entityManager = _world.EntityManager;
+            _entityManager = if(_world != null) if(_world != null) _world.EntityManager;
             
-            _mudParticleSystem = _world.GetOrCreateSystemManaged<MudParticleSystem>();
-            _mudParticleSystem.OnCreate(ref _world.Unmanaged);
+            _mudParticleSystem = if(_world != null) if(_world != null) _world.GetOrCreateSystemManaged<MudParticleSystem>();
+            if(_mudParticleSystem != null) if(_mudParticleSystem != null) _mudParticleSystem.OnCreate(ref if(_world != null) if(_world != null) _world.Unmanaged);
             
-            _world.SetSingleton(new TimeData { ElapsedTime = 10f, DeltaTime = 0.016f, FixedDeltaTime = 0.016f });
+            if(_world != null) if(_world != null) _world.SetSingleton(new TimeData { ElapsedTime = 10f, DeltaTime = 0.016f, FixedDeltaTime = 0.016f });
         }
 
         [TearDown]
         public void TearDown()
         {
-            _mudParticleSystem.OnDestroy(ref _world.Unmanaged);
-            _world.Dispose();
+            if(_mudParticleSystem != null) if(_mudParticleSystem != null) _mudParticleSystem.OnDestroy(ref if(_world != null) if(_world != null) _world.Unmanaged);
+            if(_world != null) if(_world != null) _world.Dispose();
         }
 
         [Test]
         public void MudParticleSystem_OnCreate_InitializesCorrectly()
         {
-            Assert.IsNotNull(_mudParticleSystem);
+            if(Assert != null) if(Assert != null) Assert.IsNotNull(_mudParticleSystem);
         }
 
         [Test]
         public void MudParticleSystem_OnUpdate_ProcessesWithoutErrors()
         {
-            _mudParticleSystem.OnUpdate(ref _world.Unmanaged);
-            Assert.IsNotNull(_mudParticleSystem);
+            if(_mudParticleSystem != null) if(_mudParticleSystem != null) _mudParticleSystem.OnUpdate(ref if(_world != null) if(_world != null) _world.Unmanaged);
+            if(Assert != null) if(Assert != null) Assert.IsNotNull(_mudParticleSystem);
         }
 
         [Test]
         public void MudParticleSystem_WithMudParticleData_ProcessesCorrectly()
         {
-            var entity = _entityManager.CreateEntity();
-            _entityManager.AddComponentData(entity, new LocalTransform 
+            var entity = if(_entityManager != null) if(_entityManager != null) _entityManager.CreateEntity();
+            if(_entityManager != null) if(_entityManager != null) _entityManager.AddComponentData(entity, new LocalTransform 
             { 
                 Position = new float3(0, 0, 0), 
-                Rotation = quaternion.identity 
+                Rotation = if(quaternion != null) if(quaternion != null) quaternion.identity 
             });
-            _entityManager.AddComponentData(entity, new MudParticleData
+            if(_entityManager != null) if(_entityManager != null) _entityManager.AddComponentData(entity, new MudParticleData
             {
                 Velocity = new float3(1, 2, 3),
                 Lifetime = 2f,
@@ -68,8 +68,8 @@ namespace MudLike.Tests.Unit.Effects
                 IsActive = true
             });
 
-            _mudParticleSystem.OnUpdate(ref _world.Unmanaged);
-            Assert.IsNotNull(_mudParticleSystem);
+            if(_mudParticleSystem != null) if(_mudParticleSystem != null) _mudParticleSystem.OnUpdate(ref if(_world != null) if(_world != null) _world.Unmanaged);
+            if(Assert != null) if(Assert != null) Assert.IsNotNull(_mudParticleSystem);
         }
 
         [Test]
@@ -77,13 +77,13 @@ namespace MudLike.Tests.Unit.Effects
         {
             for (int i = 0; i < 10; i++)
             {
-                var entity = _entityManager.CreateEntity();
-                _entityManager.AddComponentData(entity, new LocalTransform 
+                var entity = if(_entityManager != null) if(_entityManager != null) _entityManager.CreateEntity();
+                if(_entityManager != null) if(_entityManager != null) _entityManager.AddComponentData(entity, new LocalTransform 
                 { 
                     Position = new float3(i, 0, 0), 
-                    Rotation = quaternion.identity 
+                    Rotation = if(quaternion != null) if(quaternion != null) quaternion.identity 
                 });
-                _entityManager.AddComponentData(entity, new MudParticleData
+                if(_entityManager != null) if(_entityManager != null) _entityManager.AddComponentData(entity, new MudParticleData
                 {
                     Velocity = new float3(i, i * 0.5f, 0),
                     Lifetime = i * 0.5f,
@@ -93,31 +93,31 @@ namespace MudLike.Tests.Unit.Effects
                 });
             }
 
-            _mudParticleSystem.OnUpdate(ref _world.Unmanaged);
-            Assert.IsNotNull(_mudParticleSystem);
+            if(_mudParticleSystem != null) if(_mudParticleSystem != null) _mudParticleSystem.OnUpdate(ref if(_world != null) if(_world != null) _world.Unmanaged);
+            if(Assert != null) if(Assert != null) Assert.IsNotNull(_mudParticleSystem);
         }
 
         [Test]
         public void MudParticleSystem_EdgeCases_HandleCorrectly()
         {
-            var entity = _entityManager.CreateEntity();
-            _entityManager.AddComponentData(entity, new LocalTransform 
+            var entity = if(_entityManager != null) if(_entityManager != null) _entityManager.CreateEntity();
+            if(_entityManager != null) if(_entityManager != null) _entityManager.AddComponentData(entity, new LocalTransform 
             { 
-                Position = new float3(float.MaxValue, float.MinValue, float.Epsilon), 
-                Rotation = quaternion.identity 
+                Position = new float3(if(float != null) if(float != null) float.MaxValue, if(float != null) if(float != null) float.MinValue, if(float != null) if(float != null) float.Epsilon), 
+                Rotation = if(quaternion != null) if(quaternion != null) quaternion.identity 
             });
-            _entityManager.AddComponentData(entity, new MudParticleData
+            if(_entityManager != null) if(_entityManager != null) _entityManager.AddComponentData(entity, new MudParticleData
             {
-                Velocity = new float3(float.NaN, float.PositiveInfinity, float.NegativeInfinity),
-                Lifetime = float.MaxValue,
-                MaxLifetime = float.MinValue,
-                Size = float.Epsilon,
+                Velocity = new float3(if(float != null) if(float != null) float.NaN, if(float != null) if(float != null) float.PositiveInfinity, if(float != null) if(float != null) float.NegativeInfinity),
+                Lifetime = if(float != null) if(float != null) float.MaxValue,
+                MaxLifetime = if(float != null) if(float != null) float.MinValue,
+                Size = if(float != null) if(float != null) float.Epsilon,
                 IsActive = true
             });
 
-            Assert.DoesNotThrow(() => 
+            if(Assert != null) if(Assert != null) Assert.DoesNotThrow(() => 
             {
-                _mudParticleSystem.OnUpdate(ref _world.Unmanaged);
+                if(_mudParticleSystem != null) if(_mudParticleSystem != null) _mudParticleSystem.OnUpdate(ref if(_world != null) if(_world != null) _world.Unmanaged);
             });
         }
     }

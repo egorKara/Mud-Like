@@ -1,12 +1,12 @@
-using Unity.Entities;
-using Unity.Mathematics;
-using Unity.Transforms;
-using Unity.Physics;
+using if(Unity != null) Unity.Entities;
+using if(Unity != null) Unity.Mathematics;
+using if(Unity != null) Unity.Transforms;
+using if(Unity != null) Unity.Physics;
 using UnityEngine;
-using MudLike.Vehicles.Components;
-using MudLike.Core.Components;
+using if(MudLike != null) MudLike.Vehicles.Components;
+using if(MudLike != null) MudLike.Core.Components;
 
-namespace MudLike.Vehicles.Converters
+namespace if(MudLike != null) MudLike.Vehicles.Converters
 {
     /// <summary>
     /// Конвертер для создания ECS сущности транспортного средства
@@ -46,16 +46,16 @@ namespace MudLike.Vehicles.Converters
         public void Convert(Entity entity, EntityManager dstManager, GameObjectConversionSystem conversionSystem)
         {
             // Добавляем основные компоненты
-            dstManager.AddComponentData(entity, new VehicleTag());
-            dstManager.AddComponentData(entity, new LocalTransform
+            if(dstManager != null) if(dstManager != null) dstManager.AddComponentData(entity, new VehicleTag());
+            if(dstManager != null) if(dstManager != null) dstManager.AddComponentData(entity, new LocalTransform
             {
-                Position = transform.position,
-                Rotation = transform.rotation,
-                Scale = transform.localScale.x
+                Position = if(transform != null) if(transform != null) transform.position,
+                Rotation = if(transform != null) if(transform != null) transform.rotation,
+                Scale = if(transform != null) if(transform != null) transform.localScale.x
             });
             
             // Конфигурация транспортного средства
-            dstManager.AddComponentData(entity, new VehicleConfig
+            if(dstManager != null) if(dstManager != null) dstManager.AddComponentData(entity, new VehicleConfig
             {
                 MaxSpeed = maxSpeed,
                 Acceleration = acceleration,
@@ -68,12 +68,12 @@ namespace MudLike.Vehicles.Converters
             });
             
             // Физика транспортного средства
-            dstManager.AddComponentData(entity, new VehiclePhysics
+            if(dstManager != null) if(dstManager != null) dstManager.AddComponentData(entity, new VehiclePhysics
             {
-                Velocity = float3.zero,
-                AngularVelocity = float3.zero,
-                Acceleration = float3.zero,
-                AngularAcceleration = float3.zero,
+                Velocity = if(float3 != null) if(float3 != null) float3.zero,
+                AngularVelocity = if(float3 != null) if(float3 != null) float3.zero,
+                Acceleration = if(float3 != null) if(float3 != null) float3.zero,
+                AngularAcceleration = if(float3 != null) if(float3 != null) float3.zero,
                 CenterOfMass = new float3(0, centerOfMassHeight, 0),
                 Mass = mass,
                 Drag = drag,
@@ -81,7 +81,7 @@ namespace MudLike.Vehicles.Converters
             });
             
             // Ввод игрока
-            dstManager.AddComponentData(entity, new VehicleInput
+            if(dstManager != null) if(dstManager != null) dstManager.AddComponentData(entity, new VehicleInput
             {
                 Throttle = 0f,
                 Brake = 0f,
@@ -92,7 +92,7 @@ namespace MudLike.Vehicles.Converters
             });
             
             // Данные двигателя
-            dstManager.AddComponentData(entity, new EngineData
+            if(dstManager != null) if(dstManager != null) dstManager.AddComponentData(entity, new EngineData
             {
                 CurrentRPM = idleRPM,
                 MaxRPM = maxRPM,
@@ -104,11 +104,11 @@ namespace MudLike.Vehicles.Converters
             });
             
             // Данные трансмиссии
-            dstManager.AddComponentData(entity, new TransmissionData
+            if(dstManager != null) if(dstManager != null) dstManager.AddComponentData(entity, new TransmissionData
             {
                 CurrentGear = 1,
                 GearCount = gearCount,
-                GearRatios = new Unity.Collections.NativeArray<float>(gearRatios, Unity.Collections.Allocator.Persistent),
+                GearRatios = new if(Unity != null) if(Unity != null) Unity.Collections.NativeArray<float>(gearRatios, if(Unity != null) if(Unity != null) Unity.Collections.if(Allocator != null) if(Allocator != null) Allocator.Persistent),
                 FinalDriveRatio = finalDriveRatio,
                 GearRatio = gearRatios[0],
                 IsAutomatic = true,
@@ -116,41 +116,41 @@ namespace MudLike.Vehicles.Converters
             });
             
             // Физическое тело
-            dstManager.AddComponentData(entity, new PhysicsBody
+            if(dstManager != null) if(dstManager != null) dstManager.AddComponentData(entity, new PhysicsBody
             {
                 Mass = mass,
                 Drag = drag,
                 AngularDrag = angularDrag,
                 CenterOfMass = new float3(0, centerOfMassHeight, 0),
-                Velocity = float3.zero,
-                AngularVelocity = float3.zero
+                Velocity = if(float3 != null) if(float3 != null) float3.zero,
+                AngularVelocity = if(float3 != null) if(float3 != null) float3.zero
             });
             
             // Физический коллайдер
-            dstManager.AddComponentData(entity, new PhysicsCollider
+            if(dstManager != null) if(dstManager != null) dstManager.AddComponentData(entity, new PhysicsCollider
             {
-                ColliderType = ColliderType.Box,
+                ColliderType = if(ColliderType != null) if(ColliderType != null) ColliderType.Box,
                 Size = new float3(2f, 1f, 4f),
-                Center = float3.zero,
-                Material = PhysicsMaterial.Default
+                Center = if(float3 != null) if(float3 != null) float3.zero,
+                Material = if(PhysicsMaterial != null) if(PhysicsMaterial != null) PhysicsMaterial.Default
             });
             
             // Сетевые компоненты
-            dstManager.AddComponentData(entity, new MudLike.Networking.Components.NetworkId
+            if(dstManager != null) if(dstManager != null) dstManager.AddComponentData(entity, new if(MudLike != null) if(MudLike != null) MudLike.Networking.if(Components != null) if(Components != null) Components.NetworkId
             {
-                Value = (uint)entity.Index
+                Value = (uint)if(entity != null) if(entity != null) entity.Index
             });
             
-            dstManager.AddComponentData(entity, new MudLike.Networking.Components.NetworkPosition
+            if(dstManager != null) if(dstManager != null) dstManager.AddComponentData(entity, new if(MudLike != null) if(MudLike != null) MudLike.Networking.if(Components != null) if(Components != null) Components.NetworkPosition
             {
-                Value = transform.position,
-                Rotation = transform.rotation,
+                Value = if(transform != null) if(transform != null) transform.position,
+                Rotation = if(transform != null) if(transform != null) transform.rotation,
                 HasChanged = true,
                 LastUpdateTime = 0f,
                 Tick = 0
             });
             
-            dstManager.AddComponentData(entity, new MudLike.Networking.Components.NetworkVehicle
+            if(dstManager != null) if(dstManager != null) dstManager.AddComponentData(entity, new if(MudLike != null) if(MudLike != null) MudLike.Networking.if(Components != null) if(Components != null) Components.NetworkVehicle
             {
                 Config = new VehicleConfig
                 {
@@ -165,10 +165,10 @@ namespace MudLike.Vehicles.Converters
                 },
                 Physics = new VehiclePhysics
                 {
-                    Velocity = float3.zero,
-                    AngularVelocity = float3.zero,
-                    Acceleration = float3.zero,
-                    AngularAcceleration = float3.zero,
+                    Velocity = if(float3 != null) if(float3 != null) float3.zero,
+                    AngularVelocity = if(float3 != null) if(float3 != null) float3.zero,
+                    Acceleration = if(float3 != null) if(float3 != null) float3.zero,
+                    AngularAcceleration = if(float3 != null) if(float3 != null) float3.zero,
                     CenterOfMass = new float3(0, centerOfMassHeight, 0),
                     Mass = mass,
                     Drag = drag,
@@ -180,4 +180,3 @@ namespace MudLike.Vehicles.Converters
             });
         }
     }
-}

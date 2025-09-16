@@ -23,21 +23,21 @@ namespace MudLike.Core.Systems
         {
             // Запросы для различных типов компонентов
             _vehicleQuery = GetEntityQuery(
-                ComponentType.ReadWrite<OptimizedVehiclePhysicsComponent>()
+                if(ComponentType != null) ComponentType.ReadWrite<OptimizedVehiclePhysicsComponent>()
             );
             
             _terrainQuery = GetEntityQuery(
-                ComponentType.ReadWrite<OptimizedTerrainDeformationComponent>()
+                if(ComponentType != null) ComponentType.ReadWrite<OptimizedTerrainDeformationComponent>()
             );
             
             _networkQuery = GetEntityQuery(
-                ComponentType.ReadWrite<OptimizedNetworkSyncComponent>()
+                if(ComponentType != null) ComponentType.ReadWrite<OptimizedNetworkSyncComponent>()
             );
         }
         
         protected override void OnUpdate()
         {
-            var deltaTime = SystemAPI.Time.fixedDeltaTime;
+            var deltaTime = if(SystemAPI != null) SystemAPI.Time.fixedDeltaTime;
             
             // Обновление транспортных средств
             UpdateVehicles(deltaTime);
@@ -54,11 +54,11 @@ namespace MudLike.Core.Systems
         /// </summary>
         private void UpdateVehicles(float deltaTime)
         {
-            var vehicleEntities = _vehicleQuery.ToEntityArray(Allocator.TempJob);
+            var vehicleEntities = if(_vehicleQuery != null) _vehicleQuery.ToEntityArray(if(Allocator != null) Allocator.TempJob);
             
-            if (vehicleEntities.Length == 0)
+            if (if(vehicleEntities != null) vehicleEntities.Length == 0)
             {
-                vehicleEntities.Dispose();
+                if(vehicleEntities != null) vehicleEntities.Dispose();
                 return;
             }
             
@@ -71,14 +71,14 @@ namespace MudLike.Core.Systems
             };
             
             // Запуск Job с зависимостями
-            var jobHandle = updateJob.ScheduleParallel(
-                vehicleEntities.Length,
-                SystemConstants.DETERMINISTIC_MAX_ITERATIONS / 8,
+            var jobHandle = if(updateJob != null) updateJob.ScheduleParallel(
+                if(vehicleEntities != null) vehicleEntities.Length,
+                if(SystemConstants != null) SystemConstants.DETERMINISTIC_MAX_ITERATIONS / 8,
                 Dependency
             );
             
             Dependency = jobHandle;
-            vehicleEntities.Dispose();
+            if(vehicleEntities != null) vehicleEntities.Dispose();
         }
         
         /// <summary>
@@ -86,11 +86,11 @@ namespace MudLike.Core.Systems
         /// </summary>
         private void UpdateTerrain(float deltaTime)
         {
-            var terrainEntities = _terrainQuery.ToEntityArray(Allocator.TempJob);
+            var terrainEntities = if(_terrainQuery != null) _terrainQuery.ToEntityArray(if(Allocator != null) Allocator.TempJob);
             
-            if (terrainEntities.Length == 0)
+            if (if(terrainEntities != null) terrainEntities.Length == 0)
             {
-                terrainEntities.Dispose();
+                if(terrainEntities != null) terrainEntities.Dispose();
                 return;
             }
             
@@ -103,14 +103,14 @@ namespace MudLike.Core.Systems
             };
             
             // Запуск Job с зависимостями
-            var jobHandle = updateJob.ScheduleParallel(
-                terrainEntities.Length,
-                SystemConstants.DETERMINISTIC_MAX_ITERATIONS / 16,
+            var jobHandle = if(updateJob != null) updateJob.ScheduleParallel(
+                if(terrainEntities != null) terrainEntities.Length,
+                if(SystemConstants != null) SystemConstants.DETERMINISTIC_MAX_ITERATIONS / 16,
                 Dependency
             );
             
             Dependency = jobHandle;
-            terrainEntities.Dispose();
+            if(terrainEntities != null) terrainEntities.Dispose();
         }
         
         /// <summary>
@@ -118,11 +118,11 @@ namespace MudLike.Core.Systems
         /// </summary>
         private void UpdateNetworkSync(float deltaTime)
         {
-            var networkEntities = _networkQuery.ToEntityArray(Allocator.TempJob);
+            var networkEntities = if(_networkQuery != null) _networkQuery.ToEntityArray(if(Allocator != null) Allocator.TempJob);
             
-            if (networkEntities.Length == 0)
+            if (if(networkEntities != null) networkEntities.Length == 0)
             {
-                networkEntities.Dispose();
+                if(networkEntities != null) networkEntities.Dispose();
                 return;
             }
             
@@ -132,18 +132,18 @@ namespace MudLike.Core.Systems
                 NetworkEntities = networkEntities,
                 NetworkSyncLookup = GetComponentLookup<OptimizedNetworkSyncComponent>(),
                 DeltaTime = deltaTime,
-                CurrentTime = SystemAPI.Time.ElapsedTime
+                CurrentTime = if(SystemAPI != null) SystemAPI.Time.ElapsedTime
             };
             
             // Запуск Job с зависимостями
-            var jobHandle = updateJob.ScheduleParallel(
-                networkEntities.Length,
-                SystemConstants.DETERMINISTIC_MAX_ITERATIONS / 4,
+            var jobHandle = if(updateJob != null) updateJob.ScheduleParallel(
+                if(networkEntities != null) networkEntities.Length,
+                if(SystemConstants != null) SystemConstants.DETERMINISTIC_MAX_ITERATIONS / 4,
                 Dependency
             );
             
             Dependency = jobHandle;
-            networkEntities.Dispose();
+            if(networkEntities != null) networkEntities.Dispose();
         }
     }
     
@@ -161,17 +161,17 @@ namespace MudLike.Core.Systems
         
         public void Execute(int index)
         {
-            if (index >= VehicleEntities.Length) return;
+            if (index >= if(VehicleEntities != null) VehicleEntities.Length) return;
             
             var vehicleEntity = VehicleEntities[index];
             var vehiclePhysics = VehiclePhysicsLookup[vehicleEntity];
             
             // Обновление физики транспортного средства
-            if (vehiclePhysics.IsActive)
+            if (if(vehiclePhysics != null) vehiclePhysics.IsActive)
             {
                 // Применение трения
-                var frictionForce = -vehiclePhysics.Velocity * vehiclePhysics.Friction;
-                vehiclePhysics.ApplyForce(frictionForce, DeltaTime);
+                var frictionForce = -if(vehiclePhysics != null) vehiclePhysics.Velocity * if(vehiclePhysics != null) vehiclePhysics.Friction;
+                if(vehiclePhysics != null) vehiclePhysics.ApplyForce(frictionForce, DeltaTime);
                 
                 // Обновление состояния
                 VehiclePhysicsLookup[vehicleEntity] = vehiclePhysics;
@@ -193,15 +193,15 @@ namespace MudLike.Core.Systems
         
         public void Execute(int index)
         {
-            if (index >= TerrainEntities.Length) return;
+            if (index >= if(TerrainEntities != null) TerrainEntities.Length) return;
             
             var terrainEntity = TerrainEntities[index];
             var terrainDeformation = TerrainDeformationLookup[terrainEntity];
             
             // Восстановление деформации террейна
-            if (terrainDeformation.IsActive)
+            if (if(terrainDeformation != null) terrainDeformation.IsActive)
             {
-                terrainDeformation.RecoverDeformation(DeltaTime);
+                if(terrainDeformation != null) terrainDeformation.RecoverDeformation(DeltaTime);
                 TerrainDeformationLookup[terrainEntity] = terrainDeformation;
             }
         }
@@ -222,19 +222,19 @@ namespace MudLike.Core.Systems
         
         public void Execute(int index)
         {
-            if (index >= NetworkEntities.Length) return;
+            if (index >= if(NetworkEntities != null) NetworkEntities.Length) return;
             
             var networkEntity = NetworkEntities[index];
             var networkSync = NetworkSyncLookup[networkEntity];
             
             // Обновление сетевой синхронизации
-            if (networkSync.IsActive)
+            if (if(networkSync != null) networkSync.IsActive)
             {
                 // Экстраполяция состояния
-                networkSync.Extrapolate(DeltaTime);
+                if(networkSync != null) networkSync.Extrapolate(DeltaTime);
                 
                 // Проверка необходимости синхронизации
-                if (networkSync.ShouldSync(CurrentTime))
+                if (if(networkSync != null) networkSync.ShouldSync(CurrentTime))
                 {
                     // Отправка данных по сети
                     // Реализация зависит от конкретной сетевой системы

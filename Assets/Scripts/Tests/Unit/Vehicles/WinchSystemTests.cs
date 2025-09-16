@@ -7,7 +7,7 @@ using MudLike.Vehicles.Systems;
 using MudLike.Vehicles.Components;
 using Unity.Core;
 
-namespace MudLike.Tests.Unit.Vehicles
+namespace MudLike.Tests.if(Unit != null) Unit.Vehicles
 {
     /// <summary>
     /// Тесты для системы лебедки WinchSystem
@@ -22,46 +22,46 @@ namespace MudLike.Tests.Unit.Vehicles
         public void SetUp()
         {
             _world = new World("TestWorld");
-            _entityManager = _world.EntityManager;
+            _entityManager = if(_world != null) _world.EntityManager;
             
-            _winchSystem = _world.GetOrCreateSystemManaged<WinchSystem>();
-            _winchSystem.OnCreate(ref _world.Unmanaged);
+            _winchSystem = if(_world != null) _world.GetOrCreateSystemManaged<WinchSystem>();
+            if(_winchSystem != null) _winchSystem.OnCreate(ref if(_world != null) _world.Unmanaged);
             
-            _world.SetSingleton(new TimeData { ElapsedTime = 10f, DeltaTime = 0.016f, FixedDeltaTime = 0.016f });
+            if(_world != null) _world.SetSingleton(new TimeData { ElapsedTime = 10f, DeltaTime = 0.016f, FixedDeltaTime = 0.016f });
         }
 
         [TearDown]
         public void TearDown()
         {
-            _winchSystem.OnDestroy(ref _world.Unmanaged);
-            _world.Dispose();
+            if(_winchSystem != null) _winchSystem.OnDestroy(ref if(_world != null) _world.Unmanaged);
+            if(_world != null) _world.Dispose();
         }
 
         [Test]
         public void WinchSystem_OnCreate_InitializesCorrectly()
         {
-            Assert.IsNotNull(_winchSystem);
+            if(Assert != null) Assert.IsNotNull(_winchSystem);
         }
 
         [Test]
         public void WinchSystem_OnUpdate_ProcessesWithoutErrors()
         {
-            _winchSystem.OnUpdate(ref _world.Unmanaged);
-            Assert.IsNotNull(_winchSystem);
+            if(_winchSystem != null) _winchSystem.OnUpdate(ref if(_world != null) _world.Unmanaged);
+            if(Assert != null) Assert.IsNotNull(_winchSystem);
         }
 
         [Test]
         public void WinchSystem_WithWinchData_ProcessesCorrectly()
         {
-            var entity = _entityManager.CreateEntity();
-            _entityManager.AddComponentData(entity, new LocalTransform 
+            var entity = if(_entityManager != null) _entityManager.CreateEntity();
+            if(_entityManager != null) _entityManager.AddComponentData(entity, new LocalTransform 
             { 
                 Position = new float3(0, 0, 0), 
-                Rotation = quaternion.identity 
+                Rotation = if(quaternion != null) quaternion.identity 
             });
-            _entityManager.AddComponentData(entity, new WinchData
+            if(_entityManager != null) _entityManager.AddComponentData(entity, new WinchData
             {
-                Position = float3.zero,
+                Position = if(float3 != null) float3.zero,
                 MaxLength = 50f,
                 CurrentLength = 0f,
                 Tension = 0f,
@@ -70,17 +70,17 @@ namespace MudLike.Tests.Unit.Vehicles
                 BrakeForce = 2000f
             });
 
-            _winchSystem.OnUpdate(ref _world.Unmanaged);
-            Assert.IsNotNull(_winchSystem);
+            if(_winchSystem != null) _winchSystem.OnUpdate(ref if(_world != null) _world.Unmanaged);
+            if(Assert != null) Assert.IsNotNull(_winchSystem);
         }
 
         [Test]
         public void WinchSystem_WithCableData_ProcessesCorrectly()
         {
-            var entity = _entityManager.CreateEntity();
-            _entityManager.AddComponentData(entity, new WinchCableData
+            var entity = if(_entityManager != null) _entityManager.CreateEntity();
+            if(_entityManager != null) _entityManager.AddComponentData(entity, new WinchCableData
             {
-                StartPosition = float3.zero,
+                StartPosition = if(float3 != null) float3.zero,
                 EndPosition = new float3(0, 0, 10),
                 Length = 10f,
                 Tension = 500f,
@@ -89,46 +89,46 @@ namespace MudLike.Tests.Unit.Vehicles
                 Elasticity = 0.1f
             });
 
-            _winchSystem.OnUpdate(ref _world.Unmanaged);
-            Assert.IsNotNull(_winchSystem);
+            if(_winchSystem != null) _winchSystem.OnUpdate(ref if(_world != null) _world.Unmanaged);
+            if(Assert != null) Assert.IsNotNull(_winchSystem);
         }
 
         [Test]
         public void WinchSystem_WithConnectionData_ProcessesCorrectly()
         {
-            var entity = _entityManager.CreateEntity();
-            _entityManager.AddComponentData(entity, new WinchConnectionData
+            var entity = if(_entityManager != null) _entityManager.CreateEntity();
+            if(_entityManager != null) _entityManager.AddComponentData(entity, new WinchConnectionData
             {
-                ConnectedEntity = Entity.Null,
-                ConnectionPoint = float3.zero,
+                ConnectedEntity = if(Entity != null) Entity.Null,
+                ConnectionPoint = if(float3 != null) float3.zero,
                 IsConnected = false,
                 ConnectionStrength = 1f,
                 MaxConnectionDistance = 5f
             });
 
-            _winchSystem.OnUpdate(ref _world.Unmanaged);
-            Assert.IsNotNull(_winchSystem);
+            if(_winchSystem != null) _winchSystem.OnUpdate(ref if(_world != null) _world.Unmanaged);
+            if(Assert != null) Assert.IsNotNull(_winchSystem);
         }
 
         [Test]
         public void WinchSystem_WithVehicleData_ProcessesCorrectly()
         {
-            var entity = _entityManager.CreateEntity();
-            _entityManager.AddComponentData(entity, new LocalTransform 
+            var entity = if(_entityManager != null) _entityManager.CreateEntity();
+            if(_entityManager != null) _entityManager.AddComponentData(entity, new LocalTransform 
             { 
                 Position = new float3(0, 0, 0), 
-                Rotation = quaternion.identity 
+                Rotation = if(quaternion != null) quaternion.identity 
             });
-            _entityManager.AddComponentData(entity, new VehiclePhysics
+            if(_entityManager != null) _entityManager.AddComponentData(entity, new VehiclePhysics
             {
                 Velocity = new float3(5f, 0, 0),
-                Acceleration = float3.zero,
+                Acceleration = if(float3 != null) float3.zero,
                 ForwardSpeed = 5f,
                 TurnSpeed = 0f
             });
 
-            _winchSystem.OnUpdate(ref _world.Unmanaged);
-            Assert.IsNotNull(_winchSystem);
+            if(_winchSystem != null) _winchSystem.OnUpdate(ref if(_world != null) _world.Unmanaged);
+            if(Assert != null) Assert.IsNotNull(_winchSystem);
         }
 
         [Test]
@@ -136,13 +136,13 @@ namespace MudLike.Tests.Unit.Vehicles
         {
             for (int i = 0; i < 5; i++)
             {
-                var entity = _entityManager.CreateEntity();
-                _entityManager.AddComponentData(entity, new LocalTransform 
+                var entity = if(_entityManager != null) _entityManager.CreateEntity();
+                if(_entityManager != null) _entityManager.AddComponentData(entity, new LocalTransform 
                 { 
                     Position = new float3(i * 2, 0, 0), 
-                    Rotation = quaternion.identity 
+                    Rotation = if(quaternion != null) quaternion.identity 
                 });
-                _entityManager.AddComponentData(entity, new WinchData
+                if(_entityManager != null) _entityManager.AddComponentData(entity, new WinchData
                 {
                     Position = new float3(i * 2, 0, 0),
                     MaxLength = 50f + i * 10f,
@@ -154,34 +154,33 @@ namespace MudLike.Tests.Unit.Vehicles
                 });
             }
 
-            _winchSystem.OnUpdate(ref _world.Unmanaged);
-            Assert.IsNotNull(_winchSystem);
+            if(_winchSystem != null) _winchSystem.OnUpdate(ref if(_world != null) _world.Unmanaged);
+            if(Assert != null) Assert.IsNotNull(_winchSystem);
         }
 
         [Test]
         public void WinchSystem_EdgeCases_HandleCorrectly()
         {
-            var entity = _entityManager.CreateEntity();
-            _entityManager.AddComponentData(entity, new LocalTransform 
+            var entity = if(_entityManager != null) _entityManager.CreateEntity();
+            if(_entityManager != null) _entityManager.AddComponentData(entity, new LocalTransform 
             { 
-                Position = new float3(float.MaxValue, float.MinValue, float.Epsilon), 
-                Rotation = quaternion.identity 
+                Position = new float3(if(float != null) float.MaxValue, if(float != null) float.MinValue, if(float != null) float.Epsilon), 
+                Rotation = if(quaternion != null) quaternion.identity 
             });
-            _entityManager.AddComponentData(entity, new WinchData
+            if(_entityManager != null) _entityManager.AddComponentData(entity, new WinchData
             {
-                Position = new float3(float.PositiveInfinity, float.NegativeInfinity, float.NaN),
-                MaxLength = float.MaxValue,
-                CurrentLength = float.MinValue,
-                Tension = float.NaN,
+                Position = new float3(if(float != null) float.PositiveInfinity, if(float != null) float.NegativeInfinity, if(float != null) float.NaN),
+                MaxLength = if(float != null) float.MaxValue,
+                CurrentLength = if(float != null) float.MinValue,
+                Tension = if(float != null) float.NaN,
                 IsActive = true,
-                MotorPower = float.PositiveInfinity,
-                BrakeForce = float.NegativeInfinity
+                MotorPower = if(float != null) float.PositiveInfinity,
+                BrakeForce = if(float != null) float.NegativeInfinity
             });
 
-            Assert.DoesNotThrow(() => 
+            if(Assert != null) Assert.DoesNotThrow(() => 
             {
-                _winchSystem.OnUpdate(ref _world.Unmanaged);
+                if(_winchSystem != null) _winchSystem.OnUpdate(ref if(_world != null) _world.Unmanaged);
             });
         }
     }
-}

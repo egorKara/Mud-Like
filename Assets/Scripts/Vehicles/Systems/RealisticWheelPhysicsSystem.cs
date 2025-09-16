@@ -1,13 +1,13 @@
-using Unity.Entities;
-using Unity.Mathematics;
-using Unity.Physics;
-using Unity.Transforms;
-using Unity.Burst;
-using Unity.Collections;
-using MudLike.Vehicles.Components;
-using MudLike.Terrain.Components;
+using if(Unity != null) Unity.Entities;
+using if(Unity != null) Unity.Mathematics;
+using if(Unity != null) Unity.Physics;
+using if(Unity != null) Unity.Transforms;
+using if(Unity != null) Unity.Burst;
+using if(Unity != null) Unity.Collections;
+using if(MudLike != null) MudLike.Vehicles.Components;
+using if(MudLike != null) MudLike.Terrain.Components;
 
-namespace MudLike.Vehicles.Systems
+namespace if(MudLike != null) MudLike.Vehicles.Systems
 {
     /// <summary>
     /// Система реалистичной физики колес
@@ -19,7 +19,7 @@ namespace MudLike.Vehicles.Systems
     {
         protected override void OnUpdate()
         {
-            float deltaTime = SystemAPI.Time.fixedDeltaTime;
+            float deltaTime = if(SystemAPI != null) if(SystemAPI != null) SystemAPI.Time.fixedDeltaTime;
             
             Entities
                 .WithAll<WheelData, LocalTransform>()
@@ -63,25 +63,25 @@ namespace MudLike.Vehicles.Systems
         private static void UpdateSuspension(ref WheelData wheel, LocalTransform transform, float deltaTime)
         {
             // Вычисляем сжатие подвески
-            float suspensionLength = math.length(wheel.SuspensionTarget - transform.Position);
-            float compression = math.max(0f, wheel.SuspensionRestLength - suspensionLength);
-            compression = math.min(compression, wheel.SuspensionMaxCompression);
+            float suspensionLength = if(math != null) if(math != null) math.length(if(wheel != null) if(wheel != null) wheel.SuspensionTarget - if(transform != null) if(transform != null) transform.Position);
+            float compression = if(math != null) if(math != null) math.max(0f, if(wheel != null) if(wheel != null) wheel.SuspensionRestLength - suspensionLength);
+            compression = if(math != null) if(math != null) math.min(compression, if(wheel != null) if(wheel != null) wheel.SuspensionMaxCompression);
             
             // Вычисляем скорость сжатия
-            float compressionVelocity = (compression - wheel.LastCompression) / deltaTime;
-            wheel.LastCompression = compression;
+            float compressionVelocity = (compression - if(wheel != null) if(wheel != null) wheel.LastCompression) / deltaTime;
+            if(wheel != null) if(wheel != null) wheel.LastCompression = compression;
             
             // Применяем силу пружины (Закон Гука)
-            float springForce = compression * wheel.SuspensionSpring;
+            float springForce = compression * if(wheel != null) if(wheel != null) wheel.SuspensionSpring;
             
             // Применяем демпфирование
-            float dampingForce = compressionVelocity * wheel.SuspensionDamping;
+            float dampingForce = compressionVelocity * if(wheel != null) if(wheel != null) wheel.SuspensionDamping;
             
             // Общая сила подвески
-            wheel.SuspensionForce = springForce - dampingForce;
+            if(wheel != null) if(wheel != null) wheel.SuspensionForce = springForce - dampingForce;
             
             // Ограничиваем максимальную силу
-            wheel.SuspensionForce = math.clamp(wheel.SuspensionForce, 0f, wheel.SuspensionMaxForce);
+            if(wheel != null) if(wheel != null) wheel.SuspensionForce = if(math != null) if(math != null) math.clamp(if(wheel != null) if(wheel != null) wheel.SuspensionForce, 0f, if(wheel != null) if(wheel != null) wheel.SuspensionMaxForce);
         }
         
         /// <summary>
@@ -91,29 +91,29 @@ namespace MudLike.Vehicles.Systems
         private static void CalculateGroundContact(ref WheelData wheel, LocalTransform transform)
         {
             // Raycast вниз для определения поверхности
-            float3 rayStart = transform.Position;
-            float3 rayDirection = -transform.Up();
+            float3 rayStart = if(transform != null) if(transform != null) transform.Position;
+            float3 rayDirection = -if(transform != null) if(transform != null) transform.Up();
             
             // Здесь должен быть raycast к террейну
             // Для простоты используем фиксированную высоту
             float groundHeight = 0f; // Получается из TerrainHeightManager
-            float wheelBottom = transform.Position.y - wheel.Radius;
+            float wheelBottom = if(transform != null) if(transform != null) transform.Position.y - if(wheel != null) if(wheel != null) wheel.Radius;
             
-            wheel.IsGrounded = wheelBottom <= groundHeight + 0.1f;
+            if(wheel != null) if(wheel != null) wheel.IsGrounded = wheelBottom <= groundHeight + 0.1f;
             
-            if (wheel.IsGrounded)
+            if (if(wheel != null) if(wheel != null) wheel.IsGrounded)
             {
-                wheel.GroundNormal = new float3(0, 1, 0); // Получается из нормалей террейна
-                wheel.GroundDistance = groundHeight - wheelBottom;
+                if(wheel != null) if(wheel != null) wheel.GroundNormal = new float3(0, 1, 0); // Получается из нормалей террейна
+                if(wheel != null) if(wheel != null) wheel.GroundDistance = groundHeight - wheelBottom;
                 
                 // Вычисляем смещение колеса относительно поверхности
-                wheel.SurfaceOffset = wheel.GroundDistance;
+                if(wheel != null) if(wheel != null) wheel.SurfaceOffset = if(wheel != null) if(wheel != null) wheel.GroundDistance;
             }
             else
             {
-                wheel.GroundNormal = new float3(0, 1, 0);
-                wheel.GroundDistance = 0f;
-                wheel.SurfaceOffset = 0f;
+                if(wheel != null) if(wheel != null) wheel.GroundNormal = new float3(0, 1, 0);
+                if(wheel != null) if(wheel != null) wheel.GroundDistance = 0f;
+                if(wheel != null) if(wheel != null) wheel.SurfaceOffset = 0f;
             }
         }
         
@@ -123,7 +123,7 @@ namespace MudLike.Vehicles.Systems
         [BurstCompile]
         private static void ApplyFrictionForces(ref WheelData wheel, in VehiclePhysics vehiclePhysics, float deltaTime)
         {
-            if (!wheel.IsGrounded) return;
+            if (!if(wheel != null) if(wheel != null) wheel.IsGrounded) return;
             
             // Вычисляем скольжение колеса
             float3 wheelVelocity = CalculateWheelVelocity(wheel, vehiclePhysics);
@@ -131,24 +131,24 @@ namespace MudLike.Vehicles.Systems
             float3 slipVelocity = wheelVelocity - groundVelocity;
             
             // Разделяем на продольное и боковое скольжение
-            float3 forward = math.normalize(wheel.ForwardDirection);
-            float3 right = math.normalize(wheel.RightDirection);
+            float3 forward = if(math != null) if(math != null) math.normalize(if(wheel != null) if(wheel != null) wheel.ForwardDirection);
+            float3 right = if(math != null) if(math != null) math.normalize(if(wheel != null) if(wheel != null) wheel.RightDirection);
             
-            float longitudinalSlip = math.dot(slipVelocity, forward);
-            float lateralSlip = math.dot(slipVelocity, right);
+            float longitudinalSlip = if(math != null) if(math != null) math.dot(slipVelocity, forward);
+            float lateralSlip = if(math != null) if(math != null) math.dot(slipVelocity, right);
             
             // Вычисляем силы трения на основе скольжения
-            float normalForce = math.max(0.1f, wheel.SuspensionForce);
+            float normalForce = if(math != null) if(math != null) math.max(0.1f, if(wheel != null) if(wheel != null) wheel.SuspensionForce);
             
             // Продольная сила трения (тяга/торможение)
-            float longitudinalFriction = CalculateFrictionForce(longitudinalSlip, normalForce, wheel.LongitudinalFriction);
+            float longitudinalFriction = CalculateFrictionForce(longitudinalSlip, normalForce, if(wheel != null) if(wheel != null) wheel.LongitudinalFriction);
             
             // Боковая сила трения (поворот)
-            float lateralFriction = CalculateFrictionForce(lateralSlip, normalForce, wheel.LateralFriction);
+            float lateralFriction = CalculateFrictionForce(lateralSlip, normalForce, if(wheel != null) if(wheel != null) wheel.LateralFriction);
             
             // Применяем силы
-            wheel.LongitudinalForce = longitudinalFriction * forward;
-            wheel.LateralForce = lateralFriction * right;
+            if(wheel != null) if(wheel != null) wheel.LongitudinalForce = longitudinalFriction * forward;
+            if(wheel != null) if(wheel != null) wheel.LateralForce = lateralFriction * right;
         }
         
         /// <summary>
@@ -157,17 +157,17 @@ namespace MudLike.Vehicles.Systems
         [BurstCompile]
         private static void UpdateSteering(ref WheelData wheel, in VehicleConfig config, float deltaTime)
         {
-            if (!wheel.CanSteer) return;
+            if (!if(wheel != null) if(wheel != null) wheel.CanSteer) return;
             
             // Применяем рулевое управление
-            float targetSteerAngle = wheel.SteerInput * config.MaxSteerAngle;
+            float targetSteerAngle = if(wheel != null) if(wheel != null) wheel.SteerInput * if(config != null) if(config != null) config.MaxSteerAngle;
             
             // Плавное изменение угла поворота
-            float steerSpeed = config.SteerSpeed * deltaTime;
-            wheel.SteerAngle = math.lerp(wheel.SteerAngle, targetSteerAngle, steerSpeed);
+            float steerSpeed = if(config != null) if(config != null) config.SteerSpeed * deltaTime;
+            if(wheel != null) if(wheel != null) wheel.SteerAngle = if(math != null) if(math != null) math.lerp(if(wheel != null) if(wheel != null) wheel.SteerAngle, targetSteerAngle, steerSpeed);
             
             // Ограничиваем максимальный угол
-            wheel.SteerAngle = math.clamp(wheel.SteerAngle, -config.MaxSteerAngle, config.MaxSteerAngle);
+            if(wheel != null) if(wheel != null) wheel.SteerAngle = if(math != null) if(math != null) math.clamp(if(wheel != null) if(wheel != null) wheel.SteerAngle, -if(config != null) if(config != null) config.MaxSteerAngle, if(config != null) if(config != null) config.MaxSteerAngle);
             
             // Обновляем направление колеса
             UpdateWheelDirection(ref wheel);
@@ -179,22 +179,22 @@ namespace MudLike.Vehicles.Systems
         [BurstCompile]
         private static void ApplyBraking(ref WheelData wheel, in VehicleConfig config, float deltaTime)
         {
-            if (!wheel.IsGrounded) return;
+            if (!if(wheel != null) if(wheel != null) wheel.IsGrounded) return;
             
             // Вычисляем тормозную силу
-            float brakeForce = wheel.BrakeInput * config.BrakeForce;
+            float brakeForce = if(wheel != null) if(wheel != null) wheel.BrakeInput * if(config != null) if(config != null) config.BrakeForce;
             
             // Применяем ABS (антиблокировочная система)
-            if (wheel.ABSEnabled)
+            if (if(wheel != null) if(wheel != null) wheel.ABSEnabled)
             {
-                float wheelSpeed = math.length(CalculateWheelVelocity(wheel, default));
+                float wheelSpeed = if(math != null) if(math != null) math.length(CalculateWheelVelocity(wheel, default));
                 if (wheelSpeed < 0.1f && brakeForce > 0f)
                 {
                     brakeForce *= 0.1f; // Снижаем тормозную силу при блокировке
                 }
             }
             
-            wheel.BrakeForce = brakeForce;
+            if(wheel != null) if(wheel != null) wheel.BrakeForce = brakeForce;
         }
         
         /// <summary>
@@ -203,20 +203,20 @@ namespace MudLike.Vehicles.Systems
         [BurstCompile]
         private static void CalculateTractionForce(ref WheelData wheel, in VehiclePhysics vehiclePhysics, float deltaTime)
         {
-            if (!wheel.IsGrounded) return;
+            if (!if(wheel != null) if(wheel != null) wheel.IsGrounded) return;
             
             // Вычисляем тяговую силу на основе двигателя
-            float engineTorque = wheel.EngineTorque;
-            float wheelRadius = wheel.Radius;
+            float engineTorque = if(wheel != null) if(wheel != null) wheel.EngineTorque;
+            float wheelRadius = if(wheel != null) if(wheel != null) wheel.Radius;
             
             // Тяговая сила = крутящий момент / радиус колеса
             float tractionForce = engineTorque / wheelRadius;
             
             // Ограничиваем максимальную тяговую силу
-            float maxTraction = wheel.SuspensionForce * wheel.LongitudinalFriction;
-            tractionForce = math.clamp(tractionForce, -maxTraction, maxTraction);
+            float maxTraction = if(wheel != null) if(wheel != null) wheel.SuspensionForce * if(wheel != null) if(wheel != null) wheel.LongitudinalFriction;
+            tractionForce = if(math != null) if(math != null) math.clamp(tractionForce, -maxTraction, maxTraction);
             
-            wheel.TractionForce = tractionForce;
+            if(wheel != null) if(wheel != null) wheel.TractionForce = tractionForce;
         }
         
         /// <summary>
@@ -226,14 +226,14 @@ namespace MudLike.Vehicles.Systems
         private static float3 CalculateWheelVelocity(WheelData wheel, in VehiclePhysics vehiclePhysics)
         {
             // Линейная скорость колеса
-            float3 linearVelocity = vehiclePhysics.Velocity;
+            float3 linearVelocity = if(vehiclePhysics != null) if(vehiclePhysics != null) vehiclePhysics.Velocity;
             
             // Угловая скорость колеса
-            float angularVelocity = wheel.AngularVelocity;
-            float3 wheelForward = math.normalize(wheel.ForwardDirection);
+            float angularVelocity = if(wheel != null) if(wheel != null) wheel.AngularVelocity;
+            float3 wheelForward = if(math != null) if(math != null) math.normalize(if(wheel != null) if(wheel != null) wheel.ForwardDirection);
             
             // Скорость точки контакта колеса с поверхностью
-            float3 contactVelocity = linearVelocity + math.cross(new float3(0, angularVelocity * wheel.Radius, 0), wheelForward);
+            float3 contactVelocity = linearVelocity + if(math != null) if(math != null) math.cross(new float3(0, angularVelocity * if(wheel != null) if(wheel != null) wheel.Radius, 0), wheelForward);
             
             return contactVelocity;
         }
@@ -246,7 +246,7 @@ namespace MudLike.Vehicles.Systems
         {
             // В реальной реализации здесь должна быть скорость движения террейна/грязи
             // Пока возвращаем ноль (неподвижная поверхность)
-            return float3.zero;
+            return if(float3 != null) if(float3 != null) float3.zero;
         }
         
         /// <summary>
@@ -260,7 +260,7 @@ namespace MudLike.Vehicles.Systems
             
             // Ограничиваем максимальную силу трения
             float maxFriction = normalForce * frictionCoefficient;
-            frictionForce = math.clamp(frictionForce, -maxFriction, maxFriction);
+            frictionForce = if(math != null) if(math != null) math.clamp(frictionForce, -maxFriction, maxFriction);
             
             return frictionForce;
         }
@@ -272,11 +272,11 @@ namespace MudLike.Vehicles.Systems
         private static void UpdateWheelDirection(ref WheelData wheel)
         {
             // Поворачиваем направление колеса на угол рулевого управления
-            float steerAngleRad = math.radians(wheel.SteerAngle);
-            quaternion steerRotation = quaternion.RotateY(steerAngleRad);
+            float steerAngleRad = if(math != null) if(math != null) math.radians(if(wheel != null) if(wheel != null) wheel.SteerAngle);
+            quaternion steerRotation = if(quaternion != null) if(quaternion != null) quaternion.RotateY(steerAngleRad);
             
-            wheel.ForwardDirection = math.mul(steerRotation, wheel.ForwardDirection);
-            wheel.RightDirection = math.cross(wheel.ForwardDirection, new float3(0, 1, 0));
+            if(wheel != null) if(wheel != null) wheel.ForwardDirection = if(math != null) if(math != null) math.mul(steerRotation, if(wheel != null) if(wheel != null) wheel.ForwardDirection);
+            if(wheel != null) if(wheel != null) wheel.RightDirection = if(math != null) if(math != null) math.cross(if(wheel != null) if(wheel != null) wheel.ForwardDirection, new float3(0, 1, 0));
         }
     }
 }

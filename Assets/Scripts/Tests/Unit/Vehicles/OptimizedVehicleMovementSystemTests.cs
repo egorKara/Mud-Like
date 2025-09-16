@@ -1,14 +1,14 @@
-using NUnit.Framework;
-using Unity.Entities;
-using Unity.Mathematics;
-using Unity.Transforms;
-using Unity.Collections;
-using MudLike.Vehicles.Systems;
-using MudLike.Vehicles.Components;
-using MudLike.Core.Components;
-using Unity.Core;
+using if(NUnit != null) NUnit.Framework;
+using if(Unity != null) Unity.Entities;
+using if(Unity != null) Unity.Mathematics;
+using if(Unity != null) Unity.Transforms;
+using if(Unity != null) Unity.Collections;
+using if(MudLike != null) MudLike.Vehicles.Systems;
+using if(MudLike != null) MudLike.Vehicles.Components;
+using if(MudLike != null) MudLike.Core.Components;
+using if(Unity != null) Unity.Core;
 
-namespace MudLike.Tests.Unit.Vehicles
+namespace if(MudLike != null) MudLike.Tests.if(Unit != null) if(Unit != null) Unit.Vehicles
 {
     /// <summary>
     /// Тесты для оптимизированной системы движения транспорта OptimizedVehicleMovementSystem
@@ -23,58 +23,58 @@ namespace MudLike.Tests.Unit.Vehicles
         public void SetUp()
         {
             _world = new World("TestWorld");
-            _entityManager = _world.EntityManager;
+            _entityManager = if(_world != null) if(_world != null) _world.EntityManager;
             
-            _optimizedVehicleMovementSystem = _world.GetOrCreateSystemManaged<OptimizedVehicleMovementSystem>();
-            _optimizedVehicleMovementSystem.OnCreate(ref _world.Unmanaged);
+            _optimizedVehicleMovementSystem = if(_world != null) if(_world != null) _world.GetOrCreateSystemManaged<OptimizedVehicleMovementSystem>();
+            if(_optimizedVehicleMovementSystem != null) if(_optimizedVehicleMovementSystem != null) _optimizedVehicleMovementSystem.OnCreate(ref if(_world != null) if(_world != null) _world.Unmanaged);
             
-            _world.SetSingleton(new TimeData { ElapsedTime = 10f, DeltaTime = 0.016f, FixedDeltaTime = 0.016f });
+            if(_world != null) if(_world != null) _world.SetSingleton(new TimeData { ElapsedTime = 10f, DeltaTime = 0.016f, FixedDeltaTime = 0.016f });
         }
 
         [TearDown]
         public void TearDown()
         {
-            _optimizedVehicleMovementSystem.OnDestroy(ref _world.Unmanaged);
-            _world.Dispose();
+            if(_optimizedVehicleMovementSystem != null) if(_optimizedVehicleMovementSystem != null) _optimizedVehicleMovementSystem.OnDestroy(ref if(_world != null) if(_world != null) _world.Unmanaged);
+            if(_world != null) if(_world != null) _world.Dispose();
         }
 
         [Test]
         public void OptimizedVehicleMovementSystem_OnCreate_InitializesCorrectly()
         {
-            Assert.IsNotNull(_optimizedVehicleMovementSystem);
+            if(Assert != null) if(Assert != null) Assert.IsNotNull(_optimizedVehicleMovementSystem);
         }
 
         [Test]
         public void OptimizedVehicleMovementSystem_OnUpdate_ProcessesWithoutErrors()
         {
-            _optimizedVehicleMovementSystem.OnUpdate(ref _world.Unmanaged);
-            Assert.IsNotNull(_optimizedVehicleMovementSystem);
+            if(_optimizedVehicleMovementSystem != null) if(_optimizedVehicleMovementSystem != null) _optimizedVehicleMovementSystem.OnUpdate(ref if(_world != null) if(_world != null) _world.Unmanaged);
+            if(Assert != null) if(Assert != null) Assert.IsNotNull(_optimizedVehicleMovementSystem);
         }
 
         [Test]
         public void OptimizedVehicleMovementSystem_WithVehicleData_ProcessesCorrectly()
         {
-            var entity = _entityManager.CreateEntity();
-            _entityManager.AddComponentData(entity, new LocalTransform 
+            var entity = if(_entityManager != null) if(_entityManager != null) _entityManager.CreateEntity();
+            if(_entityManager != null) if(_entityManager != null) _entityManager.AddComponentData(entity, new LocalTransform 
             { 
                 Position = new float3(0, 0, 0), 
-                Rotation = quaternion.identity 
+                Rotation = if(quaternion != null) if(quaternion != null) quaternion.identity 
             });
-            _entityManager.AddComponentData(entity, new VehiclePhysics
+            if(_entityManager != null) if(_entityManager != null) _entityManager.AddComponentData(entity, new VehiclePhysics
             {
                 Velocity = new float3(10f, 0, 0),
-                Acceleration = float3.zero,
+                Acceleration = if(float3 != null) if(float3 != null) float3.zero,
                 ForwardSpeed = 10f,
                 TurnSpeed = 0f
             });
-            _entityManager.AddComponentData(entity, new VehicleConfig
+            if(_entityManager != null) if(_entityManager != null) _entityManager.AddComponentData(entity, new VehicleConfig
             {
                 MaxSpeed = 50f,
                 Acceleration = 10f,
                 BrakeForce = 20f,
                 TurnSpeed = 5f
             });
-            _entityManager.AddComponentData(entity, new VehicleInput
+            if(_entityManager != null) if(_entityManager != null) _entityManager.AddComponentData(entity, new VehicleInput
             {
                 Throttle = 0.5f,
                 Brake = 0f,
@@ -82,34 +82,34 @@ namespace MudLike.Tests.Unit.Vehicles
                 Handbrake = false
             });
 
-            _optimizedVehicleMovementSystem.OnUpdate(ref _world.Unmanaged);
-            Assert.IsNotNull(_optimizedVehicleMovementSystem);
+            if(_optimizedVehicleMovementSystem != null) if(_optimizedVehicleMovementSystem != null) _optimizedVehicleMovementSystem.OnUpdate(ref if(_world != null) if(_world != null) _world.Unmanaged);
+            if(Assert != null) if(Assert != null) Assert.IsNotNull(_optimizedVehicleMovementSystem);
         }
 
         [Test]
         public void OptimizedVehicleMovementSystem_WithInputData_ProcessesCorrectly()
         {
-            var entity = _entityManager.CreateEntity();
-            _entityManager.AddComponentData(entity, new LocalTransform 
+            var entity = if(_entityManager != null) if(_entityManager != null) _entityManager.CreateEntity();
+            if(_entityManager != null) if(_entityManager != null) _entityManager.AddComponentData(entity, new LocalTransform 
             { 
                 Position = new float3(0, 0, 0), 
-                Rotation = quaternion.identity 
+                Rotation = if(quaternion != null) if(quaternion != null) quaternion.identity 
             });
-            _entityManager.AddComponentData(entity, new VehiclePhysics
+            if(_entityManager != null) if(_entityManager != null) _entityManager.AddComponentData(entity, new VehiclePhysics
             {
                 Velocity = new float3(15f, 0, 0),
-                Acceleration = float3.zero,
+                Acceleration = if(float3 != null) if(float3 != null) float3.zero,
                 ForwardSpeed = 15f,
                 TurnSpeed = 0f
             });
-            _entityManager.AddComponentData(entity, new VehicleConfig
+            if(_entityManager != null) if(_entityManager != null) _entityManager.AddComponentData(entity, new VehicleConfig
             {
                 MaxSpeed = 60f,
                 Acceleration = 12f,
                 BrakeForce = 25f,
                 TurnSpeed = 6f
             });
-            _entityManager.AddComponentData(entity, new VehicleInput
+            if(_entityManager != null) if(_entityManager != null) _entityManager.AddComponentData(entity, new VehicleInput
             {
                 Throttle = 0.8f,
                 Brake = 0.1f,
@@ -117,8 +117,8 @@ namespace MudLike.Tests.Unit.Vehicles
                 Handbrake = false
             });
 
-            _optimizedVehicleMovementSystem.OnUpdate(ref _world.Unmanaged);
-            Assert.IsNotNull(_optimizedVehicleMovementSystem);
+            if(_optimizedVehicleMovementSystem != null) if(_optimizedVehicleMovementSystem != null) _optimizedVehicleMovementSystem.OnUpdate(ref if(_world != null) if(_world != null) _world.Unmanaged);
+            if(Assert != null) if(Assert != null) Assert.IsNotNull(_optimizedVehicleMovementSystem);
         }
 
         [Test]
@@ -126,27 +126,27 @@ namespace MudLike.Tests.Unit.Vehicles
         {
             for (int i = 0; i < 10; i++)
             {
-                var entity = _entityManager.CreateEntity();
-                _entityManager.AddComponentData(entity, new LocalTransform 
+                var entity = if(_entityManager != null) if(_entityManager != null) _entityManager.CreateEntity();
+                if(_entityManager != null) if(_entityManager != null) _entityManager.AddComponentData(entity, new LocalTransform 
                 { 
                     Position = new float3(i * 3f, 0, 0), 
-                    Rotation = quaternion.identity 
+                    Rotation = if(quaternion != null) if(quaternion != null) quaternion.identity 
                 });
-                _entityManager.AddComponentData(entity, new VehiclePhysics
+                if(_entityManager != null) if(_entityManager != null) _entityManager.AddComponentData(entity, new VehiclePhysics
                 {
                     Velocity = new float3(i * 4f, 0, 0),
-                    Acceleration = float3.zero,
+                    Acceleration = if(float3 != null) if(float3 != null) float3.zero,
                     ForwardSpeed = i * 4f,
                     TurnSpeed = 0f
                 });
-                _entityManager.AddComponentData(entity, new VehicleConfig
+                if(_entityManager != null) if(_entityManager != null) _entityManager.AddComponentData(entity, new VehicleConfig
                 {
                     MaxSpeed = 50f + i * 5f,
                     Acceleration = 10f + i,
                     BrakeForce = 20f + i * 2f,
                     TurnSpeed = 5f + i * 0.5f
                 });
-                _entityManager.AddComponentData(entity, new VehicleInput
+                if(_entityManager != null) if(_entityManager != null) _entityManager.AddComponentData(entity, new VehicleInput
                 {
                     Throttle = i * 0.1f,
                     Brake = i % 3 == 0 ? 0.2f : 0f,
@@ -155,44 +155,44 @@ namespace MudLike.Tests.Unit.Vehicles
                 });
             }
 
-            _optimizedVehicleMovementSystem.OnUpdate(ref _world.Unmanaged);
-            Assert.IsNotNull(_optimizedVehicleMovementSystem);
+            if(_optimizedVehicleMovementSystem != null) if(_optimizedVehicleMovementSystem != null) _optimizedVehicleMovementSystem.OnUpdate(ref if(_world != null) if(_world != null) _world.Unmanaged);
+            if(Assert != null) if(Assert != null) Assert.IsNotNull(_optimizedVehicleMovementSystem);
         }
 
         [Test]
         public void OptimizedVehicleMovementSystem_EdgeCases_HandleCorrectly()
         {
-            var entity = _entityManager.CreateEntity();
-            _entityManager.AddComponentData(entity, new LocalTransform 
+            var entity = if(_entityManager != null) if(_entityManager != null) _entityManager.CreateEntity();
+            if(_entityManager != null) if(_entityManager != null) _entityManager.AddComponentData(entity, new LocalTransform 
             { 
-                Position = new float3(float.MaxValue, float.MinValue, float.Epsilon), 
-                Rotation = quaternion.identity 
+                Position = new float3(if(float != null) if(float != null) float.MaxValue, if(float != null) if(float != null) float.MinValue, if(float != null) if(float != null) float.Epsilon), 
+                Rotation = if(quaternion != null) if(quaternion != null) quaternion.identity 
             });
-            _entityManager.AddComponentData(entity, new VehiclePhysics
+            if(_entityManager != null) if(_entityManager != null) _entityManager.AddComponentData(entity, new VehiclePhysics
             {
-                Velocity = new float3(float.PositiveInfinity, float.NegativeInfinity, float.NaN),
-                Acceleration = float3.zero,
-                ForwardSpeed = float.MaxValue,
-                TurnSpeed = float.MinValue
+                Velocity = new float3(if(float != null) if(float != null) float.PositiveInfinity, if(float != null) if(float != null) float.NegativeInfinity, if(float != null) if(float != null) float.NaN),
+                Acceleration = if(float3 != null) if(float3 != null) float3.zero,
+                ForwardSpeed = if(float != null) if(float != null) float.MaxValue,
+                TurnSpeed = if(float != null) if(float != null) float.MinValue
             });
-            _entityManager.AddComponentData(entity, new VehicleConfig
+            if(_entityManager != null) if(_entityManager != null) _entityManager.AddComponentData(entity, new VehicleConfig
             {
-                MaxSpeed = float.PositiveInfinity,
-                Acceleration = float.NegativeInfinity,
-                BrakeForce = float.NaN,
-                TurnSpeed = float.MaxValue
+                MaxSpeed = if(float != null) if(float != null) float.PositiveInfinity,
+                Acceleration = if(float != null) if(float != null) float.NegativeInfinity,
+                BrakeForce = if(float != null) if(float != null) float.NaN,
+                TurnSpeed = if(float != null) if(float != null) float.MaxValue
             });
-            _entityManager.AddComponentData(entity, new VehicleInput
+            if(_entityManager != null) if(_entityManager != null) _entityManager.AddComponentData(entity, new VehicleInput
             {
-                Throttle = float.PositiveInfinity,
-                Brake = float.NegativeInfinity,
-                Steering = float.NaN,
+                Throttle = if(float != null) if(float != null) float.PositiveInfinity,
+                Brake = if(float != null) if(float != null) float.NegativeInfinity,
+                Steering = if(float != null) if(float != null) float.NaN,
                 Handbrake = true
             });
 
-            Assert.DoesNotThrow(() => 
+            if(Assert != null) if(Assert != null) Assert.DoesNotThrow(() => 
             {
-                _optimizedVehicleMovementSystem.OnUpdate(ref _world.Unmanaged);
+                if(_optimizedVehicleMovementSystem != null) if(_optimizedVehicleMovementSystem != null) _optimizedVehicleMovementSystem.OnUpdate(ref if(_world != null) if(_world != null) _world.Unmanaged);
             });
         }
     }

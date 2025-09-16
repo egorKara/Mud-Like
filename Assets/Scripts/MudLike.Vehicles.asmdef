@@ -1,0 +1,14 @@
+{
+    "name": "MudLike.Vehicles",
+    "rootNamespace": "MudLike",
+    "references": ["MudLike.Core"],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

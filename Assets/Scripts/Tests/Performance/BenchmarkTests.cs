@@ -1,17 +1,17 @@
-using NUnit.Framework;
-using Unity.Entities;
-using Unity.Mathematics;
-using Unity.Transforms;
-using Unity.Profiling;
-using Unity.Collections;
-using MudLike.Vehicles.Components;
-using MudLike.Terrain.Components;
-using MudLike.Weather.Components;
-using MudLike.UI.Components;
-using MudLike.Audio.Components;
-using MudLike.Pooling.Components;
+using if(NUnit != null) NUnit.Framework;
+using if(Unity != null) Unity.Entities;
+using if(Unity != null) Unity.Mathematics;
+using if(Unity != null) Unity.Transforms;
+using if(Unity != null) Unity.Profiling;
+using if(Unity != null) Unity.Collections;
+using if(MudLike != null) MudLike.Vehicles.Components;
+using if(MudLike != null) MudLike.Terrain.Components;
+using if(MudLike != null) MudLike.Weather.Components;
+using if(MudLike != null) MudLike.UI.Components;
+using if(MudLike != null) MudLike.Audio.Components;
+using if(MudLike != null) MudLike.Pooling.Components;
 
-namespace MudLike.Tests.Performance
+namespace if(MudLike != null) MudLike.Tests.Performance
 {
     /// <summary>
     /// Бенчмарк тесты для измерения производительности
@@ -25,7 +25,7 @@ namespace MudLike.Tests.Performance
         [SetUp]
         public override void Setup()
         {
-            base.Setup();
+            if(base != null) if(base != null) base.Setup();
             
             // Создаем тестовые данные для бенчмарка
             CreateBenchmarkData();
@@ -35,324 +35,324 @@ namespace MudLike.Tests.Performance
         public void Benchmark_VehicleMovementSystem()
         {
             // Arrange
-            var system = World.CreateSystemManaged<VehicleMovementSystem>();
+            var system = if(World != null) if(World != null) World.CreateSystemManaged<VehicleMovementSystem>();
             
             // Act & Measure
-            var stopwatch = System.Diagnostics.Stopwatch.StartNew();
+            var stopwatch = if(System != null) if(System != null) System.Diagnostics.if(Stopwatch != null) if(Stopwatch != null) Stopwatch.StartNew();
             
             for (int i = 0; i < BENCHMARK_ITERATIONS; i++)
             {
-                system.Update();
+                if(system != null) if(system != null) system.Update();
             }
             
-            stopwatch.Stop();
+            if(stopwatch != null) if(stopwatch != null) stopwatch.Stop();
             
             // Assert
-            var averageTime = stopwatch.ElapsedMilliseconds / (float)BENCHMARK_ITERATIONS;
-            Assert.Less(averageTime, 1f, $"VehicleMovementSystem took {averageTime}ms per update on average");
+            var averageTime = if(stopwatch != null) if(stopwatch != null) stopwatch.ElapsedMilliseconds / (float)BENCHMARK_ITERATIONS;
+            if(Assert != null) if(Assert != null) Assert.Less(averageTime, 1f, $"VehicleMovementSystem took {averageTime}ms per update on average");
             
-            Debug.Log($"VehicleMovementSystem: {averageTime}ms per update, {stopwatch.ElapsedMilliseconds}ms total");
+            if(Debug != null) if(Debug != null) Debug.Log($"VehicleMovementSystem: {averageTime}ms per update, {if(stopwatch != null) if(stopwatch != null) stopwatch.ElapsedMilliseconds}ms total");
         }
         
         [Test]
         public void Benchmark_WheelPhysicsSystem()
         {
             // Arrange
-            var system = World.CreateSystemManaged<AdvancedWheelPhysicsSystem>();
+            var system = if(World != null) if(World != null) World.CreateSystemManaged<AdvancedWheelPhysicsSystem>();
             
             // Act & Measure
-            var stopwatch = System.Diagnostics.Stopwatch.StartNew();
+            var stopwatch = if(System != null) if(System != null) System.Diagnostics.if(Stopwatch != null) if(Stopwatch != null) Stopwatch.StartNew();
             
             for (int i = 0; i < BENCHMARK_ITERATIONS; i++)
             {
-                system.Update();
+                if(system != null) if(system != null) system.Update();
             }
             
-            stopwatch.Stop();
+            if(stopwatch != null) if(stopwatch != null) stopwatch.Stop();
             
             // Assert
-            var averageTime = stopwatch.ElapsedMilliseconds / (float)BENCHMARK_ITERATIONS;
-            Assert.Less(averageTime, 2f, $"WheelPhysicsSystem took {averageTime}ms per update on average");
+            var averageTime = if(stopwatch != null) if(stopwatch != null) stopwatch.ElapsedMilliseconds / (float)BENCHMARK_ITERATIONS;
+            if(Assert != null) if(Assert != null) Assert.Less(averageTime, 2f, $"WheelPhysicsSystem took {averageTime}ms per update on average");
             
-            Debug.Log($"WheelPhysicsSystem: {averageTime}ms per update, {stopwatch.ElapsedMilliseconds}ms total");
+            if(Debug != null) if(Debug != null) Debug.Log($"WheelPhysicsSystem: {averageTime}ms per update, {if(stopwatch != null) if(stopwatch != null) stopwatch.ElapsedMilliseconds}ms total");
         }
         
         [Test]
         public void Benchmark_TerrainDeformationSystem()
         {
             // Arrange
-            var system = World.CreateSystemManaged<TerrainDeformationSystem>();
+            var system = if(World != null) if(World != null) World.CreateSystemManaged<TerrainDeformationSystem>();
             
             // Act & Measure
-            var stopwatch = System.Diagnostics.Stopwatch.StartNew();
+            var stopwatch = if(System != null) if(System != null) System.Diagnostics.if(Stopwatch != null) if(Stopwatch != null) Stopwatch.StartNew();
             
             for (int i = 0; i < BENCHMARK_ITERATIONS; i++)
             {
-                system.Update();
+                if(system != null) if(system != null) system.Update();
             }
             
-            stopwatch.Stop();
+            if(stopwatch != null) if(stopwatch != null) stopwatch.Stop();
             
             // Assert
-            var averageTime = stopwatch.ElapsedMilliseconds / (float)BENCHMARK_ITERATIONS;
-            Assert.Less(averageTime, 3f, $"TerrainDeformationSystem took {averageTime}ms per update on average");
+            var averageTime = if(stopwatch != null) if(stopwatch != null) stopwatch.ElapsedMilliseconds / (float)BENCHMARK_ITERATIONS;
+            if(Assert != null) if(Assert != null) Assert.Less(averageTime, 3f, $"TerrainDeformationSystem took {averageTime}ms per update on average");
             
-            Debug.Log($"TerrainDeformationSystem: {averageTime}ms per update, {stopwatch.ElapsedMilliseconds}ms total");
+            if(Debug != null) if(Debug != null) Debug.Log($"TerrainDeformationSystem: {averageTime}ms per update, {if(stopwatch != null) if(stopwatch != null) stopwatch.ElapsedMilliseconds}ms total");
         }
         
         [Test]
         public void Benchmark_UIHUDSystem()
         {
             // Arrange
-            var system = World.CreateSystemManaged<UIHUDSystem>();
+            var system = if(World != null) if(World != null) World.CreateSystemManaged<UIHUDSystem>();
             
             // Act & Measure
-            var stopwatch = System.Diagnostics.Stopwatch.StartNew();
+            var stopwatch = if(System != null) if(System != null) System.Diagnostics.if(Stopwatch != null) if(Stopwatch != null) Stopwatch.StartNew();
             
             for (int i = 0; i < BENCHMARK_ITERATIONS; i++)
             {
-                system.Update();
+                if(system != null) if(system != null) system.Update();
             }
             
-            stopwatch.Stop();
+            if(stopwatch != null) if(stopwatch != null) stopwatch.Stop();
             
             // Assert
-            var averageTime = stopwatch.ElapsedMilliseconds / (float)BENCHMARK_ITERATIONS;
-            Assert.Less(averageTime, 0.5f, $"UIHUDSystem took {averageTime}ms per update on average");
+            var averageTime = if(stopwatch != null) if(stopwatch != null) stopwatch.ElapsedMilliseconds / (float)BENCHMARK_ITERATIONS;
+            if(Assert != null) if(Assert != null) Assert.Less(averageTime, 0.5f, $"UIHUDSystem took {averageTime}ms per update on average");
             
-            Debug.Log($"UIHUDSystem: {averageTime}ms per update, {stopwatch.ElapsedMilliseconds}ms total");
+            if(Debug != null) if(Debug != null) Debug.Log($"UIHUDSystem: {averageTime}ms per update, {if(stopwatch != null) if(stopwatch != null) stopwatch.ElapsedMilliseconds}ms total");
         }
         
         [Test]
         public void Benchmark_EngineAudioSystem()
         {
             // Arrange
-            var system = World.CreateSystemManaged<EngineAudioSystem>();
+            var system = if(World != null) if(World != null) World.CreateSystemManaged<EngineAudioSystem>();
             
             // Act & Measure
-            var stopwatch = System.Diagnostics.Stopwatch.StartNew();
+            var stopwatch = if(System != null) if(System != null) System.Diagnostics.if(Stopwatch != null) if(Stopwatch != null) Stopwatch.StartNew();
             
             for (int i = 0; i < BENCHMARK_ITERATIONS; i++)
             {
-                system.Update();
+                if(system != null) if(system != null) system.Update();
             }
             
-            stopwatch.Stop();
+            if(stopwatch != null) if(stopwatch != null) stopwatch.Stop();
             
             // Assert
-            var averageTime = stopwatch.ElapsedMilliseconds / (float)BENCHMARK_ITERATIONS;
-            Assert.Less(averageTime, 1f, $"EngineAudioSystem took {averageTime}ms per update on average");
+            var averageTime = if(stopwatch != null) if(stopwatch != null) stopwatch.ElapsedMilliseconds / (float)BENCHMARK_ITERATIONS;
+            if(Assert != null) if(Assert != null) Assert.Less(averageTime, 1f, $"EngineAudioSystem took {averageTime}ms per update on average");
             
-            Debug.Log($"EngineAudioSystem: {averageTime}ms per update, {stopwatch.ElapsedMilliseconds}ms total");
+            if(Debug != null) if(Debug != null) Debug.Log($"EngineAudioSystem: {averageTime}ms per update, {if(stopwatch != null) if(stopwatch != null) stopwatch.ElapsedMilliseconds}ms total");
         }
         
         [Test]
         public void Benchmark_WinchSystem()
         {
             // Arrange
-            var system = World.CreateSystemManaged<WinchSystem>();
+            var system = if(World != null) if(World != null) World.CreateSystemManaged<WinchSystem>();
             
             // Act & Measure
-            var stopwatch = System.Diagnostics.Stopwatch.StartNew();
+            var stopwatch = if(System != null) if(System != null) System.Diagnostics.if(Stopwatch != null) if(Stopwatch != null) Stopwatch.StartNew();
             
             for (int i = 0; i < BENCHMARK_ITERATIONS; i++)
             {
-                system.Update();
+                if(system != null) if(system != null) system.Update();
             }
             
-            stopwatch.Stop();
+            if(stopwatch != null) if(stopwatch != null) stopwatch.Stop();
             
             // Assert
-            var averageTime = stopwatch.ElapsedMilliseconds / (float)BENCHMARK_ITERATIONS;
-            Assert.Less(averageTime, 1.5f, $"WinchSystem took {averageTime}ms per update on average");
+            var averageTime = if(stopwatch != null) if(stopwatch != null) stopwatch.ElapsedMilliseconds / (float)BENCHMARK_ITERATIONS;
+            if(Assert != null) if(Assert != null) Assert.Less(averageTime, 1.5f, $"WinchSystem took {averageTime}ms per update on average");
             
-            Debug.Log($"WinchSystem: {averageTime}ms per update, {stopwatch.ElapsedMilliseconds}ms total");
+            if(Debug != null) if(Debug != null) Debug.Log($"WinchSystem: {averageTime}ms per update, {if(stopwatch != null) if(stopwatch != null) stopwatch.ElapsedMilliseconds}ms total");
         }
         
         [Test]
         public void Benchmark_CargoSystem()
         {
             // Arrange
-            var system = World.CreateSystemManaged<CargoSystem>();
+            var system = if(World != null) if(World != null) World.CreateSystemManaged<CargoSystem>();
             
             // Act & Measure
-            var stopwatch = System.Diagnostics.Stopwatch.StartNew();
+            var stopwatch = if(System != null) if(System != null) System.Diagnostics.if(Stopwatch != null) if(Stopwatch != null) Stopwatch.StartNew();
             
             for (int i = 0; i < BENCHMARK_ITERATIONS; i++)
             {
-                system.Update();
+                if(system != null) if(system != null) system.Update();
             }
             
-            stopwatch.Stop();
+            if(stopwatch != null) if(stopwatch != null) stopwatch.Stop();
             
             // Assert
-            var averageTime = stopwatch.ElapsedMilliseconds / (float)BENCHMARK_ITERATIONS;
-            Assert.Less(averageTime, 1f, $"CargoSystem took {averageTime}ms per update on average");
+            var averageTime = if(stopwatch != null) if(stopwatch != null) stopwatch.ElapsedMilliseconds / (float)BENCHMARK_ITERATIONS;
+            if(Assert != null) if(Assert != null) Assert.Less(averageTime, 1f, $"CargoSystem took {averageTime}ms per update on average");
             
-            Debug.Log($"CargoSystem: {averageTime}ms per update, {stopwatch.ElapsedMilliseconds}ms total");
+            if(Debug != null) if(Debug != null) Debug.Log($"CargoSystem: {averageTime}ms per update, {if(stopwatch != null) if(stopwatch != null) stopwatch.ElapsedMilliseconds}ms total");
         }
         
         [Test]
         public void Benchmark_MissionSystem()
         {
             // Arrange
-            var system = World.CreateSystemManaged<MissionSystem>();
+            var system = if(World != null) if(World != null) World.CreateSystemManaged<MissionSystem>();
             
             // Act & Measure
-            var stopwatch = System.Diagnostics.Stopwatch.StartNew();
+            var stopwatch = if(System != null) if(System != null) System.Diagnostics.if(Stopwatch != null) if(Stopwatch != null) Stopwatch.StartNew();
             
             for (int i = 0; i < BENCHMARK_ITERATIONS; i++)
             {
-                system.Update();
+                if(system != null) if(system != null) system.Update();
             }
             
-            stopwatch.Stop();
+            if(stopwatch != null) if(stopwatch != null) stopwatch.Stop();
             
             // Assert
-            var averageTime = stopwatch.ElapsedMilliseconds / (float)BENCHMARK_ITERATIONS;
-            Assert.Less(averageTime, 0.5f, $"MissionSystem took {averageTime}ms per update on average");
+            var averageTime = if(stopwatch != null) if(stopwatch != null) stopwatch.ElapsedMilliseconds / (float)BENCHMARK_ITERATIONS;
+            if(Assert != null) if(Assert != null) Assert.Less(averageTime, 0.5f, $"MissionSystem took {averageTime}ms per update on average");
             
-            Debug.Log($"MissionSystem: {averageTime}ms per update, {stopwatch.ElapsedMilliseconds}ms total");
+            if(Debug != null) if(Debug != null) Debug.Log($"MissionSystem: {averageTime}ms per update, {if(stopwatch != null) if(stopwatch != null) stopwatch.ElapsedMilliseconds}ms total");
         }
         
         [Test]
         public void Benchmark_LODSystem()
         {
             // Arrange
-            var system = World.CreateSystemManaged<LODSystem>();
+            var system = if(World != null) if(World != null) World.CreateSystemManaged<LODSystem>();
             
             // Act & Measure
-            var stopwatch = System.Diagnostics.Stopwatch.StartNew();
+            var stopwatch = if(System != null) if(System != null) System.Diagnostics.if(Stopwatch != null) if(Stopwatch != null) Stopwatch.StartNew();
             
             for (int i = 0; i < BENCHMARK_ITERATIONS; i++)
             {
-                system.Update();
+                if(system != null) if(system != null) system.Update();
             }
             
-            stopwatch.Stop();
+            if(stopwatch != null) if(stopwatch != null) stopwatch.Stop();
             
             // Assert
-            var averageTime = stopwatch.ElapsedMilliseconds / (float)BENCHMARK_ITERATIONS;
-            Assert.Less(averageTime, 1f, $"LODSystem took {averageTime}ms per update on average");
+            var averageTime = if(stopwatch != null) if(stopwatch != null) stopwatch.ElapsedMilliseconds / (float)BENCHMARK_ITERATIONS;
+            if(Assert != null) if(Assert != null) Assert.Less(averageTime, 1f, $"LODSystem took {averageTime}ms per update on average");
             
-            Debug.Log($"LODSystem: {averageTime}ms per update, {stopwatch.ElapsedMilliseconds}ms total");
+            if(Debug != null) if(Debug != null) Debug.Log($"LODSystem: {averageTime}ms per update, {if(stopwatch != null) if(stopwatch != null) stopwatch.ElapsedMilliseconds}ms total");
         }
         
         [Test]
         public void Benchmark_ObjectPoolSystem()
         {
             // Arrange
-            var system = World.CreateSystemManaged<ObjectPoolSystem>();
+            var system = if(World != null) if(World != null) World.CreateSystemManaged<ObjectPoolSystem>();
             
             // Act & Measure
-            var stopwatch = System.Diagnostics.Stopwatch.StartNew();
+            var stopwatch = if(System != null) if(System != null) System.Diagnostics.if(Stopwatch != null) if(Stopwatch != null) Stopwatch.StartNew();
             
             for (int i = 0; i < BENCHMARK_ITERATIONS; i++)
             {
-                system.Update();
+                if(system != null) if(system != null) system.Update();
             }
             
-            stopwatch.Stop();
+            if(stopwatch != null) if(stopwatch != null) stopwatch.Stop();
             
             // Assert
-            var averageTime = stopwatch.ElapsedMilliseconds / (float)BENCHMARK_ITERATIONS;
-            Assert.Less(averageTime, 0.5f, $"ObjectPoolSystem took {averageTime}ms per update on average");
+            var averageTime = if(stopwatch != null) if(stopwatch != null) stopwatch.ElapsedMilliseconds / (float)BENCHMARK_ITERATIONS;
+            if(Assert != null) if(Assert != null) Assert.Less(averageTime, 0.5f, $"ObjectPoolSystem took {averageTime}ms per update on average");
             
-            Debug.Log($"ObjectPoolSystem: {averageTime}ms per update, {stopwatch.ElapsedMilliseconds}ms total");
+            if(Debug != null) if(Debug != null) Debug.Log($"ObjectPoolSystem: {averageTime}ms per update, {if(stopwatch != null) if(stopwatch != null) stopwatch.ElapsedMilliseconds}ms total");
         }
         
         [Test]
         public void Benchmark_AllSystemsTogether()
         {
             // Arrange - создаем все системы
-            var vehicleSystem = World.CreateSystemManaged<VehicleMovementSystem>();
-            var wheelSystem = World.CreateSystemManaged<AdvancedWheelPhysicsSystem>();
-            var terrainSystem = World.CreateSystemManaged<TerrainDeformationSystem>();
-            var hudSystem = World.CreateSystemManaged<UIHUDSystem>();
-            var audioSystem = World.CreateSystemManaged<EngineAudioSystem>();
-            var winchSystem = World.CreateSystemManaged<WinchSystem>();
-            var cargoSystem = World.CreateSystemManaged<CargoSystem>();
-            var missionSystem = World.CreateSystemManaged<MissionSystem>();
-            var lodSystem = World.CreateSystemManaged<LODSystem>();
-            var poolSystem = World.CreateSystemManaged<ObjectPoolSystem>();
+            var vehicleSystem = if(World != null) if(World != null) World.CreateSystemManaged<VehicleMovementSystem>();
+            var wheelSystem = if(World != null) if(World != null) World.CreateSystemManaged<AdvancedWheelPhysicsSystem>();
+            var terrainSystem = if(World != null) if(World != null) World.CreateSystemManaged<TerrainDeformationSystem>();
+            var hudSystem = if(World != null) if(World != null) World.CreateSystemManaged<UIHUDSystem>();
+            var audioSystem = if(World != null) if(World != null) World.CreateSystemManaged<EngineAudioSystem>();
+            var winchSystem = if(World != null) if(World != null) World.CreateSystemManaged<WinchSystem>();
+            var cargoSystem = if(World != null) if(World != null) World.CreateSystemManaged<CargoSystem>();
+            var missionSystem = if(World != null) if(World != null) World.CreateSystemManaged<MissionSystem>();
+            var lodSystem = if(World != null) if(World != null) World.CreateSystemManaged<LODSystem>();
+            var poolSystem = if(World != null) if(World != null) World.CreateSystemManaged<ObjectPoolSystem>();
             
             // Act & Measure
-            var stopwatch = System.Diagnostics.Stopwatch.StartNew();
+            var stopwatch = if(System != null) if(System != null) System.Diagnostics.if(Stopwatch != null) if(Stopwatch != null) Stopwatch.StartNew();
             
             for (int i = 0; i < BENCHMARK_ITERATIONS / 10; i++) // Меньше итераций для всех систем
             {
-                vehicleSystem.Update();
-                wheelSystem.Update();
-                terrainSystem.Update();
-                hudSystem.Update();
-                audioSystem.Update();
-                winchSystem.Update();
-                cargoSystem.Update();
-                missionSystem.Update();
-                lodSystem.Update();
-                poolSystem.Update();
+                if(vehicleSystem != null) if(vehicleSystem != null) vehicleSystem.Update();
+                if(wheelSystem != null) if(wheelSystem != null) wheelSystem.Update();
+                if(terrainSystem != null) if(terrainSystem != null) terrainSystem.Update();
+                if(hudSystem != null) if(hudSystem != null) hudSystem.Update();
+                if(audioSystem != null) if(audioSystem != null) audioSystem.Update();
+                if(winchSystem != null) if(winchSystem != null) winchSystem.Update();
+                if(cargoSystem != null) if(cargoSystem != null) cargoSystem.Update();
+                if(missionSystem != null) if(missionSystem != null) missionSystem.Update();
+                if(lodSystem != null) if(lodSystem != null) lodSystem.Update();
+                if(poolSystem != null) if(poolSystem != null) poolSystem.Update();
             }
             
-            stopwatch.Stop();
+            if(stopwatch != null) if(stopwatch != null) stopwatch.Stop();
             
             // Assert
-            var averageTime = stopwatch.ElapsedMilliseconds / (float)(BENCHMARK_ITERATIONS / 10);
-            Assert.Less(averageTime, 10f, $"All systems together took {averageTime}ms per update on average");
+            var averageTime = if(stopwatch != null) if(stopwatch != null) stopwatch.ElapsedMilliseconds / (float)(BENCHMARK_ITERATIONS / 10);
+            if(Assert != null) if(Assert != null) Assert.Less(averageTime, 10f, $"All systems together took {averageTime}ms per update on average");
             
-            Debug.Log($"All systems together: {averageTime}ms per update, {stopwatch.ElapsedMilliseconds}ms total");
+            if(Debug != null) if(Debug != null) Debug.Log($"All systems together: {averageTime}ms per update, {if(stopwatch != null) if(stopwatch != null) stopwatch.ElapsedMilliseconds}ms total");
         }
         
         [Test]
         public void Benchmark_MemoryAllocation()
         {
             // Arrange
-            var initialMemory = Profiler.GetTotalAllocatedMemory(false);
+            var initialMemory = if(Profiler != null) if(Profiler != null) Profiler.GetTotalAllocatedMemory(false);
             
             // Act
-            var stopwatch = System.Diagnostics.Stopwatch.StartNew();
+            var stopwatch = if(System != null) if(System != null) System.Diagnostics.if(Stopwatch != null) if(Stopwatch != null) Stopwatch.StartNew();
             
             for (int i = 0; i < 1000; i++)
             {
                 // Создаем и уничтожаем сущности
-                var entity = EntityManager.CreateEntity();
-                EntityManager.AddComponentData(entity, new VehiclePhysics());
-                EntityManager.AddComponentData(entity, new LocalTransform());
-                EntityManager.DestroyEntity(entity);
+                var entity = if(EntityManager != null) if(EntityManager != null) EntityManager.CreateEntity();
+                if(EntityManager != null) if(EntityManager != null) EntityManager.AddComponentData(entity, new VehiclePhysics());
+                if(EntityManager != null) if(EntityManager != null) EntityManager.AddComponentData(entity, new LocalTransform());
+                if(EntityManager != null) if(EntityManager != null) EntityManager.DestroyEntity(entity);
             }
             
-            stopwatch.Stop();
+            if(stopwatch != null) if(stopwatch != null) stopwatch.Stop();
             
             // Assert
-            var finalMemory = Profiler.GetTotalAllocatedMemory(false);
+            var finalMemory = if(Profiler != null) if(Profiler != null) Profiler.GetTotalAllocatedMemory(false);
             var memoryIncrease = finalMemory - initialMemory;
             
-            Assert.Less(memoryIncrease, 10 * 1024 * 1024, $"Memory increased by {memoryIncrease / 1024 / 1024}MB");
+            if(Assert != null) if(Assert != null) Assert.Less(memoryIncrease, 10 * 1024 * 1024, $"Memory increased by {memoryIncrease / 1024 / 1024}MB");
             
-            Debug.Log($"Memory allocation: {memoryIncrease / 1024 / 1024}MB increase, {stopwatch.ElapsedMilliseconds}ms total");
+            if(Debug != null) if(Debug != null) Debug.Log($"Memory allocation: {memoryIncrease / 1024 / 1024}MB increase, {if(stopwatch != null) if(stopwatch != null) stopwatch.ElapsedMilliseconds}ms total");
         }
         
         [Test]
         public void Benchmark_EntityQueryPerformance()
         {
             // Arrange
-            var query = EntityManager.CreateEntityQuery(typeof(VehiclePhysics));
+            var query = if(EntityManager != null) if(EntityManager != null) EntityManager.CreateEntityQuery(typeof(VehiclePhysics));
             
             // Act & Measure
-            var stopwatch = System.Diagnostics.Stopwatch.StartNew();
+            var stopwatch = if(System != null) if(System != null) System.Diagnostics.if(Stopwatch != null) if(Stopwatch != null) Stopwatch.StartNew();
             
             for (int i = 0; i < BENCHMARK_ITERATIONS; i++)
             {
-                var entities = query.ToEntityArray(Allocator.Temp);
-                entities.Dispose();
+                var entities = if(query != null) if(query != null) query.ToEntityArray(if(Allocator != null) if(Allocator != null) Allocator.Temp);
+                if(entities != null) if(entities != null) entities.Dispose();
             }
             
-            stopwatch.Stop();
+            if(stopwatch != null) if(stopwatch != null) stopwatch.Stop();
             
             // Assert
-            var averageTime = stopwatch.ElapsedMilliseconds / (float)BENCHMARK_ITERATIONS;
-            Assert.Less(averageTime, 0.1f, $"EntityQuery took {averageTime}ms per query on average");
+            var averageTime = if(stopwatch != null) if(stopwatch != null) stopwatch.ElapsedMilliseconds / (float)BENCHMARK_ITERATIONS;
+            if(Assert != null) if(Assert != null) Assert.Less(averageTime, 0.1f, $"EntityQuery took {averageTime}ms per query on average");
             
-            Debug.Log($"EntityQuery: {averageTime}ms per query, {stopwatch.ElapsedMilliseconds}ms total");
+            if(Debug != null) if(Debug != null) Debug.Log($"EntityQuery: {averageTime}ms per query, {if(stopwatch != null) if(stopwatch != null) stopwatch.ElapsedMilliseconds}ms total");
         }
         
         private void CreateBenchmarkData()
@@ -361,45 +361,45 @@ namespace MudLike.Tests.Performance
             for (int i = 0; i < ENTITY_COUNT; i++)
             {
                 // Транспорт
-                var vehicleEntity = EntityManager.CreateEntity();
-                EntityManager.AddComponentData(vehicleEntity, new VehicleTag());
-                EntityManager.AddComponentData(vehicleEntity, new VehicleConfig
+                var vehicleEntity = if(EntityManager != null) if(EntityManager != null) EntityManager.CreateEntity();
+                if(EntityManager != null) if(EntityManager != null) EntityManager.AddComponentData(vehicleEntity, new VehicleTag());
+                if(EntityManager != null) if(EntityManager != null) EntityManager.AddComponentData(vehicleEntity, new VehicleConfig
                 {
                     MaxSpeed = 100f,
                     Mass = 1500f
                 });
-                EntityManager.AddComponentData(vehicleEntity, new VehiclePhysics
+                if(EntityManager != null) if(EntityManager != null) EntityManager.AddComponentData(vehicleEntity, new VehiclePhysics
                 {
                     Velocity = new float3(i % 10, 0f, i % 5),
                     EngineRPM = 1000f + i
                 });
-                EntityManager.AddComponentData(vehicleEntity, new LocalTransform
+                if(EntityManager != null) if(EntityManager != null) EntityManager.AddComponentData(vehicleEntity, new LocalTransform
                 {
                     Position = new float3(i * 2f, 0f, i * 1.5f),
-                    Rotation = quaternion.identity
+                    Rotation = if(quaternion != null) if(quaternion != null) quaternion.identity
                 });
                 
                 // Колеса
                 for (int j = 0; j < 4; j++)
                 {
-                    var wheelEntity = EntityManager.CreateEntity();
-                    EntityManager.AddComponentData(wheelEntity, new WheelData
+                    var wheelEntity = if(EntityManager != null) if(EntityManager != null) EntityManager.CreateEntity();
+                    if(EntityManager != null) if(EntityManager != null) EntityManager.AddComponentData(wheelEntity, new WheelData
                     {
                         Radius = 0.5f,
                         IsGrounded = (i + j) % 3 != 0
                     });
-                    EntityManager.AddComponentData(wheelEntity, new LocalTransform
+                    if(EntityManager != null) if(EntityManager != null) EntityManager.AddComponentData(wheelEntity, new LocalTransform
                     {
                         Position = new float3(i * 2f + j, 0f, i * 1.5f),
-                        Rotation = quaternion.identity
+                        Rotation = if(quaternion != null) if(quaternion != null) quaternion.identity
                     });
                 }
                 
                 // Поверхности
                 if (i % 10 == 0)
                 {
-                    var surfaceEntity = EntityManager.CreateEntity();
-                    EntityManager.AddComponentData(surfaceEntity, new SurfaceData
+                    var surfaceEntity = if(EntityManager != null) if(EntityManager != null) EntityManager.CreateEntity();
+                    if(EntityManager != null) if(EntityManager != null) EntityManager.AddComponentData(surfaceEntity, new SurfaceData
                     {
                         SurfaceType = (SurfaceType)(i % 12),
                         FrictionCoefficient = 0.5f + (i % 50) * 0.01f
@@ -409,8 +409,8 @@ namespace MudLike.Tests.Performance
                 // HUD
                 if (i % 100 == 0)
                 {
-                    var hudEntity = EntityManager.CreateEntity();
-                    EntityManager.AddComponentData(hudEntity, new UIHUDData
+                    var hudEntity = if(EntityManager != null) if(EntityManager != null) EntityManager.CreateEntity();
+                    if(EntityManager != null) if(EntityManager != null) EntityManager.AddComponentData(hudEntity, new UIHUDData
                     {
                         Speed = i % 100,
                         RPM = 1000f + i
@@ -420,8 +420,8 @@ namespace MudLike.Tests.Performance
                 // Аудио
                 if (i % 50 == 0)
                 {
-                    var audioEntity = EntityManager.CreateEntity();
-                    EntityManager.AddComponentData(audioEntity, new EngineAudioData
+                    var audioEntity = if(EntityManager != null) if(EntityManager != null) EntityManager.CreateEntity();
+                    if(EntityManager != null) if(EntityManager != null) EntityManager.AddComponentData(audioEntity, new EngineAudioData
                     {
                         RPM = 1000f + i,
                         Volume = 0.5f
@@ -431,19 +431,18 @@ namespace MudLike.Tests.Performance
                 // LOD
                 if (i % 20 == 0)
                 {
-                    var lodEntity = EntityManager.CreateEntity();
-                    EntityManager.AddComponentData(lodEntity, new LODData
+                    var lodEntity = if(EntityManager != null) if(EntityManager != null) EntityManager.CreateEntity();
+                    if(EntityManager != null) if(EntityManager != null) EntityManager.AddComponentData(lodEntity, new LODData
                     {
                         CurrentLOD = i % 4,
                         DistanceToCamera = i * 0.1f
                     });
-                    EntityManager.AddComponentData(lodEntity, new LocalTransform
+                    if(EntityManager != null) if(EntityManager != null) EntityManager.AddComponentData(lodEntity, new LocalTransform
                     {
                         Position = new float3(i * 2f, 0f, i * 1.5f),
-                        Rotation = quaternion.identity
+                        Rotation = if(quaternion != null) if(quaternion != null) quaternion.identity
                     });
                 }
             }
         }
     }
-}

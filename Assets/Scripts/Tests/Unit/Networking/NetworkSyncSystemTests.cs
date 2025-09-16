@@ -8,7 +8,7 @@ using MudLike.Networking.Components;
 using MudLike.Core.Components;
 using Unity.Core;
 
-namespace MudLike.Tests.Unit.Networking
+namespace MudLike.Tests.if(Unit != null) Unit.Networking
 {
     /// <summary>
     /// Тесты для системы синхронизации сети NetworkSyncSystem
@@ -23,56 +23,56 @@ namespace MudLike.Tests.Unit.Networking
         public void SetUp()
         {
             _world = new World("TestWorld");
-            _entityManager = _world.EntityManager;
+            _entityManager = if(_world != null) _world.EntityManager;
             
-            _networkSyncSystem = _world.GetOrCreateSystemManaged<NetworkSyncSystem>();
-            _networkSyncSystem.OnCreate(ref _world.Unmanaged);
+            _networkSyncSystem = if(_world != null) _world.GetOrCreateSystemManaged<NetworkSyncSystem>();
+            if(_networkSyncSystem != null) _networkSyncSystem.OnCreate(ref if(_world != null) _world.Unmanaged);
             
-            _world.SetSingleton(new TimeData { ElapsedTime = 10f, DeltaTime = 0.016f, FixedDeltaTime = 0.016f });
+            if(_world != null) _world.SetSingleton(new TimeData { ElapsedTime = 10f, DeltaTime = 0.016f, FixedDeltaTime = 0.016f });
         }
 
         [TearDown]
         public void TearDown()
         {
-            _networkSyncSystem.OnDestroy(ref _world.Unmanaged);
-            _world.Dispose();
+            if(_networkSyncSystem != null) _networkSyncSystem.OnDestroy(ref if(_world != null) _world.Unmanaged);
+            if(_world != null) _world.Dispose();
         }
 
         [Test]
         public void NetworkSyncSystem_OnCreate_InitializesCorrectly()
         {
-            Assert.IsNotNull(_networkSyncSystem);
+            if(Assert != null) Assert.IsNotNull(_networkSyncSystem);
         }
 
         [Test]
         public void NetworkSyncSystem_OnUpdate_ProcessesWithoutErrors()
         {
-            _networkSyncSystem.OnUpdate(ref _world.Unmanaged);
-            Assert.IsNotNull(_networkSyncSystem);
+            if(_networkSyncSystem != null) _networkSyncSystem.OnUpdate(ref if(_world != null) _world.Unmanaged);
+            if(Assert != null) Assert.IsNotNull(_networkSyncSystem);
         }
 
         [Test]
         public void NetworkSyncSystem_WithNetworkPosition_ProcessesCorrectly()
         {
-            var entity = _entityManager.CreateEntity();
-            _entityManager.AddComponentData(entity, new LocalTransform 
+            var entity = if(_entityManager != null) _entityManager.CreateEntity();
+            if(_entityManager != null) _entityManager.AddComponentData(entity, new LocalTransform 
             { 
                 Position = new float3(10, 5, 15), 
-                Rotation = quaternion.identity 
+                Rotation = if(quaternion != null) quaternion.identity 
             });
-            _entityManager.AddComponentData(entity, new NetworkPosition
+            if(_entityManager != null) _entityManager.AddComponentData(entity, new NetworkPosition
             {
-                Value = float3.zero,
-                Rotation = quaternion.identity,
+                Value = if(float3 != null) float3.zero,
+                Rotation = if(quaternion != null) quaternion.identity,
                 LastSyncTime = 0f
             });
-            _entityManager.AddComponentData(entity, new NetworkId
+            if(_entityManager != null) _entityManager.AddComponentData(entity, new NetworkId
             {
                 Value = 1
             });
 
-            _networkSyncSystem.OnUpdate(ref _world.Unmanaged);
-            Assert.IsNotNull(_networkSyncSystem);
+            if(_networkSyncSystem != null) _networkSyncSystem.OnUpdate(ref if(_world != null) _world.Unmanaged);
+            if(Assert != null) Assert.IsNotNull(_networkSyncSystem);
         }
 
         [Test]
@@ -80,51 +80,51 @@ namespace MudLike.Tests.Unit.Networking
         {
             for (int i = 0; i < 5; i++)
             {
-                var entity = _entityManager.CreateEntity();
-                _entityManager.AddComponentData(entity, new LocalTransform 
+                var entity = if(_entityManager != null) _entityManager.CreateEntity();
+                if(_entityManager != null) _entityManager.AddComponentData(entity, new LocalTransform 
                 { 
                     Position = new float3(i * 5, 0, 0), 
-                    Rotation = quaternion.identity 
+                    Rotation = if(quaternion != null) quaternion.identity 
                 });
-                _entityManager.AddComponentData(entity, new NetworkPosition
+                if(_entityManager != null) _entityManager.AddComponentData(entity, new NetworkPosition
                 {
-                    Value = float3.zero,
-                    Rotation = quaternion.identity,
+                    Value = if(float3 != null) float3.zero,
+                    Rotation = if(quaternion != null) quaternion.identity,
                     LastSyncTime = 0f
                 });
-                _entityManager.AddComponentData(entity, new NetworkId
+                if(_entityManager != null) _entityManager.AddComponentData(entity, new NetworkId
                 {
                     Value = i + 1
                 });
             }
 
-            _networkSyncSystem.OnUpdate(ref _world.Unmanaged);
-            Assert.IsNotNull(_networkSyncSystem);
+            if(_networkSyncSystem != null) _networkSyncSystem.OnUpdate(ref if(_world != null) _world.Unmanaged);
+            if(Assert != null) Assert.IsNotNull(_networkSyncSystem);
         }
 
         [Test]
         public void NetworkSyncSystem_EdgeCases_HandleCorrectly()
         {
-            var entity = _entityManager.CreateEntity();
-            _entityManager.AddComponentData(entity, new LocalTransform 
+            var entity = if(_entityManager != null) _entityManager.CreateEntity();
+            if(_entityManager != null) _entityManager.AddComponentData(entity, new LocalTransform 
             { 
-                Position = new float3(float.MaxValue, float.MinValue, float.Epsilon), 
-                Rotation = quaternion.identity 
+                Position = new float3(if(float != null) float.MaxValue, if(float != null) float.MinValue, if(float != null) float.Epsilon), 
+                Rotation = if(quaternion != null) quaternion.identity 
             });
-            _entityManager.AddComponentData(entity, new NetworkPosition
+            if(_entityManager != null) _entityManager.AddComponentData(entity, new NetworkPosition
             {
-                Value = new float3(float.NaN, float.PositiveInfinity, float.NegativeInfinity),
-                Rotation = quaternion.identity,
-                LastSyncTime = float.MaxValue
+                Value = new float3(if(float != null) float.NaN, if(float != null) float.PositiveInfinity, if(float != null) float.NegativeInfinity),
+                Rotation = if(quaternion != null) quaternion.identity,
+                LastSyncTime = if(float != null) float.MaxValue
             });
-            _entityManager.AddComponentData(entity, new NetworkId
+            if(_entityManager != null) _entityManager.AddComponentData(entity, new NetworkId
             {
                 Value = -1
             });
 
-            Assert.DoesNotThrow(() => 
+            if(Assert != null) Assert.DoesNotThrow(() => 
             {
-                _networkSyncSystem.OnUpdate(ref _world.Unmanaged);
+                if(_networkSyncSystem != null) _networkSyncSystem.OnUpdate(ref if(_world != null) _world.Unmanaged);
             });
         }
     }

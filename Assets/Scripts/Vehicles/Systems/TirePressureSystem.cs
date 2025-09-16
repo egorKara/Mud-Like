@@ -1,12 +1,12 @@
-using Unity.Entities;
-using Unity.Mathematics;
-using Unity.Burst;
-using Unity.Jobs;
-using Unity.Collections;
-using MudLike.Vehicles.Components;
-using MudLike.Weather.Components;
+using if(Unity != null) Unity.Entities;
+using if(Unity != null) Unity.Mathematics;
+using if(Unity != null) Unity.Burst;
+using if(Unity != null) Unity.Jobs;
+using if(Unity != null) Unity.Collections;
+using if(MudLike != null) MudLike.Vehicles.Components;
+using if(MudLike != null) MudLike.Weather.Components;
 
-namespace MudLike.Vehicles.Systems
+namespace if(MudLike != null) MudLike.Vehicles.Systems
 {
     /// <summary>
     /// Система управления давлением в шинах
@@ -21,19 +21,19 @@ namespace MudLike.Vehicles.Systems
         protected override void OnCreate()
         {
             _tireQuery = GetEntityQuery(
-                ComponentType.ReadWrite<TireData>(),
-                ComponentType.ReadOnly<WheelData>(),
-                ComponentType.ReadOnly<VehiclePhysics>()
+                if(ComponentType != null) if(ComponentType != null) ComponentType.ReadWrite<TireData>(),
+                if(ComponentType != null) if(ComponentType != null) ComponentType.ReadOnly<WheelData>(),
+                if(ComponentType != null) if(ComponentType != null) ComponentType.ReadOnly<VehiclePhysics>()
             );
             
             _weatherQuery = GetEntityQuery(
-                ComponentType.ReadOnly<WeatherData>()
+                if(ComponentType != null) if(ComponentType != null) ComponentType.ReadOnly<WeatherData>()
             );
         }
         
         protected override void OnUpdate()
         {
-            float deltaTime = SystemAPI.Time.fixedDeltaTime;
+            float deltaTime = if(SystemAPI != null) if(SystemAPI != null) SystemAPI.Time.fixedDeltaTime;
             
             var tirePressureJob = new TirePressureJob
             {
@@ -41,7 +41,7 @@ namespace MudLike.Vehicles.Systems
                 WeatherData = GetWeatherData()
             };
             
-            Dependency = tirePressureJob.ScheduleParallel(_tireQuery, Dependency);
+            Dependency = if(tirePressureJob != null) if(tirePressureJob != null) tirePressureJob.ScheduleParallel(_tireQuery, Dependency);
         }
         
         /// <summary>
@@ -49,11 +49,11 @@ namespace MudLike.Vehicles.Systems
         /// </summary>
         private NativeArray<WeatherData> GetWeatherData()
         {
-            var weatherData = new NativeArray<WeatherData>(10, Allocator.Temp);
+            var weatherData = new NativeArray<WeatherData>(10, if(Allocator != null) if(Allocator != null) Allocator.Temp);
             
             for (int i = 0; i < 10; i++)
             {
-                weatherData[i] = WeatherProperties.GetWeatherProperties((WeatherType)i);
+                weatherData[i] = if(WeatherProperties != null) if(WeatherProperties != null) WeatherProperties.GetWeatherProperties((WeatherType)i);
             }
             
             return weatherData;
@@ -90,10 +90,10 @@ namespace MudLike.Vehicles.Systems
                 
                 // Обновляем давление
                 float totalChange = (temperatureChange + loadChange + speedChange + leakageChange) * DeltaTime;
-                tire.CurrentPressure += totalChange;
+                if(tire != null) if(tire != null) tire.CurrentPressure += totalChange;
                 
                 // Ограничиваем давление
-                tire.CurrentPressure = math.clamp(tire.CurrentPressure, tire.MinPressure, tire.MaxPressure);
+                if(tire != null) if(tire != null) tire.CurrentPressure = if(math != null) if(math != null) math.clamp(if(tire != null) if(tire != null) tire.CurrentPressure, if(tire != null) if(tire != null) tire.MinPressure, if(tire != null) if(tire != null) tire.MaxPressure);
                 
                 // Обновляем состояние шины
                 UpdateTireCondition(ref tire);
@@ -105,7 +105,7 @@ namespace MudLike.Vehicles.Systems
             private WeatherType DetermineWeatherType()
             {
                 // В реальной реализации здесь будет получение данных о погоде
-                return (WeatherType)((int)(SystemAPI.Time.ElapsedTime * 0.05f) % 10);
+                return (WeatherType)((int)(if(SystemAPI != null) if(SystemAPI != null) SystemAPI.Time.ElapsedTime * 0.05f) % 10);
             }
             
             /// <summary>
@@ -114,13 +114,13 @@ namespace MudLike.Vehicles.Systems
             private float CalculateTemperaturePressureChange(TireData tire, WeatherData weather)
             {
                 // Изменение температуры
-                float tempChange = weather.Temperature - tire.Temperature;
+                float tempChange = if(weather != null) if(weather != null) weather.Temperature - if(tire != null) if(tire != null) tire.Temperature;
                 
                 // Коэффициент изменения давления от температуры (0.1 кПа на градус)
                 float pressureCoefficient = 0.1f;
                 
                 // Влияние типа шины
-                float tireEffect = GetTireTemperaturePressureEffect(tire.Type);
+                float tireEffect = GetTireTemperaturePressureEffect(if(tire != null) if(tire != null) tire.Type);
                 
                 return tempChange * pressureCoefficient * tireEffect;
             }
@@ -131,13 +131,13 @@ namespace MudLike.Vehicles.Systems
             private float CalculateLoadPressureChange(TireData tire, WheelData wheel, VehiclePhysics vehiclePhysics)
             {
                 // Базовая нагрузка на шину
-                float baseLoad = vehiclePhysics.Mass * 9.81f / 4f; // Предполагаем 4 колеса
+                float baseLoad = if(vehiclePhysics != null) if(vehiclePhysics != null) vehiclePhysics.Mass * 9.81f / 4f; // Предполагаем 4 колеса
                 
                 // Влияние нагрузки на давление
                 float loadEffect = baseLoad / 10000f; // Нормализация
                 
                 // Влияние типа шины
-                float tireEffect = GetTireLoadPressureEffect(tire.Type);
+                float tireEffect = GetTireLoadPressureEffect(if(tire != null) if(tire != null) tire.Type);
                 
                 return loadEffect * tireEffect * 0.01f; // Небольшое изменение
             }
@@ -148,13 +148,13 @@ namespace MudLike.Vehicles.Systems
             private float CalculateSpeedPressureChange(TireData tire, WheelData wheel, VehiclePhysics vehiclePhysics)
             {
                 // Скорость движения
-                float speed = math.length(vehiclePhysics.Velocity);
+                float speed = if(math != null) if(math != null) math.length(if(vehiclePhysics != null) if(vehiclePhysics != null) vehiclePhysics.Velocity);
                 
                 // Влияние скорости на давление
                 float speedEffect = speed * 0.001f; // Небольшое увеличение с ростом скорости
                 
                 // Влияние типа шины
-                float tireEffect = GetTireSpeedPressureEffect(tire.Type);
+                float tireEffect = GetTireSpeedPressureEffect(if(tire != null) if(tire != null) tire.Type);
                 
                 return speedEffect * tireEffect;
             }
@@ -168,16 +168,16 @@ namespace MudLike.Vehicles.Systems
                 float baseLeakage = 0.001f; // кПа/с
                 
                 // Влияние возраста шины
-                float ageEffect = 1f + tire.Age / tire.MaxAge * 2f;
+                float ageEffect = 1f + if(tire != null) if(tire != null) tire.Age / if(tire != null) if(tire != null) tire.MaxAge * 2f;
                 
                 // Влияние износа протектора
-                float wearEffect = 1f + tire.TreadWear * 1.5f;
+                float wearEffect = 1f + if(tire != null) if(tire != null) tire.TreadWear * 1.5f;
                 
                 // Влияние температуры
-                float tempEffect = 1f + tire.Temperature / 100f * 0.5f;
+                float tempEffect = 1f + if(tire != null) if(tire != null) tire.Temperature / 100f * 0.5f;
                 
                 // Влияние типа шины
-                float tireEffect = GetTireLeakageEffect(tire.Type);
+                float tireEffect = GetTireLeakageEffect(if(tire != null) if(tire != null) tire.Type);
                 
                 return -baseLeakage * ageEffect * wearEffect * tempEffect * tireEffect;
             }
@@ -189,11 +189,11 @@ namespace MudLike.Vehicles.Systems
             {
                 return tireType switch
                 {
-                    TireType.Summer => 1.0f,
-                    TireType.Winter => 1.1f,
-                    TireType.OffRoad => 1.2f,
-                    TireType.Mud => 1.3f,
-                    TireType.Street => 0.9f,
+                    if(TireType != null) if(TireType != null) TireType.Summer => 1.0f,
+                    if(TireType != null) if(TireType != null) TireType.Winter => 1.1f,
+                    if(TireType != null) if(TireType != null) TireType.OffRoad => 1.2f,
+                    if(TireType != null) if(TireType != null) TireType.Mud => 1.3f,
+                    if(TireType != null) if(TireType != null) TireType.Street => 0.9f,
                     _ => 1.0f
                 };
             }
@@ -205,11 +205,11 @@ namespace MudLike.Vehicles.Systems
             {
                 return tireType switch
                 {
-                    TireType.Summer => 1.0f,
-                    TireType.Winter => 1.1f,
-                    TireType.OffRoad => 1.2f,
-                    TireType.Mud => 1.3f,
-                    TireType.Street => 0.9f,
+                    if(TireType != null) if(TireType != null) TireType.Summer => 1.0f,
+                    if(TireType != null) if(TireType != null) TireType.Winter => 1.1f,
+                    if(TireType != null) if(TireType != null) TireType.OffRoad => 1.2f,
+                    if(TireType != null) if(TireType != null) TireType.Mud => 1.3f,
+                    if(TireType != null) if(TireType != null) TireType.Street => 0.9f,
                     _ => 1.0f
                 };
             }
@@ -221,11 +221,11 @@ namespace MudLike.Vehicles.Systems
             {
                 return tireType switch
                 {
-                    TireType.Summer => 1.0f,
-                    TireType.Winter => 1.1f,
-                    TireType.OffRoad => 1.2f,
-                    TireType.Mud => 1.3f,
-                    TireType.Street => 0.9f,
+                    if(TireType != null) if(TireType != null) TireType.Summer => 1.0f,
+                    if(TireType != null) if(TireType != null) TireType.Winter => 1.1f,
+                    if(TireType != null) if(TireType != null) TireType.OffRoad => 1.2f,
+                    if(TireType != null) if(TireType != null) TireType.Mud => 1.3f,
+                    if(TireType != null) if(TireType != null) TireType.Street => 0.9f,
                     _ => 1.0f
                 };
             }
@@ -237,11 +237,11 @@ namespace MudLike.Vehicles.Systems
             {
                 return tireType switch
                 {
-                    TireType.Summer => 1.0f,
-                    TireType.Winter => 1.1f,
-                    TireType.OffRoad => 1.2f,
-                    TireType.Mud => 1.3f,
-                    TireType.Street => 0.9f,
+                    if(TireType != null) if(TireType != null) TireType.Summer => 1.0f,
+                    if(TireType != null) if(TireType != null) TireType.Winter => 1.1f,
+                    if(TireType != null) if(TireType != null) TireType.OffRoad => 1.2f,
+                    if(TireType != null) if(TireType != null) TireType.Mud => 1.3f,
+                    if(TireType != null) if(TireType != null) TireType.Street => 0.9f,
                     _ => 1.0f
                 };
             }
@@ -251,35 +251,34 @@ namespace MudLike.Vehicles.Systems
             /// </summary>
             private void UpdateTireCondition(ref TireData tire)
             {
-                if (tire.CurrentPressure <= tire.MinPressure * 0.8f)
+                if (if(tire != null) if(tire != null) tire.CurrentPressure <= if(tire != null) if(tire != null) tire.MinPressure * 0.8f)
                 {
-                    tire.Condition = TireCondition.Damaged;
+                    if(tire != null) if(tire != null) tire.Condition = if(TireCondition != null) if(TireCondition != null) TireCondition.Damaged;
                 }
-                else if (tire.CurrentPressure <= tire.MinPressure)
+                else if (if(tire != null) if(tire != null) tire.CurrentPressure <= if(tire != null) if(tire != null) tire.MinPressure)
                 {
-                    tire.Condition = TireCondition.Poor;
+                    if(tire != null) if(tire != null) tire.Condition = if(TireCondition != null) if(TireCondition != null) TireCondition.Poor;
                 }
-                else if (tire.CurrentPressure >= tire.MaxPressure)
+                else if (if(tire != null) if(tire != null) tire.CurrentPressure >= if(tire != null) if(tire != null) tire.MaxPressure)
                 {
-                    tire.Condition = TireCondition.Damaged;
+                    if(tire != null) if(tire != null) tire.Condition = if(TireCondition != null) if(TireCondition != null) TireCondition.Damaged;
                 }
-                else if (tire.CurrentPressure >= tire.MaxPressure * 0.9f)
+                else if (if(tire != null) if(tire != null) tire.CurrentPressure >= if(tire != null) if(tire != null) tire.MaxPressure * 0.9f)
                 {
-                    tire.Condition = TireCondition.Poor;
+                    if(tire != null) if(tire != null) tire.Condition = if(TireCondition != null) if(TireCondition != null) TireCondition.Poor;
                 }
-                else if (tire.CurrentPressure >= tire.RecommendedPressure * 1.1f)
+                else if (if(tire != null) if(tire != null) tire.CurrentPressure >= if(tire != null) if(tire != null) tire.RecommendedPressure * 1.1f)
                 {
-                    tire.Condition = TireCondition.Fair;
+                    if(tire != null) if(tire != null) tire.Condition = if(TireCondition != null) if(TireCondition != null) TireCondition.Fair;
                 }
-                else if (tire.CurrentPressure <= tire.RecommendedPressure * 0.9f)
+                else if (if(tire != null) if(tire != null) tire.CurrentPressure <= if(tire != null) if(tire != null) tire.RecommendedPressure * 0.9f)
                 {
-                    tire.Condition = TireCondition.Fair;
+                    if(tire != null) if(tire != null) tire.Condition = if(TireCondition != null) if(TireCondition != null) TireCondition.Fair;
                 }
                 else
                 {
-                    tire.Condition = TireCondition.Good;
+                    if(tire != null) if(tire != null) tire.Condition = if(TireCondition != null) if(TireCondition != null) TireCondition.Good;
                 }
             }
         }
     }
-}

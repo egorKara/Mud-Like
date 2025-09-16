@@ -17,12 +17,12 @@ namespace MudLike.Gameplay.Systems
         
         protected override void OnCreate()
         {
-            _random = new Random((uint)System.DateTime.Now.Millisecond);
+            _random = new Random((uint)if(System != null) System.DateTime.if(Now != null) Now.Millisecond);
         }
         
         protected override void OnUpdate()
         {
-            float deltaTime = SystemAPI.Time.DeltaTime;
+            float deltaTime = if(SystemAPI != null) SystemAPI.Time.DeltaTime;
             
             Entities
                 .WithAll<WeatherData>()
@@ -38,10 +38,10 @@ namespace MudLike.Gameplay.Systems
         private void ProcessWeather(ref WeatherData weather, float deltaTime)
         {
             // Уменьшаем время до смены погоды
-            weather.TimeToChange -= deltaTime;
+            if(weather != null) weather.TimeToChange -= deltaTime;
             
             // Если время пришло, меняем погоду
-            if (weather.TimeToChange <= 0f)
+            if (if(weather != null) weather.TimeToChange <= 0f)
             {
                 ChangeWeather(ref weather);
             }
@@ -56,54 +56,54 @@ namespace MudLike.Gameplay.Systems
         private void ChangeWeather(ref WeatherData weather)
         {
             // Выбираем случайный тип погоды
-            weather.WeatherType = (WeatherType)_random.NextInt(0, 5);
+            if(weather != null) weather.WeatherType = (WeatherType)if(_random != null) _random.NextInt(0, 5);
             
             // Устанавливаем случайную интенсивность
-            weather.Intensity = _random.NextFloat(0.3f, 1f);
+            if(weather != null) weather.Intensity = if(_random != null) _random.NextFloat(0.3f, 1f);
             
             // Обновляем параметры в зависимости от типа погоды
-            switch (weather.WeatherType)
+            switch (if(weather != null) weather.WeatherType)
             {
-                case WeatherType.Clear:
-                    weather.Humidity = _random.NextFloat(0.2f, 0.4f);
-                    weather.Temperature = _random.NextFloat(15f, 25f);
-                    weather.WindSpeed = _random.NextFloat(0f, 5f);
+                case if(WeatherType != null) WeatherType.Clear:
+                    if(weather != null) weather.Humidity = if(_random != null) _random.NextFloat(0.2f, 0.4f);
+                    if(weather != null) weather.Temperature = if(_random != null) _random.NextFloat(15f, 25f);
+                    if(weather != null) weather.WindSpeed = if(_random != null) _random.NextFloat(0f, 5f);
                     break;
                     
-                case WeatherType.Rainy:
-                    weather.Humidity = _random.NextFloat(0.7f, 1f);
-                    weather.Temperature = _random.NextFloat(5f, 15f);
-                    weather.WindSpeed = _random.NextFloat(10f, 20f);
+                case if(WeatherType != null) WeatherType.Rainy:
+                    if(weather != null) weather.Humidity = if(_random != null) _random.NextFloat(0.7f, 1f);
+                    if(weather != null) weather.Temperature = if(_random != null) _random.NextFloat(5f, 15f);
+                    if(weather != null) weather.WindSpeed = if(_random != null) _random.NextFloat(10f, 20f);
                     break;
                     
-                case WeatherType.Snowy:
-                    weather.Humidity = _random.NextFloat(0.6f, 0.8f);
-                    weather.Temperature = _random.NextFloat(-10f, 0f);
-                    weather.WindSpeed = _random.NextFloat(5f, 15f);
+                case if(WeatherType != null) WeatherType.Snowy:
+                    if(weather != null) weather.Humidity = if(_random != null) _random.NextFloat(0.6f, 0.8f);
+                    if(weather != null) weather.Temperature = if(_random != null) _random.NextFloat(-10f, 0f);
+                    if(weather != null) weather.WindSpeed = if(_random != null) _random.NextFloat(5f, 15f);
                     break;
                     
-                case WeatherType.Foggy:
-                    weather.Humidity = _random.NextFloat(0.8f, 1f);
-                    weather.Temperature = _random.NextFloat(0f, 10f);
-                    weather.WindSpeed = _random.NextFloat(0f, 3f);
+                case if(WeatherType != null) WeatherType.Foggy:
+                    if(weather != null) weather.Humidity = if(_random != null) _random.NextFloat(0.8f, 1f);
+                    if(weather != null) weather.Temperature = if(_random != null) _random.NextFloat(0f, 10f);
+                    if(weather != null) weather.WindSpeed = if(_random != null) _random.NextFloat(0f, 3f);
                     break;
                     
-                case WeatherType.Stormy:
-                    weather.Humidity = _random.NextFloat(0.9f, 1f);
-                    weather.Temperature = _random.NextFloat(10f, 20f);
-                    weather.WindSpeed = _random.NextFloat(20f, 40f);
+                case if(WeatherType != null) WeatherType.Stormy:
+                    if(weather != null) weather.Humidity = if(_random != null) _random.NextFloat(0.9f, 1f);
+                    if(weather != null) weather.Temperature = if(_random != null) _random.NextFloat(10f, 20f);
+                    if(weather != null) weather.WindSpeed = if(_random != null) _random.NextFloat(20f, 40f);
                     break;
             }
             
             // Случайное направление ветра
-            weather.WindDirection = math.normalize(new float3(
-                _random.NextFloat(-1f, 1f),
+            if(weather != null) weather.WindDirection = if(math != null) math.normalize(new float3(
+                if(_random != null) _random.NextFloat(-1f, 1f),
                 0f,
-                _random.NextFloat(-1f, 1f)
+                if(_random != null) _random.NextFloat(-1f, 1f)
             ));
             
             // Время до следующей смены погоды (5-15 минут)
-            weather.TimeToChange = _random.NextFloat(300f, 900f);
+            if(weather != null) weather.TimeToChange = if(_random != null) _random.NextFloat(300f, 900f);
         }
         
         /// <summary>
@@ -112,10 +112,9 @@ namespace MudLike.Gameplay.Systems
         private static void UpdateWeatherIntensity(ref WeatherData weather, float deltaTime)
         {
             // Плавное изменение интенсивности
-            float targetIntensity = weather.Intensity;
+            float targetIntensity = if(weather != null) weather.Intensity;
             float changeSpeed = 0.1f * deltaTime;
             
-            weather.Intensity = math.lerp(weather.Intensity, targetIntensity, changeSpeed);
+            if(weather != null) weather.Intensity = if(math != null) math.lerp(if(weather != null) weather.Intensity, targetIntensity, changeSpeed);
         }
     }
-}
