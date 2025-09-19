@@ -52,7 +52,7 @@ namespace MudLike.Core.Performance
         /// </summary>
         public PerformanceReport GetPerformanceReport()
         {
-            var report = new PerformanceReport();
+            var report = PerformanceReport.Create();
             
             foreach (var kvp in _systemExecutionTimes)
             {
@@ -132,9 +132,12 @@ namespace MudLike.Core.Performance
     {
         public List<SystemPerformanceData> SystemData;
         
-        public PerformanceReport()
+        public static PerformanceReport Create()
         {
-            SystemData = new List<SystemPerformanceData>();
+            return new PerformanceReport
+            {
+                SystemData = new List<SystemPerformanceData>()
+            };
         }
     }
     

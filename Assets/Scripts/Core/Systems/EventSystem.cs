@@ -14,14 +14,14 @@ namespace MudLike.Core.Systems
     public partial class EventSystem : SystemBase
     {
         private NativeQueue<EventData> _eventQueue;
-        private NativeHashMap<EventType, int> _eventCounters;
-        private NativeHashMap<EventType, float> _eventTimers;
+        private NativeHashMap<int, int> _eventCounters;
+        private NativeHashMap<int, float> _eventTimers;
         
         protected override void OnCreate()
         {
             _eventQueue = new NativeQueue<EventData>(Allocator.Persistent);
-            _eventCounters = new NativeHashMap<EventType, int>(100, Allocator.Persistent);
-            _eventTimers = new NativeHashMap<EventType, float>(100, Allocator.Persistent);
+            _eventCounters = new NativeHashMap<int, int>(100, Allocator.Persistent);
+            _eventTimers = new NativeHashMap<int, float>(100, Allocator.Persistent);
         }
         
         protected override void OnDestroy()
@@ -57,17 +57,17 @@ namespace MudLike.Core.Systems
         private void ProcessEvent(EventData eventData)
         {
             // Увеличиваем счетчик событий
-            if (_eventCounters.TryGetValue(eventData.Type, out int count))
+            if (_eventCounters.TryGetValue((int)eventData.Type, out int count))
             {
-                _eventCounters[eventData.Type] = count + 1;
+                _eventCounters[(int)eventData.Type] = count + 1;
             }
             else
             {
-                _eventCounters[eventData.Type] = 1;
+                _eventCounters[(int)eventData.Type] = 1;
             }
             
             // Обновляем таймер события
-            _eventTimers[eventData.Type] = eventData.Time;
+            _eventTimers[(int)eventData.Type] = eventData.Time;
             
             // Обрабатываем событие в зависимости от типа
             switch (eventData.Type)

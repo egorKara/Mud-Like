@@ -1,6 +1,6 @@
 {
-    "name": "MudLike.Terrain",
-    "rootNamespace": "MudLike.Terrain",
+    "name": "MudLike.Physics",
+    "rootNamespace": "MudLike.Physics",
     "references": [
         "Unity.Entities",
         "Unity.Collections",
@@ -8,8 +8,7 @@
         "Unity.Burst",
         "Unity.Mathematics",
         "Unity.Physics",
-        "MudLike.Core",
-        "MudLike.Physics"
+        "MudLike.Core"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

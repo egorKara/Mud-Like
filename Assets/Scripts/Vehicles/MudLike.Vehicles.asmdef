@@ -8,7 +8,8 @@
         "Unity.Burst",
         "Unity.Mathematics",
         "Unity.Physics",
-        "MudLike.Core"
+        "MudLike.Core",
+        "MudLike.Physics"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

@@ -3,9 +3,9 @@ using Unity.Mathematics;
 using Unity.Transforms;
 using Unity.Burst;
 using MudLike.Core.Components;
-using MudLike.Vehicles.Components;
+using MudLike.Physics.Components;
 
-namespace MudLike.Core.Systems
+namespace MudLike.Vehicles.Systems
 {
     /// <summary>
     /// Система управления транспортом игрока в ECS архитектуре

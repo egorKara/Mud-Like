@@ -52,7 +52,7 @@ namespace MudLike.Core.Components
     /// <summary>
     /// Типы событий
     /// </summary>
-    public enum EventType
+    public enum EventType : int
     {
         // События транспорта
         VehicleSpawned,

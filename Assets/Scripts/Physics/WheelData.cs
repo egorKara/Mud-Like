@@ -1,7 +1,7 @@
 using Unity.Entities;
 using Unity.Mathematics;
 
-namespace MudLike.Vehicles.Components
+namespace MudLike.Physics.Components
 {
     /// <summary>
     /// Компонент данных колеса транспортного средства
