@@ -71,7 +71,7 @@ namespace MudLike.Core.Performance
         protected override void OnUpdate()
         {
             // Очистка неиспользуемых объектов периодически
-            if (Time.frameCount % 1000 == 0)
+            if (SystemAPI.Time.ElapsedTime % 16.67f < SystemAPI.Time.DeltaTime)
             {
                 CleanupUnusedObjects();
             }

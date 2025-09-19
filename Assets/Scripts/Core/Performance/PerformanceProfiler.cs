@@ -101,10 +101,10 @@ namespace MudLike.Core.Performance
         private void RecordPerformanceMetrics()
         {
             // Запись времени кадра
-            _frameTimes[_currentIndex] = Time.deltaTime * 1000f; // в миллисекундах
+            _frameTimes[_currentIndex] = SystemAPI.Time.DeltaTime * 1000f; // в миллисекундах
             
             // Запись использования памяти
-            _memoryUsage[_currentIndex] = UnityEngine.Profiling.Profiler.GetTotalAllocatedMemory(false) / (1024f * 1024f); // в MB
+            _memoryUsage[_currentIndex] = UnityEngine.Profiling.Profiler.GetTotalAllocatedMemoryLong() / (1024f * 1024f); // в MB
             
             // Запись использования CPU (приблизительно)
             _cpuUsage[_currentIndex] = CalculateCpuUsage();

@@ -4,7 +4,6 @@ using Unity.Mathematics;
 using Unity.Transforms;
 using MudLike.Core.Components;
 using MudLike.Vehicles.Components;
-using MudLike.Networking.Components;
 
 namespace MudLike.Core.Systems
 {
@@ -66,16 +65,16 @@ namespace MudLike.Core.Systems
             // Добавляем основные компоненты
             EntityManager.AddComponent<PlayerTag>(playerEntity);
             EntityManager.AddComponent<PlayerInput>(playerEntity);
-            EntityManager.AddComponent<NetworkId>(playerEntity);
+            // EntityManager.AddComponent<NetworkId>(playerEntity); // Требует Networking модуль
             EntityManager.AddComponent<LocalTransform>(playerEntity);
             
-            // Настраиваем NetworkId
-            var networkId = new NetworkId
-            {
-                Value = _playerIdCounter++,
-                LastUpdateTime = 0f
-            };
-            EntityManager.SetComponentData(playerEntity, networkId);
+            // Настраиваем NetworkId (закомментировано - требует Networking модуль)
+            // var networkId = new NetworkId
+            // {
+            //     Value = _playerIdCounter++,
+            //     LastUpdateTime = 0f
+            // };
+            // EntityManager.SetComponentData(playerEntity, networkId);
             
             // Настраиваем начальную трансформацию
             var transform = new LocalTransform

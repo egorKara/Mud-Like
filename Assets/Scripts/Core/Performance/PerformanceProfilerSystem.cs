@@ -4,7 +4,6 @@ using Unity.Burst;
 using Unity.Collections;
 using Unity.Jobs;
 using System.Diagnostics;
-using MudLike.Terrain.Components;
 
 namespace MudLike.Core.Performance
 {
@@ -29,7 +28,7 @@ namespace MudLike.Core.Performance
             _fpsHistory = new NativeArray<float>(HISTORY_SIZE, Allocator.Persistent);
             _frameTimeHistory = new NativeArray<float>(HISTORY_SIZE, Allocator.Persistent);
             _historyIndex = 0;
-            _lastUpdateTime = SystemAPI.Time.time;
+            _lastUpdateTime = (float)SystemAPI.Time.ElapsedTime;
             
             // Инициализируем историю нулями
             for (int i = 0; i < HISTORY_SIZE; i++)
@@ -49,8 +48,8 @@ namespace MudLike.Core.Performance
         
         protected override void OnUpdate()
         {
-            float currentTime = SystemAPI.Time.time;
-            float deltaTime = SystemAPI.Time.deltaTime;
+            float currentTime = (float)SystemAPI.Time.ElapsedTime;
+            float deltaTime = SystemAPI.Time.DeltaTime;
             
             // Обновляем метрики каждый кадр
             UpdateFrameMetrics(deltaTime);
@@ -319,15 +318,15 @@ namespace MudLike.Core.Performance
         {
             _deformationStopwatch.Restart();
             
-            // Подсчитываем количество деформаций
+            // Подсчитываем количество деформаций (закомментировано - требует Terrain модуль)
             _deformationCount = 0;
             
-            Entities
-                .WithAll<DeformationData>()
-                .ForEach((in DeformationData deformation) =>
-                {
-                    _deformationCount++;
-                }).WithoutBurst().Run();
+            // Entities
+            //     .WithAll<DeformationData>()
+            //     .ForEach((in DeformationData deformation) =>
+            //     {
+            //         _deformationCount++;
+            //     }).WithoutBurst().Run();
             
             _deformationStopwatch.Stop();
             _deformationTime = (float)_deformationStopwatch.Elapsed.TotalMilliseconds;

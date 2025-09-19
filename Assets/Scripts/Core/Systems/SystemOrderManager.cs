@@ -2,9 +2,6 @@ using Unity.Entities;
 using Unity.Burst;
 using MudLike.Core.Components;
 using MudLike.Vehicles.Components;
-using MudLike.Input.Systems;
-using MudLike.Camera.Systems;
-using MudLike.Gameplay.Systems;
 
 namespace MudLike.Core.Systems
 {
@@ -52,11 +49,11 @@ namespace MudLike.Core.Systems
         {
             // Получаем ссылки на системы
             var bootstrapSystem = World.GetOrCreateSystemManaged<GameBootstrapSystem>();
-            var inputSystem = World.GetOrCreateSystemManaged<VehicleInputSystem>();
-            var spawningSystem = World.GetOrCreateSystemManaged<VehicleSpawningSystem>();
-            var controlSystem = World.GetOrCreateSystemManaged<VehicleControlSystem>();
-            var cameraSystem = World.GetOrCreateSystemManaged<VehicleCameraSystem>();
-            var sceneSystem = World.GetOrCreateSystemManaged<SceneManagementSystem>();
+            // var inputSystem = World.GetOrCreateSystemManaged<VehicleInputSystem>(); // Требует Input модуль
+            // var spawningSystem = World.GetOrCreateSystemManaged<VehicleSpawningSystem>(); // Требует Vehicles модуль
+            // var controlSystem = World.GetOrCreateSystemManaged<VehicleControlSystem>(); // Требует Vehicles модуль
+            // var cameraSystem = World.GetOrCreateSystemManaged<VehicleCameraSystem>(); // Требует Camera модуль
+            // var sceneSystem = World.GetOrCreateSystemManaged<SceneManagementSystem>(); // Требует Gameplay модуль
             
             // Настраиваем порядок выполнения в InitializationSystemGroup
             // 1. GameBootstrapSystem - создание игроков
