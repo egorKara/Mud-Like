@@ -243,7 +243,7 @@ namespace MudLike.Core.Optimization
         private void UpdatePerformanceMetrics()
         {
             _frameCount++;
-            _averageFrameTime = (_averageFrameTime * (_frameCount - 1) + Time.deltaTime * 1000f) / _frameCount;
+            _averageFrameTime = (_averageFrameTime * (_frameCount - 1) + SystemAPI.Time.DeltaTime * 1000f) / _frameCount;
             
             if (_frameCount >= 60)
             {
@@ -310,7 +310,7 @@ namespace MudLike.Core.Optimization
         /// <summary>
         /// Выполняет компоненты систем с зависимостями
         /// </summary>
-        private void ExecuteSystemComponentsWithDependencies()
+        protected void ExecuteSystemComponentsWithDependencies()
         {
             _mainDependency = default(JobHandle);
             

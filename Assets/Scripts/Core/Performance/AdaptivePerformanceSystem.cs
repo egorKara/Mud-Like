@@ -82,7 +82,7 @@ namespace MudLike.Core.Performance
         private void UpdatePerformanceMetrics()
         {
             // Запись текущего времени кадра
-            _currentFrameTime = Time.deltaTime * 1000f; // в миллисекундах
+            _currentFrameTime = SystemAPI.Time.DeltaTime * 1000f; // в миллисекундах
             _frameTimeHistory[_historyIndex] = _currentFrameTime;
             _historyIndex = (_historyIndex + 1) % HISTORY_SIZE;
             
@@ -197,7 +197,7 @@ namespace MudLike.Core.Performance
             QualitySettings.realtimeReflectionProbes = true;
             
             // Высокое качество физики
-            Time.fixedDeltaTime = 0.01f; // 100 Hz
+            // Time.fixedDeltaTime = 0.01f; // 100 Hz - только для чтения в ECS
             Physics.defaultSolverIterations = 8;
             Physics.defaultSolverVelocityIterations = 2;
             
@@ -229,7 +229,7 @@ namespace MudLike.Core.Performance
             QualitySettings.realtimeReflectionProbes = false;
             
             // Среднее качество физики
-            Time.fixedDeltaTime = 0.02f; // 50 Hz
+            // Time.fixedDeltaTime = 0.02f; // 50 Hz - только для чтения в ECS
             Physics.defaultSolverIterations = 6;
             Physics.defaultSolverVelocityIterations = 1;
             

@@ -98,15 +98,15 @@ namespace MudLike.Core.Optimization
         {
             var currentMetric = new OptimizationMetric
             {
-                FrameTime = Time.deltaTime * 1000f,
-                MemoryUsage = UnityEngine.Profiling.Profiler.GetTotalAllocatedMemory(false) / (1024f * 1024f),
+                FrameTime = SystemAPI.Time.DeltaTime * 1000f,
+                MemoryUsage = UnityEngine.Profiling.Profiler.GetTotalAllocatedMemoryLong() / (1024f * 1024f),
                 CpuUsage = CalculateCpuUsage(),
                 GpuUsage = CalculateGpuUsage(),
                 BurstCompilationRatio = CalculateBurstCompilationRatio(),
                 JobSystemUsageRatio = CalculateJobSystemUsageRatio(),
                 MemoryOptimizationRatio = CalculateMemoryOptimizationRatio(),
                 SIMDUsageRatio = CalculateSIMDUsageRatio(),
-                Timestamp = Time.time
+                Timestamp = (float)SystemAPI.Time.ElapsedTime
             };
             
             _metrics[_currentMetricIndex] = currentMetric;
@@ -137,7 +137,7 @@ namespace MudLike.Core.Optimization
         /// </summary>
         private void UpdateOptimizationMetrics()
         {
-            if (Time.frameCount % 100 == 0) // Каждые 100 кадров
+            if (SystemAPI.Time.ElapsedTime % 1.67f < SystemAPI.Time.DeltaTime) // Каждые ~100 кадров при 60 FPS
             {
                 LogOptimizationMetrics();
             }
@@ -150,7 +150,7 @@ namespace MudLike.Core.Optimization
         {
             // Простая оценка использования CPU
             float targetFrameTime = 16.67f; // 60 FPS
-            float currentFrameTime = Time.deltaTime * 1000f;
+            float currentFrameTime = SystemAPI.Time.DeltaTime * 1000f;
             return (currentFrameTime / targetFrameTime) * 100f;
         }
         

@@ -98,7 +98,7 @@ namespace MudLike.Core.Performance
         protected override void OnUpdate()
         {
             // Обновляем профилирование каждые 60 кадров
-            if (Time.frameCount % 60 == 0)
+            if (SystemAPI.Time.ElapsedTime % 1.0f < SystemAPI.Time.DeltaTime)
             {
                 LogPerformanceSummary();
             }
