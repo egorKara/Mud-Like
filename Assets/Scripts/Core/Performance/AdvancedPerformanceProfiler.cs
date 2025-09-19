@@ -93,7 +93,7 @@ namespace MudLike.Core.Performance
             metrics.SystemCount = GetSystemCount();
             
             // Использование памяти
-            metrics.MemoryUsage = UnityEngine.Profiling.Profiler.GetTotalAllocatedMemory(false);
+            metrics.MemoryUsage = UnityEngine.Profiling.Profiler.GetTotalAllocatedMemoryLong();
             
             // CPU и GPU нагрузка
             metrics.CPUUsage = GetCPUUsage();

@@ -7,7 +7,7 @@ using Unity.Transforms;
 using MudLike.Vehicles.Components;
 using MudLike.Core.Components;
 
-namespace MudLike.Core.Performance
+namespace MudLike.Vehicles.Systems
 {
     /// <summary>
     /// Оптимизированная система Job для высокопроизводительных вычислений

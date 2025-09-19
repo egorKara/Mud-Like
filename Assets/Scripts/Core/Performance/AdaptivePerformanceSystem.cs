@@ -261,7 +261,7 @@ namespace MudLike.Core.Performance
             QualitySettings.realtimeReflectionProbes = false;
             
             // Низкое качество физики
-            Time.fixedDeltaTime = 0.033f; // 30 Hz
+            // Time.fixedDeltaTime = 0.033f; // 30 Hz - только для чтения в ECS
             Physics.defaultSolverIterations = 4;
             Physics.defaultSolverVelocityIterations = 1;
             

@@ -7,8 +7,7 @@
         "Unity.Jobs",
         "Unity.Burst",
         "Unity.Mathematics",
-        "Unity.Transforms",
-        "MudLike.Vehicles"
+        "Unity.Transforms"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

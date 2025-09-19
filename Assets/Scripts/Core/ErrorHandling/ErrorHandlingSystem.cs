@@ -64,7 +64,7 @@ namespace MudLike.Core.ErrorHandling
             {
                 ErrorType = errorEvent.ErrorType,
                 Message = errorEvent.Message,
-                Timestamp = SystemAPI.Time.time,
+                Timestamp = (float)SystemAPI.Time.ElapsedTime,
                 SystemName = errorEvent.SystemName,
                 Severity = errorEvent.Severity
             };
@@ -77,16 +77,16 @@ namespace MudLike.Core.ErrorHandling
             switch (errorEvent.Severity)
             {
                 case ErrorSeverity.Info:
-                    Log.Info($"[{errorEvent.SystemName}] {errorEvent.Message}");
+                    UnityEngine.Debug.Log($"[{errorEvent.SystemName}] {errorEvent.Message}");
                     break;
                 case ErrorSeverity.Warning:
-                    Log.Warning($"[{errorEvent.SystemName}] {errorEvent.Message}");
+                    UnityEngine.Debug.LogWarning($"[{errorEvent.SystemName}] {errorEvent.Message}");
                     break;
                 case ErrorSeverity.Error:
-                    Log.Error($"[{errorEvent.SystemName}] {errorEvent.Message}");
+                    UnityEngine.Debug.LogError($"[{errorEvent.SystemName}] {errorEvent.Message}");
                     break;
                 case ErrorSeverity.Critical:
-                    Log.Fatal($"[{errorEvent.SystemName}] {errorEvent.Message}");
+                    UnityEngine.Debug.LogError($"[{errorEvent.SystemName}] {errorEvent.Message}");
                     break;
             }
         }
@@ -97,7 +97,7 @@ namespace MudLike.Core.ErrorHandling
         private void ValidateSystemHealth()
         {
             // Проверяем количество ошибок за последнюю минуту
-            float currentTime = SystemAPI.Time.time;
+            float currentTime = (float)SystemAPI.Time.ElapsedTime;
             int recentErrors = 0;
             
             for (int i = 0; i < _errorHistory.Count; i++)
@@ -114,7 +114,7 @@ namespace MudLike.Core.ErrorHandling
             // Если слишком много ошибок - предупреждение
             if (recentErrors > 100)
             {
-                Log.Warning($"[ErrorHandling] High error rate detected: {recentErrors} errors in the last minute");
+                UnityEngine.Debug.LogWarning($"[ErrorHandling] High error rate detected: {recentErrors} errors in the last minute");
             }
         }
         
@@ -129,7 +129,7 @@ namespace MudLike.Core.ErrorHandling
                 Message = message,
                 SystemName = systemName,
                 Severity = severity,
-                Timestamp = SystemAPI.Time.time
+                Timestamp = (float)SystemAPI.Time.ElapsedTime
             };
             
             _errorQueue.Enqueue(errorEvent);
@@ -240,7 +240,7 @@ namespace MudLike.Core.ErrorHandling
             }
             
             // Проверяем временную метку
-            float currentTime = SystemAPI.Time.time;
+            float currentTime = (float)SystemAPI.Time.ElapsedTime;
             if (math.abs(timestamp - currentTime) > 5f) // 5 секунд разницы
             {
                 LogError(ErrorType.NetworkError, $"Timestamp too old: {timestamp:F1} vs {currentTime:F1}", "NetworkValidation", ErrorSeverity.Warning);
@@ -263,7 +263,7 @@ namespace MudLike.Core.ErrorHandling
         public ErrorStatistics GetErrorStatistics()
         {
             var statistics = new ErrorStatistics();
-            float currentTime = SystemAPI.Time.time;
+            float currentTime = (float)SystemAPI.Time.ElapsedTime;
             
             for (int i = 0; i < _errorHistory.Count; i++)
             {
