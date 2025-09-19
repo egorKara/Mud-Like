@@ -5,6 +5,7 @@ using System.Text.RegularExpressions;
 using Unity.Entities;
 using Unity.Burst;
 using Unity.Jobs;
+using UnityEngine;
 #if UNITY_EDITOR
 using UnityEditor;
 #endif

@@ -82,23 +82,23 @@ namespace MudLike.Core.AI
             try
             {
                 var issues = ScanForIssues();
-                int fixed = 0;
+                int fixedCount = 0;
                 
                 foreach (var issue in issues)
                 {
                     EditorUtility.DisplayProgressBar("AI Agent", 
                         $"Исправление: {issue.Type}...", 
-                        fixed / (float)issues.Count);
+                        fixedCount / (float)issues.Count);
                     
                     if (FixIssue(issue))
                     {
-                        fixed++;
+                        fixedCount++;
                     }
                 }
                 
                 EditorUtility.ClearProgressBar();
                 EditorUtility.DisplayDialog("AI Agent", 
-                    $"🔧 Исправлено {fixed} из {issues.Count} проблем!", 
+                    $"🔧 Исправлено {fixedCount} из {issues.Count} проблем!", 
                     "OK");
                 
                 AssetDatabase.Refresh();

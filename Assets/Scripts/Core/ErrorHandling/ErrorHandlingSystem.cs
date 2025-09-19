@@ -2,7 +2,7 @@ using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Burst;
 using Unity.Collections;
-using Unity.Logging;
+using UnityEngine;
 using System;
 
 namespace MudLike.Core.ErrorHandling

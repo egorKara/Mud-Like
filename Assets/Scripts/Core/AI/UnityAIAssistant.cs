@@ -19,6 +19,7 @@ namespace MudLike.Core.AI
     /// </summary>
     public static class UnityAIAssistant
     {
+        #region Editor Methods
         #if UNITY_EDITOR
         
         /// <summary>
@@ -34,21 +35,21 @@ namespace MudLike.Core.AI
                 var issues = FindDeterminismIssues();
                 EditorUtility.DisplayProgressBar("AI Assistant", $"Найдено {issues.Count} проблем. Исправление...", 0.5f);
                 
-                int fixed = 0;
+                int fixedCount = 0;
                 foreach (var issue in issues)
                 {
                     if (FixDeterminismIssue(issue))
                     {
-                        fixed++;
+                        fixedCount++;
                         EditorUtility.DisplayProgressBar("AI Assistant", 
-                            $"Исправлено {fixed}/{issues.Count} проблем...", 
-                            0.5f + (fixed / (float)issues.Count) * 0.5f);
+                            $"Исправлено {fixedCount}/{issues.Count} проблем...", 
+                            0.5f + (fixedCount / (float)issues.Count) * 0.5f);
                     }
                 }
                 
                 EditorUtility.ClearProgressBar();
                 EditorUtility.DisplayDialog("AI Assistant", 
-                    $"✅ Успешно исправлено {fixed} из {issues.Count} проблем детерминизма!", 
+                    $"✅ Успешно исправлено {fixedCount} из {issues.Count} проблем детерминизма!", 
                     "OK");
                 
                 // Обновляем проект
@@ -179,6 +180,7 @@ namespace MudLike.Core.AI
             }
         }
         
+        #endif
         #endregion
         
         #region Private Methods

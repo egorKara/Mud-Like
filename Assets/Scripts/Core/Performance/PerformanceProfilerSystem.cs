@@ -4,6 +4,7 @@ using Unity.Burst;
 using Unity.Collections;
 using Unity.Jobs;
 using System.Diagnostics;
+using MudLike.Terrain.Components;
 
 namespace MudLike.Core.Performance
 {

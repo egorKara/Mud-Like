@@ -1,0 +1,22 @@
+{
+    "name": "MudLike.Networking",
+    "rootNamespace": "MudLike.Networking",
+    "references": [
+        "Unity.Entities",
+        "Unity.Collections",
+        "Unity.Jobs",
+        "Unity.Burst",
+        "Unity.Mathematics",
+        "Unity.NetCode",
+        "MudLike.Core"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": true,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

@@ -3,6 +3,7 @@ using Unity.Mathematics;
 using Unity.Transforms;
 using Unity.Burst;
 using MudLike.Core.Components;
+using MudLike.Vehicles.Components;
 
 namespace MudLike.Core.Systems
 {

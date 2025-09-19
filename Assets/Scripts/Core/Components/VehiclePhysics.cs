@@ -77,7 +77,6 @@ namespace MudLike.Vehicles.Components
         
         // Параметры взаимодействия с террейном
         public float EffectiveTraction;   // Эффективное сцепление (0-1)
-        public float RollingResistance;   // Сопротивление качению
         public float MudDrag;             // Сопротивление грязи
         public float BaseMaxSpeed;        // Базовая максимальная скорость
         public float BaseAcceleration;    // Базовое ускорение
@@ -115,7 +114,6 @@ namespace MudLike.Vehicles.Components
             UpdateFrequency = 60f,           // 60 Гц
             LastUpdateTime = 0f,             // Начальное время
             EffectiveTraction = 1f,          // Базовое сцепление
-            RollingResistance = 0.02f,       // Базовое сопротивление качению
             MudDrag = 0f,                    // Без сопротивления грязи
             BaseMaxSpeed = 50f,              // Базовая максимальная скорость
             BaseAcceleration = 8f            // Базовое ускорение
