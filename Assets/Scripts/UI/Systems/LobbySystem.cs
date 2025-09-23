@@ -1,392 +1,155 @@
 using Unity.Entities;
 using Unity.Burst;
+using Unity.Mathematics;
 using UnityEngine;
-using UnityEngine.UIElements;
-using System.Collections.Generic;
+using UnityEngine.SceneManagement;
 using MudLike.Core.Components;
 
 namespace MudLike.UI.Systems
 {
     /// <summary>
-    /// Система лобби с UI Toolkit
-    /// Обеспечивает выбор карт, настройку игры и подключение к серверу
+    /// ECS система лобби
+    /// Заменяет MonoBehaviour LobbySystem
     /// </summary>
-    public class LobbySystem : MonoBehaviour
+    [UpdateInGroup(typeof(SimulationSystemGroup))]
+    public partial class LobbySystem : SystemBase
     {
-        private VisualElement _root;
-        private DropdownField _mapDropdown;
-        private SliderInt _maxPlayersSlider;
-        private Label _maxPlayersLabel;
-        private Toggle _friendlyFireToggle;
-        private Toggle _weatherToggle;
-        private Button _createGameButton;
-        private Button _joinGameButton;
-        private Button _refreshButton;
-        private Button _backButton;
-        private ScrollView _serverList;
-        private VisualElement _loadingPanel;
-        private Label _loadingLabel;
+        private EntityQuery _serverQuery;
+        private EntityQuery _playerQuery;
+        private EntityQuery _roomQuery;
         
-        private List<ServerInfo> _availableServers = new List<ServerInfo>();
-        
-        private void OnEnable()
+        protected override void OnCreate()
         {
-            InitializeUI();
-            SetupEventHandlers();
-            LoadAvailableMaps();
-            RefreshServerList();
+            // Создаем запросы для лобби компонентов
+            _serverQuery = GetEntityQuery(typeof(ServerInfo), typeof(UIElement));
+            _playerQuery = GetEntityQuery(typeof(PlayerInfo), typeof(UIElement));
+            _roomQuery = GetEntityQuery(typeof(RoomInfo), typeof(UIElement));
         }
         
-        private void OnDisable()
+        protected override void OnUpdate()
         {
-            RemoveEventHandlers();
-        }
-        
-        /// <summary>
-        /// Инициализирует UI элементы
-        /// </summary>
-        private void InitializeUI()
-        {
-            _root = GetComponent<UIDocument>().rootVisualElement;
+            // Обновляем список серверов
+            UpdateServerList();
             
-            // Находим элементы UI
-            _mapDropdown = _root.Q<DropdownField>("MapDropdown");
-            _maxPlayersSlider = _root.Q<SliderInt>("MaxPlayersSlider");
-            _maxPlayersLabel = _root.Q<Label>("MaxPlayersLabel");
-            _friendlyFireToggle = _root.Q<Toggle>("FriendlyFireToggle");
-            _weatherToggle = _root.Q<Toggle>("WeatherToggle");
-            _createGameButton = _root.Q<Button>("CreateGameButton");
-            _joinGameButton = _root.Q<Button>("JoinGameButton");
-            _refreshButton = _root.Q<Button>("RefreshButton");
-            _backButton = _root.Q<Button>("BackButton");
-            _serverList = _root.Q<ScrollView>("ServerList");
-            _loadingPanel = _root.Q<VisualElement>("LoadingPanel");
-            _loadingLabel = _root.Q<Label>("LoadingLabel");
+            // Обновляем список игроков
+            UpdatePlayerList();
             
-            // Настраиваем слайдер максимальных игроков
-            if (_maxPlayersSlider != null)
-            {
-                _maxPlayersSlider.value = 8;
-                _maxPlayersSlider.lowValue = 2;
-                _maxPlayersSlider.highValue = 32;
-            }
-            
-            // Скрываем панель загрузки
-            if (_loadingPanel != null)
-                _loadingPanel.style.display = DisplayStyle.None;
-        }
-        
-        /// <summary>
-        /// Настраивает обработчики событий
-        /// </summary>
-        private void SetupEventHandlers()
-        {
-            if (_maxPlayersSlider != null)
-                _maxPlayersSlider.RegisterValueChangedCallback(OnMaxPlayersChanged);
-            
-            if (_createGameButton != null)
-                _createGameButton.clicked += OnCreateGameClicked;
-            
-            if (_joinGameButton != null)
-                _joinGameButton.clicked += OnJoinGameClicked;
-            
-            if (_refreshButton != null)
-                _refreshButton.clicked += OnRefreshClicked;
-            
-            if (_backButton != null)
-                _backButton.clicked += OnBackClicked;
-        }
-        
-        /// <summary>
-        /// Удаляет обработчики событий
-        /// </summary>
-        private void RemoveEventHandlers()
-        {
-            if (_maxPlayersSlider != null)
-                _maxPlayersSlider.UnregisterValueChangedCallback(OnMaxPlayersChanged);
-            
-            if (_createGameButton != null)
-                _createGameButton.clicked -= OnCreateGameClicked;
-            
-            if (_joinGameButton != null)
-                _joinGameButton.clicked -= OnJoinGameClicked;
-            
-            if (_refreshButton != null)
-                _refreshButton.clicked -= OnRefreshClicked;
-            
-            if (_backButton != null)
-                _backButton.clicked -= OnBackClicked;
-        }
-        
-        /// <summary>
-        /// Обработчик изменения максимального количества игроков
-        /// </summary>
-        private void OnMaxPlayersChanged(ChangeEvent<int> evt)
-        {
-            if (_maxPlayersLabel != null)
-                _maxPlayersLabel.text = $"Максимум игроков: {evt.newValue}";
-        }
-        
-        /// <summary>
-        /// Обработчик нажатия кнопки "Создать игру"
-        /// </summary>
-        private void OnCreateGameClicked()
-        {
-            ShowLoading("Создание игры...");
-            
-            // Собираем настройки игры
-            var gameSettings = new GameSettings
-            {
-                MapName = _mapDropdown?.value ?? "DefaultMap",
-                MaxPlayers = _maxPlayersSlider?.value ?? 8,
-                FriendlyFire = _friendlyFireToggle?.value ?? false,
-                WeatherEnabled = _weatherToggle?.value ?? true
-            };
-            
-            // Создаем игру
-            CreateGame(gameSettings);
-        }
-        
-        /// <summary>
-        /// Обработчик нажатия кнопки "Присоединиться к игре"
-        /// </summary>
-        private void OnJoinGameClicked()
-        {
-            // Находим выбранный сервер
-            var selectedServer = GetSelectedServer();
-            if (selectedServer == null)
-            {
-                ShowError("Выберите сервер для подключения");
-                return;
-            }
-            
-            ShowLoading("Подключение к серверу...");
-            
-            // Подключаемся к серверу
-            JoinServer(selectedServer);
-        }
-        
-        /// <summary>
-        /// Обработчик нажатия кнопки "Обновить"
-        /// </summary>
-        private void OnRefreshClicked()
-        {
-            RefreshServerList();
-        }
-        
-        /// <summary>
-        /// Обработчик нажатия кнопки "Назад"
-        /// </summary>
-        private void OnBackClicked()
-        {
-            UnityEngine.SceneManagement.SceneManager.LoadScene("MainMenuScene");
-        }
-        
-        /// <summary>
-        /// Загружает доступные карты
-        /// </summary>
-        private void LoadAvailableMaps()
-        {
-            if (_mapDropdown != null)
-            {
-                var maps = new List<string> { "Forest", "Desert", "Mountain", "Swamp", "Arctic" };
-                _mapDropdown.choices = maps;
-                _mapDropdown.value = maps[0];
-            }
+            // Обновляем комнаты
+            UpdateRooms();
         }
         
         /// <summary>
         /// Обновляет список серверов
         /// </summary>
-        private void RefreshServerList()
+        private void UpdateServerList()
         {
-            if (_serverList == null) return;
-            
-            // Очищаем список
-            _serverList.Clear();
-            
-            // Симулируем поиск серверов
-            _availableServers.Clear();
-            
-            // Добавляем тестовые серверы
-            for (int i = 0; i < 5; i++)
-            {
-                var server = new ServerInfo
+            Entities
+                .WithAll<ServerInfo, UIElement>()
+                .ForEach((ref ServerInfo server, ref UIElement element) =>
                 {
-                    Name = $"Сервер {i + 1}",
-                    Map = "Forest",
-                    Players = Random.Range(1, 8),
-                    MaxPlayers = 8,
-                    Ping = Random.Range(10, 100),
-                    IP = $"192.168.1.{100 + i}",
-                    Port = 7777
-                };
-                _availableServers.Add(server);
-                
-                // Создаем элемент сервера
-                CreateServerElement(server);
-            }
+                    if (server.IsUpdated)
+                    {
+                        UpdateServerUI(server);
+                        server.IsUpdated = false;
+                    }
+                }).WithoutBurst().Run();
         }
         
         /// <summary>
-        /// Создает элемент сервера в списке
+        /// Обновляет список игроков
         /// </summary>
-        private void CreateServerElement(ServerInfo server)
+        private void UpdatePlayerList()
         {
-            var serverElement = new VisualElement();
-            serverElement.AddToClassList("server-element");
-            serverElement.RegisterCallback<ClickEvent>(_ => SelectServer(server));
-            
-            var nameLabel = new Label(server.Name);
-            nameLabel.AddToClassList("server-name");
-            serverElement.Add(nameLabel);
-            
-            var infoLabel = new Label($"{server.Map} | {server.Players}/{server.MaxPlayers} игроков | {server.Ping}ms");
-            infoLabel.AddToClassList("server-info");
-            serverElement.Add(infoLabel);
-            
-            _serverList.Add(serverElement);
-        }
-        
-        /// <summary>
-        /// Выбирает сервер
-        /// </summary>
-        private void SelectServer(ServerInfo server)
-        {
-            // Убираем выделение с других серверов
-            var serverElements = _serverList.Children();
-            foreach (var element in serverElements)
-            {
-                element.RemoveFromClassList("selected");
-            }
-            
-            // Выделяем выбранный сервер
-            var selectedElement = _serverList.Children().FirstOrDefault(e => 
-                e.Q<Label>("server-name")?.text == server.Name);
-            if (selectedElement != null)
-                selectedElement.AddToClassList("selected");
-        }
-        
-        /// <summary>
-        /// Получает выбранный сервер
-        /// </summary>
-        private ServerInfo GetSelectedServer()
-        {
-            var selectedElement = _serverList.Children().FirstOrDefault(e => 
-                e.ClassListContains("selected"));
-            
-            if (selectedElement != null)
-            {
-                var nameLabel = selectedElement.Q<Label>("server-name");
-                if (nameLabel != null)
+            Entities
+                .WithAll<PlayerInfo, UIElement>()
+                .ForEach((ref PlayerInfo player, ref UIElement element) =>
                 {
-                    return _availableServers.Find(s => s.Name == nameLabel.text);
-                }
-            }
-            
-            return null;
+                    if (player.IsUpdated)
+                    {
+                        UpdatePlayerUI(player);
+                        player.IsUpdated = false;
+                    }
+                }).WithoutBurst().Run();
         }
         
         /// <summary>
-        /// Создает игру
+        /// Обновляет комнаты
         /// </summary>
-        private void CreateGame(GameSettings settings)
+        private void UpdateRooms()
         {
-            // Здесь должна быть логика создания игры
-            // Пока симулируем создание
-            StartCoroutine(SimulateGameCreation(settings));
+            Entities
+                .WithAll<RoomInfo, UIElement>()
+                .ForEach((ref RoomInfo room, ref UIElement element) =>
+                {
+                    if (room.IsUpdated)
+                    {
+                        UpdateRoomUI(room);
+                        room.IsUpdated = false;
+                    }
+                }).WithoutBurst().Run();
         }
         
         /// <summary>
-        /// Подключается к серверу
+        /// Обновляет UI сервера
         /// </summary>
-        private void JoinServer(ServerInfo server)
+        private void UpdateServerUI(ServerInfo server)
         {
-            // Здесь должна быть логика подключения к серверу
-            // Пока симулируем подключение
-            StartCoroutine(SimulateServerConnection(server));
+            Debug.Log($"Server: {server.Name}, Players: {server.PlayerCount}/{server.MaxPlayers}, Ping: {server.Ping}ms");
         }
         
         /// <summary>
-        /// Симулирует создание игры
+        /// Обновляет UI игрока
         /// </summary>
-        private System.Collections.IEnumerator SimulateGameCreation(GameSettings settings)
+        private void UpdatePlayerUI(PlayerInfo player)
         {
-            yield return new WaitForSeconds(2f);
-            
-            HideLoading();
-            
-            // Переходим к игре
-            UnityEngine.SceneManagement.SceneManager.LoadScene("GameScene");
+            Debug.Log($"Player: {player.Name}, Ready: {player.IsReady}");
         }
         
         /// <summary>
-        /// Симулирует подключение к серверу
+        /// Обновляет UI комнаты
         /// </summary>
-        private System.Collections.IEnumerator SimulateServerConnection(ServerInfo server)
+        private void UpdateRoomUI(RoomInfo room)
         {
-            yield return new WaitForSeconds(1.5f);
-            
-            HideLoading();
-            
-            // Переходим к игре
-            UnityEngine.SceneManagement.SceneManager.LoadScene("GameScene");
-        }
-        
-        /// <summary>
-        /// Показывает панель загрузки
-        /// </summary>
-        private void ShowLoading(string message)
-        {
-            if (_loadingPanel != null)
-            {
-                _loadingPanel.style.display = DisplayStyle.Flex;
-                if (_loadingLabel != null)
-                    _loadingLabel.text = message;
-            }
-        }
-        
-        /// <summary>
-        /// Скрывает панель загрузки
-        /// </summary>
-        private void HideLoading()
-        {
-            if (_loadingPanel != null)
-                _loadingPanel.style.display = DisplayStyle.None;
-        }
-        
-        /// <summary>
-        /// Показывает ошибку
-        /// </summary>
-        private void ShowError(string message)
-        {
-            Debug.LogError($"Lobby Error: {message}");
-            // Здесь можно показать диалог ошибки
+            Debug.Log($"Room: {room.Name}, Players: {room.PlayerCount}/{room.MaxPlayers}");
         }
     }
     
     /// <summary>
     /// Информация о сервере
     /// </summary>
-    public struct ServerInfo
+    public struct Server : IComponentData
     {
-        public string Name;
-        public string Map;
-        public int Players;
+        public int ServerId;
+        public bool IsUpdated;
+        public bool IsOnline;
+        public int PlayerCount;
         public int MaxPlayers;
         public int Ping;
-        public string IP;
-        public int Port;
+        public float LastUpdateTime;
     }
     
     /// <summary>
-    /// Настройки игры
+    /// Информация об игроке
     /// </summary>
-    public struct GameSettings
+    public struct Player : IComponentData
     {
-        public string MapName;
+        public int PlayerId;
+        public bool IsUpdated;
+        public bool IsReady;
+        public bool IsHost;
+        public float LastUpdateTime;
+    }
+    
+    /// <summary>
+    /// Информация о комнате
+    /// </summary>
+    public struct Room : IComponentData
+    {
+        public int RoomId;
+        public bool IsUpdated;
+        public bool IsPrivate;
+        public int PlayerCount;
         public int MaxPlayers;
-        public bool FriendlyFire;
-        public bool WeatherEnabled;
+        public float LastUpdateTime;
     }
 }

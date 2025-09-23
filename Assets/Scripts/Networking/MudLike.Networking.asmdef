@@ -8,6 +8,8 @@
         "Unity.Burst",
         "Unity.Mathematics",
         "Unity.NetCode",
+        "Unity.Multiplayer",
+        "Unity.Transport",
         "MudLike.Core"
     ],
     "includePlatforms": [],
@@ -16,7 +18,20 @@
     "overrideReferences": false,
     "precompiledReferences": [],
     "autoReferenced": true,
-    "defineConstraints": [],
-    "versionDefines": [],
+    "defineConstraints": [
+        "UNITY_6_0_OR_NEWER"
+    ],
+    "versionDefines": [
+        {
+            "name": "com.unity.netcode.gameobjects",
+            "expression": "1.0.0",
+            "define": "UNITY_NETCODE_GAMEOBJECTS"
+        },
+        {
+            "name": "com.unity.netcode.entities",
+            "expression": "1.0.0",
+            "define": "UNITY_NETCODE_ENTITIES"
+        }
+    ],
     "noEngineReferences": false
 }

@@ -6,7 +6,7 @@ namespace MudLike.Vehicles.Components
     /// <summary>
     /// Компонент данных LOD (Level of Detail) для оптимизации рендеринга и физики
     /// </summary>
-    public struct LODData : IComponentData
+    public struct LOD : IComponentData
     {
         // Основные параметры LOD
         public int CurrentLOD;            // Текущий уровень детализации (0-3)

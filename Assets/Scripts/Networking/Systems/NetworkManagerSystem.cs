@@ -13,7 +13,7 @@ namespace MudLike.Networking.Systems
     /// </summary>
     [UpdateInGroup(typeof(NetCodeClientAndServerSystemGroup))]
     [BurstCompile]
-    public partial class NetworkManagerSystem : SystemBase
+    public partial class NetworkManagerSystemManager : SystemBase
     {
         private NetworkDriver m_NetworkDriver;
         private NativeList<NetworkConnection> m_Connections;

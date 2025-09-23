@@ -7,6 +7,7 @@ using Unity.Collections;
 using MudLike.Vehicles.Components;
 using MudLike.Core.Components;
 using MudLike.Core.Performance;
+using static MudLike.Core.Components.Position;
 
 namespace MudLike.Vehicles.Systems
 {

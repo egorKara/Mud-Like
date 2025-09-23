@@ -4,6 +4,7 @@ using Unity.Transforms;
 using Unity.Burst;
 using MudLike.Core.Components;
 using MudLike.Physics.Components;
+using static MudLike.Core.Components.Position;
 
 namespace MudLike.Vehicles.Systems
 {

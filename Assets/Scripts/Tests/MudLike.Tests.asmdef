@@ -4,25 +4,20 @@
     "references": [
         "Unity.Entities",
         "Unity.Collections",
-        "Unity.Jobs",
-        "Unity.Burst",
         "Unity.Mathematics",
         "Unity.Physics",
-        "Unity.TestFramework",
-        "UnityEngine.TestRunner",
-        "UnityEditor.TestRunner",
-        "MudLike.Core",
-        "MudLike.Vehicles",
-        "MudLike.Terrain",
-        "MudLike.Networking",
-        "MudLike.DOTS"
+        "Unity.Transforms",
+        "MudLike.Performance",
+        "MudLike.ECS"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": true,
-    "overrideReferences": false,
-    "precompiledReferences": [],
-    "autoReferenced": true,
+    "overrideReferences": true,
+    "precompiledReferences": [
+        "nunit.framework.dll"
+    ],
+    "autoReferenced": false,
     "defineConstraints": [
         "UNITY_INCLUDE_TESTS"
     ],

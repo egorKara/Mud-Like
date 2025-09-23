@@ -3,6 +3,7 @@ using Unity.Collections;
 using Unity.Jobs;
 using Unity.Burst;
 using Unity.Mathematics;
+using Unity.Collections.LowLevel.Unsafe;
 using System.Collections.Generic;
 
 namespace MudLike.Core.Systems
@@ -16,18 +17,18 @@ namespace MudLike.Core.Systems
     public partial class OptimizedEventSystem : SystemBase
     {
         private NativeList<GameEvent> _events;
-        private NativeHashMap<int, NativeList<System.Action<GameEvent>>> _listeners;
+        private Dictionary<int, List<System.Action<GameEvent>>> _listeners;
         
         protected override void OnCreate()
         {
             _events = new NativeList<GameEvent>(1000, Allocator.Persistent);
-            _listeners = new NativeHashMap<int, NativeList<System.Action<GameEvent>>>(100, Allocator.Persistent);
+            _listeners = new Dictionary<int, List<System.Action<GameEvent>>>();
         }
         
         protected override void OnDestroy()
         {
             if (_events.IsCreated) _events.Dispose();
-            if (_listeners.IsCreated) _listeners.Dispose();
+            _listeners?.Clear();
         }
         
         /// <summary>
@@ -53,7 +54,7 @@ namespace MudLike.Core.Systems
         {
             if (!_listeners.TryGetValue(eventType, out var callbacks))
             {
-                callbacks = new NativeList<System.Action<GameEvent>>(10, Allocator.Persistent);
+                callbacks = new List<System.Action<GameEvent>>();
                 _listeners[eventType] = callbacks;
             }
             callbacks.Add(callback);
@@ -62,7 +63,6 @@ namespace MudLike.Core.Systems
         /// <summary>
         /// Обрабатывает все события в очереди
         /// </summary>
-        [BurstCompile]
         private void ProcessEvents()
         {
             for (int i = 0; i < _events.Length; i++)
@@ -71,7 +71,7 @@ namespace MudLike.Core.Systems
                 
                 if (_listeners.TryGetValue(gameEvent.Type, out var callbacks))
                 {
-                    for (int j = 0; j < callbacks.Length; j++)
+                    for (int j = 0; j < callbacks.Count; j++)
                     {
                         callbacks[j](gameEvent);
                     }

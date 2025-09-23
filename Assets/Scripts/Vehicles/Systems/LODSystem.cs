@@ -6,6 +6,7 @@ using Unity.Jobs;
 using Unity.Collections;
 using MudLike.Vehicles.Components;
 using MudLike.Core.Components;
+using static MudLike.Core.Components.Position;
 
 namespace MudLike.Vehicles.Systems
 {

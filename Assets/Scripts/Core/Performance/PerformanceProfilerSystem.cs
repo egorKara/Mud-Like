@@ -1,99 +1,178 @@
 using Unity.Entities;
-using Unity.Mathematics;
-using Unity.Burst;
+using Unity.Profiling;
 using Unity.Collections;
-using Unity.Jobs;
-using System.Diagnostics;
+using Unity.Mathematics;
+using System.Collections.Generic;
 
 namespace MudLike.Core.Performance
 {
     /// <summary>
-    /// Система профилирования производительности в реальном времени
-    /// Обеспечивает мониторинг FPS, памяти, физики и сетевой производительности
+    /// Система профилирования производительности
     /// </summary>
     [UpdateInGroup(typeof(InitializationSystemGroup))]
-    [BurstCompile]
     public partial class PerformanceProfilerSystem : SystemBase
     {
-        private PerformanceMetrics _metrics;
-        private NativeArray<float> _fpsHistory;
-        private NativeArray<float> _frameTimeHistory;
-        private int _historyIndex;
-        private float _lastUpdateTime;
-        private const int HISTORY_SIZE = 60; // 1 секунда при 60 FPS
+        // Profiler Markers
+        private static readonly ProfilerMarker _updateMarker = new ProfilerMarker("PerformanceProfiler.Update");
+        private static readonly ProfilerMarker _physicsMarker = new ProfilerMarker("Physics.Calculation");
+        private static readonly ProfilerMarker _renderingMarker = new ProfilerMarker("Rendering.Process");
+        private static readonly ProfilerMarker _networkingMarker = new ProfilerMarker("Networking.Sync");
+        private static readonly ProfilerMarker _audioMarker = new ProfilerMarker("Audio.Process");
+        private static readonly ProfilerMarker _uiMarker = new ProfilerMarker("UI.Update");
+        
+        // Performance Metrics
+        private NativeArray<float> _frameTimes;
+        private NativeArray<float> _memoryUsage;
+        private NativeArray<float> _cpuUsage;
+        private NativeArray<float> _gpuUsage;
+        private int _currentIndex = 0;
+        private const int METRICS_BUFFER_SIZE = 1000;
+        
+        // Performance Thresholds
+        private const float TARGET_FRAME_TIME = 16.67f; // 60 FPS
+        private const float MAX_MEMORY_USAGE = 1000f; // 1GB
+        private const float MAX_CPU_USAGE = 80f; // 80%
+        private const float MAX_GPU_USAGE = 90f; // 90%
+        
+        // Performance Warnings
+        private bool _frameTimeWarning = false;
+        private bool _memoryWarning = false;
+        private bool _cpuWarning = false;
+        private bool _gpuWarning = false;
+        
+        // Performance Statistics
+        private float _averageFrameTime = 0f;
+        private float _averageMemoryUsage = 0f;
+        private float _averageCpuUsage = 0f;
+        private float _averageGpuUsage = 0f;
+        private float _minFrameTime = float.MaxValue;
+        private float _maxFrameTime = 0f;
+        private float _minMemoryUsage = float.MaxValue;
+        private float _maxMemoryUsage = 0f;
         
         protected override void OnCreate()
         {
-            _metrics = new PerformanceMetrics();
-            _fpsHistory = new NativeArray<float>(HISTORY_SIZE, Allocator.Persistent);
-            _frameTimeHistory = new NativeArray<float>(HISTORY_SIZE, Allocator.Persistent);
-            _historyIndex = 0;
-            _lastUpdateTime = (float)SystemAPI.Time.ElapsedTime;
+            // Инициализация массивов метрик
+            _frameTimes = new NativeArray<float>(METRICS_BUFFER_SIZE, Allocator.Persistent);
+            _memoryUsage = new NativeArray<float>(METRICS_BUFFER_SIZE, Allocator.Persistent);
+            _cpuUsage = new NativeArray<float>(METRICS_BUFFER_SIZE, Allocator.Persistent);
+            _gpuUsage = new NativeArray<float>(METRICS_BUFFER_SIZE, Allocator.Persistent);
             
-            // Инициализируем историю нулями
-            for (int i = 0; i < HISTORY_SIZE; i++)
+            // Инициализация значений
+            for (int i = 0; i < METRICS_BUFFER_SIZE; i++)
             {
-                _fpsHistory[i] = 0f;
-                _frameTimeHistory[i] = 0f;
+                _frameTimes[i] = 0f;
+                _memoryUsage[i] = 0f;
+                _cpuUsage[i] = 0f;
+                _gpuUsage[i] = 0f;
             }
         }
         
         protected override void OnDestroy()
         {
-            if (_fpsHistory.IsCreated)
-                _fpsHistory.Dispose();
-            if (_frameTimeHistory.IsCreated)
-                _frameTimeHistory.Dispose();
+            // Освобождение памяти
+            if (_frameTimes.IsCreated) _frameTimes.Dispose();
+            if (_memoryUsage.IsCreated) _memoryUsage.Dispose();
+            if (_cpuUsage.IsCreated) _cpuUsage.Dispose();
+            if (_gpuUsage.IsCreated) _gpuUsage.Dispose();
         }
         
         protected override void OnUpdate()
         {
-            float currentTime = (float)SystemAPI.Time.ElapsedTime;
-            float deltaTime = SystemAPI.Time.DeltaTime;
-            
-            // Обновляем метрики каждый кадр
-            UpdateFrameMetrics(deltaTime);
-            
-            // Обновляем историю каждые 16.67ms (60 FPS)
-            if (currentTime - _lastUpdateTime >= 0.01667f)
+            using (_updateMarker.Auto())
             {
-                UpdatePerformanceHistory();
-                _lastUpdateTime = currentTime;
+                // Запись метрик производительности
+                RecordPerformanceMetrics();
+                
+                // Анализ производительности
+                AnalyzePerformance();
+                
+                // Обновление статистики
+                UpdateStatistics();
+                
+                // Проверка предупреждений
+                CheckPerformanceWarnings();
             }
+        }
+        
+        /// <summary>
+        /// Записывает метрики производительности
+        /// </summary>
+        private void RecordPerformanceMetrics()
+        {
+            // Запись времени кадра
+            _frameTimes[_currentIndex] = SystemAPI.Time.DeltaTime * 1000f; // в миллисекундах
             
-            // Проверяем производительность каждую секунду
-            if (currentTime % 1.0f < deltaTime)
+            // Запись использования памяти
+            _memoryUsage[_currentIndex] = UnityEngine.Profiling.Profiler.GetTotalAllocatedMemoryLong() / (1024f * 1024f); // в MB
+            
+            // Запись использования CPU (приблизительно)
+            _cpuUsage[_currentIndex] = CalculateCpuUsage();
+            
+            // Запись использования GPU (приблизительно)
+            _gpuUsage[_currentIndex] = CalculateGpuUsage();
+            
+            // Обновление индекса
+            _currentIndex = (_currentIndex + 1) % METRICS_BUFFER_SIZE;
+        }
+        
+        /// <summary>
+        /// Анализирует производительность
+        /// </summary>
+        private void AnalyzePerformance()
+        {
+            if (_currentIndex == 0) // Буфер заполнен
             {
+                CalculateAverages();
+                CalculateMinMax();
                 CheckPerformanceThresholds();
             }
         }
         
         /// <summary>
-        /// Обновляет метрики кадра
+        /// Вычисляет средние значения
         /// </summary>
-        [BurstCompile]
-        private void UpdateFrameMetrics(float deltaTime)
+        private void CalculateAverages()
         {
-            _metrics.FrameTime = deltaTime;
-            _metrics.FPS = 1.0f / deltaTime;
-            _metrics.TotalFrames++;
+            float frameTimeSum = 0f;
+            float memorySum = 0f;
+            float cpuSum = 0f;
+            float gpuSum = 0f;
             
-            // Обновляем средние значения
-            _metrics.AverageFPS = CalculateAverageFPS();
-            _metrics.MinFPS = CalculateMinFPS();
-            _metrics.MaxFPS = CalculateMaxFPS();
+            for (int i = 0; i < METRICS_BUFFER_SIZE; i++)
+            {
+                frameTimeSum += _frameTimes[i];
+                memorySum += _memoryUsage[i];
+                cpuSum += _cpuUsage[i];
+                gpuSum += _gpuUsage[i];
+            }
+            
+            _averageFrameTime = frameTimeSum / METRICS_BUFFER_SIZE;
+            _averageMemoryUsage = memorySum / METRICS_BUFFER_SIZE;
+            _averageCpuUsage = cpuSum / METRICS_BUFFER_SIZE;
+            _averageGpuUsage = gpuSum / METRICS_BUFFER_SIZE;
         }
         
         /// <summary>
-        /// Обновляет историю производительности
+        /// Вычисляет минимальные и максимальные значения
         /// </summary>
-        [BurstCompile]
-        private void UpdatePerformanceHistory()
+        private void CalculateMinMax()
         {
-            _fpsHistory[_historyIndex] = _metrics.FPS;
-            _frameTimeHistory[_historyIndex] = _metrics.FrameTime;
+            _minFrameTime = float.MaxValue;
+            _maxFrameTime = 0f;
+            _minMemoryUsage = float.MaxValue;
+            _maxMemoryUsage = 0f;
             
-            _historyIndex = (_historyIndex + 1) % HISTORY_SIZE;
+            for (int i = 0; i < METRICS_BUFFER_SIZE; i++)
+            {
+                // Frame Time
+                if (_frameTimes[i] < _minFrameTime) _minFrameTime = _frameTimes[i];
+                if (_frameTimes[i] > _maxFrameTime) _maxFrameTime = _frameTimes[i];
+                
+                // Memory Usage
+                if (_memoryUsage[i] < _minMemoryUsage) _minMemoryUsage = _memoryUsage[i];
+                if (_memoryUsage[i] > _maxMemoryUsage) _maxMemoryUsage = _memoryUsage[i];
+            }
         }
         
         /// <summary>
@@ -101,257 +180,188 @@ namespace MudLike.Core.Performance
         /// </summary>
         private void CheckPerformanceThresholds()
         {
-            // Проверяем минимальный FPS
-            if (_metrics.AverageFPS < 30f)
+            // Проверка времени кадра
+            if (_averageFrameTime > TARGET_FRAME_TIME)
             {
-                UnityEngine.Debug.LogWarning($"[Performance] Low FPS detected: {_metrics.AverageFPS:F1} FPS");
-            }
-            
-            // Проверяем максимальное время кадра
-            if (_metrics.FrameTime > 0.033f) // 30 FPS
-            {
-                UnityEngine.Debug.LogWarning($"[Performance] High frame time: {_metrics.FrameTime * 1000:F1}ms");
-            }
-            
-            // Проверяем стабильность FPS
-            float fpsVariance = CalculateFPSVariance();
-            if (fpsVariance > 10f) // Высокая вариативность
-            {
-                UnityEngine.Debug.LogWarning($"[Performance] Unstable FPS: variance {fpsVariance:F1}");
-            }
-        }
-        
-        /// <summary>
-        /// Вычисляет средний FPS
-        /// </summary>
-        [BurstCompile]
-        private float CalculateAverageFPS()
-        {
-            float sum = 0f;
-            int count = 0;
-            
-            for (int i = 0; i < HISTORY_SIZE; i++)
-            {
-                if (_fpsHistory[i] > 0f)
+                if (!_frameTimeWarning)
                 {
-                    sum += _fpsHistory[i];
-                    count++;
+                    UnityEngine.Debug.LogWarning($"Performance Warning: Average frame time {_averageFrameTime:F2}ms exceeds target {TARGET_FRAME_TIME}ms");
+                    _frameTimeWarning = true;
                 }
             }
-            
-            return count > 0 ? sum / count : 0f;
-        }
-        
-        /// <summary>
-        /// Вычисляет минимальный FPS
-        /// </summary>
-        [BurstCompile]
-        private float CalculateMinFPS()
-        {
-            float minFPS = float.MaxValue;
-            
-            for (int i = 0; i < HISTORY_SIZE; i++)
+            else
             {
-                if (_fpsHistory[i] > 0f && _fpsHistory[i] < minFPS)
-                {
-                    minFPS = _fpsHistory[i];
-                }
+                _frameTimeWarning = false;
             }
             
-            return minFPS == float.MaxValue ? 0f : minFPS;
-        }
-        
-        /// <summary>
-        /// Вычисляет максимальный FPS
-        /// </summary>
-        [BurstCompile]
-        private float CalculateMaxFPS()
-        {
-            float maxFPS = 0f;
-            
-            for (int i = 0; i < HISTORY_SIZE; i++)
+            // Проверка использования памяти
+            if (_averageMemoryUsage > MAX_MEMORY_USAGE)
             {
-                if (_fpsHistory[i] > maxFPS)
+                if (!_memoryWarning)
                 {
-                    maxFPS = _fpsHistory[i];
+                    UnityEngine.Debug.LogWarning($"Memory Warning: Average memory usage {_averageMemoryUsage:F2}MB exceeds limit {MAX_MEMORY_USAGE}MB");
+                    _memoryWarning = true;
                 }
             }
-            
-            return maxFPS;
-        }
-        
-        /// <summary>
-        /// Вычисляет вариативность FPS
-        /// </summary>
-        [BurstCompile]
-        private float CalculateFPSVariance()
-        {
-            float average = CalculateAverageFPS();
-            if (average <= 0f) return 0f;
-            
-            float sum = 0f;
-            int count = 0;
-            
-            for (int i = 0; i < HISTORY_SIZE; i++)
+            else
             {
-                if (_fpsHistory[i] > 0f)
-                {
-                    float diff = _fpsHistory[i] - average;
-                    sum += diff * diff;
-                    count++;
-                }
+                _memoryWarning = false;
             }
             
-            return count > 1 ? math.sqrt(sum / (count - 1)) : 0f;
-        }
-        
-        /// <summary>
-        /// Получает текущие метрики производительности
-        /// </summary>
-        public PerformanceMetrics GetMetrics()
-        {
-            return _metrics;
-        }
-        
-        /// <summary>
-        /// Сбрасывает метрики
-        /// </summary>
-        public void ResetMetrics()
-        {
-            _metrics = new PerformanceMetrics();
-            _historyIndex = 0;
-            
-            for (int i = 0; i < HISTORY_SIZE; i++)
+            // Проверка использования CPU
+            if (_averageCpuUsage > MAX_CPU_USAGE)
             {
-                _fpsHistory[i] = 0f;
-                _frameTimeHistory[i] = 0f;
+                if (!_cpuWarning)
+                {
+                    UnityEngine.Debug.LogWarning($"CPU Warning: Average CPU usage {_averageCpuUsage:F2}% exceeds limit {MAX_CPU_USAGE}%");
+                    _cpuWarning = true;
+                }
+            }
+            else
+            {
+                _cpuWarning = false;
+            }
+            
+            // Проверка использования GPU
+            if (_averageGpuUsage > MAX_GPU_USAGE)
+            {
+                if (!_gpuWarning)
+                {
+                    UnityEngine.Debug.LogWarning($"GPU Warning: Average GPU usage {_averageGpuUsage:F2}% exceeds limit {MAX_GPU_USAGE}%");
+                    _gpuWarning = true;
+                }
+            }
+            else
+            {
+                _gpuWarning = false;
+            }
+        }
+        
+        /// <summary>
+        /// Обновляет статистику
+        /// </summary>
+        private void UpdateStatistics()
+        {
+            // Обновление статистики каждые 100 кадров
+            if (Time.frameCount % 100 == 0)
+            {
+                LogPerformanceStatistics();
+            }
+        }
+        
+        /// <summary>
+        /// Проверяет предупреждения производительности
+        /// </summary>
+        private void CheckPerformanceWarnings()
+        {
+            // Проверка критических проблем производительности
+            if (_averageFrameTime > TARGET_FRAME_TIME * 2f)
+            {
+                UnityEngine.Debug.LogError($"Critical Performance Issue: Frame time {_averageFrameTime:F2}ms is too high!");
+            }
+            
+            if (_averageMemoryUsage > MAX_MEMORY_USAGE * 1.5f)
+            {
+                UnityEngine.Debug.LogError($"Critical Memory Issue: Memory usage {_averageMemoryUsage:F2}MB is too high!");
+            }
+        }
+        
+        /// <summary>
+        /// Вычисляет использование CPU (приблизительно)
+        /// </summary>
+        private float CalculateCpuUsage()
+        {
+            // Простая оценка использования CPU на основе времени кадра
+            float targetFrameTime = 16.67f; // 60 FPS
+            float currentFrameTime = Time.deltaTime * 1000f;
+            float cpuUsage = (currentFrameTime / targetFrameTime) * 100f;
+            return math.clamp(cpuUsage, 0f, 100f);
+        }
+        
+        /// <summary>
+        /// Вычисляет использование GPU (приблизительно)
+        /// </summary>
+        private float CalculateGpuUsage()
+        {
+            // Простая оценка использования GPU на основе рендеринга
+            // В реальном проекте здесь должны быть более точные измерения
+            return 50f; // Заглушка
+        }
+        
+        /// <summary>
+        /// Логирует статистику производительности
+        /// </summary>
+        private void LogPerformanceStatistics()
+        {
+            UnityEngine.Debug.Log($"=== PERFORMANCE STATISTICS ===");
+            UnityEngine.Debug.Log($"Frame Time: {_averageFrameTime:F2}ms (Min: {_minFrameTime:F2}ms, Max: {_maxFrameTime:F2}ms)");
+            UnityEngine.Debug.Log($"Memory Usage: {_averageMemoryUsage:F2}MB (Min: {_minMemoryUsage:F2}MB, Max: {_maxMemoryUsage:F2}MB)");
+            UnityEngine.Debug.Log($"CPU Usage: {_averageCpuUsage:F2}%");
+            UnityEngine.Debug.Log($"GPU Usage: {_averageGpuUsage:F2}%");
+            UnityEngine.Debug.Log($"FPS: {1000f / _averageFrameTime:F1}");
+        }
+        
+        /// <summary>
+        /// Получает текущую статистику производительности
+        /// </summary>
+        public PerformanceStats GetPerformanceStats()
+        {
+            return new PerformanceStats
+            {
+                AverageFrameTime = _averageFrameTime,
+                AverageMemoryUsage = _averageMemoryUsage,
+                AverageCpuUsage = _averageCpuUsage,
+                AverageGpuUsage = _averageGpuUsage,
+                MinFrameTime = _minFrameTime,
+                MaxFrameTime = _maxFrameTime,
+                MinMemoryUsage = _minMemoryUsage,
+                MaxMemoryUsage = _maxMemoryUsage,
+                CurrentFPS = 1000f / _averageFrameTime,
+                FrameTimeWarning = _frameTimeWarning,
+                MemoryWarning = _memoryWarning,
+                CpuWarning = _cpuWarning,
+                GpuWarning = _gpuWarning
+            };
+        }
+        
+        /// <summary>
+        /// Сбрасывает статистику производительности
+        /// </summary>
+        public void ResetPerformanceStats()
+        {
+            _currentIndex = 0;
+            _frameTimeWarning = false;
+            _memoryWarning = false;
+            _cpuWarning = false;
+            _gpuWarning = false;
+            
+            for (int i = 0; i < METRICS_BUFFER_SIZE; i++)
+            {
+                _frameTimes[i] = 0f;
+                _memoryUsage[i] = 0f;
+                _cpuUsage[i] = 0f;
+                _gpuUsage[i] = 0f;
             }
         }
     }
     
     /// <summary>
-    /// Метрики производительности
+    /// Структура статистики производительности
     /// </summary>
-    public struct PerformanceMetrics
+    public struct PerformanceStats
     {
-        public float FPS;
-        public float AverageFPS;
-        public float MinFPS;
-        public float MaxFPS;
-        public float FrameTime;
-        public int TotalFrames;
-        public float MemoryUsage;
-        public float PhysicsTime;
-        public float NetworkLatency;
-        public float DeformationTime;
-        
-        /// <summary>
-        /// Возвращает строковое представление метрик
-        /// </summary>
-        public override string ToString()
-        {
-            return $"FPS: {FPS:F1} | Avg: {AverageFPS:F1} | Min: {MinFPS:F1} | Max: {MaxFPS:F1} | Frame: {FrameTime * 1000:F1}ms";
-        }
-    }
-    
-    /// <summary>
-    /// Система профилирования физики
-    /// </summary>
-    [UpdateInGroup(typeof(FixedStepSimulationSystemGroup))]
-    [BurstCompile]
-    public partial class PhysicsProfilerSystem : SystemBase
-    {
-        private Stopwatch _physicsStopwatch;
-        private float _physicsTime;
-        
-        protected override void OnCreate()
-        {
-            _physicsStopwatch = new Stopwatch();
-            _physicsTime = 0f;
-        }
-        
-        protected override void OnUpdate()
-        {
-            _physicsStopwatch.Restart();
-            
-            // Здесь выполняется физическая симуляция
-            // Время измеряется автоматически
-            
-            _physicsStopwatch.Stop();
-            _physicsTime = (float)_physicsStopwatch.Elapsed.TotalMilliseconds;
-            
-            // Проверяем производительность физики
-            if (_physicsTime > 16f) // Больше 16ms для 60 FPS
-            {
-                UnityEngine.Debug.LogWarning($"[Physics] High physics time: {_physicsTime:F1}ms");
-            }
-        }
-        
-        /// <summary>
-        /// Получает время выполнения физики
-        /// </summary>
-        public float GetPhysicsTime()
-        {
-            return _physicsTime;
-        }
-    }
-    
-    /// <summary>
-    /// Система профилирования деформации террейна
-    /// </summary>
-    [UpdateInGroup(typeof(FixedStepSimulationSystemGroup))]
-    [BurstCompile]
-    public partial class DeformationProfilerSystem : SystemBase
-    {
-        private Stopwatch _deformationStopwatch;
-        private float _deformationTime;
-        private int _deformationCount;
-        
-        protected override void OnCreate()
-        {
-            _deformationStopwatch = new Stopwatch();
-            _deformationTime = 0f;
-            _deformationCount = 0;
-        }
-        
-        protected override void OnUpdate()
-        {
-            _deformationStopwatch.Restart();
-            
-            // Подсчитываем количество деформаций (закомментировано - требует Terrain модуль)
-            _deformationCount = 0;
-            
-            // Entities
-            //     .WithAll<DeformationData>()
-            //     .ForEach((in DeformationData deformation) =>
-            //     {
-            //         _deformationCount++;
-            //     }).WithoutBurst().Run();
-            
-            _deformationStopwatch.Stop();
-            _deformationTime = (float)_deformationStopwatch.Elapsed.TotalMilliseconds;
-            
-            // Проверяем производительность деформации
-            if (_deformationTime > 5f) // Больше 5ms
-            {
-                UnityEngine.Debug.LogWarning($"[Deformation] High deformation time: {_deformationTime:F1}ms for {_deformationCount} deformations");
-            }
-        }
-        
-        /// <summary>
-        /// Получает время выполнения деформации
-        /// </summary>
-        public float GetDeformationTime()
-        {
-            return _deformationTime;
-        }
-        
-        /// <summary>
-        /// Получает количество деформаций
-        /// </summary>
-        public int GetDeformationCount()
-        {
-            return _deformationCount;
-        }
+        public float AverageFrameTime;
+        public float AverageMemoryUsage;
+        public float AverageCpuUsage;
+        public float AverageGpuUsage;
+        public float MinFrameTime;
+        public float MaxFrameTime;
+        public float MinMemoryUsage;
+        public float MaxMemoryUsage;
+        public float CurrentFPS;
+        public bool FrameTimeWarning;
+        public bool MemoryWarning;
+        public bool CpuWarning;
+        public bool GpuWarning;
     }
 }

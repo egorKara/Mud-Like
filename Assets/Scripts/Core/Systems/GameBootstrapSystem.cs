@@ -31,13 +31,18 @@ namespace MudLike.Core.Systems
             InitializeGame();
             _isInitialized = true;
             
-            // Удаляем тег бутстрапа
+            // Удаляем тег бутстрапа с помощью EntityCommandBuffer
+            var ecb = new EntityCommandBuffer(Allocator.Temp);
+            
             Entities
                 .WithAll<GameBootstrapTag>()
                 .ForEach((Entity entity) =>
                 {
-                    EntityManager.RemoveComponent<GameBootstrapTag>(entity);
+                    ecb.RemoveComponent<GameBootstrapTag>(entity);
                 }).WithoutBurst().Run();
+                
+            ecb.Playback(EntityManager);
+            ecb.Dispose();
         }
         
         /// <summary>

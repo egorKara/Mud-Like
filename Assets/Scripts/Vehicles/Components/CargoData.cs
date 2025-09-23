@@ -6,7 +6,7 @@ namespace MudLike.Vehicles.Components
     /// <summary>
     /// Данные груза
     /// </summary>
-    public struct CargoData : IComponentData
+    public struct Cargo : IComponentData
     {
         /// <summary>
         /// ID груза

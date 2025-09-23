@@ -14,7 +14,7 @@ namespace MudLike.Terrain.Systems
     /// </summary>
     [UpdateInGroup(typeof(FixedStepSimulationSystemGroup))]
     [BurstCompile]
-    public partial class MudManagerSystem : SystemBase
+    public partial class MudManagerSystemManager : SystemBase
     {
         private TerrainHeightManager _terrainManager;
         private NativeHashMap<int, MudContactData> _mudContacts;

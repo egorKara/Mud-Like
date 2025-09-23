@@ -18,7 +18,7 @@ namespace MudLike.Vehicles.Systems
         
         protected override void OnCreate()
         {
-            // Получаем PhysicsWorld через SystemAPI для Unity 2022.3.62f1
+            // Получаем PhysicsWorld через SystemAPI для Unity 6000.0.57f1
             RequireForUpdate<PhysicsWorldSingleton>();
         }
         

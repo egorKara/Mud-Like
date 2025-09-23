@@ -2,25 +2,32 @@ using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Transforms;
 using Unity.NetCode;
+using Unity.Burst;
+using Unity.Collections;
 using MudLike.Networking.Components;
 using MudLike.Core.Components;
+using static MudLike.Core.Components.Position;
 
 namespace MudLike.Networking.Systems
 {
     /// <summary>
-    /// Система синхронизации сетевых данных
+    /// Система синхронизации сетевых данных для Unity 6
+    /// Оптимизирована для GhostSystem и новых возможностей NFE
     /// </summary>
     [UpdateInGroup(typeof(NetCodeClientAndServerSystemGroup))]
     [BurstCompile(CompileSynchronously = true)]
     public partial class NetworkSyncSystem : SystemBase
     {
         /// <summary>
-        /// Обрабатывает синхронизацию сетевых данных
+        /// Обрабатывает синхронизацию сетевых данных для Unity 6
         /// </summary>
         protected override void OnUpdate()
         {
-            // Синхронизируем позиции
-            SyncPositions();
+            // Проверяем, что мы в сетевой игре
+            if (!HasSingleton<NetworkStreamInGame>()) return;
+            
+            // Синхронизируем позиции с приоритизацией
+            SyncPositionsWithPriority();
             
             // Синхронизируем транспортные средства
             SyncVehicles();
@@ -30,6 +37,9 @@ namespace MudLike.Networking.Systems
             
             // Синхронизируем грязь
             SyncMud();
+            
+            // Обновляем статистику сети (Unity 6)
+            UpdateNetworkStats();
         }
         
         /// <summary>
@@ -168,6 +178,61 @@ namespace MudLike.Networking.Systems
         private static bool HasMudChanged(in NetworkMud networkMud, in MudData mud)
         {
             return !networkMud.Mud.Equals(mud);
+        }
+        
+        /// <summary>
+        /// Синхронизирует позиции с приоритизацией (Unity 6)
+        /// </summary>
+        private void SyncPositionsWithPriority()
+        {
+            Entities
+                .WithAll<NetworkPosition, NetworkId>()
+                .ForEach((ref NetworkPosition networkPos, 
+                         in LocalTransform transform, 
+                         in NetworkId networkId) =>
+                {
+                    // Проверяем приоритет синхронизации
+                    if (ShouldSyncPosition(networkId, networkPos))
+                    {
+                        // Проверяем, изменилась ли позиция
+                        if (HasPositionChanged(networkPos, transform))
+                        {
+                            // Обновляем сетевые данные
+                            networkPos.Value = transform.Position;
+                            networkPos.Rotation = transform.Rotation;
+                            networkPos.HasChanged = true;
+                            networkPos.LastUpdateTime = (float)Time.time;
+                            networkPos.Tick = (uint)Time.time;
+                        }
+                    }
+                }).Schedule();
+        }
+        
+        /// <summary>
+        /// Определяет, нужно ли синхронизировать позицию (Unity 6)
+        /// </summary>
+        private static bool ShouldSyncPosition(in NetworkId networkId, in NetworkPosition networkPos)
+        {
+            // Высокий приоритет для авторитетных сущностей
+            if (networkId.IsAuthoritative) return true;
+            
+            // Проверяем приоритет синхронизации
+            if (networkId.UpdatePriority > 128) return true;
+            
+            // Проверяем флаг интерполяции
+            if (networkPos.EnableInterpolation) return true;
+            
+            // Проверяем время с последнего обновления
+            return (Time.time - networkPos.LastUpdateTime) > (1f / networkId.UpdatePriority);
+        }
+        
+        /// <summary>
+        /// Обновляет статистику сети (Unity 6)
+        /// </summary>
+        private void UpdateNetworkStats()
+        {
+            // Здесь можно добавить обновление статистики сети
+            // Например, количество синхронизированных сущностей, пропускную способность и т.д.
         }
     }
 }

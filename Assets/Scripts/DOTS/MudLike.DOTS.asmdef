@@ -9,10 +9,7 @@
         "Unity.Mathematics",
         "Unity.Physics",
         "Unity.Rendering.Hybrid",
-        "MudLike.Core",
-        "MudLike.Vehicles",
-        "MudLike.Terrain",
-        "MudLike.Networking"
+        "MudLike.Core"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

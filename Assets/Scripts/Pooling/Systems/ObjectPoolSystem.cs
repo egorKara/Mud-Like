@@ -13,7 +13,7 @@ namespace MudLike.Pooling.Systems
     /// </summary>
     [UpdateInGroup(typeof(SimulationSystemGroup))]
     [BurstCompile(CompileSynchronously = true)]
-    public partial class ObjectPoolSystem : SystemBase
+    public partial class ObjectPoolSystemPool : SystemBase
     {
         private EntityQuery _poolQuery;
         private EntityQuery _pooledObjectQuery;

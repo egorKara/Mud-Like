@@ -144,5 +144,8 @@ MIT License - см. файл [LICENSE](LICENSE)
 - ⏳ **Деформация террейна**: Планируется
 
 ---
+"Use branches for experiments, review diff in Cursor".
+
+Автоматизировать генерацию (e.g., "Generate XML docs for all APIs").
 
 **Удачи в разработке Mud-Like! 🎮**

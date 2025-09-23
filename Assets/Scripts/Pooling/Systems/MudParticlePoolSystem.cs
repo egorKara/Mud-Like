@@ -14,7 +14,7 @@ namespace MudLike.Pooling.Systems
     /// </summary>
     [UpdateInGroup(typeof(FixedStepSimulationSystemGroup))]
     [BurstCompile]
-    public partial class MudParticlePoolSystem : SystemBase
+    public partial class MudParticlePoolSystemPool : SystemBase
     {
         private NativeQueue<Entity> _availableParticles;
         private NativeList<Entity> _activeParticles;

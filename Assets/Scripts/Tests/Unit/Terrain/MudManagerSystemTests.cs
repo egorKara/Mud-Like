@@ -11,7 +11,7 @@ namespace MudLike.Tests.Unit.Terrain
     /// Комплексные тесты для MudManagerSystem
     /// Обеспечивает проверку всех критических функций API деформации террейна
     /// </summary>
-    public class MudManagerSystemTests
+    public class MudManagerSystemTestsManager
     {
         private World _world;
         private MudManagerSystem _mudManager;

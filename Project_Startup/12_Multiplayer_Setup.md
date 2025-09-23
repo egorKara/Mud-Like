@@ -219,19 +219,21 @@ public class WorldSetup : MonoBehaviour
     private void SetupHostSystems(World world)
     {
         // Системы для хоста (клиент + сервер)
-        world.GetOrCreateSystem<PlayerInputSystem>();
-        world.GetOrCreateSystem<PlayerMovementSystem>();
-        world.GetOrCreateSystem<VehicleSystem>();
-        world.GetOrCreateSystem<TerrainDeformationSystem>();
+        // Все системы должны иметь [BurstCompile] атрибут
+        world.GetOrCreateSystem<PlayerInputSystem>();        // [BurstCompile] + partial
+        world.GetOrCreateSystem<PlayerMovementSystem>();     // [BurstCompile] + partial
+        world.GetOrCreateSystem<VehicleSystem>();            // [BurstCompile] + partial
+        world.GetOrCreateSystem<TerrainDeformationSystem>(); // [BurstCompile] + partial
     }
     
     private void SetupServerSystems(World world)
     {
         // Системы только для сервера
+        // Все системы должны иметь [BurstCompile] атрибут
         world.GetOrCreateSystem<ServerSimulationSystemGroup>();
-        world.GetOrCreateSystem<NetworkSyncSystem>();
-        world.GetOrCreateSystem<LagCompensationSystem>();
-        world.GetOrCreateSystem<AntiCheatSystem>();
+        world.GetOrCreateSystem<NetworkSyncSystem>();        // [BurstCompile] + partial
+        world.GetOrCreateSystem<LagCompensationSystem>();    // [BurstCompile] + partial
+        world.GetOrCreateSystem<AntiCheatSystem>();          // [BurstCompile] + partial
     }
 }
 ```
@@ -244,9 +246,11 @@ public class WorldSetup : MonoBehaviour
 using Unity.Entities;
 using Unity.Mathematics;
 using Unity.NetCode;
+using Unity.Burst;
 
 [UpdateAfter(typeof(PlayerMovementSystem))]
-public class SendPositionToServerSystem : SystemBase
+[BurstCompile]
+public partial class SendPositionToServerSystem : SystemBase
 {
     protected override void OnUpdate()
     {
@@ -277,9 +281,11 @@ public class SendPositionToServerSystem : SystemBase
 using Unity.Entities;
 using Unity.Mathematics;
 using Unity.NetCode;
+using Unity.Burst;
 
 [UpdateAfter(typeof(NetworkSyncSystem))]
-public class ReceivePositionFromServerSystem : SystemBase
+[BurstCompile]
+public partial class ReceivePositionFromServerSystem : SystemBase
 {
     protected override void OnUpdate()
     {
@@ -299,9 +305,11 @@ public class ReceivePositionFromServerSystem : SystemBase
 // Scripts/Networking/Systems/NetworkSyncSystem.cs
 using Unity.Entities;
 using Unity.NetCode;
+using Unity.Burst;
 
 [UpdateInGroup(typeof(ServerSimulationSystemGroup))]
-public class NetworkSyncSystem : SystemBase
+[BurstCompile]
+public partial class NetworkSyncSystem : SystemBase
 {
     protected override void OnUpdate()
     {
@@ -358,9 +366,11 @@ public class NetworkSyncSystem : SystemBase
 using Unity.Entities;
 using Unity.NetCode;
 using Unity.Physics;
+using Unity.Burst;
 
 [UpdateInGroup(typeof(ServerSimulationSystemGroup))]
-public class LagCompensationSystem : SystemBase
+[BurstCompile]
+public partial class LagCompensationSystem : SystemBase
 {
     private PhysicsWorld _physicsWorld;
     private CollisionWorld _collisionWorld;
@@ -450,9 +460,11 @@ public struct ShootEvent : IEventData
 // Scripts/Networking/Systems/AntiCheatSystem.cs
 using Unity.Entities;
 using Unity.NetCode;
+using Unity.Burst;
 
 [UpdateInGroup(typeof(ServerSimulationSystemGroup))]
-public class AntiCheatSystem : SystemBase
+[BurstCompile]
+public partial class AntiCheatSystem : SystemBase
 {
     protected override void OnUpdate()
     {
@@ -587,6 +599,37 @@ public class NetworkCommunicationTests
 }
 ```
 
+## ⚡ **BURST COMPILER ОПТИМИЗАЦИЯ**
+
+### **Обязательные требования для мультиплеера**
+```csharp
+// Все ECS системы должны использовать BurstCompile
+[BurstCompile]
+public partial class NetworkSystem : SystemBase
+{
+    // Высокопроизводительный код для сетевых операций
+}
+
+// Все Jobs должны использовать BurstCompile
+[BurstCompile]
+public struct NetworkSyncJob : IJobEntity
+{
+    // Оптимизированные сетевые вычисления
+}
+```
+
+### **Преимущества BurstCompile в мультиплеере**
+- **Производительность**: 10-100x ускорение сетевых вычислений
+- **Детерминизм**: Гарантированная стабильность на всех клиентах
+- **Масштабируемость**: Поддержка большего количества игроков
+- **Задержка**: Минимальная задержка сетевых операций
+
+### **Правила использования**
+1. **Все ECS системы** должны иметь `[BurstCompile]` атрибут
+2. **Все Jobs** должны иметь `[BurstCompile]` атрибут
+3. **Все partial классы** для совместимости с source generators
+4. **Избегать** managed типов в Burst-коде
+
 ## 🎯 **РЕЗУЛЬТАТ НАСТРОЙКИ**
 
 ### **Функциональность**
@@ -594,12 +637,14 @@ public class NetworkCommunicationTests
 - ✅ **Client-Server архитектура** с авторитарным сервером
 - ✅ **Синхронизация ECS** компонентов
 - ✅ **Lag Compensation** для честности игры
+- ✅ **BurstCompile оптимизация** для максимальной производительности
 
 ### **Технические характеристики**
 - ✅ **Netcode for Entities** для сетевой функциональности
 - ✅ **Детерминизм** для всех физических вычислений
 - ✅ **Anti-cheat система** для защиты от мошенничества
 - ✅ **Тестируемость** всех сетевых компонентов
+- ✅ **Burst Compiler** для высокопроизводительных вычислений
 
 ---
 

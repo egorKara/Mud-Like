@@ -36,7 +36,7 @@ namespace MudLike.Core.Performance
         
         // System References
         private PerformanceProfiler _profiler;
-        private MemoryPool _memoryPool;
+        private MudLikeMemoryPool _memoryPool;
         
         protected override void OnCreate()
         {

@@ -7,6 +7,7 @@ using Unity.Burst;
 using Unity.Jobs;
 using MudLike.Vehicles.Components;
 using MudLike.Core.Components;
+using static MudLike.Core.Components.Position;
 
 namespace MudLike.Vehicles.Systems
 {
